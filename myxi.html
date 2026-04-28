@@ -394,9 +394,9 @@ p {
 
   transform: translateX(-50%);
 
-  width: 16px;
+  width: 24px;
 
-  height: 16px;
+  height: 24px;
 
   object-fit: contain;
 
@@ -412,7 +412,7 @@ p {
 
   position: absolute;
 
-  top: 30px;
+  top: 10px;
 
   left: 50%;
 
@@ -620,15 +620,15 @@ button:hover {
 
     font-size: 6px;
 
-    top: 20px;
+    top: 8px;
 
   }
 
   .badge {
 
-    width: 10px;
+    width: 16px;
 
-    height: 10px;
+    height: 16px;
 
   }
 
@@ -756,11 +756,21 @@ Select 11 players. Maximum 1 player per club.
 
 <option>Select</option>
 
-<option>Ramsdale</option>
+<option>Arsenal</option>
 
-<option>Alisson</option>
+<option>Chelsea</option>
 
-<option>Ederson</option>
+<option>Liverpool</option>
+
+<option>Man City</option>
+
+<option>Villa</option>
+
+<option>Spurs</option>
+
+<option>West Ham</option>
+
+<option>Newcastle</option>
 
 </select>
 
@@ -797,12 +807,6 @@ Lock Team
 /* PLAYER TO CLUB MAPPING */
 
 const playerTeams = {
-
-  "Ramsdale": "Arsenal",
-
-  "Alisson": "Liverpool",
-
-  "Ederson": "Man City",
 
   "Saliba": "Arsenal",
 
@@ -918,13 +922,31 @@ const badge =
 
 select.parentElement.querySelector(".badge");
 
-const playerName = select.value;
+const value = select.value;
 
-shirtName.innerText = playerName;
+let club;
 
-const club = playerTeams[playerName];
+let displayName;
 
-if (!club) return;
+if (playerTeams[value]) {
+
+  // It's a player
+
+  club = playerTeams[value];
+
+  displayName = value;
+
+} else {
+
+  // It's a GK club
+
+  club = value;
+
+  displayName = club;
+
+}
+
+shirtName.innerText = displayName;
 
 /* CLUBS */
 
