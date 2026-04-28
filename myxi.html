@@ -756,21 +756,11 @@ Select 11 players. Maximum 1 player per club.
 
 <option>Select</option>
 
-<option>Arsenal</option>
+<option>Ramsdale</option>
 
-<option>Liverpool</option>
+<option>Alisson</option>
 
-<option>Chelsea</option>
-
-<option>Man City</option>
-
-<option>Villa</option>
-
-<option>Spurs</option>
-
-<option>West Ham</option>
-
-<option>Newcastle</option>
+<option>Ederson</option>
 
 </select>
 
@@ -804,77 +794,87 @@ Lock Team
 
 <script>
 
+/* PLAYER TO CLUB MAPPING */
+
+const playerTeams = {
+
+  "Ramsdale": "Arsenal",
+
+  "Alisson": "Liverpool",
+
+  "Ederson": "Man City",
+
+  "Saliba": "Arsenal",
+
+  "Gabriel": "Arsenal",
+
+  "Van Dijk": "Liverpool",
+
+  "Walker": "Man City",
+
+  "Trippier": "Newcastle",
+
+  "Romero": "Spurs",
+
+  "Saka": "Arsenal",
+
+  "Palmer": "Chelsea",
+
+  "Salah": "Liverpool",
+
+  "Son": "Spurs",
+
+  "Bowen": "West Ham",
+
+  "Bruno": "Man Utd",
+
+  "Haaland": "Man City",
+
+  "Watkins": "Villa",
+
+  "Isak": "Newcastle",
+
+  "Jackson": "Chelsea",
+
+  "Solanke": "Bournemouth",
+
+  "Darwin": "Liverpool"
+
+};
+
 /* CREATE PLAYER */
 
 function createPlayer(type) {
 
 let options = "";
 
+let players = [];
+
 if (type === "DEF") {
 
-options = `
-
-<option>Select</option>
-
-<option>Saliba (Arsenal)</option>
-
-<option>Gabriel (Arsenal)</option>
-
-<option>Van Dijk (Liverpool)</option>
-
-<option>Walker (Man City)</option>
-
-<option>Trippier (Newcastle)</option>
-
-<option>Romero (Spurs)</option>
-
-`;
+players = ["Saliba", "Gabriel", "Van Dijk", "Walker", "Trippier", "Romero"];
 
 }
 
 if (type === "MID") {
 
-options = `
-
-<option>Select</option>
-
-<option>Saka (Arsenal)</option>
-
-<option>Palmer (Chelsea)</option>
-
-<option>Salah (Liverpool)</option>
-
-<option>Son (Spurs)</option>
-
-<option>Bowen (West Ham)</option>
-
-<option>Bruno (Man Utd)</option>
-
-`;
+players = ["Saka", "Palmer", "Salah", "Son", "Bowen", "Bruno"];
 
 }
 
 if (type === "FWD") {
 
-options = `
-
-<option>Select</option>
-
-<option>Haaland (Man City)</option>
-
-<option>Watkins (Villa)</option>
-
-<option>Isak (Newcastle)</option>
-
-<option>Jackson (Chelsea)</option>
-
-<option>Solanke (Bournemouth)</option>
-
-<option>Darwin (Liverpool)</option>
-
-`;
+players = ["Haaland", "Watkins", "Isak", "Jackson", "Solanke", "Darwin"];
 
 }
+
+options = "<option>Select</option>";
+
+players.forEach(player => {
+
+  options += `<option>${player}</option>`;
+
+});
 
 return `
 
@@ -918,15 +918,17 @@ const badge =
 
 select.parentElement.querySelector(".badge");
 
-const value = select.value;
+const playerName = select.value;
 
-shirtName.innerText =
+shirtName.innerText = playerName;
 
-value.split(" ")[0];
+const club = playerTeams[playerName];
+
+if (!club) return;
 
 /* CLUBS */
 
-if (value.includes("Arsenal")) {
+if (club === "Arsenal") {
 
 shirt.style.background =
 
@@ -936,7 +938,7 @@ badge.src = "badges/arsenal.png";
 
 }
 
-else if (value.includes("Chelsea")) {
+else if (club === "Chelsea") {
 
 shirt.style.background =
 
@@ -946,7 +948,7 @@ badge.src = "badges/chelsea.png";
 
 }
 
-else if (value.includes("Liverpool")) {
+else if (club === "Liverpool") {
 
 shirt.style.background =
 
@@ -956,7 +958,7 @@ badge.src = "badges/liverpool.png";
 
 }
 
-else if (value.includes("Villa")) {
+else if (club === "Villa") {
 
 shirt.style.background =
 
@@ -966,7 +968,7 @@ badge.src = "badges/villa.png";
 
 }
 
-else if (value.includes("Spurs")) {
+else if (club === "Spurs") {
 
 shirt.style.background =
 
@@ -976,7 +978,7 @@ badge.src = "badges/spurs.png";
 
 }
 
-else if (value.includes("West Ham")) {
+else if (club === "West Ham") {
 
 shirt.style.background =
 
@@ -986,7 +988,7 @@ badge.src = "badges/westham.png";
 
 }
 
-else if (value.includes("Newcastle")) {
+else if (club === "Newcastle") {
 
 shirt.style.background =
 
@@ -996,13 +998,33 @@ badge.src = "badges/newcastle.png";
 
 }
 
-else if (value.includes("Man City")) {
+else if (club === "Man City") {
 
 shirt.style.background =
 
 "linear-gradient(#38bdf8, #0284c7)";
 
 badge.src = "badges/mancity.png";
+
+}
+
+else if (club === "Man Utd") {
+
+shirt.style.background =
+
+"linear-gradient(#c1121f, #7a0721)";
+
+badge.src = "badges/manutd.png";
+
+}
+
+else if (club === "Bournemouth") {
+
+shirt.style.background =
+
+"linear-gradient(#d4003a, #640723)";
+
+badge.src = "badges/bournemouth.png";
 
 }
 
@@ -1098,15 +1120,9 @@ return;
 
 }
 
-let value = select.value;
+let playerName = select.value;
 
-let club =
-
-value.includes("(")
-
-? value.split("(")[1].replace(")", "")
-
-: value;
+let club = playerTeams[playerName];
 
 if (clubs.includes(club)) {
 
