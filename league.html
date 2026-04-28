@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <title>League Table - Game of Opinions</title>
+
+  <style>
+
+    body {
+
+      background: #0b1020;
+
+      color: white;
+
+      font-family: Arial;
+
+      margin: 0;
+
+    }
+
+    header {
+
+      display: flex;
+
+      justify-content: space-between;
+
+      padding: 20px 40px;
+
+      border-bottom: 1px solid #222;
+
+    }
+
+    .logo span { color: gold; }
+
+    nav a {
+
+      color: white;
+
+      margin-left: 20px;
+
+      text-decoration: none;
+
+    }
+
+    .container {
+
+      padding: 40px;
+
+      max-width: 1100px;
+
+      margin: auto;
+
+    }
+
+    h1 {
+
+      margin-bottom: 20px;
+
+    }
+
+    .table {
+
+      width: 100%;
+
+      border-collapse: collapse;
+
+      margin-bottom: 30px;
+
+    }
+
+    .table th, .table td {
+
+      padding: 12px;
+
+      text-align: left;
+
+      border-bottom: 1px solid #222;
+
+    }
+
+    .table th {
+
+      color: gold;
+
+    }
+
+    .highlight {
+
+      background: #111827;
+
+    }
+
+    .layout {
+
+      display: grid;
+
+      grid-template-columns: 2fr 1fr;
+
+      gap: 30px;
+
+    }
+
+    .card {
+
+      background: #111827;
+
+      padding: 20px;
+
+      border-radius: 12px;
+
+      border: 1px solid #222;
+
+    }
+
+    .card h3 {
+
+      margin-bottom: 15px;
+
+      color: gold;
+
+    }
+
+    .progress-item {
+
+      margin-bottom: 15px;
+
+    }
+
+    .progress-item strong {
+
+      display: block;
+
+    }
+
+    .points {
+
+      color: #4ade80;
+
+      font-size: 14px;
+
+    }
+
+    .pending {
+
+      color: #aaa;
+
+      font-size: 14px;
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<header>
+
+  <div class="logo">GAME <span>OF OPINIONS</span></div>
+
+  <nav>
+
+    <a href="index.html">Home</a>
+
+    <a href="myxi.html">My XI</a>
+
+    <a href="season.html">Season Picks</a>
+
+    <a href="league.html">League</a>
+
+  </nav>
+
+</header>
+
+<div class="container">
+
+  <h1>League Table</h1>
+
+  <div class="layout">
+
+    <!-- TABLE -->
+
+    <div>
+
+      <table class="table">
+
+        <tr>
+
+          <th>#</th>
+
+          <th>Manager</th>
+
+          <th>Total Points</th>
+
+          <th>Weekly</th>
+
+          <th>Season Picks</th>
+
+        </tr>
+
+        <tr class="highlight">
+
+          <td>1</td>
+
+          <td>You</td>
+
+          <td>245</td>
+
+          <td>52</td>
+
+          <td>30</td>
+
+        </tr>
+
+        <tr>
+
+          <td>2</td>
+
+          <td>James</td>
+
+          <td>230</td>
+
+          <td>48</td>
+
+          <td>20</td>
+
+        </tr>
+
+        <tr>
+
+          <td>3</td>
+
+          <td>Sarah</td>
+
+          <td>210</td>
+
+          <td>50</td>
+
+          <td>10</td>
+
+        </tr>
+
+      </table>
+
+    </div>
+
+    <!-- YOUR PROGRESS -->
+
+    <div class="card">
+
+      <h3>Your Progress</h3>
+
+      <div class="progress-item">
+
+        <strong>Total Points</strong>
+
+        245
+
+      </div>
+
+      <div class="progress-item">
+
+        <strong>Top Scorer</strong>
+
+        Haaland
+
+        <div class="points">+10 pts</div>
+
+      </div>
+
+      <div class="progress-item">
+
+        <strong>FA Cup Winner</strong>
+
+        West Ham
+
+        <div class="points">+10 pts</div>
+
+      </div>
+
+      <div class="progress-item">
+
+        <strong>Top Assists</strong>
+
+        Palmer
+
+        <div class="pending">Pending</div>
+
+      </div>
+
+      <div class="progress-item">
+
+        <strong>Most Clean Sheets</strong>
+
+        Alisson
+
+        <div class="pending">Pending</div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+
+</html>

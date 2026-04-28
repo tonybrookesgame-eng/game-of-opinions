@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Game of Opinions</title>
+
+<style>
+
+body {
+
+  margin: 0;
+
+  background: #0b1020;
+
+  color: white;
+
+  font-family: 'Segoe UI', Arial, sans-serif;
+
+}
+
+/* HEADER */
+
+header {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding: 20px 40px;
+
+  border-bottom: 1px solid #1f2937;
+
+}
+
+.logo {
+
+  font-size: 26px;
+
+  font-weight: bold;
+
+}
+
+.logo span {
+
+  color: gold;
+
+}
+
+nav a {
+
+  color: white;
+
+  text-decoration: none;
+
+  margin-left: 20px;
+
+  transition: 0.2s;
+
+}
+
+nav a:hover {
+
+  opacity: 0.7;
+
+}
+
+/* HERO */
+
+.hero {
+
+  padding: 80px 40px;
+
+  text-align: center;
+
+  background:
+
+    radial-gradient(circle at top, rgba(255,215,0,0.15), transparent 30%);
+
+}
+
+.hero h1 {
+
+  font-size: 64px;
+
+  margin-bottom: 20px;
+
+}
+
+.hero p {
+
+  color: #cbd5e1;
+
+  font-size: 20px;
+
+  max-width: 700px;
+
+  margin: auto;
+
+  line-height: 1.6;
+
+}
+
+.hero-buttons {
+
+  margin-top: 40px;
+
+}
+
+.hero-buttons a {
+
+  text-decoration: none;
+
+  padding: 16px 28px;
+
+  border-radius: 10px;
+
+  margin: 10px;
+
+  display: inline-block;
+
+  font-weight: bold;
+
+  transition: 0.2s;
+
+}
+
+.primary-btn {
+
+  background: gold;
+
+  color: black;
+
+}
+
+.secondary-btn {
+
+  border: 1px solid #334155;
+
+  color: white;
+
+}
+
+.hero-buttons a:hover {
+
+  transform: scale(1.05);
+
+}
+
+/* FEATURES */
+
+.section {
+
+  padding: 60px 40px;
+
+}
+
+.section-title {
+
+  font-size: 36px;
+
+  margin-bottom: 30px;
+
+  text-align: center;
+
+}
+
+.features {
+
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 25px;
+
+}
+
+.card {
+
+  background: #111827;
+
+  border: 1px solid #1f2937;
+
+  border-radius: 18px;
+
+  padding: 30px;
+
+  transition: 0.2s;
+
+}
+
+.card:hover {
+
+  transform: translateY(-5px);
+
+  border-color: gold;
+
+}
+
+.card h3 {
+
+  margin-top: 0;
+
+  color: gold;
+
+}
+
+.card p {
+
+  color: #cbd5e1;
+
+  line-height: 1.5;
+
+}
+
+/* LEADERBOARD */
+
+.leaderboard {
+
+  max-width: 700px;
+
+  margin: auto;
+
+  background: #111827;
+
+  border-radius: 18px;
+
+  overflow: hidden;
+
+  border: 1px solid #1f2937;
+
+}
+
+.leader-row {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  padding: 18px 24px;
+
+  border-bottom: 1px solid #1f2937;
+
+}
+
+.leader-row:last-child {
+
+  border-bottom: none;
+
+}
+
+.rank {
+
+  color: gold;
+
+  font-weight: bold;
+
+}
+
+/* CTA */
+
+.cta {
+
+  text-align: center;
+
+  padding: 80px 40px;
+
+}
+
+.cta h2 {
+
+  font-size: 42px;
+
+}
+
+.cta a {
+
+  display: inline-block;
+
+  margin-top: 25px;
+
+  background: gold;
+
+  color: black;
+
+  padding: 18px 32px;
+
+  border-radius: 10px;
+
+  text-decoration: none;
+
+  font-weight: bold;
+
+  transition: 0.2s;
+
+}
+
+.cta a:hover {
+
+  transform: scale(1.05);
+
+}
+
+/* MOBILE */
+
+@media (max-width: 900px) {
+
+  .features {
+
+    grid-template-columns: 1fr;
+
+  }
+
+  .hero h1 {
+
+    font-size: 42px;
+
+  }
+
+  header {
+
+    flex-direction: column;
+
+    gap: 15px;
+
+  }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<header>
+
+<div class="logo">
+
+  GAME <span>OF OPINIONS</span>
+
+</div>
+
+<nav>
+
+  <a href="index.html">Home</a>
+
+  <a href="myxi.html">My XI</a>
+
+  <a href="season.html">Season Picks</a>
+
+  <a href="league.html">League</a>
+
+</nav>
+
+</header>
+
+<!-- HERO -->
+
+<section class="hero">
+
+<h1>
+
+  Pick Different.<br>
+
+  Win Bigger.
+
+</h1>
+
+<p>
+
+  Build your ultimate football XI with only one player per club.
+
+  Make bold season predictions. Climb the leaderboard.
+
+  No template teams. No generic selections following trends.
+
+</p>
+
+<div class="hero-buttons">
+
+  <a href="myxi.html" class="primary-btn">
+
+    Build Your XI
+
+  </a>
+
+  <a href="season.html" class="secondary-btn">
+
+    Season Picks
+
+  </a>
+
+</div>
+
+</section>
+
+<!-- FEATURES -->
+
+<section class="section">
+
+<h2 class="section-title">
+
+  Why Game of Opinions?
+
+</h2>
+
+<div class="features">
+
+  <div class="card">
+
+    <h3>One Player Per Club</h3>
+
+    <p>
+
+      No stacking elite teams. Every selection matters.
+
+      Build a truly unique XI.
+
+    </p>
+
+  </div>
+
+  <div class="card">
+
+    <h3>Season Predictions</h3>
+
+    <p>
+
+      Predict league winners, top scorers, clean sheets,
+
+      relegation battles and more.
+
+    </p>
+
+  </div>
+
+  <div class="card">
+
+    <h3>Opinion-Based Scoring</h3>
+
+    <p>
+
+      Beat template football thinking. Back your football knowledge
+
+      and make bold calls.
+
+    </p>
+
+  </div>
+
+</div>
+
+</section>
+
+<!-- LEADERBOARD -->
+
+<section class="section">
+
+<h2 class="section-title">
+
+  Live Leaderboard
+
+</h2>
+
+<div class="leaderboard">
+
+  <div class="leader-row">
+
+    <span class="rank">1.</span>
+
+    <span>FootyWizard</span>
+
+    <span>412 pts</span>
+
+  </div>
+
+  <div class="leader-row">
+
+    <span class="rank">2.</span>
+
+    <span>CaptainChaos</span>
+
+    <span>398 pts</span>
+
+  </div>
+
+  <div class="leader-row">
+
+    <span class="rank">3.</span>
+
+    <span>TikiTakaTom</span>
+
+    <span>376 pts</span>
+
+  </div>
+
+  <div class="leader-row">
+
+    <span class="rank">4.</span>
+
+    <span>WildcardWill</span>
+
+    <span>355 pts</span>
+
+  </div>
+
+</div>
+
+</section>
+
+<!-- CTA -->
+
+<section class="cta">
+
+<h2>
+
+  Ready To Build Your XI?
+
+</h2>
+
+<a href="myxi.html">
+
+  Start Playing
+
+</a>
+
+</section>
+
+</body>
+
+</html>
