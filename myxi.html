@@ -210,13 +210,29 @@ p {
 
   box-shadow: 0 6px 16px rgba(0,0,0,0.24);
 
-  margin: 0 auto 12px;
+  margin: 0;
 
   max-width: 320px;
 
 }
 
-.stadium-banner--top {
+.stadium-top {
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  gap: 12px;
+
+  flex-wrap: wrap;
+
+  margin-bottom: 14px;
+
+}
+
+.stadium-banner--title {
 
   background: #0f3463;
 
@@ -232,41 +248,19 @@ p {
 
 }
 
-.stadium-banner--bottom-left,
-
-.stadium-banner--bottom-right {
-
-  position: absolute;
-
-  bottom: 12px;
-
-  width: auto;
-
-  margin: 0;
-
-}
-
-.stadium-banner--bottom-left {
-
-  left: 16px;
+.stadium-banner--quote {
 
   background: #1d6d9c;
 
   color: #fff;
 
-  font-size: 11px;
+  letter-spacing: 0.02em;
 
-}
+  text-transform: none;
 
-.stadium-banner--bottom-right {
+  font-size: 12px;
 
-  right: 16px;
-
-  background: #9341aa;
-
-  color: #fff;
-
-  font-size: 11px;
+  padding: 8px 12px;
 
 }
 
@@ -290,35 +284,17 @@ p {
 
 }
 
-  margin-left: auto;
-
-  margin-right: auto;
-
-}
-
 .pitch {
 
   position: relative;
 
-  background: linear-gradient(180deg, #0a642c 0%, #0c7b3a 100%);
-
-  padding: 20px 14px 18px;
-
-  border-radius: 22px;
-
-  margin-top: 0;
+  padding: 12px 0 16px;
 
   display: flex;
 
   flex-direction: column;
 
-  gap: 18px;
-
-  overflow: hidden;
-
-  border: 1px solid rgba(255,255,255,0.08);
-
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+  gap: 20px;
 
 }
 
@@ -588,9 +564,11 @@ p {
 
   letter-spacing: 0.02em;
 
+  text-align: center;
+
 }
 
-.shirt-name { display: none; }
+
 
 /* =========================
 
@@ -794,8 +772,6 @@ button:hover {
 
   }
 
-  .shirt-name { display: none; }
-
   .badge {
 
     width: 12px;
@@ -904,7 +880,15 @@ Select 11 players. Maximum 1 player per club.
 
 <div class="stadium">
 
-  <div class="stadium-banner stadium-banner--top">Game of Opinions</div>
+  <div class="stadium-top">
+
+    <div class="stadium-banner stadium-banner--quote">"You Want Some"</div>
+
+    <div class="stadium-banner stadium-banner--title">Game of Opinions</div>
+
+    <div class="stadium-banner stadium-banner--quote">"Lets Be Having You"</div>
+
+  </div>
 
   <div class="pitch-frame">
 
@@ -925,8 +909,6 @@ Select 11 players. Maximum 1 player per club.
 <div class="shirt">
 
 <img class="badge" src="badges/premierleague.png">
-
-<span class="shirt-name"></span>
 
 </div>
 
@@ -974,9 +956,7 @@ Select 11 players. Maximum 1 player per club.
 
 </div>
 
-  <div class="stadium-banner stadium-banner--bottom-left">"You Want Some"</div>
-
-  <div class="stadium-banner stadium-banner--bottom-right">"Lets Be Having You"</div>
+</div>
 
 </div>
 
@@ -1076,8 +1056,6 @@ return `
 
 <img class="badge" src="badges/premierleague.png">
 
-<span class="shirt-name"></span>
-
 </div>
 
 <div class="player-name"></div>
@@ -1104,10 +1082,6 @@ const shirt =
 
 select.parentElement.querySelector(".shirt");
 
-const shirtName =
-
-select.parentElement.querySelector(".shirt-name");
-
 const badge =
 
 select.parentElement.querySelector(".badge");
@@ -1116,23 +1090,13 @@ const value = select.value;
 
 let club;
 
-let displayName;
-
 if (playerTeams[value]) {
-
-  // It's a player
 
   club = playerTeams[value];
 
-  displayName = value;
-
 } else {
 
-  // It's a GK club
-
   club = value;
-
-  displayName = club;
 
 }
 
@@ -1140,11 +1104,9 @@ const playerNameEl = select.parentElement.querySelector('.player-name');
 
 if (playerNameEl) {
 
-  playerNameEl.innerText = displayName;
+  playerNameEl.innerText = club || '';
 
 }
-
-shirtName.innerText = '';
 
 /* CLUBS */
 
