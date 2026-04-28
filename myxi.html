@@ -138,11 +138,39 @@ p {
 
 ========================= */
 
+.formation-block {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+
+  max-width: 240px;
+
+  margin-top: 14px;
+
+}
+
+.formation-block label {
+
+  color: #cfd3da;
+
+  font-size: 11px;
+
+  letter-spacing: 0.14em;
+
+  text-transform: uppercase;
+
+}
+
 #formation {
 
-  margin-top: 20px;
+  margin-top: 0;
 
-  padding: 10px;
+  width: 100%;
+
+  padding: 10px 32px 10px 12px;
 
   background: #111827;
 
@@ -150,7 +178,21 @@ p {
 
   border: 1px solid #333;
 
-  border-radius: 8px;
+  border-radius: 10px;
+
+  text-align: center;
+
+  text-align-last: center;
+
+  appearance: none;
+
+  background-image: linear-gradient(45deg, transparent 50%, #fff 50%), linear-gradient(135deg, #fff 50%, transparent 50%);
+
+  background-position: calc(100% - 12px) calc(50% + 1px), calc(100% - 8px) calc(50% + 1px);
+
+  background-size: 6px 6px;
+
+  background-repeat: no-repeat;
 
 }
 
@@ -636,6 +678,14 @@ p {
 
   text-align: center;
 
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  display: block;
+
 }
 
 
@@ -680,11 +730,23 @@ select {
 
   border-radius: 10px;
 
-  padding: 8px 10px;
+  padding: 8px 10px 8px 12px;
 
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
 
   appearance: none;
+
+  text-align: center;
+
+  text-align-last: center;
+
+  background-image: linear-gradient(45deg, transparent 50%, #fff 50%), linear-gradient(135deg, #fff 50%, transparent 50%);
+
+  background-position: calc(100% - 12px) calc(50% + 1px), calc(100% - 8px) calc(50% + 1px);
+
+  background-size: 6px 6px;
+
+  background-repeat: no-repeat;
 
 }
 
@@ -770,13 +832,13 @@ button:hover {
 
   .container {
 
-    padding: 20px;
+    padding: 16px 16px 90px;
 
   }
 
   h1 {
 
-    font-size: 28px;
+    font-size: 26px;
 
     text-align: center;
 
@@ -788,33 +850,89 @@ button:hover {
 
   }
 
+  .stadium {
+
+    padding: 10px;
+
+  }
+
+  .stadium-top {
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-bottom: 12px;
+
+  }
+
+  .stadium-banner {
+
+    width: 100%;
+
+    max-width: 100%;
+
+    justify-content: center;
+
+    font-size: 10px;
+
+    padding: 6px 10px;
+
+  }
+
+  .stadium-banner--title {
+
+    font-size: 14px;
+
+    padding: 8px 12px;
+
+    min-width: auto;
+
+  }
+
+  .stadium-banner--quote {
+
+    font-size: 9px;
+
+    padding: 5px 10px;
+
+  }
+
+  .pitch-frame {
+
+    padding: 10px;
+
+  }
+
   .pitch {
 
-    padding: 24px 12px;
+    padding: 18px 10px 14px;
 
-    gap: 20px;
+    gap: 16px;
 
   }
 
   .row {
 
-    gap: 12px;
+    gap: 10px;
 
   }
 
   .player {
 
-    width: 82px;
+    width: 74px;
 
-    padding: 10px 6px 12px;
+    padding: 8px 5px 10px;
 
   }
 
   .shirt {
 
-    width: 54px;
+    width: 48px;
 
-    height: 54px;
+    height: 48px;
 
   }
 
@@ -822,33 +940,65 @@ button:hover {
 
   .shirt::after {
 
-    width: 10px;
+    width: 9px;
 
-    height: 14px;
+    height: 12px;
 
-    top: 10px;
+    top: 9px;
 
   }
 
   .shirt::before {
 
-    left: -10px;
+    left: -9px;
 
   }
 
   .shirt::after {
 
-    right: -10px;
+    right: -9px;
 
   }
 
   .badge {
 
-    width: 12px;
+    width: 10px;
 
-    height: 12px;
+    height: 10px;
 
-    top: 32px;
+    top: 30px;
+
+  }
+
+  .player-name {
+
+    font-size: 9px;
+
+    min-height: 20px;
+
+    padding: 2px 6px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+  }
+
+  .formation-block {
+
+    max-width: 220px;
+
+    width: 100%;
+
+    margin: 0 auto 14px;
+
+  }
+
+  #formation {
+
+    padding-right: 28px;
 
   }
 
@@ -856,7 +1006,7 @@ button:hover {
 
     width: 100%;
 
-    font-size: 9px;
+    font-size: 8px;
 
     padding: 6px 8px;
 
@@ -934,19 +1084,25 @@ Select 11 players. Maximum 1 player per club.
 
 </p>
 
-<select id="formation" onchange="setFormation()">
+<div class="formation-block">
 
-<option value="442">4-4-2</option>
+  <label for="formation">Formation</label>
 
-<option value="433">4-3-3</option>
+  <select id="formation" onchange="setFormation()">
 
-<option value="352">3-5-2</option>
+    <option value="442">4-4-2</option>
 
-<option value="343">3-4-3</option>
+    <option value="433">4-3-3</option>
 
-<option value="451">4-5-1</option>
+    <option value="352">3-5-2</option>
 
-</select>
+    <option value="343">3-4-3</option>
+
+    <option value="451">4-5-1</option>
+
+  </select>
+
+</div>
 
 <div class="stadium">
 
