@@ -76,41 +76,115 @@ nav a:hover {
 
 .hero {
 
-  padding: 80px 40px;
+  padding: 80px 40px 100px;
 
-  text-align: center;
+  position: relative;
 
-  background:
+  overflow: hidden;
 
-    radial-gradient(circle at top, rgba(255,215,0,0.15), transparent 30%);
+  background: radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 26%), linear-gradient(180deg, #040812 0%, #07141f 35%, #071a29 100%);
+
+}
+
+.hero::before {
+
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  background: radial-gradient(circle at 30% 20%, rgba(86, 255, 119, 0.16), transparent 18%), radial-gradient(circle at 80% 10%, rgba(255,255,255,0.14), transparent 15%);
+
+  pointer-events: none;
+
+}
+
+.hero::after {
+
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+
+  top: 0;
+
+  width: 120%;
+
+  height: 100%;
+
+  background: radial-gradient(circle at top, rgba(255,255,255,0.06), transparent 25%);
+
+  transform: translateX(-50%);
+
+  pointer-events: none;
+
+}
+
+.hero-grid {
+
+  display: grid;
+
+  grid-template-columns: 1.1fr 0.9fr;
+
+  align-items: center;
+
+  gap: 40px;
+
+  max-width: 1180px;
+
+  margin: auto;
+
+  position: relative;
+
+  z-index: 1;
+
+}
+
+.hero-copy {
+
+  text-align: left;
 
 }
 
 .hero h1 {
 
-  font-size: 64px;
+  font-size: 58px;
 
-  margin-bottom: 20px;
+  line-height: 1.02;
+
+  max-width: 620px;
+
+  margin-bottom: 24px;
+
+}
+
+.hero h1 strong {
+
+  display: block;
+
+  color: #a7ff3f;
 
 }
 
 .hero p {
 
-  color: #cbd5e1;
+  color: #cfd8e6;
 
-  font-size: 20px;
+  font-size: 19px;
 
-  max-width: 700px;
+  max-width: 620px;
 
-  margin: auto;
+  margin: 0 0 36px;
 
-  line-height: 1.6;
+  line-height: 1.7;
 
 }
 
 .hero-buttons {
 
-  margin-top: 40px;
+  margin-top: 10px;
 
 }
 
@@ -118,31 +192,31 @@ nav a:hover {
 
   text-decoration: none;
 
-  padding: 16px 28px;
+  padding: 14px 28px;
 
-  border-radius: 10px;
+  border-radius: 999px;
 
-  margin: 10px;
+  margin-right: 16px;
 
   display: inline-block;
 
-  font-weight: bold;
+  font-weight: 700;
 
-  transition: 0.2s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 
 }
 
 .primary-btn {
 
-  background: gold;
+  background: #a7ff3f;
 
-  color: black;
+  color: #041102;
 
 }
 
 .secondary-btn {
 
-  border: 1px solid #334155;
+  border: 1px solid rgba(255,255,255,0.18);
 
   color: white;
 
@@ -150,7 +224,283 @@ nav a:hover {
 
 .hero-buttons a:hover {
 
-  transform: scale(1.05);
+  transform: translateY(-1px) scale(1.02);
+
+}
+
+.hero-visual {
+
+  display: flex;
+
+  justify-content: center;
+
+}
+
+.phone-mockup {
+
+  width: 340px;
+
+  max-width: 100%;
+
+  border-radius: 46px;
+
+  background: linear-gradient(180deg, #111827 0%, #0b1421 100%);
+
+  border: 1px solid rgba(255,255,255,0.1);
+
+  box-shadow: 0 30px 60px rgba(0,0,0,0.35);
+
+  position: relative;
+
+  overflow: hidden;
+
+}
+
+.phone-mockup::before {
+
+  content: "";
+
+  position: absolute;
+
+  top: 14px;
+
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  width: 96px;
+
+  height: 8px;
+
+  border-radius: 999px;
+
+  background: rgba(255,255,255,0.12);
+
+}
+
+.phone-screen {
+
+  position: relative;
+
+  padding: 24px 18px 18px;
+
+  background: linear-gradient(180deg, #031114 0%, #081b26 30%, #091f2d 100%);
+
+  min-height: 620px;
+
+}
+
+.phone-header {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  color: #d8e3f2;
+
+  font-size: 13px;
+
+  margin-bottom: 18px;
+
+}
+
+.phone-header span {
+
+  opacity: 0.8;
+
+}
+
+.phone-screen::before {
+
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  background: radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 22%), linear-gradient(180deg, rgba(0,0,0,0.08), transparent 35%);
+
+  pointer-events: none;
+
+}
+
+.pitch-panel {
+
+  position: relative;
+
+  background: #0f2217;
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  border-radius: 28px;
+
+  padding: 18px;
+
+  overflow: hidden;
+
+}
+
+.pitch-panel::before {
+
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  background-image: linear-gradient(0deg, rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+
+  background-size: 100% 18px, 18px 100%;
+
+  opacity: 0.25;
+
+}
+
+.pitch-field {
+
+  position: relative;
+
+  min-height: 420px;
+
+  display: grid;
+
+  place-items: center;
+
+}
+
+.pitch-field::before {
+
+  content: "";
+
+  position: absolute;
+
+  inset: 16px;
+
+  border: 1px solid rgba(255,255,255,0.18);
+
+  border-radius: 28px;
+
+}
+
+.pitch-row {
+
+  display: grid;
+
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  gap: 8px;
+
+  width: 100%;
+
+  position: relative;
+
+  z-index: 1;
+
+}
+
+.pitch-row.top {
+
+  display: flex;
+
+  justify-content: center;
+
+  margin-bottom: 18px;
+
+}
+
+.pitch-row.middle { margin-bottom: 18px; }
+
+.pitch-card {
+
+  background: rgba(0,0,0,0.45);
+
+  border: 1px solid rgba(255,255,255,0.14);
+
+  border-radius: 16px;
+
+  padding: 8px 6px;
+
+  color: white;
+
+  font-size: 11px;
+
+  text-align: center;
+
+}
+
+.pitch-card strong {
+
+  display: block;
+
+  margin-bottom: 4px;
+
+  font-size: 12px;
+
+}
+
+.pitch-card span {
+
+  display: inline-block;
+
+  margin-top: 4px;
+
+  color: #a7ff3f;
+
+  font-size: 10px;
+
+  opacity: 0.95;
+
+}
+
+.pitch-bottom {
+
+  display: grid;
+
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  gap: 8px;
+
+  margin-top: 20px;
+
+}
+
+.pitch-bottom .pitch-card {
+
+  min-height: 46px;
+
+}
+
+/* FEATURE ICONS */
+
+.card {
+
+  position: relative;
+
+}
+
+.card-icon {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 46px;
+
+  height: 46px;
+
+  background: rgba(167,255,63,0.12);
+
+  border-radius: 16px;
+
+  color: #a7ff3f;
+
+  font-size: 20px;
+
+  margin-bottom: 18px;
 
 }
 
@@ -312,15 +662,41 @@ nav a:hover {
 
 @media (max-width: 900px) {
 
-  .features {
+  .hero-grid {
 
     grid-template-columns: 1fr;
 
   }
 
+  .hero {
+
+    padding: 60px 24px 80px;
+
+  }
+
   .hero h1 {
 
-    font-size: 42px;
+    font-size: 44px;
+
+  }
+
+  .hero p {
+
+    font-size: 17px;
+
+  }
+
+  .phone-mockup {
+
+    width: 100%;
+
+    max-width: 420px;
+
+  }
+
+  .features {
+
+    grid-template-columns: 1fr;
 
   }
 
@@ -368,39 +744,103 @@ nav a:hover {
 
 <section class="hero">
 
-<h1>
+  <div class="hero-grid">
 
-  Pick Different.<br>
+    <div class="hero-copy">
 
-  Win Bigger.
+      <h1>
 
-</h1>
+        Your football opinions.<br>
 
-<p>
+        <strong>Finally worth something.</strong>
 
-  Build your ultimate football XI with only one player per club.
+      </h1>
 
-  Make bold season predictions. Climb the leaderboard.
+      <p>
 
-  No template teams. No generic selections following trends.
+        Pick your XI, lock your season picks, and beat your mates over a full season.
 
-</p>
+        No prices. No templates. Just football opinions.
 
-<div class="hero-buttons">
+      </p>
 
-  <a href="myxi.html" class="primary-btn">
+      <div class="hero-buttons">
 
-    Build Your XI
+        <a href="myxi.html" class="primary-btn">
 
-  </a>
+          Build Your XI
 
-  <a href="season.html" class="secondary-btn">
+        </a>
 
-    Season Picks
+        <a href="season.html" class="secondary-btn">
 
-  </a>
+          Season Picks
 
-</div>
+        </a>
+
+      </div>
+
+    </div>
+
+    <div class="hero-visual">
+
+      <div class="phone-mockup">
+
+        <div class="phone-screen">
+
+          <div class="phone-header">
+
+            <span>Your XI</span>
+
+            <span>Max 1 per club</span>
+
+          </div>
+
+          <div class="pitch-panel">
+
+            <div class="pitch-field">
+
+              <div class="pitch-row top">
+
+                <div class="pitch-card"><strong>Ramsdale</strong><span>GK</span></div>
+
+              </div>
+
+              <div class="pitch-row middle">
+
+                <div class="pitch-card"><strong>Trippier</strong><span>DEF</span></div>
+
+                <div class="pitch-card"><strong>Dias</strong><span>DEF</span></div>
+
+                <div class="pitch-card"><strong>Saliba</strong><span>DEF</span></div>
+
+                <div class="pitch-card"><strong>Pedro</strong><span>DEF</span></div>
+
+              </div>
+
+              <div class="pitch-bottom">
+
+                <div class="pitch-card"><strong>Ødegaard</strong><span>MID</span></div>
+
+                <div class="pitch-card"><strong>Rice</strong><span>MID</span></div>
+
+                <div class="pitch-card"><strong>Palmer</strong><span>MID</span></div>
+
+                <div class="pitch-card"><strong>Salah</strong><span>FWD</span></div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
 
 </section>
 
@@ -418,6 +858,8 @@ nav a:hover {
 
   <div class="card">
 
+    <span class="card-icon">11</span>
+
     <h3>One Player Per Club</h3>
 
     <p>
@@ -432,6 +874,8 @@ nav a:hover {
 
   <div class="card">
 
+    <span class="card-icon">✓</span>
+
     <h3>Season Predictions</h3>
 
     <p>
@@ -445,6 +889,8 @@ nav a:hover {
   </div>
 
   <div class="card">
+
+    <span class="card-icon">🏆</span>
 
     <h3>Opinion-Based Scoring</h3>
 
