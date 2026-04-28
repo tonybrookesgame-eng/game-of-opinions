@@ -160,29 +160,51 @@ p {
 
 ========================= */
 
-.pitch {
+.pitch-frame {
+
+  padding: 18px;
+
+  border-radius: 34px;
+
+  background: rgba(10, 13, 18, 0.95);
+
+  border: 1px solid rgba(255,255,255,0.07);
+
+  box-shadow: 0 28px 80px rgba(0,0,0,0.45);
+
+  max-width: 800px;
+
+  margin-left: auto;
+
+  margin-right: auto;
+
+}
+
+  .pitch {
 
   position: relative;
 
-  background: #0b7a3e;
+  background: linear-gradient(180deg, #0a642c 0%, #0c7b3a 100%);
 
-  padding: 60px 20px;
+  padding: 32px 18px 24px;
 
-  border-radius: 20px;
+  border-radius: 24px;
 
-  margin-top: 30px;
+  margin-top: 0;
 
   display: flex;
 
   flex-direction: column;
 
-  gap: 60px;
+  gap: 24px;
 
   overflow: hidden;
 
-}
+  border: 1px solid rgba(255,255,255,0.08);
 
-/* Grass stripes */
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+
+}
 
 .pitch::after {
 
@@ -196,19 +218,19 @@ p {
 
     to bottom,
 
-    rgba(255,255,255,0.03),
+    rgba(255,255,255,0.04),
 
-    rgba(255,255,255,0.03) 20px,
+    rgba(255,255,255,0.04) 26px,
 
-    transparent 20px,
+    transparent 26px,
 
-    transparent 40px
+    transparent 52px
 
   );
 
-}
+  opacity: 0.4;
 
-/* Halfway line */
+}
 
 .pitch::before {
 
@@ -220,9 +242,9 @@ p {
 
   width: 100%;
 
-  height: 2px;
+  height: 1px;
 
-  background: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.15);
 
 }
 
@@ -236,11 +258,11 @@ p {
 
   left: 50%;
 
-  width: 120px;
+  width: 110px;
 
-  height: 120px;
+  height: 110px;
 
-  border: 2px solid rgba(255,255,255,0.3);
+  border: 1px solid rgba(255,255,255,0.18);
 
   border-radius: 50%;
 
@@ -256,9 +278,9 @@ p {
 
   width: 60%;
 
-  height: 120px;
+  height: 110px;
 
-  border: 2px solid rgba(255,255,255,0.3);
+  border: 1px solid rgba(255,255,255,0.14);
 
   left: 20%;
 
@@ -286,11 +308,17 @@ p {
 
   display: flex;
 
-  justify-content: space-around;
+  justify-content: center;
+
+  align-items: flex-end;
+
+  gap: 18px;
 
   position: relative;
 
   z-index: 2;
+
+  flex-wrap: wrap;
 
 }
 
@@ -302,17 +330,33 @@ p {
 
 .player {
 
-  width: 90px;
+  width: 106px;
 
   text-align: center;
 
-  transition: 0.2s;
+  transition: transform 0.2s ease;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 10px 6px 14px;
+
+  border-radius: 22px;
+
+  background: rgba(255,255,255,0.07);
+
+  border: 1px solid rgba(255,255,255,0.12);
 
 }
 
 .player:hover {
 
-  transform: scale(1.05);
+  transform: scale(1.04);
 
 }
 
@@ -324,21 +368,21 @@ p {
 
 .shirt {
 
-  width: 70px;
+  width: 78px;
 
-  height: 70px;
+  height: 78px;
 
   background: linear-gradient(#2563eb, #1d4ed8);
 
   margin: auto;
 
-  border-radius: 12px 12px 20px 20px;
+  border-radius: 20px 20px 28px 28px;
 
   position: relative;
 
-  border: 2px solid rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.16);
 
-  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05), 0 8px 18px rgba(0,0,0,0.25);
 
 }
 
@@ -352,13 +396,13 @@ p {
 
   position: absolute;
 
-  width: 20px;
+  width: 18px;
 
-  height: 25px;
+  height: 20px;
 
   background: inherit;
 
-  top: 8px;
+  top: 10px;
 
 }
 
@@ -388,19 +432,17 @@ p {
 
   position: absolute;
 
-  top: 35px;
+  top: 44px;
 
   left: 50%;
 
   transform: translateX(-50%);
 
-  width: 16px;
+  width: 18px;
 
-  height: 16px;
+  height: 18px;
 
   object-fit: contain;
-
-  border-radius: 0;
 
 }
 
@@ -410,27 +452,29 @@ p {
 
 ========================= */
 
-.shirt-name {
+.player-name {
 
-  position: absolute;
+  font-size: 11px;
 
-  top: 10px;
+  font-weight: 700;
 
-  left: 50%;
+  line-height: 1.1;
 
-  transform: translateX(-50%);
+  min-height: 28px;
 
-  font-size: 9px;
+  padding: 4px 10px;
 
-  font-weight: bold;
+  border-radius: 999px;
+
+  background: rgba(0,0,0,0.45);
 
   color: white;
 
-  width: 100%;
-
-  text-align: center;
+  letter-spacing: 0.01em;
 
 }
+
+.shirt-name { display: none; }
 
 /* =========================
 
@@ -456,7 +500,7 @@ p {
 
 select {
 
-  width: 82px;
+  width: 100%;
 
   margin-top: 6px;
 
@@ -466,11 +510,15 @@ select {
 
   color: white;
 
-  border: 1px solid #333;
+  border: 1px solid rgba(255,255,255,0.08);
 
-  border-radius: 6px;
+  border-radius: 10px;
 
-  padding: 5px;
+  padding: 8px 10px;
+
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+
+  appearance: none;
 
 }
 
@@ -492,23 +540,31 @@ button {
 
   margin-top: 30px;
 
-  padding: 14px 22px;
+  padding: 14px 24px;
 
   background: gold;
 
+  color: #111;
+
   border: none;
 
-  border-radius: 8px;
+  border-radius: 12px;
 
   font-weight: bold;
 
+  letter-spacing: 0.02em;
+
   cursor: pointer;
+
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 
 }
 
 button:hover {
 
-  transform: scale(1.03);
+  transform: translateY(-1px);
+
+  box-shadow: 0 10px 20px rgba(0,0,0,0.18);
 
 }
 
@@ -568,29 +624,31 @@ button:hover {
 
   .pitch {
 
-    padding: 30px 10px;
+    padding: 24px 12px;
 
-    gap: 30px;
+    gap: 20px;
 
   }
 
   .row {
 
-    gap: 8px;
+    gap: 12px;
 
   }
 
   .player {
 
-    width: 60px;
+    width: 82px;
+
+    padding: 10px 6px 12px;
 
   }
 
   .shirt {
 
-    width: 48px;
+    width: 54px;
 
-    height: 48px;
+    height: 54px;
 
   }
 
@@ -598,51 +656,45 @@ button:hover {
 
   .shirt::after {
 
-    width: 12px;
+    width: 10px;
 
-    height: 16px;
+    height: 14px;
 
-    top: 6px;
+    top: 10px;
 
   }
 
   .shirt::before {
 
-    left: -8px;
+    left: -10px;
 
   }
 
   .shirt::after {
 
-    right: -8px;
+    right: -10px;
 
   }
 
-  .shirt-name {
-
-    font-size: 6px;
-
-    top: 8px;
-
-  }
+  .shirt-name { display: none; }
 
   .badge {
 
-    width: 10px;
+    width: 12px;
 
-    height: 10px;
+    height: 12px;
 
-    top: 20px;
+    top: 32px;
 
   }
 
   select {
 
-    width: 58px;
+    width: 100%;
 
-    font-size: 8px;
+    font-size: 9px;
 
-    padding: 3px;
+    padding: 6px 8px;
 
   }
 
@@ -732,6 +784,8 @@ Select 11 players. Maximum 1 player per club.
 
 </select>
 
+<div class="pitch-frame">
+
 <div class="pitch">
 
 <div class="center-circle"></div>
@@ -753,6 +807,8 @@ Select 11 players. Maximum 1 player per club.
 <span class="shirt-name"></span>
 
 </div>
+
+<div class="player-name"></div>
 
 <strong>GK</strong>
 
@@ -896,6 +952,8 @@ return `
 
 </div>
 
+<div class="player-name"></div>
+
 <strong>${type}</strong>
 
 <select onchange="updateShirt(this)">
@@ -950,7 +1008,15 @@ if (playerTeams[value]) {
 
 }
 
-shirtName.innerText = displayName;
+const playerNameEl = select.parentElement.querySelector('.player-name');
+
+if (playerNameEl) {
+
+  playerNameEl.innerText = displayName;
+
+}
+
+shirtName.innerText = '';
 
 /* CLUBS */
 
