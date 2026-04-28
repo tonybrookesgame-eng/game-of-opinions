@@ -34,7 +34,7 @@ header {
 
   align-items: center;
 
-  padding: 20px 40px;
+  padding: 18px 40px;
 
   border-bottom: 1px solid #1f2937;
 
@@ -46,11 +46,23 @@ header {
 
   font-weight: bold;
 
+  white-space: nowrap;
+
 }
 
 .logo span {
 
   color: gold;
+
+}
+
+nav {
+
+  display: flex;
+
+  gap: 24px;
+
+  flex-wrap: nowrap;
 
 }
 
@@ -60,9 +72,11 @@ nav a {
 
   text-decoration: none;
 
-  margin-left: 20px;
-
   transition: 0.2s;
+
+  font-size: 14px;
+
+  white-space: nowrap;
 
 }
 
@@ -76,7 +90,7 @@ nav a:hover {
 
 .hero {
 
-  padding: 80px 40px 100px;
+  padding: 50px 40px 80px;
 
   position: relative;
 
@@ -94,7 +108,14 @@ nav a:hover {
 
   inset: 0;
 
-  background: radial-gradient(circle at 30% 20%, rgba(86, 255, 119, 0.16), transparent 18%), radial-gradient(circle at 80% 10%, rgba(255,255,255,0.14), transparent 15%);
+  background: 
+    radial-gradient(ellipse 600px 400px at 50% -50%, rgba(255,255,255,0.04), transparent 35%),
+    radial-gradient(circle at 20% 40%, rgba(86, 255, 119, 0.08), transparent 20%),
+    radial-gradient(circle at 80% 30%, rgba(255,255,255,0.06), transparent 18%),
+    repeating-radial-gradient(circle at 15% -10%, rgba(255,255,255,0.02) 0px, transparent 80px, transparent 100px),
+    repeating-radial-gradient(circle at 85% -10%, rgba(255,255,255,0.02) 0px, transparent 80px, transparent 100px),
+    repeating-radial-gradient(circle at 10% -5%, rgba(255,255,255,0.015) 0px, transparent 120px, transparent 150px),
+    repeating-radial-gradient(circle at 90% -8%, rgba(255,255,255,0.015) 0px, transparent 120px, transparent 150px);
 
   pointer-events: none;
 
@@ -114,7 +135,7 @@ nav a:hover {
 
   height: 100%;
 
-  background: radial-gradient(circle at top, rgba(255,255,255,0.06), transparent 25%);
+  background: radial-gradient(circle at top, rgba(255,255,255,0.05), transparent 22%);
 
   transform: translateX(-50%);
 
@@ -670,7 +691,7 @@ nav a:hover {
 
   .hero {
 
-    padding: 60px 24px 80px;
+    padding: 45px 24px 70px;
 
   }
 
@@ -700,11 +721,31 @@ nav a:hover {
 
   }
 
+}
+
+@media (max-width: 640px) {
+
   header {
 
     flex-direction: column;
 
-    gap: 15px;
+    gap: 12px;
+
+  }
+
+  nav {
+
+    flex-wrap: wrap;
+
+    justify-content: center;
+
+    gap: 12px;
+
+  }
+
+  nav a {
+
+    font-size: 13px;
 
   }
 
