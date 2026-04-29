@@ -1,4 +1,77 @@
-<!DOCTYPE html>
+[06:00, 29/04/2026] TB: <!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Your Team - Game of Opinions</title>
+
+<style>
+
+/* =========================
+
+   GLOBAL
+
+========================= */
+
+body {
+
+  background: #0b1020;
+
+  color: white;
+
+  font-family: 'Segoe UI', Arial, sans-serif;
+
+  margin: 0;
+
+  padding-bottom: 90px;
+
+}
+
+/* =========================
+
+   HEADER
+
+========================= */
+
+header {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding: 16px 24px;
+
+  border-bottom: 1px solid #222;
+
+}
+
+.logo {
+
+  font-size: 22px;
+
+  font-weight: bold;
+
+}
+
+.logo span {
+
+  color: gold;
+
+}
+
+/* =========================
+
+   NAVIGATION
+
+================…
+[06:05, 29/04/2026] TB: <!DOCTYPE html>
 
 <html lang="en">
 
@@ -166,8 +239,6 @@ p {
 
 #formation {
 
-  margin-top: 0;
-
   width: 100%;
 
   padding: 10px 32px 10px 12px;
@@ -186,33 +257,33 @@ p {
 
   appearance: none;
 
-  background-image: linear-gradient(45deg, transparent 50%, #fff 50%), linear-gradient(135deg, #fff 50%, transparent 50%);
-
-  background-position: calc(100% - 12px) calc(50% + 1px), calc(100% - 8px) calc(50% + 1px);
-
-  background-size: 6px 6px;
-
-  background-repeat: no-repeat;
-
 }
 
 /* =========================
 
-   PITCH
+   STADIUM
 
 ========================= */
 
 .stadium {
 
-  padding: 10px;
+  padding: 14px;
 
-  border-radius: 32px;
+  border-radius: 36px;
 
-  background: radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 30%), #05121d;
+  background:
+
+    radial-gradient(circle at top, rgba(255,255,255,0.10), transparent 25%),
+
+    linear-gradient(180deg, #09111f 0%, #050b14 100%);
 
   border: 1px solid rgba(255,255,255,0.08);
 
-  box-shadow: 0 18px 50px rgba(0,0,0,0.45);
+  box-shadow:
+
+    0 25px 60px rgba(0,0,0,0.45),
+
+    inset 0 1px 0 rgba(255,255,255,0.05);
 
   max-width: 780px;
 
@@ -223,38 +294,6 @@ p {
   margin-bottom: 20px;
 
   position: relative;
-
-}
-
-.stadium-banner {
-
-  display: inline-flex;
-
-  justify-content: center;
-
-  align-items: center;
-
-  background: #111c36;
-
-  color: #f8f8f8;
-
-  font-size: 11px;
-
-  font-weight: 700;
-
-  padding: 6px 10px;
-
-  border-radius: 999px;
-
-  letter-spacing: 0.02em;
-
-  text-transform: uppercase;
-
-  box-shadow: 0 6px 14px rgba(0,0,0,0.20);
-
-  margin: 0;
-
-  max-width: 280px;
 
 }
 
@@ -274,23 +313,35 @@ p {
 
 }
 
+.stadium-banner {
+
+  display: inline-flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  background: #111c36;
+
+  color: #fff;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  padding: 6px 10px;
+
+  border-radius: 999px;
+
+}
+
 .stadium-banner--title {
 
   background: #0f3463;
 
-  color: #fff;
-
-  letter-spacing: 0.04em;
-
-  text-transform: none;
-
   font-size: 14px;
 
   padding: 8px 18px;
-
-  min-width: 180px;
-
-  text-align: center;
 
 }
 
@@ -298,17 +349,15 @@ p {
 
   background: #1d6d9c;
 
-  color: #fff;
-
-  letter-spacing: 0.02em;
-
-  text-transform: none;
-
   font-size: 10px;
 
-  padding: 5px 9px;
-
 }
+
+/* =========================
+
+   PITCH FRAME
+
+========================= */
 
 .pitch-frame {
 
@@ -320,31 +369,41 @@ p {
 
   border: 1px solid rgba(255,255,255,0.08);
 
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
-
-  max-width: 760px;
-
-  margin-left: auto;
-
-  margin-right: auto;
-
 }
+
+/* =========================
+
+   PITCH
+
+========================= */
 
 .pitch {
 
   position: relative;
 
-  padding: 10px 0 12px;
+  padding: 30px 12px 40px;
 
   display: flex;
 
   flex-direction: column;
 
-  gap: 16px;
+  gap: 22px;
 
-  background: linear-gradient(180deg, #1f7f33 0%, #18742c 35%, #1b6d2a 60%, #1d7f34 100%);
+  background:
+
+    radial-gradient(circle at center, rgba(255,255,255,0.06), transparent 60%),
+
+    linear-gradient(180deg, #2d9b44 0%, #22863a 30%, #1f7a34 55%, #17662b 100%);
 
   overflow: hidden;
+
+  border-radius: 24px;
+
+  box-shadow:
+
+    inset 0 0 120px rgba(0,0,0,0.35),
+
+    0 30px 60px rgba(0,0,0,0.35);
 
 }
 
@@ -356,21 +415,23 @@ p {
 
   inset: 0;
 
-  background: repeating-linear-gradient(
+  background:
 
-    to bottom,
+    repeating-linear-gradient(
 
-    rgba(255,255,255,0.08) 0,
+      to bottom,
 
-    rgba(255,255,255,0.08) 10px,
+      rgba(255,255,255,0.06) 0,
 
-    transparent 10px,
+      rgba(255,255,255,0.06) 18px,
 
-    transparent 20px
+      transparent 18px,
 
-  );
+      transparent 36px
 
-  opacity: 0.25;
+    );
+
+  opacity: 0.35;
 
   pointer-events: none;
 
@@ -392,7 +453,11 @@ p {
 
 }
 
-/* Centre circle */
+/* =========================
+
+   PITCH DETAILS
+
+========================= */
 
 .center-circle {
 
@@ -414,8 +479,6 @@ p {
 
 }
 
-/* Penalty boxes */
-
 .penalty-box {
 
   position: absolute;
@@ -427,8 +490,6 @@ p {
   border: 2px solid rgba(255,255,255,0.24);
 
   left: 22%;
-
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
 
 }
 
@@ -455,8 +516,6 @@ p {
   border: 2px solid rgba(255,255,255,0.24);
 
   left: 39%;
-
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
 
 }
 
@@ -486,8 +545,6 @@ p {
 
   border-radius: 2px;
 
-  box-shadow: 0 0 10px rgba(255,255,255,0.18);
-
 }
 
 .goal-top {
@@ -516,7 +573,7 @@ p {
 
   align-items: flex-end;
 
-  gap: 8px;
+  gap: 10px;
 
   position: relative;
 
@@ -528,17 +585,17 @@ p {
 
 /* =========================
 
-   PLAYER
+   PLAYER CARD
 
 ========================= */
 
 .player {
 
-  width: 76px;
+  width: 78px;
 
   text-align: center;
 
-  transition: transform 0.18s ease;
+  transition: all 0.25s ease;
 
   display: flex;
 
@@ -546,21 +603,33 @@ p {
 
   align-items: center;
 
-  gap: 6px;
+  gap: 8px;
 
-  padding: 6px 4px 8px;
+  padding: 10px 6px;
 
-  border-radius: 16px;
+  border-radius: 20px;
 
-  background: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.07);
 
   border: 1px solid rgba(255,255,255,0.12);
+
+  backdrop-filter: blur(6px);
+
+  box-shadow:
+
+    0 8px 20px rgba(0,0,0,0.18),
+
+    inset 0 1px 0 rgba(255,255,255,0.08);
 
 }
 
 .player:hover {
 
-  transform: scale(1.02);
+  transform: translateY(-4px) scale(1.04);
+
+  box-shadow:
+
+    0 18px 30px rgba(0,0,0,0.28);
 
 }
 
@@ -572,25 +641,27 @@ p {
 
 .shirt {
 
-  width: 52px;
+  width: 54px;
 
-  height: 52px;
+  height: 54px;
 
   background: linear-gradient(#2563eb, #1d4ed8);
 
   margin: auto;
 
-  border-radius: 16px 16px 22px 22px;
+  border-radius: 18px 18px 24px 24px;
 
   position: relative;
 
-  border: 1px solid rgba(255,255,255,0.16);
+  border: 1px solid rgba(255,255,255,0.12);
 
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05), 0 5px 12px rgba(0,0,0,0.20);
+  box-shadow:
+
+    inset 0 2px 6px rgba(255,255,255,0.12),
+
+    0 8px 18px rgba(0,0,0,0.25);
 
 }
-
-/* Sleeves */
 
 .shirt::before,
 
@@ -628,30 +699,6 @@ p {
 
 /* =========================
 
-   BADGES
-
-========================= */
-
-.badge {
-
-  position: absolute;
-
-  top: 30px;
-
-  left: 50%;
-
-  transform: translateX(-50%);
-
-  width: 14px;
-
-  height: 14px;
-
-  object-fit: contain;
-
-}
-
-/* =========================
-
    PLAYER NAME
 
 ========================= */
@@ -674,21 +721,7 @@ p {
 
   color: white;
 
-  letter-spacing: 0.02em;
-
-  text-align: center;
-
-  white-space: nowrap;
-
-  overflow: hidden;
-
-  text-overflow: ellipsis;
-
-  display: block;
-
 }
-
-
 
 /* =========================
 
@@ -730,31 +763,9 @@ select {
 
   border-radius: 10px;
 
-  padding: 7px 10px 7px 12px;
-
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
-
-  appearance: none;
+  padding: 7px 10px;
 
   text-align: center;
-
-  text-align-last: center;
-
-  background-image: linear-gradient(45deg, transparent 50%, #fff 50%), linear-gradient(135deg, #fff 50%, transparent 50%);
-
-  background-position: calc(100% - 12px) calc(50% + 1px), calc(100% - 8px) calc(50% + 1px);
-
-  background-size: 6px 6px;
-
-  background-repeat: no-repeat;
-
-}
-
-select:focus {
-
-  outline: none;
-
-  border: 1px solid gold;
 
 }
 
@@ -780,19 +791,7 @@ button {
 
   font-weight: bold;
 
-  letter-spacing: 0.02em;
-
   cursor: pointer;
-
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-
-}
-
-button:hover {
-
-  transform: translateY(-1px);
-
-  box-shadow: 0 10px 20px rgba(0,0,0,0.18);
 
 }
 
@@ -832,101 +831,7 @@ button:hover {
 
   .container {
 
-    padding: 16px 14px 90px;
-
-  }
-
-  h1 {
-
-    font-size: 25px;
-
-    text-align: center;
-
-  }
-
-  p {
-
-    text-align: center;
-
-  }
-
-  .stadium {
-
-    padding: 8px;
-
-  }
-
-  .stadium-top {
-
-    flex-wrap: nowrap;
-
-    align-items: center;
-
-    gap: 6px;
-
-    margin-bottom: 10px;
-
-    overflow-x: auto;
-
-    padding-bottom: 2px;
-
-  }
-
-  .stadium-top::-webkit-scrollbar {
-
-    display: none;
-
-  }
-
-  .stadium-banner {
-
-    flex: 0 0 auto;
-
-    justify-content: center;
-
-    font-size: 9px;
-
-    padding: 4px 8px;
-
-    min-width: 72px;
-
-  }
-
-  .stadium-banner--title {
-
-    font-size: 13px;
-
-    padding: 7px 10px;
-
-    min-width: 120px;
-
-  }
-
-  .stadium-banner--quote {
-
-    font-size: 8px;
-
-    padding: 4px 7px;
-
-  }
-
-  .pitch-frame {
-
-    padding: 6px;
-
-  }
-
-  .pitch {
-
-    padding: 10px 6px 10px;
-
-    gap: 10px;
-
-  }
-
-  .row {
-
-    gap: 5px;
+    padding: 16px;
 
   }
 
@@ -934,103 +839,19 @@ button:hover {
 
     width: 60px;
 
-    padding: 5px 3px 7px;
-
   }
 
   .shirt {
 
-    width: 38px;
+    width: 40px;
 
-    height: 38px;
-
-  }
-
-  .shirt::before,
-
-  .shirt::after {
-
-    width: 7px;
-
-    height: 9px;
-
-    top: 7px;
-
-  }
-
-  .shirt::before {
-
-    left: -7px;
-
-  }
-
-  .shirt::after {
-
-    right: -7px;
-
-  }
-
-  .badge {
-
-    width: 8px;
-
-    height: 8px;
-
-    top: 24px;
-
-  }
-
-  .player-name {
-
-    font-size: 8px;
-
-    min-height: 16px;
-
-    padding: 1px 3px;
-
-    white-space: nowrap;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-
-  }
-
-  .formation-block {
-
-    max-width: 210px;
-
-    width: 100%;
-
-    margin: 0 auto 10px;
-
-  }
-
-  #formation {
-
-    padding-right: 26px;
+    height: 40px;
 
   }
 
   select {
 
-    width: 100%;
-
     font-size: 7px;
-
-    padding: 4px 6px;
-
-  }
-
-  .player strong {
-
-    font-size: 7px;
-
-  }
-
-  button {
-
-    width: 100%;
 
   }
 
@@ -1088,61 +909,69 @@ GAME <span>OF OPINIONS</span>
 
 <h1>Your Team</h1>
 
-<p>
-
-Select 11 players. Maximum 1 player per club.
-
-</p>
+<p>Select 11 players. Maximum 1 player per club.</p>
 
 <div class="formation-block">
 
-  <label for="formation">Formation</label>
+<label for="formation">Formation</label>
 
-  <select id="formation" onchange="setFormation()">
+<select id="formation" onchange="setFormation()">
 
-    <option value="442">4-4-2</option>
+<option value="442">4-4-2</option>
 
-    <option value="433">4-3-3</option>
+<option value="433">4-3-3</option>
 
-    <option value="352">3-5-2</option>
+<option value="352">3-5-2</option>
 
-    <option value="343">3-4-3</option>
+<option value="343">3-4-3</option>
 
-    <option value="451">4-5-1</option>
+<option value="451">4-5-1</option>
 
-  </select>
+</select>
 
 </div>
 
 <div class="stadium">
 
-  <div class="stadium-top">
+<div class="stadium-top">
 
-    <div class="stadium-banner stadium-banner--quote">"You Want Some"</div>
+<div class="stadium-banner stadium-banner--quote">
 
-    <div class="stadium-banner stadium-banner--title">Game of Opinions</div>
+"You Want Some"
 
-    <div class="stadium-banner stadium-banner--quote">"Lets Be Having You"</div>
+</div>
 
-  </div>
+<div class="stadium-banner stadium-banner--title">
 
-  <div class="pitch-frame">
+Game of Opinions
 
-    <div class="pitch">
+</div>
 
-      <div class="center-circle"></div>
+<div class="stadium-banner stadium-banner--quote">
 
-      <div class="goal-line goal-top"></div>
+"Let's Be Having You"
 
-      <div class="goal-line goal-bottom"></div>
+</div>
 
-      <div class="penalty-box penalty-top"></div>
+</div>
 
-      <div class="six-yard-box six-yard-top"></div>
+<div class="pitch-frame">
 
-      <div class="penalty-box penalty-bottom"></div>
+<div class="pitch">
 
-      <div class="six-yard-box six-yard-bottom"></div>
+<div class="center-circle"></div>
+
+<div class="goal-line goal-top"></div>
+
+<div class="goal-line goal-bottom"></div>
+
+<div class="penalty-box penalty-top"></div>
+
+<div class="six-yard-box six-yard-top"></div>
+
+<div class="penalty-box penalty-bottom"></div>
+
+<div class="six-yard-box six-yard-bottom"></div>
 
 <!-- GOALKEEPER -->
 
@@ -1150,11 +979,7 @@ Select 11 players. Maximum 1 player per club.
 
 <div class="player">
 
-<div class="shirt">
-
-<img class="badge" src="badges/premierleague.png">
-
-</div>
+<div class="shirt"></div>
 
 <div class="player-name"></div>
 
@@ -1216,8 +1041,6 @@ Lock Team
 
 <script>
 
-/* PLAYER TO CLUB MAPPING */
-
 const playerTeams = {
 
   "Saliba": "Arsenal",
@@ -1258,11 +1081,7 @@ const playerTeams = {
 
 };
 
-/* CREATE PLAYER */
-
 function createPlayer(type) {
-
-let options = "";
 
 let players = [];
 
@@ -1284,11 +1103,11 @@ players = ["Haaland", "Watkins", "Isak", "Jackson", "Solanke", "Darwin"];
 
 }
 
-options = "<option>Select</option>";
+let options = "<option>Select</option>";
 
 players.forEach(player => {
 
-  options += `<option>${player}</option>`;
+options += <option>${player}</option>;
 
 });
 
@@ -1296,11 +1115,7 @@ return `
 
 <div class="player">
 
-<div class="shirt">
-
-<img class="badge" src="badges/premierleague.png">
-
-</div>
+<div class="shirt"></div>
 
 <div class="player-name"></div>
 
@@ -1318,17 +1133,11 @@ ${options}
 
 }
 
-/* UPDATE SHIRT */
-
 function updateShirt(select) {
 
 const shirt =
 
 select.parentElement.querySelector(".shirt");
-
-const badge =
-
-select.parentElement.querySelector(".badge");
 
 const value = select.value;
 
@@ -1336,31 +1145,25 @@ let club;
 
 if (playerTeams[value]) {
 
-  club = playerTeams[value];
+club = playerTeams[value];
 
 } else {
 
-  club = value;
+club = value;
 
 }
 
-const playerNameEl = select.parentElement.querySelector('.player-name');
+const playerNameEl =
 
-if (playerNameEl) {
+select.parentElement.querySelector('.player-name');
 
-  playerNameEl.innerText = club || '';
-
-}
-
-/* CLUBS */
+playerNameEl.innerText = club || '';
 
 if (club === "Arsenal") {
 
 shirt.style.background =
 
 "linear-gradient(#ef4444, #991b1b)";
-
-badge.src = "badges/arsenal.png";
 
 }
 
@@ -1370,8 +1173,6 @@ shirt.style.background =
 
 "linear-gradient(#2563eb, #1d4ed8)";
 
-badge.src = "badges/chelsea.png";
-
 }
 
 else if (club === "Liverpool") {
@@ -1379,8 +1180,6 @@ else if (club === "Liverpool") {
 shirt.style.background =
 
 "linear-gradient(#dc2626, #7f1d1d)";
-
-badge.src = "badges/liverpool.png";
 
 }
 
@@ -1390,8 +1189,6 @@ shirt.style.background =
 
 "linear-gradient(#7c3aed, #5b21b6)";
 
-badge.src = "badges/villa.png";
-
 }
 
 else if (club === "Spurs") {
@@ -1399,8 +1196,6 @@ else if (club === "Spurs") {
 shirt.style.background =
 
 "linear-gradient(#f8fafc, #94a3b8)";
-
-badge.src = "badges/spurs.png";
 
 }
 
@@ -1410,8 +1205,6 @@ shirt.style.background =
 
 "linear-gradient(#7f1d1d, #facc15)";
 
-badge.src = "badges/westham.png";
-
 }
 
 else if (club === "Newcastle") {
@@ -1419,8 +1212,6 @@ else if (club === "Newcastle") {
 shirt.style.background =
 
 "linear-gradient(#111827, #000000)";
-
-badge.src = "badges/newcastle.png";
 
 }
 
@@ -1430,8 +1221,6 @@ shirt.style.background =
 
 "linear-gradient(#38bdf8, #0284c7)";
 
-badge.src = "badges/mancity.png";
-
 }
 
 else if (club === "Man Utd") {
@@ -1439,8 +1228,6 @@ else if (club === "Man Utd") {
 shirt.style.background =
 
 "linear-gradient(#c1121f, #7a0721)";
-
-badge.src = "badges/manutd.png";
 
 }
 
@@ -1450,13 +1237,9 @@ shirt.style.background =
 
 "linear-gradient(#d4003a, #640723)";
 
-badge.src = "badges/bournemouth.png";
-
 }
 
 }
-
-/* FORMATION */
 
 function setFormation() {
 
@@ -1472,8 +1255,6 @@ let fwd = 2;
 
 if (formation === "433") {
 
-def = 4;
-
 mid = 3;
 
 fwd = 3;
@@ -1486,23 +1267,17 @@ def = 3;
 
 mid = 5;
 
-fwd = 2;
-
 }
 
 if (formation === "343") {
 
 def = 3;
 
-mid = 4;
-
 fwd = 3;
 
 }
 
 if (formation === "451") {
-
-def = 4;
 
 mid = 5;
 
@@ -1523,8 +1298,6 @@ document.getElementById("forwards").innerHTML =
 Array(fwd).fill().map(() => createPlayer("FWD")).join("");
 
 }
-
-/* SAVE TEAM */
 
 function lockTeam() {
 
@@ -1548,7 +1321,7 @@ return;
 
 let playerName = select.value;
 
-let club = playerTeams[playerName];
+let club = playerTeams[playerName] || playerName;
 
 if (clubs.includes(club)) {
 
@@ -1569,8 +1342,6 @@ document.getElementById("status").innerText =
 "Team saved successfully!";
 
 }
-
-/* LOAD */
 
 window.onload = function () {
 
