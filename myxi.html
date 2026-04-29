@@ -46,11 +46,7 @@ body{
 
 }
 
-/* =========================
-
-   BACKGROUND
-
-========================= */
+/* STADIUM BACKGROUND */
 
 body::before{
 
@@ -62,9 +58,11 @@ body::before{
 
   background:
 
-    radial-gradient(circle at center, rgba(120,255,120,0.05), transparent 30%),
+    radial-gradient(circle at center, rgba(120,255,120,0.08), transparent 30%),
 
-    radial-gradient(circle at top, rgba(255,255,255,0.05), transparent 25%);
+    radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 25%),
+
+    repeating-radial-gradient(circle at 50% -20%, rgba(255,255,255,0.03) 0px, transparent 80px, transparent 120px);
 
   pointer-events:none;
 
@@ -80,13 +78,13 @@ body::after{
 
   background-image:
 
-    linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
 
-    linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
 
   background-size:80px 80px;
 
-  opacity:0.12;
+  opacity:0.2;
 
   pointer-events:none;
 
@@ -106,9 +104,9 @@ header{
 
   z-index:999;
 
-  backdrop-filter:blur(10px);
+  backdrop-filter:blur(12px);
 
-  background:rgba(5,10,18,0.72);
+  background:rgba(5,10,18,0.78);
 
   border-bottom:1px solid rgba(255,255,255,0.08);
 
@@ -226,9 +224,9 @@ header{
 
   font-size:17px;
 
-  max-width:720px;
+  max-width:620px;
 
-  line-height:1.7;
+  line-height:1.6;
 
 }
 
@@ -278,15 +276,23 @@ header{
 
   outline:none;
 
-  backdrop-filter:blur(8px);
+  backdrop-filter:blur(10px);
 
 }
 
-#formation option{
+#formation option {
 
-  background:#111827;
+  background: #111827;
 
-  color:white;
+  color: white;
+
+}
+
+#formation option:hover {
+
+  background: #c7ff38;
+
+  color: #041102;
 
 }
 
@@ -306,7 +312,7 @@ header{
 
   background:
 
-    radial-gradient(circle at top, rgba(255,255,255,0.06), transparent 24%),
+    radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 24%),
 
     linear-gradient(180deg,#08111c 0%,#030813 100%);
 
@@ -319,6 +325,126 @@ header{
     inset 0 1px 0 rgba(255,255,255,0.06);
 
 }
+
+.stadium-shell::before{
+
+  content:"";
+
+  position:absolute;
+
+  inset:0;
+
+  border-radius:38px;
+
+  background:
+
+    radial-gradient(circle at center, transparent 60%, rgba(255,255,255,0.08) 61%, transparent 63%),
+
+    radial-gradient(circle at center, transparent 70%, rgba(255,255,255,0.05) 71%, transparent 73%),
+
+    repeating-linear-gradient(to bottom, transparent 0 4.5px, rgba(255,255,255,0.15) 4.5px 10.5px, transparent 10.5px 15px),
+
+    repeating-linear-gradient(90deg, transparent 0 4.5px, rgba(255,255,255,0.15) 4.5px 10.5px, transparent 10.5px 15px),
+
+    repeating-conic-gradient(
+
+      rgba(230,230,230,0.14) 0deg 6deg,
+
+      rgba(200,200,200,0.10) 6deg 10deg,
+
+      rgba(180,180,180,0.08) 10deg 14deg,
+
+      rgba(220,220,220,0.06) 14deg 24deg
+
+    );
+
+  background-size:100% 100%, 100% 100%, 15px 15px, 15px 15px, 100% 100%;
+
+  opacity:0.78;
+
+  pointer-events:none;
+
+  filter:blur(0.4px);
+
+}
+
+.stadium-shell::after{
+
+  content:"";
+
+  position:absolute;
+
+  inset:12px;
+
+  border-radius:28px;
+
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,0.12);
+
+  pointer-events:none;
+
+}
+
+.stadium-top{
+
+  position:relative;
+
+  z-index:2;
+
+  display:flex;
+
+  justify-content:center;
+
+  gap:10px;
+
+  flex-wrap:wrap;
+
+  margin-bottom:10px;
+
+}
+
+.stadium-banner{
+
+  padding:8px 14px;
+
+  border-radius:999px;
+
+  font-size:11px;
+
+  font-weight:700;
+
+  letter-spacing:0.03em;
+
+  border:1px solid rgba(255,255,255,0.08);
+
+  backdrop-filter:blur(10px);
+
+}
+
+.stadium-banner--title{
+
+  background:#133d77;
+
+  color:white;
+
+  font-size:15px;
+
+  padding:10px 20px;
+
+}
+
+.stadium-banner--quote{
+
+  background:#143e59;
+
+  color:#d9f3ff;
+
+}
+
+/* =========================
+
+   PITCH FRAME
+
+========================= */
 
 .pitch-frame{
 
@@ -346,21 +472,23 @@ header{
 
   border-radius:24px;
 
-  padding:28px 8px 34px;
+  padding:20px 10px 26px;
 
   background:
 
-    radial-gradient(circle at center, rgba(255,255,255,0.04), transparent 55%),
+    radial-gradient(circle at center, rgba(255,255,255,0.05), transparent 55%),
 
     linear-gradient(180deg,#2ca84a 0%,#228d3c 35%,#1d7b34 60%,#16632b 100%);
 
   box-shadow:
 
-    inset 0 0 120px rgba(0,0,0,0.30),
+    inset 0 0 120px rgba(0,0,0,0.35),
 
-    inset 0 30px 50px rgba(255,255,255,0.03);
+    inset 0 30px 50px rgba(255,255,255,0.04);
 
 }
+
+/* mowing pattern */
 
 .pitch::after{
 
@@ -376,9 +504,9 @@ header{
 
       to bottom,
 
-      rgba(255,255,255,0.04) 0px,
+      rgba(255,255,255,0.06) 0px,
 
-      rgba(255,255,255,0.04) 24px,
+      rgba(255,255,255,0.06) 24px,
 
       transparent 24px,
 
@@ -386,9 +514,11 @@ header{
 
     );
 
-  opacity:0.12;
+  opacity:0.28;
 
 }
+
+/* halfway line */
 
 .pitch::before{
 
@@ -404,13 +534,13 @@ header{
 
   height:2px;
 
-  background:rgba(255,255,255,0.12);
+  background:rgba(255,255,255,0.15);
 
 }
 
 /* =========================
 
-   MARKINGS
+   PITCH MARKINGS
 
 ========================= */
 
@@ -428,7 +558,7 @@ header{
 
   border-radius:50%;
 
-  border:2px solid rgba(255,255,255,0.16);
+  border:2px solid rgba(255,255,255,0.18);
 
   transform:translate(-50%,-50%);
 
@@ -454,6 +584,58 @@ header{
 
 }
 
+.penalty-box{
+
+  position:absolute;
+
+  left:22%;
+
+  width:56%;
+
+  height:120px;
+
+  border:2px solid rgba(255,255,255,0.20);
+
+}
+
+.penalty-top{
+
+  top:16px;
+
+}
+
+.penalty-bottom{
+
+  bottom:16px;
+
+}
+
+.six-yard-box{
+
+  position:absolute;
+
+  left:39%;
+
+  width:22%;
+
+  height:54px;
+
+  border:2px solid rgba(255,255,255,0.20);
+
+}
+
+.six-yard-top{
+
+  top:24px;
+
+}
+
+.six-yard-bottom{
+
+  bottom:24px;
+
+}
+
 /* =========================
 
    ROWS
@@ -474,9 +656,9 @@ header{
 
   flex-wrap:wrap;
 
-  gap:10px;
+  gap:12px;
 
-  margin:12px 0;
+  margin:10px 0;
 
 }
 
@@ -488,11 +670,11 @@ header{
 
 .player{
 
-  width:86px;
+  width:92px;
 
-  background:rgba(0,0,0,0.18);
+  background:rgba(0,0,0,0.22);
 
-  border:1px solid rgba(255,255,255,0.10);
+  border:1px solid rgba(255,255,255,0.12);
 
   border-radius:20px;
 
@@ -504,7 +686,7 @@ header{
 
   align-items:center;
 
-  backdrop-filter:blur(4px);
+  backdrop-filter:blur(10px);
 
   transition:0.22s ease;
 
@@ -528,9 +710,9 @@ header{
 
 .shirt{
 
-  width:58px;
+  width:56px;
 
-  height:58px;
+  height:56px;
 
   border-radius:18px 18px 24px 24px;
 
@@ -598,7 +780,7 @@ header{
 
   font-weight:700;
 
-  background:rgba(0,0,0,0.40);
+  background:rgba(0,0,0,0.42);
 
   padding:4px 8px;
 
@@ -744,15 +926,53 @@ button:hover{
 
   .player{
 
-    width:78px;
+    width:74px;
+
+    padding:8px 6px;
 
   }
 
   .shirt{
 
-    width:46px;
+    width:44px;
 
-    height:46px;
+    height:44px;
+
+  }
+
+  .shirt::before,
+
+  .shirt::after{
+
+    width:9px;
+
+    height:11px;
+
+  }
+
+  .shirt::before{
+
+    left:-9px;
+
+  }
+
+  .shirt::after{
+
+    right:-9px;
+
+  }
+
+  select{
+
+    font-size:8px;
+
+    padding:6px 4px;
+
+  }
+
+  .row{
+
+    gap:4px;
 
   }
 
@@ -800,21 +1020,23 @@ button:hover{
 
   .player{
 
-    width:72px;
+    width:62px;
 
   }
 
   .shirt{
 
-    width:40px;
+    width:38px;
 
-    height:40px;
+    height:38px;
 
   }
 
   .player-name{
 
     font-size:8px;
+
+    padding:3px 6px;
 
   }
 
@@ -830,9 +1052,21 @@ button:hover{
 
   }
 
+  .stadium-banner--title{
+
+    font-size:13px;
+
+  }
+
   button{
 
     width:100%;
+
+  }
+
+  .row{
+
+    gap:4px;
 
   }
 
@@ -876,11 +1110,9 @@ button:hover{
 
       <p>
 
-        Pick your strongest 11. STRICTLY one player per club.
+        Pick your strongest XI. One player per club.
 
-        Put your manager hat on and MANAGE! No loading up on
-
-        players from top teams, this is an even playing field.
+        Back your football opinions and build the perfect side.
 
       </p>
 
@@ -910,6 +1142,10 @@ button:hover{
 
   <div class="stadium-shell">
 
+    <div class="stadium-top">
+
+    </div>
+
     <div class="pitch-frame">
 
       <div class="pitch">
@@ -917,6 +1153,14 @@ button:hover{
         <div class="center-circle"></div>
 
         <div class="center-dot"></div>
+
+        <div class="penalty-box penalty-top"></div>
+
+        <div class="penalty-box penalty-bottom"></div>
+
+        <div class="six-yard-box six-yard-top"></div>
+
+        <div class="six-yard-box six-yard-bottom"></div>
 
         <!-- GOALKEEPER -->
 
@@ -934,21 +1178,21 @@ button:hover{
 
               <option>Select</option>
 
-              <option value="Alisson">Alisson (Liverpool)</option>
+              <option>Arsenal</option>
 
-              <option value="Raya">Raya (Arsenal)</option>
+              <option>Chelsea</option>
 
-              <option value="Ederson">Ederson (Man City)</option>
+              <option>Liverpool</option>
 
-              <option value="Martinez">Martinez (Villa)</option>
+              <option>Man City</option>
 
-              <option value="Vicario">Vicario (Spurs)</option>
+              <option>Villa</option>
 
-              <option value="Onana">Onana (Man Utd)</option>
+              <option>Spurs</option>
 
-              <option value="Pope">Pope (Newcastle)</option>
+              <option>West Ham</option>
 
-              <option value="Pickford">Pickford (Everton)</option>
+              <option>Newcastle</option>
 
             </select>
 
@@ -992,173 +1236,49 @@ button:hover{
 
 /* =========================
 
-   PLAYER DATABASE
+   PLAYER DATA
 
 ========================= */
 
-const players = [
+const playerTeams = {
 
-  /* GK */
+  "Saliba":"Arsenal",
 
-  { name:"Alisson", club:"Liverpool", position:"GK" },
+  "Gabriel":"Arsenal",
 
-  { name:"Raya", club:"Arsenal", position:"GK" },
+  "Van Dijk":"Liverpool",
 
-  { name:"Ederson", club:"Man City", position:"GK" },
+  "Walker":"Man City",
 
-  { name:"Martinez", club:"Villa", position:"GK" },
+  "Trippier":"Newcastle",
 
-  { name:"Vicario", club:"Spurs", position:"GK" },
+  "Romero":"Spurs",
 
-  { name:"Onana", club:"Man Utd", position:"GK" },
+  "Saka":"Arsenal",
 
-  { name:"Pope", club:"Newcastle", position:"GK" },
+  "Palmer":"Chelsea",
 
-  { name:"Pickford", club:"Everton", position:"GK" },
+  "Salah":"Liverpool",
 
-  /* DEF */
+  "Son":"Spurs",
 
-  { name:"Saliba", club:"Arsenal", position:"DEF" },
+  "Bowen":"West Ham",
 
-  { name:"Gabriel", club:"Arsenal", position:"DEF" },
+  "Bruno":"Man Utd",
 
-  { name:"White", club:"Arsenal", position:"DEF" },
+  "Haaland":"Man City",
 
-  { name:"Timber", club:"Arsenal", position:"DEF" },
+  "Watkins":"Villa",
 
-  { name:"Van Dijk", club:"Liverpool", position:"DEF" },
+  "Isak":"Newcastle",
 
-  { name:"Konate", club:"Liverpool", position:"DEF" },
+  "Jackson":"Chelsea",
 
-  { name:"Robertson", club:"Liverpool", position:"DEF" },
+  "Solanke":"Bournemouth",
 
-  { name:"Alexander-Arnold", club:"Liverpool", position:"DEF" },
+  "Darwin":"Liverpool"
 
-  { name:"Walker", club:"Man City", position:"DEF" },
-
-  { name:"Gvardiol", club:"Man City", position:"DEF" },
-
-  { name:"Dias", club:"Man City", position:"DEF" },
-
-  { name:"Akanji", club:"Man City", position:"DEF" },
-
-  { name:"Romero", club:"Spurs", position:"DEF" },
-
-  { name:"Van de Ven", club:"Spurs", position:"DEF" },
-
-  { name:"Porro", club:"Spurs", position:"DEF" },
-
-  { name:"Udogie", club:"Spurs", position:"DEF" },
-
-  { name:"Trippier", club:"Newcastle", position:"DEF" },
-
-  { name:"Schar", club:"Newcastle", position:"DEF" },
-
-  { name:"Konsa", club:"Villa", position:"DEF" },
-
-  { name:"Pau Torres", club:"Villa", position:"DEF" },
-
-  { name:"Dalot", club:"Man Utd", position:"DEF" },
-
-  { name:"Martinez", club:"Man Utd", position:"DEF" },
-
-  { name:"Colwill", club:"Chelsea", position:"DEF" },
-
-  { name:"Cucurella", club:"Chelsea", position:"DEF" },
-
-  { name:"Kilman", club:"West Ham", position:"DEF" },
-
-  { name:"Branthwaite", club:"Everton", position:"DEF" },
-
-  { name:"Andersen", club:"Crystal Palace", position:"DEF" },
-
-  { name:"Guehi", club:"Crystal Palace", position:"DEF" },
-
-  /* MID */
-
-  { name:"Saka", club:"Arsenal", position:"MID" },
-
-  { name:"Odegaard", club:"Arsenal", position:"MID" },
-
-  { name:"Rice", club:"Arsenal", position:"MID" },
-
-  { name:"Martinelli", club:"Arsenal", position:"MID" },
-
-  { name:"Salah", club:"Liverpool", position:"MID" },
-
-  { name:"Mac Allister", club:"Liverpool", position:"MID" },
-
-  { name:"Szoboszlai", club:"Liverpool", position:"MID" },
-
-  { name:"Foden", club:"Man City", position:"MID" },
-
-  { name:"De Bruyne", club:"Man City", position:"MID" },
-
-  { name:"Rodri", club:"Man City", position:"MID" },
-
-  { name:"Bernardo Silva", club:"Man City", position:"MID" },
-
-  { name:"Son", club:"Spurs", position:"MID" },
-
-  { name:"Maddison", club:"Spurs", position:"MID" },
-
-  { name:"Bruno", club:"Man Utd", position:"MID" },
-
-  { name:"Mainoo", club:"Man Utd", position:"MID" },
-
-  { name:"Palmer", club:"Chelsea", position:"MID" },
-
-  { name:"Caicedo", club:"Chelsea", position:"MID" },
-
-  { name:"Enzo", club:"Chelsea", position:"MID" },
-
-  { name:"Bowen", club:"West Ham", position:"MID" },
-
-  { name:"Paqueta", club:"West Ham", position:"MID" },
-
-  { name:"Kudus", club:"West Ham", position:"MID" },
-
-  { name:"Gordon", club:"Newcastle", position:"MID" },
-
-  { name:"Guimaraes", club:"Newcastle", position:"MID" },
-
-  { name:"McGinn", club:"Villa", position:"MID" },
-
-  { name:"Eze", club:"Crystal Palace", position:"MID" },
-
-  { name:"Olise", club:"Crystal Palace", position:"MID" },
-
-  { name:"Mitoma", club:"Brighton", position:"MID" },
-
-  /* FWD */
-
-  { name:"Haaland", club:"Man City", position:"FWD" },
-
-  { name:"Watkins", club:"Villa", position:"FWD" },
-
-  { name:"Isak", club:"Newcastle", position:"FWD" },
-
-  { name:"Darwin", club:"Liverpool", position:"FWD" },
-
-  { name:"Jota", club:"Liverpool", position:"FWD" },
-
-  { name:"Jackson", club:"Chelsea", position:"FWD" },
-
-  { name:"Nkunku", club:"Chelsea", position:"FWD" },
-
-  { name:"Solanke", club:"Bournemouth", position:"FWD" },
-
-  { name:"Hojlund", club:"Man Utd", position:"FWD" },
-
-  { name:"Jesus", club:"Arsenal", position:"FWD" },
-
-  { name:"Richarlison", club:"Spurs", position:"FWD" },
-
-  { name:"Antonio", club:"West Ham", position:"FWD" },
-
-  { name:"Mateta", club:"Crystal Palace", position:"FWD" }
-
-];
+};
 
 /* =========================
 
@@ -1168,23 +1288,73 @@ const players = [
 
 function createPlayer(type){
 
-  const filteredPlayers =
+  let players = [];
 
-    players.filter(player => player.position === type);
+  if(type === "DEF"){
+
+    players = [
+
+      "Saliba",
+
+      "Gabriel",
+
+      "Van Dijk",
+
+      "Walker",
+
+      "Trippier",
+
+      "Romero"
+
+    ];
+
+  }
+
+  if(type === "MID"){
+
+    players = [
+
+      "Saka",
+
+      "Palmer",
+
+      "Salah",
+
+      "Son",
+
+      "Bowen",
+
+      "Bruno"
+
+    ];
+
+  }
+
+  if(type === "FWD"){
+
+    players = [
+
+      "Haaland",
+
+      "Watkins",
+
+      "Isak",
+
+      "Jackson",
+
+      "Solanke",
+
+      "Darwin"
+
+    ];
+
+  }
 
   let options = '<option>Select</option>';
 
-  filteredPlayers.forEach(player => {
+  players.forEach(player => {
 
-    options += `
-
-      <option value="${player.name}">
-
-        ${player.name} (${player.club})
-
-      </option>
-
-    `;
+    options += `<option>${player}</option>`;
 
   });
 
@@ -1228,31 +1398,33 @@ function updateShirt(select){
 
   const value = select.value;
 
-  const selectedPlayer =
+  let club;
 
-    players.find(player => player.name === value);
+  if(playerTeams[value]){
 
-  let club = selectedPlayer
+    club = playerTeams[value];
 
-    ? selectedPlayer.club
+  }else{
 
-    : "";
+    club = value;
+
+  }
 
   playerNameEl.innerText = club || "";
+
+  /* DEFAULT */
 
   shirt.style.background =
 
     "linear-gradient(#2563eb,#1d4ed8)";
 
-  shirt.style.border =
-
-    "1px solid rgba(255,255,255,0.12)";
+  /* CLUB COLOURS */
 
   if(club === "Arsenal"){
 
     shirt.style.background =
 
-      "linear-gradient(#ef4444 0 72%, #ffffff 72% 100%)";
+      "linear-gradient(#ef4444,#991b1b)";
 
   }
 
@@ -1284,11 +1456,7 @@ function updateShirt(select){
 
     shirt.style.background =
 
-      "linear-gradient(#ffffff,#dbeafe)";
-
-    shirt.style.border =
-
-      "2px solid #334155";
+      "linear-gradient(#f8fafc,#94a3b8)";
 
   }
 
@@ -1304,7 +1472,7 @@ function updateShirt(select){
 
     shirt.style.background =
 
-      "repeating-linear-gradient(90deg,#111 0 8px,#fff 8px 16px)";
+      "linear-gradient(#111827,#000000)";
 
   }
 
@@ -1312,7 +1480,7 @@ function updateShirt(select){
 
     shirt.style.background =
 
-      "linear-gradient(#7dd3fc,#38bdf8)";
+      "linear-gradient(#38bdf8,#0284c7)";
 
   }
 
@@ -1324,19 +1492,11 @@ function updateShirt(select){
 
   }
 
-  else if(club === "Everton"){
+  else if(club === "Bournemouth"){
 
     shirt.style.background =
 
-      "linear-gradient(#1d4ed8,#1e3a8a)";
-
-  }
-
-  else if(club === "Crystal Palace"){
-
-    shirt.style.background =
-
-      "repeating-linear-gradient(90deg,#1d4ed8 0 10px,#dc2626 10px 20px)";
+      "linear-gradient(#d4003a,#640723)";
 
   }
 
@@ -1420,7 +1580,7 @@ function setFormation(){
 
 /* =========================
 
-   LOCK TEAM
+   SAVE TEAM
 
 ========================= */
 
@@ -1444,25 +1604,17 @@ function lockTeam(){
 
     }
 
-    const selectedPlayer =
+    let playerName = select.value;
 
-      players.find(player =>
+    let club =
 
-        player.name === select.value
-
-      );
-
-    let club = selectedPlayer
-
-      ? selectedPlayer.club
-
-      : "";
+      playerTeams[playerName] || playerName;
 
     if(clubs.includes(club)){
 
       document.getElementById("status").innerText =
 
-        "STRICTLY one player per club.";
+        "Maximum 1 player per club.";
 
       return;
 
