@@ -10,742 +10,973 @@
 
 <title>Game of Opinions</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
 <style>
 
-body {
+/* =========================
 
-  margin: 0;
+   GLOBAL
 
-  background: #0b1020;
+========================= */
 
-  color: white;
+*{
 
-  font-family: 'Segoe UI', Arial, sans-serif;
+  margin:0;
 
-}
+  padding:0;
 
-/* HEADER */
-
-header {
-
-  display: flex;
-
-  justify-content: space-between;
-
-  align-items: center;
-
-  padding: 18px 40px;
-
-  border-bottom: 1px solid #1f2937;
+  box-sizing:border-box;
 
 }
 
-.logo {
+body{
 
-  font-size: 26px;
+  background:#02060d;
 
-  font-weight: bold;
+  color:white;
 
-  white-space: nowrap;
+  font-family:'Inter',sans-serif;
 
-}
-
-.logo span {
-
-  color: gold;
+  overflow-x:hidden;
 
 }
 
-nav {
+/* =========================
 
-  display: flex;
+   STADIUM BACKGROUND
 
-  gap: 24px;
+========================= */
 
-  flex-wrap: nowrap;
+.hero{
 
-}
+  min-height:100vh;
 
-nav a {
+  position:relative;
 
-  color: white;
+  overflow:hidden;
 
-  text-decoration: none;
+  padding-bottom:80px;
 
-  transition: 0.2s;
+  background:
 
-  font-size: 14px;
+  linear-gradient(
 
-  white-space: nowrap;
+    to bottom,
 
-}
+    rgba(0,0,0,0.78),
 
-nav a:hover {
+    rgba(0,0,0,0.70)
 
-  opacity: 0.7;
+  ),
 
-}
+  url("https://images.unsplash.com/photo-1508098682722-e99c643e7485?q=80&w=1600&auto=format&fit=crop");
 
-/* HERO */
+  background-size:cover;
 
-.hero {
-
-  padding: 50px 40px 80px;
-
-  position: relative;
-
-  overflow: hidden;
-
-  background: radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 26%), linear-gradient(180deg, #040812 0%, #07141f 35%, #071a29 100%);
+  background-position:center;
 
 }
 
-.hero::before {
+.hero::before{
 
-  content: "";
+  content:"";
 
-  position: absolute;
+  position:absolute;
 
-  inset: 0;
+  inset:0;
 
-  background: 
-    radial-gradient(ellipse 600px 400px at 50% -50%, rgba(255,255,255,0.04), transparent 35%),
-    radial-gradient(circle at 20% 40%, rgba(86, 255, 119, 0.08), transparent 20%),
-    radial-gradient(circle at 80% 30%, rgba(255,255,255,0.06), transparent 18%),
-    repeating-radial-gradient(circle at 15% -10%, rgba(255,255,255,0.02) 0px, transparent 80px, transparent 100px),
-    repeating-radial-gradient(circle at 85% -10%, rgba(255,255,255,0.02) 0px, transparent 80px, transparent 100px),
-    repeating-radial-gradient(circle at 10% -5%, rgba(255,255,255,0.015) 0px, transparent 120px, transparent 150px),
-    repeating-radial-gradient(circle at 90% -8%, rgba(255,255,255,0.015) 0px, transparent 120px, transparent 150px);
+  background:
 
-  pointer-events: none;
+  radial-gradient(circle at top,
 
-}
+  rgba(168,255,46,0.15),
 
-.hero::after {
+  transparent 35%);
 
-  content: "";
-
-  position: absolute;
-
-  left: 50%;
-
-  top: 0;
-
-  width: 120%;
-
-  height: 100%;
-
-  background: radial-gradient(circle at top, rgba(255,255,255,0.05), transparent 22%);
-
-  transform: translateX(-50%);
-
-  pointer-events: none;
+  pointer-events:none;
 
 }
 
-.hero-grid {
+/* =========================
 
-  display: grid;
+   HEADER
 
-  grid-template-columns: 1.1fr 0.9fr;
+========================= */
 
-  align-items: center;
+header{
 
-  gap: 40px;
+  position:relative;
 
-  max-width: 1180px;
+  z-index:2;
 
-  margin: auto;
+  display:flex;
 
-  position: relative;
+  justify-content:space-between;
 
-  z-index: 1;
+  align-items:center;
 
-}
-
-.hero-copy {
-
-  text-align: left;
+  padding:28px 70px;
 
 }
 
-.hero h1 {
+.logo{
 
-  font-size: 58px;
+  font-family:'Anton',sans-serif;
 
-  line-height: 1.02;
+  font-size:44px;
 
-  max-width: 620px;
-
-  margin-bottom: 24px;
+  letter-spacing:1px;
 
 }
 
-.hero h1 strong {
+.logo span{
 
-  display: block;
-
-  color: #a7ff3f;
+  color:#b4ff2b;
 
 }
 
-.hero p {
+nav{
 
-  color: #cfd8e6;
+  display:flex;
 
-  font-size: 19px;
+  align-items:center;
 
-  max-width: 620px;
-
-  margin: 0 0 36px;
-
-  line-height: 1.7;
+  gap:42px;
 
 }
 
-.hero-buttons {
+nav a{
 
-  margin-top: 10px;
+  color:rgba(255,255,255,0.82);
 
-}
+  text-decoration:none;
 
-.hero-buttons a {
+  font-size:15px;
 
-  text-decoration: none;
+  font-weight:500;
 
-  padding: 14px 28px;
-
-  border-radius: 999px;
-
-  margin-right: 16px;
-
-  display: inline-block;
-
-  font-weight: 700;
-
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:0.2s;
 
 }
 
-.primary-btn {
+nav a:hover{
 
-  background: #a7ff3f;
-
-  color: #041102;
+  color:white;
 
 }
 
-.secondary-btn {
+.waitlist-btn{
 
-  border: 1px solid rgba(255,255,255,0.18);
+  background:#b4ff2b;
 
-  color: white;
+  color:black;
 
-}
+  padding:16px 34px;
 
-.hero-buttons a:hover {
+  border-radius:999px;
 
-  transform: translateY(-1px) scale(1.02);
+  font-weight:800;
 
-}
+  text-decoration:none;
 
-.hero-visual {
-
-  display: flex;
-
-  justify-content: center;
+  transition:0.2s;
 
 }
 
-.phone-mockup {
+.waitlist-btn:hover{
 
-  width: 340px;
-
-  max-width: 100%;
-
-  border-radius: 46px;
-
-  background: linear-gradient(180deg, #111827 0%, #0b1421 100%);
-
-  border: 1px solid rgba(255,255,255,0.1);
-
-  box-shadow: 0 30px 60px rgba(0,0,0,0.35);
-
-  position: relative;
-
-  overflow: hidden;
+  transform:translateY(-2px);
 
 }
 
-.phone-mockup::before {
+/* =========================
 
-  content: "";
+   HERO GRID
 
-  position: absolute;
+========================= */
 
-  top: 14px;
+.hero-grid{
 
-  left: 50%;
+  position:relative;
 
-  transform: translateX(-50%);
+  z-index:2;
 
-  width: 96px;
+  max-width:1400px;
 
-  height: 8px;
+  margin:auto;
 
-  border-radius: 999px;
+  padding:50px 70px 0;
 
-  background: rgba(255,255,255,0.12);
+  display:grid;
 
-}
+  grid-template-columns:1.1fr 0.9fr;
 
-.phone-screen {
+  align-items:center;
 
-  position: relative;
-
-  padding: 24px 18px 18px;
-
-  background: linear-gradient(180deg, #031114 0%, #081b26 30%, #091f2d 100%);
-
-  min-height: 620px;
+  gap:20px;
 
 }
 
-.phone-header {
+/* =========================
 
-  display: flex;
+   HERO COPY
 
-  justify-content: space-between;
+========================= */
 
-  align-items: center;
+.hero-copy h1{
 
-  color: #d8e3f2;
+  font-family:'Anton',sans-serif;
 
-  font-size: 13px;
+  font-size:92px;
 
-  margin-bottom: 18px;
+  line-height:0.95;
 
-}
+  letter-spacing:1px;
 
-.phone-header span {
-
-  opacity: 0.8;
+  max-width:700px;
 
 }
 
-.phone-screen::before {
+.hero-copy h1 strong{
 
-  content: "";
+  display:block;
 
-  position: absolute;
-
-  inset: 0;
-
-  background: radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 22%), linear-gradient(180deg, rgba(0,0,0,0.08), transparent 35%);
-
-  pointer-events: none;
+  color:#b4ff2b;
 
 }
 
-.pitch-panel {
+.hero-copy p{
 
-  position: relative;
+  margin-top:34px;
 
-  background: #0f2217;
+  color:rgba(255,255,255,0.86);
 
-  border: 1px solid rgba(255,255,255,0.08);
+  font-size:29px;
 
-  border-radius: 28px;
+  line-height:1.5;
 
-  padding: 18px;
-
-  overflow: hidden;
+  max-width:620px;
 
 }
 
-.pitch-panel::before {
+.hero-buttons{
 
-  content: "";
+  margin-top:42px;
 
-  position: absolute;
+  display:flex;
 
-  inset: 0;
+  gap:18px;
 
-  background-image: linear-gradient(0deg, rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
-
-  background-size: 100% 18px, 18px 100%;
-
-  opacity: 0.25;
+  flex-wrap:wrap;
 
 }
 
-.pitch-field {
+.hero-buttons a{
 
-  position: relative;
+  text-decoration:none;
 
-  min-height: 420px;
+  padding:18px 34px;
 
-  display: grid;
+  border-radius:999px;
 
-  place-items: center;
+  font-weight:800;
 
-}
-
-.pitch-field::before {
-
-  content: "";
-
-  position: absolute;
-
-  inset: 16px;
-
-  border: 1px solid rgba(255,255,255,0.18);
-
-  border-radius: 28px;
+  transition:0.2s;
 
 }
 
-.pitch-row {
+.primary-btn{
 
-  display: grid;
+  background:#b4ff2b;
 
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-
-  gap: 8px;
-
-  width: 100%;
-
-  position: relative;
-
-  z-index: 1;
+  color:black;
 
 }
 
-.pitch-row.top {
+.secondary-btn{
 
-  display: flex;
+  border:1px solid rgba(255,255,255,0.18);
 
-  justify-content: center;
+  color:white;
 
-  margin-bottom: 18px;
+  background:rgba(255,255,255,0.05);
 
-}
-
-.pitch-row.middle { margin-bottom: 18px; }
-
-.pitch-card {
-
-  background: rgba(0,0,0,0.45);
-
-  border: 1px solid rgba(255,255,255,0.14);
-
-  border-radius: 16px;
-
-  padding: 8px 6px;
-
-  color: white;
-
-  font-size: 11px;
-
-  text-align: center;
+  backdrop-filter:blur(8px);
 
 }
 
-.pitch-card strong {
+.hero-buttons a:hover{
 
-  display: block;
-
-  margin-bottom: 4px;
-
-  font-size: 12px;
+  transform:translateY(-2px);
 
 }
 
-.pitch-card span {
+.sub-text{
 
-  display: inline-block;
+  margin-top:34px;
 
-  margin-top: 4px;
+  color:rgba(255,255,255,0.68);
 
-  color: #a7ff3f;
-
-  font-size: 10px;
-
-  opacity: 0.95;
+  font-size:18px;
 
 }
 
-.pitch-bottom {
+/* =========================
 
-  display: grid;
+   PHONE MOCKUPS
 
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+========================= */
 
-  gap: 8px;
+.hero-visual{
 
-  margin-top: 20px;
+  position:relative;
 
-}
+  display:flex;
 
-.pitch-bottom .pitch-card {
+  justify-content:center;
 
-  min-height: 46px;
+  align-items:center;
 
-}
-
-/* FEATURE ICONS */
-
-.card {
-
-  position: relative;
+  min-height:760px;
 
 }
 
-.card-icon {
+.phone{
 
-  display: inline-flex;
+  position:absolute;
 
-  align-items: center;
+  width:320px;
 
-  justify-content: center;
+  height:650px;
 
-  width: 46px;
+  border-radius:42px;
 
-  height: 46px;
+  background:#050b14;
 
-  background: rgba(167,255,63,0.12);
+  border:1px solid rgba(255,255,255,0.1);
 
-  border-radius: 16px;
+  box-shadow:
 
-  color: #a7ff3f;
+  0 40px 80px rgba(0,0,0,0.6),
 
-  font-size: 20px;
+  inset 0 0 0 1px rgba(255,255,255,0.04);
 
-  margin-bottom: 18px;
-
-}
-
-/* FEATURES */
-
-.section {
-
-  padding: 60px 40px;
+  overflow:hidden;
 
 }
 
-.section-title {
+.phone::before{
 
-  font-size: 36px;
+  content:"";
 
-  margin-bottom: 30px;
+  position:absolute;
 
-  text-align: center;
+  top:14px;
 
-}
+  left:50%;
 
-.features {
+  transform:translateX(-50%);
 
-  display: grid;
+  width:110px;
 
-  grid-template-columns: repeat(3, 1fr);
+  height:8px;
 
-  gap: 25px;
+  border-radius:999px;
 
-}
-
-.card {
-
-  background: #111827;
-
-  border: 1px solid #1f2937;
-
-  border-radius: 18px;
-
-  padding: 30px;
-
-  transition: 0.2s;
+  background:rgba(255,255,255,0.1);
 
 }
 
-.card:hover {
+.phone-left{
 
-  transform: translateY(-5px);
+  left:10px;
 
-  border-color: gold;
+  top:120px;
 
-}
+  transform:rotate(-7deg);
 
-.card h3 {
-
-  margin-top: 0;
-
-  color: gold;
+  z-index:1;
 
 }
 
-.card p {
+.phone-right{
 
-  color: #cbd5e1;
+  right:10px;
 
-  line-height: 1.5;
+  top:20px;
 
-}
+  transform:rotate(5deg);
 
-/* LEADERBOARD */
-
-.leaderboard {
-
-  max-width: 700px;
-
-  margin: auto;
-
-  background: #111827;
-
-  border-radius: 18px;
-
-  overflow: hidden;
-
-  border: 1px solid #1f2937;
+  z-index:2;
 
 }
 
-.leader-row {
+/* =========================
 
-  display: flex;
+   PHONE CONTENT
 
-  justify-content: space-between;
+========================= */
 
-  padding: 18px 24px;
+.phone-screen{
 
-  border-bottom: 1px solid #1f2937;
+  padding:36px 18px 20px;
 
-}
-
-.leader-row:last-child {
-
-  border-bottom: none;
+  height:100%;
 
 }
 
-.rank {
+.phone-header{
 
-  color: gold;
+  display:flex;
 
-  font-weight: bold;
+  justify-content:space-between;
 
-}
+  align-items:center;
 
-/* CTA */
+  margin-bottom:18px;
 
-.cta {
+  font-size:13px;
 
-  text-align: center;
-
-  padding: 80px 40px;
+  color:white;
 
 }
 
-.cta h2 {
+.phone-title{
 
-  font-size: 42px;
+  font-size:38px;
 
-}
-
-.cta a {
-
-  display: inline-block;
-
-  margin-top: 25px;
-
-  background: gold;
-
-  color: black;
-
-  padding: 18px 32px;
-
-  border-radius: 10px;
-
-  text-decoration: none;
-
-  font-weight: bold;
-
-  transition: 0.2s;
+  font-weight:800;
 
 }
 
-.cta a:hover {
+/* =========================
 
-  transform: scale(1.05);
+   SEASON PICKS PHONE
+
+========================= */
+
+.pick-card{
+
+  background:rgba(255,255,255,0.05);
+
+  border:1px solid rgba(255,255,255,0.06);
+
+  border-radius:18px;
+
+  padding:16px;
+
+  margin-bottom:12px;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:14px;
 
 }
 
-/* MOBILE */
+.pick-icon{
 
-@media (max-width: 900px) {
+  width:46px;
 
-  .hero-grid {
+  height:46px;
 
-    grid-template-columns: 1fr;
+  border-radius:14px;
+
+  background:rgba(180,255,43,0.12);
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  font-size:22px;
+
+}
+
+.pick-card h4{
+
+  font-size:15px;
+
+  margin-bottom:3px;
+
+}
+
+.pick-card p{
+
+  color:rgba(255,255,255,0.7);
+
+  font-size:13px;
+
+}
+
+/* =========================
+
+   PITCH PHONE
+
+========================= */
+
+.pitch{
+
+  position:relative;
+
+  margin-top:16px;
+
+  height:520px;
+
+  border-radius:24px;
+
+  overflow:hidden;
+
+  background:
+
+  linear-gradient(180deg,#17652c,#0e4f1f);
+
+  border:1px solid rgba(255,255,255,0.08);
+
+}
+
+.pitch::before{
+
+  content:"";
+
+  position:absolute;
+
+  inset:0;
+
+  background:
+
+  repeating-linear-gradient(
+
+    to bottom,
+
+    rgba(255,255,255,0.04) 0px,
+
+    rgba(255,255,255,0.04) 24px,
+
+    transparent 24px,
+
+    transparent 48px
+
+  );
+
+}
+
+.pitch::after{
+
+  content:"";
+
+  position:absolute;
+
+  top:50%;
+
+  left:0;
+
+  width:100%;
+
+  height:1px;
+
+  background:rgba(255,255,255,0.16);
+
+}
+
+/* Centre Circle */
+
+.centre-circle{
+
+  position:absolute;
+
+  width:90px;
+
+  height:90px;
+
+  border:1px solid rgba(255,255,255,0.18);
+
+  border-radius:50%;
+
+  top:50%;
+
+  left:50%;
+
+  transform:translate(-50%,-50%);
+
+}
+
+/* Pitch Layout */
+
+.pitch-area{
+
+  position:relative;
+
+  z-index:2;
+
+  height:100%;
+
+  display:flex;
+
+  flex-direction:column;
+
+  justify-content:space-evenly;
+
+  padding:20px 10px;
+
+}
+
+.pitch-row{
+
+  display:flex;
+
+  justify-content:center;
+
+  gap:8px;
+
+}
+
+/* Player Card */
+
+.player{
+
+  width:58px;
+
+  text-align:center;
+
+}
+
+.shirt{
+
+  width:42px;
+
+  height:42px;
+
+  margin:auto;
+
+  border-radius:10px 10px 14px 14px;
+
+  position:relative;
+
+  box-shadow:0 8px 18px rgba(0,0,0,0.4);
+
+}
+
+.shirt::before,
+
+.shirt::after{
+
+  content:"";
+
+  position:absolute;
+
+  width:10px;
+
+  height:12px;
+
+  top:7px;
+
+  background:inherit;
+
+}
+
+.shirt::before{
+
+  left:-8px;
+
+  border-radius:6px 0 0 6px;
+
+}
+
+.shirt::after{
+
+  right:-8px;
+
+  border-radius:0 6px 6px 0;
+
+}
+
+/* CLUB COLOURS */
+
+.arsenal{
+
+  background:linear-gradient(#ef4444,#991b1b);
+
+}
+
+.city{
+
+  background:linear-gradient(#7dd3fc,#0284c7);
+
+}
+
+.liverpool{
+
+  background:linear-gradient(#dc2626,#7f1d1d);
+
+}
+
+.spurs{
+
+  background:linear-gradient(#f8fafc,#94a3b8);
+
+}
+
+.newcastle{
+
+  background:linear-gradient(#ffffff,#111827);
+
+}
+
+.chelsea{
+
+  background:linear-gradient(#2563eb,#1d4ed8);
+
+}
+
+.villa{
+
+  background:linear-gradient(#7c3aed,#5b21b6);
+
+}
+
+.player-name{
+
+  margin-top:7px;
+
+  font-size:10px;
+
+  font-weight:700;
+
+  background:rgba(0,0,0,0.55);
+
+  border-radius:999px;
+
+  padding:4px 6px;
+
+  white-space:nowrap;
+
+}
+
+/* =========================
+
+   FEATURE BOXES
+
+========================= */
+
+.features{
+
+  position:relative;
+
+  z-index:2;
+
+  max-width:1400px;
+
+  margin:auto;
+
+  padding:0 70px;
+
+  margin-top:20px;
+
+  display:grid;
+
+  grid-template-columns:repeat(3,1fr);
+
+  gap:22px;
+
+}
+
+.feature-card{
+
+  background:rgba(7,10,18,0.92);
+
+  border:1px solid rgba(180,255,43,0.15);
+
+  border-radius:24px;
+
+  padding:34px;
+
+  backdrop-filter:blur(12px);
+
+  box-shadow:0 20px 50px rgba(0,0,0,0.4);
+
+}
+
+.feature-icon{
+
+  width:68px;
+
+  height:68px;
+
+  border-radius:20px;
+
+  background:rgba(180,255,43,0.08);
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  font-size:30px;
+
+  color:#b4ff2b;
+
+  margin-bottom:24px;
+
+}
+
+.feature-card h3{
+
+  font-size:34px;
+
+  margin-bottom:16px;
+
+}
+
+.feature-card p{
+
+  color:rgba(255,255,255,0.72);
+
+  line-height:1.7;
+
+  font-size:19px;
+
+}
+
+/* =========================
+
+   MOBILE
+
+========================= */
+
+@media(max-width:1100px){
+
+  .hero-grid{
+
+    grid-template-columns:1fr;
 
   }
 
-  .hero {
+  .hero-copy{
 
-    padding: 45px 24px 70px;
-
-  }
-
-  .hero h1 {
-
-    font-size: 44px;
+    text-align:center;
 
   }
 
-  .hero p {
+  .hero-copy h1{
 
-    font-size: 17px;
+    margin:auto;
 
-  }
-
-  .phone-mockup {
-
-    width: 100%;
-
-    max-width: 420px;
+    font-size:72px;
 
   }
 
-  .features {
+  .hero-copy p{
 
-    grid-template-columns: 1fr;
+    margin-left:auto;
+
+    margin-right:auto;
+
+  }
+
+  .hero-buttons{
+
+    justify-content:center;
+
+  }
+
+  .sub-text{
+
+    text-align:center;
+
+  }
+
+  .hero-visual{
+
+    margin-top:40px;
+
+    min-height:700px;
+
+  }
+
+  .features{
+
+    grid-template-columns:1fr;
 
   }
 
 }
 
-@media (max-width: 640px) {
+@media(max-width:768px){
 
-  header {
+  header{
 
-    flex-direction: column;
+    flex-direction:column;
 
-    gap: 12px;
+    gap:18px;
 
-  }
-
-  nav {
-
-    flex-wrap: wrap;
-
-    justify-content: center;
-
-    gap: 12px;
+    padding:22px;
 
   }
 
-  nav a {
+  nav{
 
-    font-size: 13px;
+    gap:18px;
+
+    flex-wrap:wrap;
+
+    justify-content:center;
+
+  }
+
+  .hero-grid{
+
+    padding:30px 22px 0;
+
+  }
+
+  .hero-copy h1{
+
+    font-size:54px;
+
+  }
+
+  .hero-copy p{
+
+    font-size:19px;
+
+  }
+
+  .phone{
+
+    width:260px;
+
+    height:560px;
+
+  }
+
+  .phone-left{
+
+    left:0;
+
+  }
+
+  .phone-right{
+
+    right:0;
+
+  }
+
+  .features{
+
+    padding:0 22px;
+
+  }
+
+  .feature-card h3{
+
+    font-size:26px;
 
   }
 
@@ -757,269 +988,379 @@ nav a:hover {
 
 <body>
 
+<section class="hero">
+
 <!-- HEADER -->
 
 <header>
 
 <div class="logo">
 
-  GAME <span>OF OPINIONS</span>
+GAME <span>OF OPINIONS</span>
 
 </div>
 
 <nav>
 
-  <a href="index.html">Home</a>
+<a href="#">How It Works</a>
 
-  <a href="myxi.html">My XI</a>
+<a href="#">Scoring</a>
 
-  <a href="season.html">Season Picks</a>
+<a href="#">Leagues</a>
 
-  <a href="league.html">League</a>
+<a href="#">Login</a>
+
+<a href="myxi.html" class="waitlist-btn">
+
+Join the Waitlist
+
+</a>
 
 </nav>
 
 </header>
 
-<!-- HERO -->
+<!-- HERO GRID -->
 
-<section class="hero">
+<div class="hero-grid">
 
-  <div class="hero-grid">
+<!-- LEFT -->
 
-    <div class="hero-copy">
+<div class="hero-copy">
 
-      <h1>
+<h1>
 
-        Your football opinions.<br>
+Your football opinions.
 
-        <strong>Finally worth something.</strong>
+<strong>Finally worth something.</strong>
 
-      </h1>
+</h1>
 
-      <p>
+<p>
 
-        Pick your XI, lock your season picks, and beat your mates over a full season.
+Pick your XI, lock your season picks,
 
-        No prices. No templates. Just football opinions.
+and beat your mates over a full season.
 
-      </p>
+</p>
 
-      <div class="hero-buttons">
+<div class="hero-buttons">
 
-        <a href="myxi.html" class="primary-btn">
+<a href="myxi.html" class="primary-btn">
 
-          Build Your XI
+Join the Waitlist
 
-        </a>
+</a>
 
-        <a href="season.html" class="secondary-btn">
+<a href="season.html" class="secondary-btn">
 
-          Season Picks
+See How It Works
 
-        </a>
+</a>
 
-      </div>
+</div>
 
-    </div>
+<div class="sub-text">
 
-    <div class="hero-visual">
+No prices. No templates. Just football opinions.
 
-      <div class="phone-mockup">
+</div>
 
-        <div class="phone-screen">
+</div>
 
-          <div class="phone-header">
+<!-- RIGHT -->
 
-            <span>Your XI</span>
+<div class="hero-visual">
 
-            <span>Max 1 per club</span>
+<!-- LEFT PHONE -->
 
-          </div>
+<div class="phone phone-left">
 
-          <div class="pitch-panel">
+<div class="phone-screen">
 
-            <div class="pitch-field">
+<div class="phone-header">
 
-              <div class="pitch-row top">
+<span>9:41</span>
 
-                <div class="pitch-card"><strong>Ramsdale</strong><span>GK</span></div>
+<span>Season Picks</span>
 
-              </div>
+</div>
 
-              <div class="pitch-row middle">
+<div class="pick-card">
 
-                <div class="pitch-card"><strong>Trippier</strong><span>DEF</span></div>
+<div class="pick-icon">⚽</div>
 
-                <div class="pitch-card"><strong>Dias</strong><span>DEF</span></div>
+<div>
 
-                <div class="pitch-card"><strong>Saliba</strong><span>DEF</span></div>
+<h4>Top Scorer</h4>
 
-                <div class="pitch-card"><strong>Pedro</strong><span>DEF</span></div>
+<p>Haaland</p>
 
-              </div>
+</div>
 
-              <div class="pitch-bottom">
+</div>
 
-                <div class="pitch-card"><strong>Ødegaard</strong><span>MID</span></div>
+<div class="pick-card">
 
-                <div class="pitch-card"><strong>Rice</strong><span>MID</span></div>
+<div class="pick-icon">🎯</div>
 
-                <div class="pitch-card"><strong>Palmer</strong><span>MID</span></div>
+<div>
 
-                <div class="pitch-card"><strong>Salah</strong><span>FWD</span></div>
+<h4>Top Assists</h4>
 
-              </div>
+<p>Palmer</p>
 
-            </div>
+</div>
 
-          </div>
+</div>
 
-        </div>
+<div class="pick-card">
 
-      </div>
+<div class="pick-icon">🏆</div>
 
-    </div>
+<div>
 
-  </div>
+<h4>FA Cup Winner</h4>
 
-</section>
+<p>Arsenal</p>
+
+</div>
+
+</div>
+
+<div class="pick-card">
+
+<div class="pick-icon">🧤</div>
+
+<div>
+
+<h4>Golden Glove</h4>
+
+<p>Alisson</p>
+
+</div>
+
+</div>
+
+<div class="pick-card">
+
+<div class="pick-icon">🟥</div>
+
+<div>
+
+<h4>Most Red Cards</h4>
+
+<p>Chelsea</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- RIGHT PHONE -->
+
+<div class="phone phone-right">
+
+<div class="phone-screen">
+
+<div class="phone-header">
+
+<span>←</span>
+
+<span>Your XI</span>
+
+<span style="color:#b4ff2b;">● Max 1 per club</span>
+
+</div>
+
+<div class="pitch">
+
+<div class="centre-circle"></div>
+
+<div class="pitch-area">
+
+<!-- GK -->
+
+<div class="pitch-row">
+
+<div class="player">
+
+<div class="shirt arsenal"></div>
+
+<div class="player-name">Ramsdale</div>
+
+</div>
+
+</div>
+
+<!-- DEF -->
+
+<div class="pitch-row">
+
+<div class="player">
+
+<div class="shirt newcastle"></div>
+
+<div class="player-name">Trippier</div>
+
+</div>
+
+<div class="player">
+
+<div class="shirt city"></div>
+
+<div class="player-name">Dias</div>
+
+</div>
+
+<div class="player">
+
+<div class="shirt arsenal"></div>
+
+<div class="player-name">Saliba</div>
+
+</div>
+
+<div class="player">
+
+<div class="shirt spurs"></div>
+
+<div class="player-name">Porro</div>
+
+</div>
+
+</div>
+
+<!-- MID -->
+
+<div class="pitch-row">
+
+<div class="player">
+
+<div class="shirt arsenal"></div>
+
+<div class="player-name">Ødegaard</div>
+
+</div>
+
+<div class="player">
+
+<div class="shirt arsenal"></div>
+
+<div class="player-name">Rice</div>
+
+</div>
+
+<div class="player">
+
+<div class="shirt chelsea"></div>
+
+<div class="player-name">Palmer</div>
+
+</div>
+
+</div>
+
+<!-- FWD -->
+
+<div class="pitch-row">
+
+<div class="player">
+
+<div class="shirt liverpool"></div>
+
+<div class="player-name">Salah</div>
+
+</div>
+
+<div class="player">
+
+<div class="shirt city"></div>
+
+<div class="player-name">Haaland</div>
+
+</div>
+
+<div class="player">
+
+<div class="shirt villa"></div>
+
+<div class="player-name">Watkins</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
 
 <!-- FEATURES -->
 
-<section class="section">
-
-<h2 class="section-title">
-
-  Why Game of Opinions?
-
-</h2>
-
 <div class="features">
 
-  <div class="card">
+<div class="feature-card">
 
-    <span class="card-icon">11</span>
+<div class="feature-icon">👕</div>
 
-    <h3>One Player Per Club</h3>
+<h3>Pick a proper XI</h3>
 
-    <p>
+<p>
 
-      No stacking elite teams. Every selection matters.
+No budgets. No trend-following selections.
 
-      Build a truly unique XI.
+Just 11 players with only 1 from each club.
 
-    </p>
-
-  </div>
-
-  <div class="card">
-
-    <span class="card-icon">✓</span>
-
-    <h3>Season Predictions</h3>
-
-    <p>
-
-      Predict league winners, top scorers, clean sheets,
-
-      relegation battles and more.
-
-    </p>
-
-  </div>
-
-  <div class="card">
-
-    <span class="card-icon">🏆</span>
-
-    <h3>Opinion-Based Scoring</h3>
-
-    <p>
-
-      Beat template football thinking. Back your football knowledge
-
-      and make bold calls.
-
-    </p>
-
-  </div>
+</p>
 
 </div>
 
-</section>
+<div class="feature-card">
 
-<!-- LEADERBOARD -->
+<div class="feature-icon">📋</div>
 
-<section class="section">
+<h3>Make your season picks</h3>
 
-<h2 class="section-title">
+<p>
 
-  Live Leaderboard
+Season predictions that matter:
 
-</h2>
+top scorer, cup winners,
 
-<div class="leaderboard">
+first manager sacked and more.
 
-  <div class="leader-row">
-
-    <span class="rank">1.</span>
-
-    <span>FootyWizard</span>
-
-    <span>412 pts</span>
-
-  </div>
-
-  <div class="leader-row">
-
-    <span class="rank">2.</span>
-
-    <span>CaptainChaos</span>
-
-    <span>398 pts</span>
-
-  </div>
-
-  <div class="leader-row">
-
-    <span class="rank">3.</span>
-
-    <span>TikiTakaTom</span>
-
-    <span>376 pts</span>
-
-  </div>
-
-  <div class="leader-row">
-
-    <span class="rank">4.</span>
-
-    <span>WildcardWill</span>
-
-    <span>355 pts</span>
-
-  </div>
+</p>
 
 </div>
 
-</section>
+<div class="feature-card">
 
-<!-- CTA -->
+<div class="feature-icon">🏆</div>
 
-<section class="cta">
+<h3>Win on judgement</h3>
 
-<h2>
+<p>
 
-  Ready To Build Your XI?
+Beat your mates through pure football
 
-</h2>
+knowledge over the full season.
 
-<a href="myxi.html">
+</p>
 
-  Start Playing
+</div>
 
-</a>
+</div>
 
 </section>
 
