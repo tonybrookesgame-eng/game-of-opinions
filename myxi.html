@@ -2084,9 +2084,39 @@ function lockTeam(){
 
   }
 
-  document.getElementById("status").innerText =
+  /* SAVE FORMATION */
 
-    "Team saved successfully!";
+localStorage.setItem(
+
+  "formation",
+
+  document.getElementById("formation").value
+
+);
+
+/* SAVE ALL PLAYER SELECTIONS */
+
+const selections = [];
+
+document.querySelectorAll(".player select")
+
+.forEach(select => {
+
+  selections.push(select.value);
+
+});
+
+localStorage.setItem(
+
+  "savedTeam",
+
+  JSON.stringify(selections)
+
+);
+
+document.getElementById("status").innerText =
+
+  "Team saved successfully!";
 
 }
 
@@ -2098,7 +2128,50 @@ function lockTeam(){
 
 window.onload = function(){
 
+  /* LOAD FORMATION */
+
+  const savedFormation =
+
+    localStorage.getItem("formation");
+
+  if(savedFormation){
+
+    document.getElementById("formation").value =
+
+      savedFormation;
+
+  }
+
+  /* BUILD FORMATION */
+
   setFormation();
+
+  /* LOAD PLAYERS */
+
+  const savedTeam =
+
+    JSON.parse(localStorage.getItem("savedTeam"));
+
+  if(savedTeam){
+
+    const selects =
+
+      document.querySelectorAll(".player select");
+
+    selects.forEach((select,index) => {
+
+      if(savedTeam[index]){
+
+        select.value = savedTeam[index];
+
+        updateShirt(select);
+
+      }
+
+    });
+
+  }
+
   refreshDropdowns();
 
 };
