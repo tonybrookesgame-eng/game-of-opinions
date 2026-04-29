@@ -1174,7 +1174,7 @@ button:hover{
 
             <strong>GK</strong>
 
-            <select onchange="updateShirt(this)">
+            <select onchange="handleSelection(this)">
 
               <option>Select</option>
 
@@ -1242,29 +1242,147 @@ button:hover{
 
 const playerTeams = {
 
+  /* =========================
+
+     DEFENDERS
+
+  ========================= */
+
   "Saliba":"Arsenal",
 
   "Gabriel":"Arsenal",
 
+  "White":"Arsenal",
+
   "Van Dijk":"Liverpool",
 
-  "Walker":"Man City",
+  "Robertson":"Liverpool",
 
-  "Trippier":"Newcastle",
+  "Alexander-Arnold":"Liverpool",
+
+  "Dias":"Man City",
+
+  "Gvardiol":"Man City",
+
+  "Akanji":"Man City",
 
   "Romero":"Spurs",
 
+  "Porro":"Spurs",
+
+  "Udogie":"Spurs",
+
+  "Trippier":"Newcastle",
+
+  "Burn":"Newcastle",
+
+  "Schar":"Newcastle",
+
+  "Dalot":"Man Utd",
+
+  "Martinez":"Man Utd",
+
+  "Konsa":"Villa",
+
+  "Digne":"Villa",
+
+  "Colwill":"Chelsea",
+
+  "Cucurella":"Chelsea",
+
+  "Tarkowski":"Everton",
+
+  "Kilman":"West Ham",
+
+  "Pinnock":"Brentford",
+
+  "Estupinan":"Brighton",
+
+  "Zabarnyi":"Bournemouth",
+
+  "Guehi":"Crystal Palace",
+
+  "Robinson":"Fulham",
+
+  "Murillo":"Forest",
+
+  "Ait-Nouri":"Wolves",
+
+  "Greaves":"Ipswich",
+
+  "Faes":"Leicester",
+
+  "Walker":"Burnley",
+
+  /* =========================
+
+     MIDFIELDERS
+
+  ========================= */
+
   "Saka":"Arsenal",
 
-  "Palmer":"Chelsea",
+  "Odegaard":"Arsenal",
+
+  "Rice":"Arsenal",
 
   "Salah":"Liverpool",
 
+  "Mac Allister":"Liverpool",
+
+  "De Bruyne":"Man City",
+
+  "Foden":"Man City",
+
+  "Rodri":"Man City",
+
   "Son":"Spurs",
+
+  "Maddison":"Spurs",
+
+  "Bruno":"Man Utd",
+
+  "Palmer":"Chelsea",
+
+  "Caicedo":"Chelsea",
 
   "Bowen":"West Ham",
 
-  "Bruno":"Man Utd",
+  "Paqueta":"West Ham",
+
+  "Gordon":"Newcastle",
+
+  "Guimaraes":"Newcastle",
+
+  "Tielemans":"Villa",
+
+  "McNeil":"Everton",
+
+  "Mbeumo":"Brentford",
+
+  "Mitoma":"Brighton",
+
+  "Tavernier":"Bournemouth",
+
+  "Eze":"Crystal Palace",
+
+  "Iwobi":"Fulham",
+
+  "Gibbs-White":"Forest",
+
+  "Neto":"Wolves",
+
+  "Szmodics":"Ipswich",
+
+  "Ndidi":"Leicester",
+
+  "Brownhill":"Burnley",
+
+  /* =========================
+
+     FORWARDS
+
+  ========================= */
 
   "Haaland":"Man City",
 
@@ -1276,7 +1394,33 @@ const playerTeams = {
 
   "Solanke":"Bournemouth",
 
-  "Darwin":"Liverpool"
+  "Darwin":"Liverpool",
+
+  "Jesus":"Arsenal",
+
+  "Hojlund":"Man Utd",
+
+  "Richarlison":"Spurs",
+
+  "Calvert-Lewin":"Everton",
+
+  "Wissa":"Brentford",
+
+  "Joao Pedro":"Brighton",
+
+  "Mateta":"Crystal Palace",
+
+  "Muniz":"Fulham",
+
+  "Wood":"Forest",
+
+  "Cunha":"Wolves",
+
+  "Delap":"Ipswich",
+
+  "Vardy":"Leicester",
+
+  "Foster":"Burnley"
 
 };
 
@@ -1294,17 +1438,71 @@ function createPlayer(type){
 
     players = [
 
-      "Saliba",
+        "Saliba",
 
-      "Gabriel",
+  "Gabriel",
 
-      "Van Dijk",
+  "White",
 
-      "Walker",
+  "Van Dijk",
 
-      "Trippier",
+  "Robertson",
 
-      "Romero"
+  "Alexander-Arnold",
+
+  "Dias",
+
+  "Gvardiol",
+
+  "Akanji",
+
+  "Romero",
+
+  "Porro",
+
+  "Udogie",
+
+  "Trippier",
+
+  "Burn",
+
+  "Schar",
+
+  "Dalot",
+
+  "Martinez",
+
+  "Konsa",
+
+  "Digne",
+
+  "Colwill",
+
+  "Cucurella",
+
+  "Tarkowski",
+
+  "Kilman",
+
+  "Pinnock",
+
+  "Estupinan",
+
+  "Zabarnyi",
+
+  "Guehi",
+
+  "Robinson",
+
+  "Murillo",
+
+  "Ait-Nouri",
+
+  "Greaves",
+
+  "Faes",
+
+  "Walker"
 
     ];
 
@@ -1316,15 +1514,61 @@ function createPlayer(type){
 
       "Saka",
 
-      "Palmer",
+  "Odegaard",
 
-      "Salah",
+  "Rice",
 
-      "Son",
+  "Salah",
 
-      "Bowen",
+  "Mac Allister",
 
-      "Bruno"
+  "De Bruyne",
+
+  "Foden",
+
+  "Rodri",
+
+  "Son",
+
+  "Maddison",
+
+  "Bruno",
+
+  "Palmer",
+
+  "Caicedo",
+
+  "Bowen",
+
+  "Paqueta",
+
+  "Gordon",
+
+  "Guimaraes",
+
+  "Tielemans",
+
+  "McNeil",
+
+  "Mbeumo",
+
+  "Mitoma",
+
+  "Tavernier",
+
+  "Eze",
+
+  "Iwobi",
+
+  "Gibbs-White",
+
+  "Neto",
+
+  "Szmodics",
+
+  "Ndidi",
+
+  "Brownhill"
 
     ];
 
@@ -1336,15 +1580,41 @@ function createPlayer(type){
 
       "Haaland",
 
-      "Watkins",
+  "Watkins",
 
-      "Isak",
+  "Isak",
 
-      "Jackson",
+  "Jackson",
 
-      "Solanke",
+  "Solanke",
 
-      "Darwin"
+  "Darwin",
+
+  "Jesus",
+
+  "Hojlund",
+
+  "Richarlison",
+
+  "Calvert-Lewin",
+
+  "Wissa",
+
+  "Joao Pedro",
+
+  "Mateta",
+
+  "Muniz",
+
+  "Wood",
+
+  "Cunha",
+
+  "Delap",
+
+  "Vardy",
+
+  "Foster"
 
     ];
 
@@ -1368,7 +1638,7 @@ function createPlayer(type){
 
       <strong>${type}</strong>
 
-      <select onchange="updateShirt(this)">
+      <select onchange="handleSelection(this)">
 
         ${options}
 
@@ -1382,9 +1652,117 @@ function createPlayer(type){
 
 /* =========================
 
-   UPDATE SHIRT
+HANDLE SELECTION
 
 ========================= */
+
+function handleSelection(select){
+
+  updateShirt(select);
+
+  refreshDropdowns();
+
+}
+
+/* =========================
+
+   REFRESH DROPDOWNS
+
+========================= */
+
+function refreshDropdowns(){
+
+  const selects =
+
+    document.querySelectorAll(".player select");
+
+  let selectedPlayers = [];
+
+  let selectedClubs = [];
+
+  /* GET CURRENT SELECTIONS */
+
+  selects.forEach(select => {
+
+    const player = select.value;
+
+    if(player !== "Select"){
+
+      selectedPlayers.push(player);
+
+      const club = playerTeams[player];
+
+      if(club){
+
+        selectedClubs.push(club);
+
+      }
+
+    }
+
+  });
+
+  /* LOOP THROUGH EVERY DROPDOWN */
+
+  selects.forEach(select => {
+
+    const currentValue = select.value;
+
+    const options = select.querySelectorAll("option");
+
+    options.forEach(option => {
+
+      const player = option.value;
+
+      /* NEVER DISABLE SELECT */
+
+      if(player === "Select"){
+
+        option.disabled = false;
+
+        return;
+
+      }
+
+      const club = playerTeams[player];
+
+      /* RESET */
+
+      option.disabled = false;
+
+      /* PREVENT SAME PLAYER */
+
+      if(
+
+        selectedPlayers.includes(player) &&
+
+        player !== currentValue
+
+      ){
+
+        option.disabled = true;
+
+      }
+
+      /* PREVENT SAME CLUB */
+
+      if(
+
+        selectedClubs.includes(club) &&
+
+        player !== currentValue
+
+      ){
+
+        option.disabled = true;
+
+      }
+
+    });
+
+  });
+
+}
 
 function updateShirt(select){
 
@@ -1500,6 +1878,86 @@ function updateShirt(select){
 
   }
 
+  else if(club === "Everton"){
+
+    shirt.style.background =
+
+      "linear-gradient(#003399,#001f66)";
+
+  }
+
+  else if(club === "Brentford"){
+
+    shirt.style.background =
+
+      "linear-gradient(#d71920,#7a0c10)";
+
+  }
+
+  else if(club === "Brighton"){
+
+    shirt.style.background =
+
+      "linear-gradient(#0057b8,#ffffff)";
+
+  }
+
+  else if(club === "Crystal Palace"){
+
+    shirt.style.background =
+
+      "linear-gradient(#1b458f,#c4122e)";
+
+  }
+
+  else if(club === "Fulham"){
+
+    shirt.style.background =
+
+      "linear-gradient(#ffffff,#111111)";
+
+  }
+
+  else if(club === "Forest"){
+
+    shirt.style.background =
+
+      "linear-gradient(#dd0000,#8b0000)";
+
+  }
+
+  else if(club === "Wolves"){
+
+    shirt.style.background =
+
+      "linear-gradient(#fdb913,#231f20)";
+
+  }
+
+  else if(club === "Ipswich"){
+
+    shirt.style.background =
+
+      "linear-gradient(#0057b8,#ffffff)";
+
+  }
+
+  else if(club === "Leicester"){
+
+    shirt.style.background =
+
+      "linear-gradient(#003090,#ffffff)";
+
+  }
+
+  else if(club === "Burnley"){
+
+    shirt.style.background =
+
+      "linear-gradient(#6c1d45,#99d6ea)";
+
+  }
+
 }
 
 /* =========================
@@ -1576,6 +2034,8 @@ function setFormation(){
 
     ).join("");
 
+    refreshDropdowns();
+
 }
 
 /* =========================
@@ -1639,6 +2099,7 @@ function lockTeam(){
 window.onload = function(){
 
   setFormation();
+  refreshDropdowns();
 
 };
 
