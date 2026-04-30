@@ -561,13 +561,13 @@ MOBILE
 
 <div class="row">
 
-<div class="player"><div class="shirt"></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
 
-<div class="player"><div class="shirt"></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
 
-<div class="player"><div class="shirt"></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
 
-<div class="player"><div class="shirt"></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
 
 </div>
 
@@ -575,13 +575,13 @@ MOBILE
 
 <div class="row">
 
-<div class="player"><div class="shirt"></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
 
-<div class="player"><div class="shirt"></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
 
-<div class="player"><div class="shirt"></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
 
-<div class="player"><div class="shirt"></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
 
 </div>
 
@@ -649,7 +649,10 @@ MOBILE
 
 const playersByPos = {
   GK: [
-    { name: "Raya", club: "Arsenal" }, { name: "Martinez", club: "Aston Villa" }, { name: "Kepa", club: "Bournemouth" }, { name: "Flekken", club: "Brentford" }, { name: "Verbruggen", club: "Brighton" }, { name: "Sanchez", club: "Chelsea" }, { name: "Henderson", club: "Crystal Palace" }, { name: "Pickford", club: "Everton" }, { name: "Leno", club: "Fulham" }, { name: "Muric", club: "Ipswich" }, { name: "Hermansen", club: "Leicester" }, { name: "Alisson", club: "Liverpool" }, { name: "Ederson", club: "Man City" }, { name: "Onana", club: "Man Utd" }, { name: "Pope", club: "Newcastle" }, { name: "Sels", club: "Nott'm Forest" }, { name: "Ramsdale", club: "Southampton" }, { name: "Vicario", club: "Spurs" }, { name: "Areola", club: "West Ham" }, { name: "Johnstone", club: "Wolves" }
+    "Arsenal", "Aston Villa", "Bournemouth", "Brentford", "Brighton", 
+    "Chelsea", "Crystal Palace", "Everton", "Fulham", "Ipswich", 
+    "Leicester", "Liverpool", "Man City", "Man Utd", "Newcastle", 
+    "Nott'm Forest", "Southampton", "Spurs", "West Ham", "Wolves"
   ],
   DEF: [
     { name: "Saliba", club: "Arsenal" }, { name: "Gabriel", club: "Arsenal" }, { name: "Konsa", club: "Aston Villa" }, { name: "Senesi", club: "Bournemouth" }, { name: "Pinnock", club: "Brentford" }, { name: "Dunk", club: "Brighton" }, { name: "James", club: "Chelsea" }, { name: "Guehi", club: "Crystal Palace" }, { name: "Tarkowski", club: "Everton" }, { name: "Robinson", club: "Fulham" }, { name: "Greaves", club: "Ipswich" }, { name: "Faes", club: "Leicester" }, { name: "Van Dijk", club: "Liverpool" }, { name: "Alexander-Arnold", club: "Liverpool" }, { name: "Gvardiol", club: "Man City" }, { name: "Martinez", club: "Man Utd" }, { name: "Schar", club: "Newcastle" }, { name: "Murillo", club: "Nott'm Forest" }, { name: "Bednarek", club: "Southampton" }, { name: "Romero", club: "Spurs" }, { name: "Kilman", club: "West Ham" }, { name: "Toti", club: "Wolves" }
@@ -663,12 +666,12 @@ const playersByPos = {
 };
 
 const playerToClub = {};
-Object.values(playersByPos).flat().forEach(p => playerToClub[p.name] = p.club);
+Object.values(playersByPos).flat().forEach(p => { if(typeof p === 'object') playerToClub[p.name] = p.club; });
 
 function updateShirt(select) {
   const shirt = select.parentElement.querySelector('.shirt');
   const playerName = select.value;
-  const team = playerToClub[playerName];
+  const team = playerToClub[playerName] || playerName;
   
   const colors = {
     "Arsenal": "linear-gradient(#ef4444, #991b1b)",
@@ -699,14 +702,14 @@ function updateShirt(select) {
 function refreshDropdowns() {
   const teamSelects = document.querySelectorAll('.pitch select');
   const selectedClubs = Array.from(teamSelects)
-    .map(s => playerToClub[s.value])
-    .filter(val => val !== undefined);
+    .map(s => playerToClub[s.value] || s.value)
+    .filter(val => val !== undefined && val !== "Select");
 
   teamSelects.forEach(select => {
-    const currentClub = playerToClub[select.value];
+    const currentClub = playerToClub[select.value] || select.value;
     Array.from(select.options).forEach(option => {
       if (option.value === "Select") return;
-      const optionClub = playerToClub[option.value];
+      const optionClub = playerToClub[option.value] || option.value;
       option.disabled = selectedClubs.includes(optionClub) && optionClub !== currentClub;
     });
   });
@@ -719,8 +722,13 @@ function populatePlayers() {
     if (pos && playersByPos[pos]) {
       playersByPos[pos].forEach(p => {
         let opt = document.createElement('option');
-        opt.value = p.name;
-        opt.innerHTML = `${p.name} (${p.club})`;
+        if (typeof p === 'string') {
+          opt.value = p;
+          opt.innerHTML = p;
+        } else {
+          opt.value = p.name;
+          opt.innerHTML = `${p.name} (${p.club})`;
+        }
         s.appendChild(opt);
       });
     }
