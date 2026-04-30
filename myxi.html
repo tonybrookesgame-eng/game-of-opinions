@@ -601,7 +601,10 @@ MOBILE
 
 </div>
 
-<button onclick="clearTeam()" class="btn-clear">Clear Team Selection</button>
+<div class="pitch-actions">
+  <button onclick="clearTeam()" class="btn-clear">Clear Team</button>
+  <button onclick="saveTeam()">Save Team</button>
+</div>
 
 </div>
 
@@ -610,29 +613,19 @@ MOBILE
 <div class="weekly-panel">
 
 <h2>🔥 Weekly Picks</h2>
-
+<p style="font-size: 13px; color: #9ca3af; margin-bottom: 5px; display: flex; justify-content: space-between;">
+  <span>Club to score first:</span>
+  <span style="color: #c7ff38; font-weight: bold;">10 pts</span>
+</p>
 <select id="firstScorer">
-
 <option>Select</option>
-
-<option>Arsenal</option>
-
-<option>Man City</option>
-
-<option>Liverpool</option>
-
 </select>
-
-<input type="number" id="goalMinute" placeholder="Goal minute">
-
-<select id="biggestWin">
-
+<p style="font-size: 13px; color: #9ca3af; margin: 10px 0 5px; display: flex; justify-content: space-between;">
+  <span>Minute of first goal:</span>
+  <span style="color: #c7ff38; font-weight: bold;">40 pts</span>
+</p>
+<select id="goalMinute">
 <option>Select</option>
-
-<option>Arsenal</option>
-
-<option>Man City</option>
-
 </select>
 
 <button onclick="saveWeekly()">Save Picks</button>
@@ -735,6 +728,31 @@ function populatePlayers() {
   });
 }
 
+function populateWeeklyOptions() {
+  const clubSelect = document.getElementById('firstScorer');
+  const minuteSelect = document.getElementById('goalMinute');
+
+  // Populate Clubs using the GK list
+  playersByPos.GK.forEach(club => {
+    let opt = document.createElement('option');
+    opt.value = club;
+    opt.innerHTML = club;
+    clubSelect.appendChild(opt);
+  });
+
+  // Populate Minutes 1-90
+  for (let i = 1; i <= 90; i++) {
+    let opt = document.createElement('option');
+    opt.value = i;
+    opt.innerHTML = i;
+    minuteSelect.appendChild(opt);
+  }
+  let otherOpt = document.createElement('option');
+  otherOpt.value = "Other";
+  otherOpt.innerHTML = "Other (90+)";
+  minuteSelect.appendChild(otherOpt);
+}
+
 function clearTeam() {
   if (confirm("Are you sure you want to clear your entire team?")) {
     const teamSelects = document.querySelectorAll('.pitch select');
@@ -745,15 +763,20 @@ function clearTeam() {
   }
 }
 
+function saveTeam() {
+  const selects = document.querySelectorAll('.pitch select');
+  const team = Array.from(selects).map(s => s.value);
+  localStorage.setItem("myTeam", JSON.stringify(team));
+  alert("Team XI Saved!");
+}
+
 function saveWeekly(){
 
   const data = {
 
     first:firstScorer.value,
 
-    minute:goalMinute.value,
-
-    win:biggestWin.value
+    minute:goalMinute.value
 
   };
 
@@ -766,6 +789,18 @@ function saveWeekly(){
 window.onload=function(){
 
   populatePlayers();
+  populateWeeklyOptions();
+
+  const savedTeam = JSON.parse(localStorage.getItem("myTeam"));
+  if(savedTeam) {
+    const selects = document.querySelectorAll('.pitch select');
+    selects.forEach((s, i) => {
+      if(savedTeam[i] && savedTeam[i] !== "Select") {
+        s.value = savedTeam[i];
+        updateShirt(s);
+      }
+    });
+  }
 
   const saved=JSON.parse(localStorage.getItem("weekly"));
 
@@ -774,8 +809,6 @@ window.onload=function(){
     firstScorer.value=saved.first;
 
     goalMinute.value=saved.minute;
-
-    biggestWin.value=saved.win;
 
   }
 
