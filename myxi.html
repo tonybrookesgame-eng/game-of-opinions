@@ -482,6 +482,25 @@ button{
 
 }
 
+.pitch-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+.pitch-actions button {
+  flex: 1;
+  width: auto;
+}
+.btn-clear {
+  background: #f87171 !important;
+  color: white !important;
+}
+
+.btn-clear {
+  background: #f87171 !important;
+  color: white !important;
+}
+
 /* =========================
 
 MOBILE
@@ -547,10 +566,8 @@ MOBILE
 <div class="row">
 
 <div class="player">
-
 <div class="shirt"></div>
-<div class="player-label">Select GK</div>
-
+<select data-pos="GK" onchange="updateShirt(this)"><option>Select</option></select>
 </div>
 
 </div>
@@ -559,13 +576,13 @@ MOBILE
 
 <div class="row">
 
-<div class="player"><div class="shirt"></div><div class="player-label">Select DEF</div></div>
+<div class="player"><div class="shirt"></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
 
-<div class="player"><div class="shirt"></div><div class="player-label">Select DEF</div></div>
+<div class="player"><div class="shirt"></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
 
-<div class="player"><div class="shirt"></div><div class="player-label">Select DEF</div></div>
+<div class="player"><div class="shirt"></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
 
-<div class="player"><div class="shirt"></div><div class="player-label">Select DEF</div></div>
+<div class="player"><div class="shirt"></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
 
 </div>
 
@@ -573,13 +590,13 @@ MOBILE
 
 <div class="row">
 
-<div class="player"><div class="shirt"></div><div class="player-label">Select MID</div></div>
+<div class="player"><div class="shirt"></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
 
-<div class="player"><div class="shirt"></div><div class="player-label">Select MID</div></div>
+<div class="player"><div class="shirt"></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
 
-<div class="player"><div class="shirt"></div><div class="player-label">Select MID</div></div>
+<div class="player"><div class="shirt"></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
 
-<div class="player"><div class="shirt"></div><div class="player-label">Select MID</div></div>
+<div class="player"><div class="shirt"></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
 
 </div>
 
@@ -587,9 +604,9 @@ MOBILE
 
 <div class="row">
 
-<div class="player"><div class="shirt"></div><div class="player-label">Select FWD</div></div>
+<div class="player"><div class="shirt"></div><select data-pos="FWD" onchange="updateShirt(this)"><option>Select</option></select></div>
 
-<div class="player"><div class="shirt"></div><div class="player-label">Select FWD</div></div>
+<div class="player"><div class="shirt"></div><select data-pos="FWD" onchange="updateShirt(this)"><option>Select</option></select></div>
 
 </div>
 
@@ -636,21 +653,15 @@ MOBILE
 
 </div>
 
-<!-- PICKER OVERLAY -->
-<div class="picker-overlay" id="pickerOverlay">
-  <div class="picker-content">
-    <div class="picker-header">
-      <h3 id="pickerTitle">Select Player</h3>
-      <button onclick="closePicker()" style="width: auto; background: none; color: #9ca3af; padding: 0;">✕</button>
-    </div>
-    <div class="picker-list" id="pickerList"></div>
-  </div>
-</div>
-
 <script>
 
-let currentXI = Array(11).fill(null);
-const slotPositions = ["GK", "DEF", "DEF", "DEF", "DEF", "MID", "MID", "MID", "MID", "FWD", "FWD"];
+const clubAbbr = {
+  "Arsenal": "ARS", "Aston Villa": "AVL", "Bournemouth": "BOU", "Brentford": "BRE",
+  "Brighton": "BHA", "Chelsea": "CHE", "Crystal Palace": "CRY", "Everton": "EVE",
+  "Fulham": "FUL", "Ipswich": "IPS", "Leicester": "LEI", "Liverpool": "LIV",
+  "Man City": "MCI", "Man Utd": "MUN", "Newcastle": "NEW", "Nott'm Forest": "NFO",
+  "Southampton": "SOU", "Spurs": "TOT", "West Ham": "WHU", "Wolves": "WOL"
+};
 
 const playersByPos = {
   GK: [
@@ -673,22 +684,14 @@ const playersByPos = {
 const playerToClub = {};
 Object.values(playersByPos).flat().forEach(p => { if(typeof p === 'object') playerToClub[p.name] = p.club; });
 
-function updateSlotUI(index) {
-  const playerDivs = document.querySelectorAll('.pitch .player');
-  const target = playerDivs[index];
-  const shirt = target.querySelector('.shirt');
-  const label = target.querySelector('.player-label');
-  const playerName = currentXI[index];
-
-  if (!playerName) {
+function updateShirt(select) {
+  const shirt = select.parentElement.querySelector('.shirt');
+  const val = select.value;
+  if (val === "Select") {
     shirt.style.background = "linear-gradient(#2563eb, #1d4ed8)";
-    label.innerText = `Select ${slotPositions[index]}`;
     return;
   }
-
-  const team = playerToClub[playerName] || playerName;
-  label.innerText = playerName;
-
+  const team = playerToClub[val] || val;
   const colors = {
     "Arsenal": "linear-gradient(#ef4444, #991b1b)",
     "Aston Villa": "linear-gradient(#94bee5, #670e36)",
@@ -808,16 +811,18 @@ function saveWeekly(){
 }
 
 window.onload=function(){
-  // Setup Click listeners
-  const playerDivs = document.querySelectorAll('.pitch .player');
-  playerDivs.forEach((div, i) => div.onclick = () => openPicker(i));
-
+  populatePlayers();
   populateWeeklyOptions();
 
   const savedTeam = JSON.parse(localStorage.getItem("myTeam"));
   if(savedTeam) {
-    currentXI = savedTeam;
-    currentXI.forEach((_, i) => updateSlotUI(i));
+    const selects = document.querySelectorAll('.pitch select');
+    selects.forEach((s, i) => {
+      if(savedTeam[i] && savedTeam[i] !== "Select") {
+        s.value = savedTeam[i];
+        updateShirt(s);
+      }
+    });
   }
 
   const saved=JSON.parse(localStorage.getItem("weekly"));
