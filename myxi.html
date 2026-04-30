@@ -549,9 +549,7 @@ MOBILE
 <div class="player">
 
 <div class="shirt"></div>
-<select data-pos="GK" onchange="updateShirt(this)">
-  <option>Select</option>
-</select>
+<div class="player-label">Select GK</div>
 
 </div>
 
@@ -561,13 +559,13 @@ MOBILE
 
 <div class="row">
 
-<div class="player"><div class="shirt"></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"></div><div class="player-label">Select DEF</div></div>
 
-<div class="player"><div class="shirt"></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"></div><div class="player-label">Select DEF</div></div>
 
-<div class="player"><div class="shirt"></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"></div><div class="player-label">Select DEF</div></div>
 
-<div class="player"><div class="shirt"></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"></div><div class="player-label">Select DEF</div></div>
 
 </div>
 
@@ -575,13 +573,13 @@ MOBILE
 
 <div class="row">
 
-<div class="player"><div class="shirt"></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"></div><div class="player-label">Select MID</div></div>
 
-<div class="player"><div class="shirt"></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"></div><div class="player-label">Select MID</div></div>
 
-<div class="player"><div class="shirt"></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"></div><div class="player-label">Select MID</div></div>
 
-<div class="player"><div class="shirt"></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"></div><div class="player-label">Select MID</div></div>
 
 </div>
 
@@ -589,9 +587,9 @@ MOBILE
 
 <div class="row">
 
-<div class="player"><div class="shirt"></div><select data-pos="FWD" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"></div><div class="player-label">Select FWD</div></div>
 
-<div class="player"><div class="shirt"></div><select data-pos="FWD" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"></div><div class="player-label">Select FWD</div></div>
 
 </div>
 
@@ -638,7 +636,21 @@ MOBILE
 
 </div>
 
+<!-- PICKER OVERLAY -->
+<div class="picker-overlay" id="pickerOverlay">
+  <div class="picker-content">
+    <div class="picker-header">
+      <h3 id="pickerTitle">Select Player</h3>
+      <button onclick="closePicker()" style="width: auto; background: none; color: #9ca3af; padding: 0;">✕</button>
+    </div>
+    <div class="picker-list" id="pickerList"></div>
+  </div>
+</div>
+
 <script>
+
+let currentXI = Array(11).fill(null);
+const slotPositions = ["GK", "DEF", "DEF", "DEF", "DEF", "MID", "MID", "MID", "MID", "FWD", "FWD"];
 
 const playersByPos = {
   GK: [
@@ -661,11 +673,22 @@ const playersByPos = {
 const playerToClub = {};
 Object.values(playersByPos).flat().forEach(p => { if(typeof p === 'object') playerToClub[p.name] = p.club; });
 
-function updateShirt(select) {
-  const shirt = select.parentElement.querySelector('.shirt');
-  const playerName = select.value;
+function updateSlotUI(index) {
+  const playerDivs = document.querySelectorAll('.pitch .player');
+  const target = playerDivs[index];
+  const shirt = target.querySelector('.shirt');
+  const label = target.querySelector('.player-label');
+  const playerName = currentXI[index];
+
+  if (!playerName) {
+    shirt.style.background = "linear-gradient(#2563eb, #1d4ed8)";
+    label.innerText = `Select ${slotPositions[index]}`;
+    return;
+  }
+
   const team = playerToClub[playerName] || playerName;
-  
+  label.innerText = playerName;
+
   const colors = {
     "Arsenal": "linear-gradient(#ef4444, #991b1b)",
     "Aston Villa": "linear-gradient(#94bee5, #670e36)",
@@ -689,43 +712,42 @@ function updateShirt(select) {
     "Wolves": "linear-gradient(#fdb913, #231f20)"
   };
   shirt.style.background = colors[team] || "linear-gradient(#2563eb, #1d4ed8)";
-  refreshDropdowns();
 }
 
-function refreshDropdowns() {
-  const teamSelects = document.querySelectorAll('.pitch select');
-  const selectedClubs = Array.from(teamSelects)
-    .map(s => playerToClub[s.value] || s.value)
-    .filter(val => val !== undefined && val !== "Select");
+function openPicker(index) {
+  const pos = slotPositions[index];
+  const overlay = document.getElementById('pickerOverlay');
+  const list = document.getElementById('pickerList');
+  const title = document.getElementById('pickerTitle');
+  
+  title.innerText = `Pick ${pos}`;
+  list.innerHTML = '';
+  overlay.style.display = 'flex';
 
-  teamSelects.forEach(select => {
-    const currentClub = playerToClub[select.value] || select.value;
-    Array.from(select.options).forEach(option => {
-      if (option.value === "Select") return;
-      const optionClub = playerToClub[option.value] || option.value;
-      option.disabled = selectedClubs.includes(optionClub) && optionClub !== currentClub;
-    });
-  });
-}
+  const usedClubs = currentXI.map((p, i) => i !== index && p ? (playerToClub[p] || p) : null).filter(Boolean);
 
-function populatePlayers() {
-  const selects = document.querySelectorAll('.player select');
-  selects.forEach(s => {
-    const pos = s.dataset.pos;
-    if (pos && playersByPos[pos]) {
-      playersByPos[pos].forEach(p => {
-        let opt = document.createElement('option');
-        if (typeof p === 'string') {
-          opt.value = p;
-          opt.innerHTML = p;
-        } else {
-          opt.value = p.name;
-          opt.innerHTML = `${p.name} (${p.club})`;
-        }
-        s.appendChild(opt);
-      });
+  playersByPos[pos].forEach(p => {
+    const name = typeof p === 'string' ? p : p.name;
+    const club = typeof p === 'string' ? p : p.club;
+    const isUsed = usedClubs.includes(club);
+
+    const item = document.createElement('div');
+    item.className = `picker-item ${isUsed ? 'disabled' : ''}`;
+    item.innerHTML = typeof p === 'string' ? p : `<strong>${name}</strong><br><small style="opacity:0.6">${club}</small>`;
+    
+    if (!isUsed) {
+      item.onclick = () => {
+        currentXI[index] = name;
+        updateSlotUI(index);
+        closePicker();
+      };
     }
+    list.appendChild(item);
   });
+}
+
+function closePicker() {
+  document.getElementById('pickerOverlay').style.display = 'none';
 }
 
 function populateWeeklyOptions() {
@@ -755,18 +777,17 @@ function populateWeeklyOptions() {
 
 function clearTeam() {
   if (confirm("Are you sure you want to clear your entire team?")) {
-    const teamSelects = document.querySelectorAll('.pitch select');
-    teamSelects.forEach(select => {
-      select.value = "Select";
-      updateShirt(select);
-    });
+    currentXI = Array(11).fill(null);
+    slotPositions.forEach((_, i) => updateSlotUI(i));
   }
 }
 
 function saveTeam() {
-  const selects = document.querySelectorAll('.pitch select');
-  const team = Array.from(selects).map(s => s.value);
-  localStorage.setItem("myTeam", JSON.stringify(team));
+  if (currentXI.includes(null)) {
+    alert("Please fill all 11 positions first!");
+    return;
+  }
+  localStorage.setItem("myTeam", JSON.stringify(currentXI));
   alert("Team XI Saved!");
 }
 
@@ -787,19 +808,16 @@ function saveWeekly(){
 }
 
 window.onload=function(){
+  // Setup Click listeners
+  const playerDivs = document.querySelectorAll('.pitch .player');
+  playerDivs.forEach((div, i) => div.onclick = () => openPicker(i));
 
-  populatePlayers();
   populateWeeklyOptions();
 
   const savedTeam = JSON.parse(localStorage.getItem("myTeam"));
   if(savedTeam) {
-    const selects = document.querySelectorAll('.pitch select');
-    selects.forEach((s, i) => {
-      if(savedTeam[i] && savedTeam[i] !== "Select") {
-        s.value = savedTeam[i];
-        updateShirt(s);
-      }
-    });
+    currentXI = savedTeam;
+    currentXI.forEach((_, i) => updateSlotUI(i));
   }
 
   const saved=JSON.parse(localStorage.getItem("weekly"));
