@@ -421,14 +421,19 @@ ROWS + PLAYERS
 
 select {
   width: 100%;
-  padding: 12px 14px;
+  padding: 10px 12px;
   background: rgba(11,16,32,0.9);
   color: white;
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 10px;
   outline: none;
-  font-size: 14px;
+  font-size: 13px;
   cursor: pointer;
+}
+
+.pitch .player select {
+  padding: 8px 6px;
+  font-size: 11px;
 }
 
 /* =========================
@@ -495,6 +500,14 @@ MOBILE
 
   .container {
     padding-bottom: 100px;
+  }
+
+  .player {
+    width: 82px;
+  }
+  .pitch .player select {
+    font-size: 9px;
+    padding: 6px 2px;
   }
 
   .mobile-nav {
