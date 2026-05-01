@@ -317,12 +317,11 @@
     }
 
     .lock-bottom {
-      
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      flex: 0 0 auto;
-
+      width: 100%;
+      margin-top: 30px;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 24px;
     }
 
     .lock-bottom button {
@@ -465,15 +464,8 @@
       <h2>Your Season Selections</h2>
 
       <p>Deadline: Kick-off of GW1</p>
-
       <p>Once locked, selections stay for the season.</p>
-
     </div>
-
-   <div class="lock-bottom">
-      <button onclick="lockSeason()">🔒 Lock In Selections</button>
-    </div>
-  </div>
   </div>
 
   <div class="grid">
@@ -645,9 +637,11 @@
         <li>Selections are locked once the deadline hits.</li>
 
       </ul>
-
     </div>
+  </div>
 
+  <div class="lock-bottom">
+    <button onclick="lockSeason()">🔒 Lock In Selections</button>
   </div>
 
 </div>
