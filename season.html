@@ -317,22 +317,17 @@
     }
 
     .lock-bottom {
-
-      width: 100%;
-
-      margin-top: 20px;
-
-      text-align: center;
-
-      border-top: 1px solid rgba(255,255,255,0.08);
-
-      padding-top: 24px;
+      
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex: 0 0 auto;
 
     }
 
     .lock-bottom button {
 
-      width: 260px;
+      width: 220px;
 
       background: #c7ff38;
       color: #041102;
@@ -427,6 +422,10 @@
 
       }
 
+      .lock-bottom {
+        justify-content: center;
+      }      
+
     }
 
   </style>
@@ -471,7 +470,9 @@
 
     </div>
 
-  </div>
+   <div class="lock-bottom">
+      <button onclick="lockSeason()">🔒 Lock In Selections</button>
+    </div>
 
   <div class="grid">
 
