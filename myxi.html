@@ -114,7 +114,7 @@ header{
 
 }
 
-.mobile-nav a{
+nav a{
 
   margin-left:18px;
 
@@ -124,7 +124,7 @@ header{
 
 }
 
-.mobile-nav a:hover{
+nav a:hover{
 
   color:#c7ff38;
 
@@ -513,6 +513,26 @@ MOBILE
     display: none;
   }
 
+  .mobile-nav {
+    display: flex;
+    justify-content: space-around;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #111827;
+    padding: 10px 0;
+    border-top: 1px solid #333;
+  }
+
+  .mobile-nav a {
+    text-decoration: none;
+    color: white;
+    font-size: 12px;
+    text-align: center;
+    margin-left: 0;
+  }
+
   .main-layout{
 
     flex-direction:column;
@@ -784,6 +804,23 @@ function updateShirt(select) {
     "Wolves": "linear-gradient(#fdb913, #231f20)"
   };
   shirt.style.background = colors[team] || "linear-gradient(#2563eb, #1d4ed8)";
+  refreshDropdowns();
+}
+
+function refreshDropdowns() {
+  const selects = document.querySelectorAll('.pitch select');
+  const selectedClubs = Array.from(selects)
+    .map(s => playerToClub[s.value] || s.value)
+    .filter(club => club && club !== "Select");
+
+  selects.forEach(select => {
+    const currentClub = playerToClub[select.value] || select.value;
+    Array.from(select.options).forEach(opt => {
+      if (opt.value === "Select") return;
+      const optClub = playerToClub[opt.value] || opt.value;
+      opt.disabled = selectedClubs.includes(optClub) && optClub !== currentClub;
+    });
+  });
 }
 
 function populatePlayers() {
