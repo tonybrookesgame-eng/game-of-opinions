@@ -80,7 +80,7 @@ header {
 
 .logo span {
 
-  color: #b8ff1e;
+  color: #c7ff38;
 
 }
 
@@ -98,6 +98,11 @@ nav {
 
   gap: 26px;
 
+}
+
+.main-nav-links {
+  display: flex;
+  gap: 26px;
 }
 
 nav a {
@@ -830,6 +835,18 @@ nav a:hover {
 
   }
 
+  .main-nav-links {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 6px 12px;
+    border-radius: 20px;
+    gap: 8px;
+    justify-content: center;
+  }
+  .signup-btn {
+    padding: 8px 16px !important;
+    font-size: 13px;
+  }
+
   .hero {
 
     padding: 110px 12px 90px;
@@ -992,19 +1009,19 @@ nav a:hover {
 
 <nav>
 
-  <a href="index.html">Home</a>
-
-  <a href="myxi.html">Your Team</a>
-
-  <a href="season.html">Season Picks</a>
-
-  <a href="league.html">League</a>
-
-  <a href="#how-it-works">How It Works</a>
+  
 
   <div class="auth-section">
     <a href="#" class="login-link">Log In</a>
     <a href="#" class="signup-btn">Sign Up</a>
+  </div>
+
+  <div class="main-nav-links">
+    <a href="index.html">Home</a>
+    <a href="myxi.html">Your Team</a>
+    <a href="season.html">Season Picks</a>
+    <a href="league.html">League</a>
+    <a href="#how-it-works">How It Works</a>
   </div>
 
 </nav>
