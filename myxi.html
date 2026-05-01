@@ -509,6 +509,10 @@ MOBILE
 
 @media(max-width:900px){
 
+  nav {
+    display: none;
+  }
+
   .main-layout{
 
     flex-direction:column;
@@ -527,7 +531,7 @@ MOBILE
 
   <div class="logo">GAME <span>OF OPINIONS</span></div>
 
-  <nav class="mobile-nav">
+  <nav>
 
     <a href="index.html">Home</a>
 
@@ -651,6 +655,14 @@ MOBILE
 
 </div>
 
+</div>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav">
+  <a href="index.html">🏠<br>Home</a>
+  <a href="myxi.html">⚽<br>Team</a>
+  <a href="season.html">🏆<br>Picks</a>
+  <a href="league.html">📊<br>League</a>
 </div>
 
 <script>
@@ -821,17 +833,23 @@ function populateWeeklyOptions() {
 
 function clearTeam() {
   if (confirm("Are you sure you want to clear your entire team?")) {
-    currentXI = Array(11).fill(null);
-    slotPositions.forEach((_, i) => updateSlotUI(i));
+    const selects = document.querySelectorAll('.pitch select');
+    selects.forEach(select => {
+      select.value = "Select";
+      updateShirt(select);
+    });
   }
 }
 
 function saveTeam() {
-  if (currentXI.includes(null)) {
+  const selects = document.querySelectorAll('.pitch select');
+  const teamValues = Array.from(selects).map(s => s.value);
+  
+  if (teamValues.includes("Select")) {
     alert("Please fill all 11 positions first!");
     return;
   }
-  localStorage.setItem("myTeam", JSON.stringify(currentXI));
+  localStorage.setItem("myTeam", JSON.stringify(teamValues));
   alert("Team XI Saved!");
 }
 

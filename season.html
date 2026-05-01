@@ -85,6 +85,10 @@
 
     }
 
+    .mobile-nav {
+      display: none; /* Hidden by default */
+    }
+
     .container {
 
       padding: 40px;
@@ -363,6 +367,28 @@
     }
 
     @media (max-width: 700px) {
+      nav {
+        display: none;
+      }
+      .mobile-nav {
+        display: flex; /* Show on mobile */
+        justify-content: space-around;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: #111827;
+        padding: 10px 0;
+        border-top: 1px solid #333;
+        z-index: 1000;
+      }
+      .mobile-nav a {
+        text-decoration: none;
+        color: white;
+        font-size: 12px;
+        text-align: center;
+        margin-left: 0; /* Reset margin for mobile nav links */
+      }
 
       header {
 
@@ -623,6 +649,14 @@
 
   </div>
 
+</div>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav">
+  <a href="index.html">🏠<br>Home</a>
+  <a href="myxi.html">⚽<br>Team</a>
+  <a href="season.html">🏆<br>Picks</a>
+  <a href="league.html">📊<br>League</a>
 </div>
 
 <!-- SCRIPT GOES HERE (IMPORTANT POSITION) -->
