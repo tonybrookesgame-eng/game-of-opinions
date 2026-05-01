@@ -715,21 +715,29 @@
     </div>
 
     <div class="card">
-
       <h3>Top Scorer</h3>
-
-      <select>
-
-        <option>Select player</option>
-
-        <option>Haaland</option>
-
-        <option>Watkins</option>
-
-      </select>
-
+      <div class="top-scorer-content">
+        <div class="ai-avatar-in-card" onclick="showAiReportTopScorer()">
+          <div class="speech-bubble-in-card">AI Scout Report! 🤖</div>
+          <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="45" fill="#6cabdd" /> <!-- City Blue Background -->
+            <path d="M50 85C65 85 78 75 82 60C75 52 65 48 50 48C35 48 25 52 18 60C22 75 35 85 50 85Z" fill="#1c2c5b" /> <!-- Jersey -->
+            <circle cx="50" cy="35" r="22" fill="#ffe0bd" /> <!-- Face -->
+            <path d="M30 30C30 15 70 15 70 30L65 35H35L30 30Z" fill="#f3e5ab" /> <!-- Blonde Hair -->
+            <circle cx="42" cy="35" r="2" fill="#000" /> <!-- Eye L -->
+            <circle cx="58" cy="35" r="2" fill="#000" /> <!-- Eye R -->
+            <path d="M45 42C47 43.5 53 43.5 55 42" stroke="#000" stroke-width="1.5" stroke-linecap="round" /> <!-- Smile -->
+          </svg>
+        </div>
+        <div class="selection-area">
+          <select>
+            <option>Select player</option>
+            <option>Haaland</option>
+            <option>Watkins</option>
+          </select>
+        </div>
+      </div>
       <div class="points">25 points</div>
-
     </div>
 
     <div class="card">
@@ -861,49 +869,6 @@
 <!-- SCRIPT GOES HERE (IMPORTANT POSITION) -->
 
 <script>
-
-function showAiReport() {
-  const modal = document.getElementById('aiModal');
-  const content = document.getElementById('aiContent');
-  const stats = document.getElementById('aiStats');
-  
-  modal.style.display = 'flex';
-  content.innerText = "Analyzing Haaland's shot conversion and xG data...";
-  stats.innerHTML = "";
-
-  setTimeout(() => {
-    content.innerText = "Based on current underlying metrics, Erling Haaland remains the statistical favorite. His xG (Expected Goals) per 90 is 1.2, significantly higher than any other forward in Europe.";
-    stats.innerHTML = `
-      <div class="stat-row"><span>Projected Goals</span> <span class="stat-val">34</span></div>
-      <div class="stat-row"><span>Shot Accuracy</span> <span class="stat-val">68%</span></div>
-      <div class="stat-row"><span>Current xG Leader</span> <span class="stat-val">Haaland (MCI)</span></div>
-      <div class="stat-row"><span>AI Recommended Pick</span> <span class="stat-val">Haaland</span></div>
-      <p style="margin-top:15px; font-style:italic; font-size:12px;">"His movement in the box creates high-value chances that traditional defenders struggle to track." - AI Scout</p>
-    `;
-  }, 800);
-}
-
-function showAiReport() {
-  const modal = document.getElementById('aiModal');
-  const content = document.getElementById('aiContent');
-  const stats = document.getElementById('aiStats');
-  
-  modal.style.display = 'flex';
-  content.innerText = "Analyzing Haaland's shot conversion and xG data...";
-  stats.innerHTML = "";
-
-  setTimeout(() => {
-    content.innerText = "Based on current underlying metrics, Erling Haaland remains the statistical favorite. His xG (Expected Goals) per 90 is 1.2, significantly higher than any other forward in Europe.";
-    stats.innerHTML = `
-      <div class="stat-row"><span>Projected Goals</span> <span class="stat-val">34</span></div>
-      <div class="stat-row"><span>Shot Accuracy</span> <span class="stat-val">68%</span></div>
-      <div class="stat-row"><span>Current xG Leader</span> <span class="stat-val">Haaland (MCI)</span></div>
-      <div class="stat-row"><span>AI Recommended Pick</span> <span class="stat-val">Haaland</span></div>
-      <p style="margin-top:15px; font-style:italic; font-size:12px;">"His movement in the box creates high-value chances that traditional defenders struggle to track." - AI Scout</p>
-    `;
-  }, 800);
-}
-
 function showAiReportTopScorer() {
   const modal = document.getElementById('aiModal');
   const content = document.getElementById('aiContent');
@@ -967,238 +932,7 @@ window.onload = function() {
 
   }
 
-};
-
-</script>
-
-</body>
-</html>
-      </select>
-
-      <div class="points">25 points</div>
-
-    </div>
-
-    <div class="card">
-
-      <h3>Top Assists</h3>
-
-
-      <select>
-
-        <option>Select player</option>
-
-        <option>De Bruyne</option>
-
-        <option>Palmer</option>
-
-      </select>
-
-      <div class="points">50 points</div>
-
-    </div>
-
-    <div class="card">
-
-      <h3>Most Clean Sheets</h3>
-
-
-      <select>
-
-        <option>Select player</option>
-
-        <option>Alisson</option>
-
-        <option>Ederson</option>
-
-      </select>
-
-      <div class="points">50 points</div>
-
-    </div>
-
-    <div class="card">
-
-      <h3>First Hat-Trick</h3>
-
-
-      <select>
-
-        <option>Select player</option>
-
-        <option>Haaland</option>
-
-        <option>Son</option>
-
-      </select>
-
-      <div class="points">50 points</div>
-
-    </div>
-
-    <div class="card">
-
-      <h3>First Manager Sacked</h3>
-
-
-      <select>
-
-        <option>Select manager</option>
-
-        <option>Manager A</option>
-
-        <option>Manager B</option>
-
-      </select>
-
-      <div class="points">50 points</div>
-
-    </div>
-
-    <div class="card">
-
-      <h3>Most Red Cards</h3>
-
-      <select>
-
-        <option>Select team</option>
-
-        <option>Everton</option>
-
-        <option>Burnley</option>
-
-      </select>
-
-      <div class="points">75 points</div>
-
-    </div>
-
-  </div>
-
-  <div class="bottom-row">
-
-    <div class="lock-bottom">
-
-      <button onclick="lockSeason()">Lock In Selections</button>
-
-    </div>
-
-  </div>
-
-</div>
-
-<!-- AI REPORT MODAL -->
-<div class="ai-modal" id="aiModal" onclick="this.style.display='none'">
-  <div class="ai-report" onclick="event.stopPropagation()">
-    <h2>🤖 AI Scout Report</h2>
-    <p id="aiContent">Analyzing current Premier League trends...</p>
-    <div id="aiStats"></div>
-    <button onclick="document.getElementById('aiModal').style.display='none'" style="margin-top:20px;">Close Report</button>
-  </div>
-</div>
-
-<!-- MOBILE NAV -->
-<div class="mobile-nav">
-  <a href="index.html">🏠<br>Home</a>
-  <a href="myxi.html">⚽<br>Team</a>
-  <a href="season.html">🏆<br>Picks</a>
-  <a href="league.html">📊<br>League</a>
-</div>
-
-<!-- SCRIPT GOES HERE (IMPORTANT POSITION) -->
-
-<script>
-
-function showAiReport() {
-  const modal = document.getElementById('aiModal');
-  const content = document.getElementById('aiContent');
-  const stats = document.getElementById('aiStats');
-  
-  modal.style.display = 'flex';
-  content.innerText = "Analyzing Haaland's shot conversion and xG data...";
-  stats.innerHTML = "";
-
-  setTimeout(() => {
-    content.innerText = "Based on current underlying metrics, Erling Haaland remains the statistical favorite. His xG (Expected Goals) per 90 is 1.2, significantly higher than any other forward in Europe.";
-    stats.innerHTML = `
-      <div class="stat-row"><span>Projected Goals</span> <span class="stat-val">34</span></div>
-      <div class="stat-row"><span>Shot Accuracy</span> <span class="stat-val">68%</span></div>
-      <div class="stat-row"><span>Current xG Leader</span> <span class="stat-val">Haaland (MCI)</span></div>
-      <div class="stat-row"><span>AI Recommended Pick</span> <span class="stat-val">Haaland</span></div>
-      <p style="margin-top:15px; font-style:italic; font-size:12px;">"His movement in the box creates high-value chances that traditional defenders struggle to track." - AI Scout</p>
-    `;
-  }, 800);
-}
-
-function showAiReport() {
-  const modal = document.getElementById('aiModal');
-  const content = document.getElementById('aiContent');
-  const stats = document.getElementById('aiStats');
-  
-  modal.style.display = 'flex';
-  content.innerText = "Analyzing Haaland's shot conversion and xG data...";
-  stats.innerHTML = "";
-
-  setTimeout(() => {
-    content.innerText = "Based on current underlying metrics, Erling Haaland remains the statistical favorite. His xG (Expected Goals) per 90 is 1.2, significantly higher than any other forward in Europe.";
-    stats.innerHTML = `
-      <div class="stat-row"><span>Projected Goals</span> <span class="stat-val">34</span></div>
-      <div class="stat-row"><span>Shot Accuracy</span> <span class="stat-val">68%</span></div>
-      <div class="stat-row"><span>Current xG Leader</span> <span class="stat-val">Haaland (MCI)</span></div>
-      <div class="stat-row"><span>AI Recommended Pick</span> <span class="stat-val">Haaland</span></div>
-      <p style="margin-top:15px; font-style:italic; font-size:12px;">"His movement in the box creates high-value chances that traditional defenders struggle to track." - AI Scout</p>
-    `;
-  }, 800);
-}
-
-function showAiReportTopScorer() {
-  const modal = document.getElementById('aiModal');
-  const content = document.getElementById('aiContent');
-  const stats = document.getElementById('aiStats');
-  
-  modal.style.display = 'flex';
-  content.innerText = "Analyzing Premier League goal-scoring trends...";
-  stats.innerHTML = "";
-
-  setTimeout(() => {
-    content.innerText = "The AI Scout predicts the Golden Boot race will be tight. Erling Haaland's clinical finishing gives him an edge, but keep an eye on emerging talents with high xG overperformance.";
-    stats.innerHTML = `
-      <div class="stat-row"><span>Haaland (MCI)</span> <span class="stat-val">34 Goals (Projected)</span></div>
-      <div class="stat-row"><span>Watkins (AVL)</span> <span class="stat-val">28 Goals (Projected)</span></div>
-      <div class="stat-row"><span>Salah (LIV)</span> <span class="stat-val">26 Goals (Projected)</span></div>
-      <div class="stat-row"><span>AI Top Pick</span> <span class="stat-val">Haaland</span></div>
-      <p style="margin-top:15px; font-style:italic; font-size:12px;">"Haaland's consistent high-volume shooting and penalty duties make him a reliable choice for the Golden Boot." - AI Scout</p>
-    `;
-  }, 800);
-}
-
-function lockSeason() {
-
-  const selects = document.querySelectorAll("select");
-
-  let picks = [];
-
-  for (let select of selects) {
-
-    if (select.value.includes("Select")) {
-
-      alert("Please complete all season picks.");
-
-      return;
-
-    }
-
-    picks.push(select.value);
-
-  }
-
-  localStorage.setItem("seasonPicks", JSON.stringify(picks));
-
-  alert("Season picks saved!");
-
-}
-
-window.onload = function() {
+};onload = function() {
 
   const saved = JSON.parse(localStorage.getItem("seasonPicks"));
 
