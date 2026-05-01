@@ -586,9 +586,8 @@ MOBILE
 <!-- GK -->
 
 <div class="row">
-
 <div class="player">
-<div class="shirt"></div>
+<div class="shirt"><div class="shirt-name"></div></div>
 <select data-pos="GK" onchange="updateShirt(this)"><option>Select</option></select>
 </div>
 
@@ -598,13 +597,13 @@ MOBILE
 
 <div class="row">
 
-<div class="player"><div class="shirt"></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
 
-<div class="player"><div class="shirt"></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
 
-<div class="player"><div class="shirt"></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
 
-<div class="player"><div class="shirt"></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
 
 </div>
 
@@ -612,13 +611,13 @@ MOBILE
 
 <div class="row">
 
-<div class="player"><div class="shirt"></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
 
-<div class="player"><div class="shirt"></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
 
-<div class="player"><div class="shirt"></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
 
-<div class="player"><div class="shirt"></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
 
 </div>
 
@@ -626,9 +625,9 @@ MOBILE
 
 <div class="row">
 
-<div class="player"><div class="shirt"></div><select data-pos="FWD" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="FWD" onchange="updateShirt(this)"><option>Select</option></select></div>
 
-<div class="player"><div class="shirt"></div><select data-pos="FWD" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="FWD" onchange="updateShirt(this)"><option>Select</option></select></div>
 
 </div>
 
@@ -773,11 +772,14 @@ Object.values(playersByPos).flat().forEach(p => { if(typeof p === 'object') play
 
 function updateShirt(select) {
   const shirt = select.parentElement.querySelector('.shirt');
+  const nameLabel = shirt.querySelector('.shirt-name');
   const val = select.value;
   if (val === "Select") {
     shirt.style.background = "linear-gradient(#2563eb, #1d4ed8)";
+    nameLabel.innerText = "";
     return;
   }
+  nameLabel.innerText = val;
   const team = playerToClub[val] || val;
   const colors = {
     "Arsenal": "linear-gradient(#ef4444, #991b1b)",
