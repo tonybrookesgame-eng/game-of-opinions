@@ -433,7 +433,7 @@ select {
 
 .pitch .player select {
   padding: 8px 6px;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 /* =========================
@@ -503,7 +503,10 @@ MOBILE
   }
 
   .player {
-    width: 82px;
+    width: 90px;
+
+    text-align: center;
+
   }
   .pitch .player select {
     font-size: 9px;
@@ -779,8 +782,8 @@ function updateShirt(select) {
     nameLabel.innerText = "";
     return;
   }
-  nameLabel.innerText = val;
   const team = playerToClub[val] || val;
+  nameLabel.innerText = clubAbbr[team] || team.substring(0,3).toUpperCase();
   const colors = {
     "Arsenal": "linear-gradient(#ef4444, #991b1b)",
     "Aston Villa": "linear-gradient(#94bee5, #670e36)",
@@ -832,10 +835,10 @@ function populatePlayers() {
         let opt = document.createElement('option');
         if (typeof p === 'string') {
           opt.value = p;
-          opt.innerHTML = `${p} (${clubAbbr[p] || p})`;
+          opt.innerHTML = p;
         } else {
           opt.value = p.name;
-          opt.innerHTML = `${p.name} (${clubAbbr[p.club] || p.club})`;
+          opt.innerHTML = p.name;
         }
         s.appendChild(opt);
       });
@@ -851,7 +854,7 @@ function populateWeeklyOptions() {
   playersByPos.GK.forEach(club => {
     let opt = document.createElement('option');
     opt.value = club;
-    opt.innerHTML = `${club} (${clubAbbr[club] || club})`;
+    opt.innerHTML = club;
     clubSelect.appendChild(opt);
   });
 
