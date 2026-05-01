@@ -6,8 +6,6 @@
 
   <meta charset="UTF-8">
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Season Picks - Game of Opinions</title>
 
   <style>
@@ -64,11 +62,6 @@
       backdrop-filter: blur(10px);
 
     }
-    .logo {
-      font-size: 22px; /* Standardized to match myxi.html and league.html */
-  font-weight: 800; /* Standardized to match myxi.html and league.html */
-  letter-spacing: normal; /* Reset letter-spacing */
-}
 
     .logo span {
 
@@ -95,9 +88,44 @@
     .mobile-nav {
       display: none; /* Hidden by default */
     }
+
+    footer {
+      display: none;
+      margin-top: 60px;
+      padding: 40px 20px;
+      background: rgba(0, 0, 0, 0.4);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+    .footer-logo {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 15px;
+    }
+    .footer-logo span {
+      color: #c7ff38;
+    }
+    .footer-links {
+      margin-bottom: 15px;
+    }
+    .footer-links a {
+      color: #9ca3af;
+      text-decoration: none;
+      margin: 0 12px;
+      font-size: 13px;
+    }
+    .footer-links a:hover {
+      color: #c7ff38;
+    }
+    .copyright {
+      color: #4b5563;
+      font-size: 11px;
+    }
+
     .container {
 
-      padding: 40px;
+      padding: 20px 40px 40px;
 
       max-width: 1080px;
 
@@ -324,16 +352,22 @@
     }
 
     .lock-bottom {
+
       width: 100%;
-      margin-top: 30px;
+
+      margin-top: 20px;
+
       text-align: center;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+      border-top: 1px solid rgba(255,255,255,0.08);
+
       padding-top: 24px;
+
     }
 
     .lock-bottom button {
 
-      width: 220px;
+      width: 260px;
 
       background: #c7ff38;
       color: #041102;
@@ -372,11 +406,11 @@
       }
       
       .container {
-        padding-bottom: 120px;
+        padding-bottom: 100px;
       }
 
       .mobile-nav {
-        display: flex !important;
+        display: flex; /* Show on mobile */
         justify-content: space-around;
         position: fixed;
         bottom: 0;
@@ -404,8 +438,9 @@
       }
 
       .top-panel {
+
         flex-direction: column;
-        align-items: center; /* Center items horizontally in column layout */
+
       }
 
       .grid {
@@ -426,10 +461,6 @@
         width: 100%;
 
       }
-
-      .lock-bottom {
-        justify-content: center;
-      }      
 
     }
 
@@ -470,8 +501,11 @@
       <h2>Your Season Selections</h2>
 
       <p>Deadline: Kick-off of GW1</p>
+
       <p>Once locked, selections stay for the season.</p>
+
     </div>
+
   </div>
 
   <div class="grid">
@@ -643,11 +677,15 @@
         <li>Selections are locked once the deadline hits.</li>
 
       </ul>
-    </div>
-  </div>
 
-  <div class="lock-bottom">
-    <button onclick="lockSeason()">🔒 Lock In Selections</button>
+    </div>
+
+    <div class="lock-bottom">
+
+      <button onclick="lockSeason()">Lock In Selections</button>
+
+    </div>
+
   </div>
 
 </div>
