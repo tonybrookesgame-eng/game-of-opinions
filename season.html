@@ -548,7 +548,7 @@
        AI SCOUT STYLES (in-card)
     ========================= */
     .ai-avatar-in-card {
-      display: none; /* Hidden by default on desktop */
+      display: block; /* Visible on all devices */
       cursor: pointer;
       position: relative;
       width: 50px; /* Smaller avatar size for card */
@@ -718,15 +718,14 @@
       <h3>Top Scorer</h3>
       <div class="top-scorer-content">
         <div class="ai-avatar-in-card" onclick="showAiReportTopScorer()">
-          <div class="speech-bubble-in-card">AI Scout Report! 🤖</div>
+          <div class="speech-bubble-in-card">Fenômeno Analysis 🇧🇷</div>
           <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="45" fill="#6cabdd" /> <!-- City Blue Background -->
-            <path d="M50 85C65 85 78 75 82 60C75 52 65 48 50 48C35 48 25 52 18 60C22 75 35 85 50 85Z" fill="#1c2c5b" /> <!-- Jersey -->
-            <circle cx="50" cy="35" r="22" fill="#ffe0bd" /> <!-- Face -->
-            <path d="M30 30C30 15 70 15 70 30L65 35H35L30 30Z" fill="#f3e5ab" /> <!-- Blonde Hair -->
+            <circle cx="50" cy="50" r="45" fill="#009b3a" /> <!-- Brazil Green -->
+            <path d="M50 85C65 85 78 75 82 60C75 52 65 48 50 48C35 48 25 52 18 60C22 75 35 85 50 85Z" fill="#fedd00" /> <!-- Brazil Yellow -->
+            <circle cx="50" cy="35" r="22" fill="#d2a679" /> <!-- Skin Tone -->
+            <path d="M40 18 Q50 14 60 18 L55 24 Q50 22 45 24 Z" fill="#1a1a1a" /> <!-- Iconic R9 Hair -->
             <circle cx="42" cy="35" r="2" fill="#000" /> <!-- Eye L -->
             <circle cx="58" cy="35" r="2" fill="#000" /> <!-- Eye R -->
-            <path d="M45 42C47 43.5 53 43.5 55 42" stroke="#000" stroke-width="1.5" stroke-linecap="round" /> <!-- Smile -->
           </svg>
         </div>
         <div class="selection-area">
@@ -875,17 +874,17 @@ function showAiReportTopScorer() {
   const stats = document.getElementById('aiStats');
   
   modal.style.display = 'flex';
-  content.innerText = "Analyzing Premier League goal-scoring trends...";
+  content.innerText = "Fenômeno AI is analyzing goal-scoring efficiency and xG data...";
   stats.innerHTML = "";
 
   setTimeout(() => {
-    content.innerText = "The AI Scout predicts the Golden Boot race will be tight. Erling Haaland's clinical finishing gives him an edge, but keep an eye on emerging talents with high xG overperformance.";
+    content.innerText = "In my prime, I relied on explosive power. Today, Erling Haaland uses pure efficiency. Analyzing shot conversion and fixture difficulty, here is my realistic projection for the Golden Boot:";
     stats.innerHTML = `
-      <div class="stat-row"><span>Haaland (MCI)</span> <span class="stat-val">34 Goals (Projected)</span></div>
-      <div class="stat-row"><span>Watkins (AVL)</span> <span class="stat-val">28 Goals (Projected)</span></div>
-      <div class="stat-row"><span>Salah (LIV)</span> <span class="stat-val">26 Goals (Projected)</span></div>
-      <div class="stat-row"><span>AI Top Pick</span> <span class="stat-val">Haaland</span></div>
-      <p style="margin-top:15px; font-style:italic; font-size:12px;">"Haaland's consistent high-volume shooting and penalty duties make him a reliable choice for the Golden Boot." - AI Scout</p>
+      <div class="stat-row"><span>Haaland (MCI)</span> <span class="stat-val">31 Goals (Realistic)</span></div>
+      <div class="stat-row"><span>Salah (LIV)</span> <span class="stat-val">23 Goals (Realistic)</span></div>
+      <div class="stat-row"><span>Palmer (CHE)</span> <span class="stat-val">21 Goals (Realistic)</span></div>
+      <div class="stat-row"><span>Confidence Level</span> <span class="stat-val">94% (High)</span></div>
+      <p style="margin-top:15px; font-style:italic; font-size:12px;">"Positioning is everything. Haaland is always in the right place, but Salah's creative xG makes him a danger until the final whistle." - Ronaldo R9 AI</p>
     `;
   }, 800);
 }
