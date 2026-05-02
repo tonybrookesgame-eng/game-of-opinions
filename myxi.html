@@ -837,29 +837,51 @@ MOBILE
 
 </div>
 
-<!-- RIGHT -->
+<!-- RIGHT SIDE PANELS -->
+<div class="right-side">
 
-<div class="weekly-panel">
+  <div class="weekly-panel">
+    <h2>Weekly Picks</h2>
+    <p style="font-size: 13px; color: #9ca3af; margin-bottom: 5px; display: flex; justify-content: space-between;">
+      <span>Club to score first:</span>
+      <span style="color: #c7ff38; font-weight: bold;">10 pts</span>
+    </p>
+    <select id="firstScorer">
+      <option>Select</option>
+    </select>
+    <p style="font-size: 13px; color: #9ca3af; margin: 10px 0 5px; display: flex; justify-content: space-between;">
+      <span>Minute of first goal:</span>
+      <span style="color: #c7ff38; font-weight: bold;">40 pts</span>
+    </p>
+    <select id="goalMinute">
+      <option>Select</option>
+    </select>
+    <button onclick="saveWeekly()">Save Picks</button>
+    <p id="weeklyStatus"></p>
+  </div>
 
-<h2>Weekly Picks</h2>
-<p style="font-size: 13px; color: #9ca3af; margin-bottom: 5px; display: flex; justify-content: space-between;">
-  <span>Club to score first:</span>
-  <span style="color: #c7ff38; font-weight: bold;">10 pts</span>
-</p>
-<select id="firstScorer">
-<option>Select</option>
-</select>
-<p style="font-size: 13px; color: #9ca3af; margin: 10px 0 5px; display: flex; justify-content: space-between;">
-  <span>Minute of first goal:</span>
-  <span style="color: #c7ff38; font-weight: bold;">40 pts</span>
-</p>
-<select id="goalMinute">
-<option>Select</option>
-</select>
-
-<button onclick="saveWeekly()">Save Picks</button>
-
-<p id="weeklyStatus"></p>
+  <div class="bet-builder-panel">
+    <h2>Bet Builder</h2>
+    <div class="bet-match">Liverpool vs Brentford</div>
+    <ul class="bet-list">
+      <li>Liverpool to win</li>
+      <li>Over 3.5 Goals</li>
+      <li>Over 9 Corners</li>
+      <li>Konate to be carded</li>
+    </ul>
+    <div class="bet-odds-box">
+      <span class="odds-label">Est. Odds</span>
+      <span class="odds-value">30/1</span>
+    </div>
+    <div class="bet-actions">
+      <button class="bet-choice" onclick="setBetChoice('yes')" id="btnYes">YES</button>
+      <button class="bet-choice" onclick="setBetChoice('no')" id="btnNo">NO</button>
+    </div>
+    <div class="bet-info" id="betInfo">
+      Pick if the bet lands. Cost: 5 pts to play.
+    </div>
+    <button class="save-btn" onclick="saveBetBuilder()">Save Bet Prediction</button>
+  </div>
 
 </div>
 
@@ -1099,7 +1121,6 @@ function populateWeeklyOptions() {
     opt.value = i;
     opt.innerHTML = i;
     minuteSelect.appendChild(opt);
-  }
   let otherOpt = document.createElement('option');
   otherOpt.value = "Other";
   otherOpt.innerHTML = "Other (90+)";
@@ -1127,6 +1148,31 @@ function saveTeam() {
   }
   localStorage.setItem("myTeam", JSON.stringify({ team: teamValues, formation: formation }));
   alert("Team XI Saved!");
+}
+
+let currentBetChoice = null;
+
+function setBetChoice(choice) {
+  currentBetChoice = choice;
+  document.getElementById('btnYes').classList.remove('selected');
+  document.getElementById('btnNo').classList.remove('selected');
+  
+  if(choice === 'yes') {
+    document.getElementById('btnYes').classList.add('selected');
+    document.getElementById('betInfo').innerHTML = "Reward: <strong>155 pts</strong> | Risk: <strong>30 pts</strong>";
+  } else {
+    document.getElementById('btnNo').classList.add('selected');
+    document.getElementById('betInfo').innerHTML = "Reward: <strong>30 pts</strong> | Risk: <strong>155 pts</strong>";
+  }
+}
+
+function saveBetBuilder() {
+  if(!currentBetChoice) {
+    alert("Please select Yes or No first!");
+    return;
+  }
+  localStorage.setItem("betBuilder", currentBetChoice);
+  alert("Bet Builder Prediction Saved!");
 }
 
 function saveWeekly(){
