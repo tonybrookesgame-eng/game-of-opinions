@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rules - Game of Opinions</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: white;
+      background:
+        radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 25%),
+        linear-gradient(180deg,#020611 0%,#071320 40%,#071a29 100%);
+      min-height: 100vh;
+    }
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background:
+        radial-gradient(circle at center, rgba(120,255,120,0.08), transparent 40%),
+        repeating-radial-gradient(circle at 50% -20%, rgba(255,255,255,0.03) 0px, transparent 80px, transparent 120px);
+      pointer-events:none;
+      z-index: -1;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      background: rgba(0,0,0,0.72);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .logo { font-size: 22px; font-weight: 800; }
+    .logo span { color: #c7ff38; }
+    nav a { color: rgba(255,255,255,0.85); text-decoration: none; font-size: 15px; margin-left: 20px; transition: 0.2s ease; }
+    nav a:hover { color: white; }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 60px 20px 100px;
+    }
+    h1 { font-size: 48px; margin-bottom: 10px; }
+    h2 { color: #c7ff38; font-size: 28px; margin-top: 40px; border-bottom: 1px solid rgba(199, 255, 56, 0.2); padding-bottom: 10px; }
+    h3 { font-size: 20px; margin-top: 25px; color: #f8fafc; }
+    p, li { color: #cbd5e1; line-height: 1.8; font-size: 16px; }
+    ul { padding-left: 20px; }
+    .highlight-box {
+      background: rgba(199, 255, 56, 0.05);
+      border: 1px solid rgba(199, 255, 56, 0.2);
+      padding: 20px;
+      border-radius: 12px;
+      margin: 20px 0;
+    }
+    .point-tag {
+      background: #c7ff38;
+      color: #041102;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 800;
+      font-size: 12px;
+      margin-right: 5px;
+    }
+
+    footer {
+      margin-top: 60px;
+      padding: 40px 20px;
+      background: rgba(0, 0, 0, 0.4);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: center;
+    }
+    .footer-links a { color: #9ca3af; text-decoration: none; margin: 0 12px; font-size: 13px; }
+    .mobile-nav { display: none; }
+    @media (max-width: 768px) {
+      nav { display: none; }
+      .mobile-nav { display: flex; justify-content: space-around; position: fixed; bottom: 0; left: 0; width: 100%; background: #111827; padding: 10px 0; border-top: 1px solid #333; z-index: 1000; }
+      .mobile-nav a { text-decoration: none; color: white; font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">GAME <span>OF OPINIONS</span></div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="myxi.html">Your Team</a>
+    <a href="season.html">Season Picks</a>
+    <a href="league.html">League</a>
+  </nav>
+</header>
+
+<div class="container">
+  <h1>How It Works</h1>
+  <p>Game of Opinions is a football management game built on the belief that pure football knowledge should trump spreadsheets and template teams.</p>
+
+  <div class="highlight-box">
+    <strong>The Golden Rule:</strong> You can only select ONE player from any single Premier League club. Every team is a puzzle.
+  </div>
+
+  <h2>1. Building Your XI</h2>
+  <h3>Squad Constraints</h3>
+  <ul>
+    <li><strong>One Player Per Club:</strong> You must select 11 players from 11 different clubs.</li>
+    <li><strong>No Budget:</strong> There are no player prices. If you want Haaland, you can have him—but you lose access to every other Man City player.</li>
+    <li><strong>Formations:</strong> You can choose from standard formations (4-4-2, 4-3-3, 3-5-2, 3-4-3, 4-5-1).</li>
+  </ul>
+
+  <h2>2. Weekly Match Predictions</h2>
+  <p>Every week, your knowledge is tested on specific match outcomes alongside your player selections.</p>
+  
+  <h3>Weekly Picks</h3>
+  <ul>
+    <li><strong>Club to Score First:</strong> Pick the club you think will open the scoring across the weekend fixtures. <span class="point-tag">10 PTS</span></li>
+    <li><strong>Minute of First Goal:</strong> Predict the exact minute the first goal will be scored in the featured match. <span class="point-tag">40 PTS</span></li>
+  </ul>
+
+  <h3>The Bet Builder (Risk & Reward)</h3>
+  <p>This is where leagues are won or lost. Every week, a "Scout's Bet" is presented. You must decide if it will land (YES) or fail (NO).</p>
+  <ul>
+    <li><strong>The Sacrifice:</strong> It costs <strong>5 Points</strong> to enter a prediction.</li>
+    <li><strong>YES:</strong> High Reward / High Risk. If the bet lands, you win massive points. If it fails, you lose points.</li>
+    <li><strong>NO:</strong> Stability / Low Risk. If the bet fails, you win small points. If it lands, you lose massive points.</li>
+  </ul>
+
+  <h2>3. Season Predictions</h2>
+  <p>Long-term vision pays off. These picks are locked at the start of the season (or when you join) and provide a huge point injection at the end of the campaign.</p>
+  <ul>
+    <li>Premier League Winner <span class="point-tag">25 PTS</span></li>
+    <li>FA Cup Winner <span class="point-tag">50 PTS</span></li>
+    <li>Top Goalscorer <span class="point-tag">25 PTS</span></li>
+    <li>Most Red Cards (Team) <span class="point-tag">75 PTS</span></li>
+  </ul>
+
+  <h2>4. Scoring System</h2>
+  <p>Points are awarded based on real-world performance. <em>(Specific player point values to be finalized)</em>.</p>
+  <h3>Standard Scoring Categories:</h3>
+  <ul>
+    <li><strong>All Players:</strong> Appearance, Goals, Assists, Yellow/Red Cards.</li>
+    <li><strong>Defenders/Keepers:</strong> Clean Sheets, Goals Conceded.</li>
+    <li><strong>Opinion Multiplier:</strong> Points are boosted if you select a "Differential" player (owned by less than 10% of the league).</li>
+  </ul>
+
+  <h2>5. AI Scout Integration</h2>
+  <p>Use the "Opinion AI" icons on the Season and Team pages to get insights from legends like R9 or Fergie. Their analysis is based on current form and historical data, but remember—it's just an opinion.</p>
+
+  <h2>6. Deadlines & Changes</h2>
+  <ul>
+    <li><strong>XI Changes:</strong> You can change your team as much as you like until the first kickoff of the Gameweek.</li>
+    <li><strong>Weekly Picks:</strong> Locked at the same time as your team.</li>
+    <li><strong>Season Picks:</strong> Locked permanently once submitted.</li>
+  </ul>
+</div>
+
+<footer>
+  <div class="footer-logo">GAME <span>OF OPINIONS</span></div>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="myxi.html">Your Team</a>
+    <a href="season.html">Season Picks</a>
+    <a href="league.html">League</a>
+    <a href="rules.html">Rules</a>
+  </div>
+  <div class="copyright">
+    &copy; 2024 Game of Opinions. All rights reserved.
+  </div>
+</footer>
+
+<div class="mobile-nav">
+  <a href="index.html">🏠<br>Home</a>
+  <a href="myxi.html">⚽<br>Team</a>
+  <a href="season.html">🏆<br>Picks</a>
+  <a href="league.html">📊<br>League</a>
+</div>
+
+</body>
+</html>
