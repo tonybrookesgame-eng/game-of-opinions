@@ -188,7 +188,8 @@ nav a:hover {
 
 .login-link {
 
-  opacity: 0.85;
+  color: white !important;
+  opacity: 1;
 
 }
 
@@ -828,11 +829,12 @@ nav a:hover {
 
   header {
 
+    position: relative;
+    background: #000 !important;
     flex-direction: column;
-
-    gap: 6px;
-
-    padding: 10px 10px;
+    gap: 12px;
+    padding: 20px 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
   }
 
@@ -874,21 +876,35 @@ nav a:hover {
 
   .hero {
 
-    padding: 140px 12px 30px;
+    padding: 40px 15px 60px;
     background: transparent;
     min-height: auto;
   }
 
+  .hero-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .hero-copy {
+    display: contents; /* Allows reordering children with the visual block */
+  }
+
+  .hero-copy h1 { order: 1; }
+  .hero-copy p { order: 2; margin-bottom: 10px; }
+  .hero-visual { order: 3; }
+  .hero-buttons { order: 4; margin-top: 10px; width: 100%; }
+
   .hero::before {
-    height: 350px; /* Limits image height to stop above the button */
+    height: 780px; /* Increased to cover text and phone, stopping above button */
     background:
       linear-gradient(rgba(0,0,0,0.40), rgba(0,0,0,0.80)),
-      url("https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=1600&auto=format&fit=crop"),
-      radial-gradient(circle at top, rgba(255,255,255,0.14), transparent 25%);
+      url("https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=1600&auto=format&fit=crop");
     background-size: cover;
-    background-position: center 80%; /* Focus on the ball and boot */
-    mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+    background-position: center 95%; /* Focus on the ball and boot */
+    mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
   }
 
   .hero-copy h1 {
