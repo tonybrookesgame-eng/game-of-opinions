@@ -692,7 +692,7 @@
     <div class="card">
       <h3>Top Scorer</h3>
       <div class="scout-card-content">
-        <div class="ai-avatar-in-card" onclick="showAiScout('r9')" style="background-image: url('https://api.dicebear.com/7.x/avataaars/svg?seed=R9&top=NoHair&skinColor=ae5d29');">
+        <div class="ai-avatar-in-card" onclick="showAiScout('r9')" style="background-image: url('https://api.dicebear.com/7.x/avataaars/svg?seed=R9&top=noHair&skinColor=ae5d29');">
           <div class="speech-bubble-in-card">R9 Analysis 🇧🇷</div>
         </div>
         <div class="selection-area">
@@ -866,32 +866,6 @@ function nextAiPage() {
   }
 }
 
-function lockSeason() {
-  const selects = document.querySelectorAll("select");
-  let picks = [];
-  for (let select of selects) {
-    if (select.value.includes("Select")) {
-      alert("Please complete all season picks.");
-      return;
-    }
-    picks.push(select.value);
-  }
-  localStorage.setItem("seasonPicks", JSON.stringify(picks));
-  alert("Season picks saved!");
-}
-
-window.onload = function() {
-  const saved = JSON.parse(localStorage.getItem("seasonPicks"));
-  if (saved) {
-    const selects = document.querySelectorAll("select");
-    selects.forEach((select, index) => {
-      select.value = saved[index];
-    });
-  }
-};
-</script>
-</body>
-</html>
 function lockSeason() {
   const selects = document.querySelectorAll("select");
   let picks = [];
