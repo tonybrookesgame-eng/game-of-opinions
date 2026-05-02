@@ -659,6 +659,24 @@ nav a:hover {
 
 }
 
+/* PHONE BUTTON (App-style CTA) */
+.phone-btn {
+  display: none;
+  text-decoration: none;
+  background: #b8ff1e;
+  color: #041102;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: 800;
+  text-align: center;
+  margin-top: 15px;
+  font-size: 14px;
+  transition: 0.2s;
+}
+.phone-btn:hover {
+  filter: brightness(1.1);
+}
+
 /* =========================
 
    FEATURES
@@ -905,10 +923,11 @@ nav a:hover {
     display: contents; /* Allows reordering children with the visual block */
   }
 
-  .hero-copy h1 { order: 1; }
-  .hero-copy p { order: 2; margin-bottom: 10px; }
+  .hero-copy h1 { order: 1; margin-bottom: 12px; }
+  .hero-copy p { order: 2; margin-bottom: 15px; }
   .hero-visual { order: 3; }
-  .hero-buttons { order: 4; margin-top: 10px; width: 100%; }
+  .hero-buttons { display: none !important; } /* Hide original button on mobile */
+  .phone-btn { display: block; } /* Show app-style button on mobile */
 
   .hero::before {
     height: 780px; /* Increased to cover text and phone, stopping above button */
@@ -966,7 +985,7 @@ nav a:hover {
   }
 
   .section {
-    padding-top: 20px;
+    padding-top: 0;
   }
 
   .primary-btn {
@@ -1256,6 +1275,12 @@ nav a:hover {
             </div>
 
           </div>
+
+          <a href="myxi.html" class="phone-btn">
+
+            Build Your Team
+
+          </a>
 
         </div>
 
