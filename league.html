@@ -67,36 +67,20 @@ header {
   border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
-.auth-section {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  background: rgba(255, 255, 255, 0.04);
-  padding: 6px 16px;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.logo {
+  font-size: 22px;
+  font-weight: 800;
+}
+.logo span {
+  color: #c7ff38;
 }
 
-.signup-btn {
-  background: #c7ff38;
-  color: #041102;
-  padding: 8px 18px;
-  border-radius: 999px;
-  transition: 0.2s ease;
-}
-.signup-btn:hover {
-  box-shadow: 0 10px 25px rgba(184,255,30,0.25);
-}
 
-.login-link {
-  color: white !important;
-  text-decoration: none;
-  font-size: 15px;
-}
 
 nav a {
   color: rgba(255,255,255,0.85);
   text-decoration: none;
+  font-size: 15px;
   transition: 0.2s ease;
   white-space: nowrap;
 }
@@ -276,61 +260,13 @@ h1 {
   border-top: 1px solid #333;
   z-index: 1000;
 }
-@media (max-width: 768px) {
-  footer {
-    padding-bottom: 100px;
-  }
-}
-@media (max-width: 768px) {
+  nav { display: none; }
+  footer { padding-bottom: 100px; }
   .mobile-nav { display: flex; }
   .mobile-nav a { text-decoration: none; color: white; font-size: 12px; text-align: center; }
-}
-
-@media (max-width: 720px) {
-  header {
-    background: #000 !important;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
-    padding: 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  nav {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 6px;
-    width: 100%;
-    padding: 0 6px;
-  }
-
-  nav a {
-    font-size: 12px;;
-    line-height: 1.2;
-  }
-
-  .auth-section {
-    background: none;
-    border: none;
-    padding: 0;
-    gap: 12px;
-  }
-
-  .login-link {
-    font-size: 12px !important;
-  }
-
-  .signup-btn {
-    padding: 6px 14px !important;
-    font-size: 12px;
-  }
-
   .leader-row {
     grid-template-columns: 40px 1fr 80px 70px;
   }
-}
 
 </style>
 </head>
@@ -339,10 +275,6 @@ h1 {
 
 <header>
   <div class="logo">GAME <span>OF OPINIONS</span></div>
-  <div class="auth-section">
-    <a href="#" class="login-link">Log In</a>
-    <a href="#" class="signup-btn">Sign Up</a>
-  </div>
   <nav>
     <a href="index.html">Home</a>
     <a href="myxi.html">Your Team</a>
