@@ -716,8 +716,8 @@
 
     <div class="card">
       <h3>Top Scorer</h3>
-      <div class="top-scorer-content">
-        <div class="ai-avatar-in-card" onclick="showAiReportTopScorer()">
+      <div class="scout-card-content">
+        <div class="ai-avatar-in-card" onclick="showAiScout('r9')">
           <div class="speech-bubble-in-card">R9 Analysis 🇧🇷</div>
           <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="50" cy="50" r="45" fill="#009b3a" /> <!-- Brazil Green -->
@@ -740,58 +740,72 @@
     </div>
 
     <div class="card">
-
       <h3>Top Assists</h3>
-
-
-      <select>
-
-        <option>Select player</option>
-
-        <option>De Bruyne</option>
-
-        <option>Palmer</option>
-
-      </select>
-
+      <div class="scout-card-content">
+        <div class="ai-avatar-in-card" onclick="showAiScout('messi')">
+          <div class="speech-bubble-in-card">Leo Analysis 🇦🇷</div>
+          <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="45" fill="#74ACDF" /> <!-- Argentina Blue -->
+            <path d="M10 50 L90 50 M10 30 L90 30 M10 70 L90 70" stroke="white" stroke-width="15" /> <!-- Argentina Stripes -->
+            <circle cx="50" cy="35" r="22" fill="#d2a679" />
+            <path d="M35 25 Q50 15 65 25 L65 45 Q50 55 35 45 Z" fill="#4a3728" opacity="0.6" /> <!-- Beard -->
+          </svg>
+        </div>
+        <div class="selection-area">
+          <select>
+            <option>Select player</option>
+            <option>De Bruyne</option>
+            <option>Palmer</option>
+          </select>
+        </div>
+      </div>
       <div class="points">50 points</div>
 
     </div>
 
     <div class="card">
-
       <h3>Most Clean Sheets</h3>
-
-
-      <select>
-
-        <option>Select player</option>
-
-        <option>Alisson</option>
-
-        <option>Ederson</option>
-
-      </select>
-
+      <div class="scout-card-content">
+        <div class="ai-avatar-in-card" onclick="showAiScout('buffon')">
+          <div class="speech-bubble-in-card">Gigi Analysis 🇮🇹</div>
+          <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="45" fill="#004FB9" /> <!-- Italy Blue -->
+            <circle cx="50" cy="35" r="22" fill="#d2a679" />
+            <path d="M30 60 L40 50 L50 60 L60 50 L70 60" stroke="white" stroke-width="4" stroke-linecap="round" /> <!-- Glove detail -->
+          </svg>
+        </div>
+        <div class="selection-area">
+          <select>
+            <option>Select player</option>
+            <option>Alisson</option>
+            <option>Ederson</option>
+          </select>
+        </div>
+      </div>
       <div class="points">50 points</div>
 
     </div>
 
     <div class="card">
-
       <h3>First Hat-Trick</h3>
-
-
-      <select>
-
-        <option>Select player</option>
-
-        <option>Haaland</option>
-
-        <option>Son</option>
-
-      </select>
-
+      <div class="scout-card-content">
+        <div class="ai-avatar-in-card" onclick="showAiScout('cr7')">
+          <div class="speech-bubble-in-card">CR7 Analysis 🇵🇹</div>
+          <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="45" fill="#E42518" /> <!-- Portugal Red -->
+            <path d="M50 5 L50 95" stroke="#046A38" stroke-width="20" /> <!-- Portugal Green Stripe -->
+            <circle cx="50" cy="35" r="22" fill="#d2a679" />
+            <path d="M35 20 L65 20 L60 12 L40 12 Z" fill="#1a1a1a" /> <!-- Slick Hair -->
+          </svg>
+        </div>
+        <div class="selection-area">
+          <select>
+            <option>Select player</option>
+            <option>Haaland</option>
+            <option>Son</option>
+          </select>
+        </div>
+      </div>
       <div class="points">50 points</div>
 
     </div>
@@ -816,19 +830,24 @@
     </div>
 
     <div class="card">
-
       <h3>Most Red Cards</h3>
-
-      <select>
-
-        <option>Select team</option>
-
-        <option>Everton</option>
-
-        <option>Burnley</option>
-
-      </select>
-
+      <div class="scout-card-content">
+        <div class="ai-avatar-in-card" onclick="showAiScout('keane')">
+          <div class="speech-bubble-in-card">Keano Analysis 🇮🇪</div>
+          <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="45" fill="#169B62" /> <!-- Ireland Green -->
+            <circle cx="50" cy="35" r="22" fill="#d2a679" />
+            <path d="M35 45 Q50 55 65 45" stroke="#4a3728" stroke-width="8" fill="none" /> <!-- Angry Beard -->
+          </svg>
+        </div>
+        <div class="selection-area">
+          <select>
+            <option>Select team</option>
+            <option>Everton</option>
+            <option>Burnley</option>
+          </select>
+        </div>
+      </div>
       <div class="points">75 points</div>
 
     </div>
@@ -961,7 +980,7 @@ function nextAiPage() {
       <div class="stat-row"><span>Avg xG per 90</span> <span class="stat-val">0.92</span></div>
       <div class="stat-row"><span>Conversion Rate</span> <span class="stat-val">24.2%</span></div>
       <div class="stat-row"><span>Big Chances Missed</span> <span class="stat-val">Low</span></div>
-      <div class="stat-row"><span>AI Recommended Pick</span> <span class="stat-val" style="color:#c7ff38">Haaland</span></div>
+      <div class="stat-row"><span>AI Recommended Pick</span> <span class="stat-val" style="color:#c7ff38">${scoutData[currentScoutKey].stats[2][1]}</span></div>
       <p style="margin-top:15px; font-size:12px; color:#9ca3af;">Data processed via Game of Opinions Scout Algorithm v1.2</p>
     `;
   }
