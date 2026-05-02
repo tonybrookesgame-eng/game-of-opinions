@@ -1079,12 +1079,14 @@ function updateShirt(select) {
   const shirt = select.parentElement.querySelector('.shirt');
   const nameLabel = shirt.querySelector('.shirt-name');
   const val = select.value;
+  
   if (val === "Select") {
     shirt.style.background = "linear-gradient(#2563eb, #1d4ed8)";
     nameLabel.innerText = "";
     nameLabel.style.display = "none";
     return;
   }
+  
   nameLabel.style.display = "block";
   const team = playerToClub[val] || val;
   nameLabel.innerText = clubAbbr[team] || team.substring(0,3).toUpperCase();
