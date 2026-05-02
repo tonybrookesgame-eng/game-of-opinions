@@ -918,7 +918,12 @@ nav a:hover {
 
   .hero-copy h1 { order: 1; margin-bottom: 12px; }
   .hero-copy p { order: 2; margin-bottom: 15px; }
-  .hero-visual { order: 3; }
+  .hero-visual { 
+    order: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
   .hero-buttons { display: none !important; } /* Hide original button on mobile */
   .phone-btn { display: block; } /* Show app-style button on mobile */
 
