@@ -97,7 +97,7 @@
     }
 
     footer {
-      display: none;
+      display: block;
       margin-top: 60px;
       padding: 40px 20px;
       background: rgba(0, 0, 0, 0.4);
@@ -631,8 +631,8 @@
         margin-top: 8px;
       }
 
-      /* Layout for Top Scorer card with avatar */
-      .card .top-scorer-content {
+      /* Layout for cards with AI avatars */
+      .card .scout-card-content {
         display: flex;
         align-items: center;
         gap: 10px;
@@ -847,6 +847,20 @@
 
 </div>
 
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">GAME <span>OF OPINIONS</span></div>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="myxi.html">Your Team</a>
+    <a href="season.html">Season Picks</a>
+    <a href="league.html">League</a>
+  </div>
+  <div class="copyright">
+    &copy; 2024 Game of Opinions. All rights reserved.
+  </div>
+</footer>
+
 <!-- AI REPORT MODAL -->
 <div class="ai-modal" id="aiModal" onclick="this.style.display='none'">
   <div class="ai-report" onclick="event.stopPropagation()">
@@ -872,38 +886,64 @@
 
 <script>
 let aiPage = 1;
-const r9Insights = [
-  "Positioning is everything. Haaland is always in the right place.",
-  "Look for players who take penalties. It's the easiest way to pad the stats.",
-  "Salah's creative xG makes him a danger until the final whistle.",
-  "Confidence is key. A striker who hasn't scored in three games is a risky pick.",
-  "Palmer's conversion rate from outside the box is statistically unsustainable, yet he keeps doing it."
-];
+let currentScoutKey = 'r9';
 
-function showAiReportTopScorer() {
+const scoutData = {
+  r9: {
+    name: "Fenômeno AI (R9)",
+    title: "Goal Scoring Analysis",
+    insights: ["Positioning is everything. Haaland is always in the right place.", "Confidence is key. A striker who hasn't scored in three games is a risky pick."],
+    stats: [["Haaland (MCI)", "31 Goals"], ["Salah (LIV)", "23 Goals"], ["AI Pick", "Haaland"]]
+  },
+  messi: {
+    name: "La Pulga AI (Messi)",
+    title: "Playmaking & Vision",
+    insights: ["Vision is about seeing the pass before the defender does.", "Look for the players who take all the set pieces."],
+    stats: [["De Bruyne (MCI)", "18 Assists"], ["Palmer (CHE)", "14 Assists"], ["AI Pick", "De Bruyne"]]
+  },
+  buffon: {
+    name: "Gigi AI (Buffon)",
+    title: "Defensive Organization",
+    insights: ["Concentration for 90 minutes is harder than any save.", "A good keeper organizes the wall before the whistle."],
+    stats: [["Raya (ARS)", "16 Cleansheets"], ["Alisson (LIV)", "14 Cleansheets"], ["AI Pick", "Raya"]]
+  },
+  cr7: {
+    name: "GOAT AI (CR7)",
+    title: "Efficiency & Records",
+    insights: ["The first goal is good, but the third is better.", "Hard work beats talent when talent doesn't work hard."],
+    stats: [["Haaland", "2 Hat-tricks"], ["Jackson", "1 Hat-trick"], ["AI Pick", "Haaland"]]
+  },
+  keane: {
+    name: "Keano AI (Roy Keane)",
+    title: "Intensity & Standards",
+    insights: ["If you're not prepared to tackle, stay at home.", "That's his job! Don't celebrate a basic yellow card."],
+    stats: [["Everton", "High Aggression"], ["Wolves", "Tactical Fouls"], ["AI Pick", "Everton"]]
+  }
+};
+
+function showAiScout(key) {
+  currentScoutKey = key;
+  const data = scoutData[key];
   const modal = document.getElementById('aiModal');
   const content = document.getElementById('aiContent');
   const stats = document.getElementById('aiStats');
   const actionBtn = document.getElementById('aiActionBtn');
+  const title = modal.querySelector('h2');
   
   aiPage = 1;
   modal.style.display = 'flex';
-  actionBtn.innerText = "Next: Advanced Stats";
-  actionBtn.onclick = nextAiPage;
-  
-  content.innerText = "Fenômeno AI is analyzing goal-scoring efficiency...";
+  title.innerText = `🤖 ${data.name}`;
+  content.innerText = `${data.name} is analyzing the field...`;
   stats.innerHTML = "";
+  actionBtn.innerText = "Next: Advanced Stats";
 
   setTimeout(() => {
-    const randomInsight = r9Insights[Math.floor(Math.random() * r9Insights.length)];
-    content.innerText = "Page 1: Golden Boot Projections. Based on current shot conversion and fixture difficulty:";
-    stats.innerHTML = `
-      <div class="stat-row"><span>Haaland (MCI)</span> <span class="stat-val">31 Goals (Realistic)</span></div>
-      <div class="stat-row"><span>Salah (LIV)</span> <span class="stat-val">23 Goals (Realistic)</span></div>
-      <div class="stat-row"><span>Palmer (CHE)</span> <span class="stat-val">21 Goals (Realistic)</span></div>
-      <p style="margin-top:15px; font-style:italic; font-size:12px;">"${randomInsight}" - Ronaldo R9 AI</p>
-    `;
-  }, 800);
+    const randomInsight = data.insights[Math.floor(Math.random() * data.insights.length)];
+    content.innerText = `Page 1: ${data.title}. Based on current underlying metrics:`;
+    stats.innerHTML = data.stats.map(s => `
+      <div class="stat-row"><span>${s[0]}</span> <span class="stat-val">${s[1]}</span></div>
+    `).join('') + `<p style="margin-top:15px; font-style:italic; font-size:12px;">"${randomInsight}"</p>`;
+  }, 600);
 }
 
 function nextAiPage() {

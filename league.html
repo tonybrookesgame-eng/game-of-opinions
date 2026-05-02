@@ -57,75 +57,71 @@ body::after{
    HEADER
 
 ========================= */
-
 header {
-
   display: flex;
-
   justify-content: space-between;
-
   align-items: center;
-
   padding: 20px 40px;
-
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-
+  background: rgba(0,0,0,0.72);
   backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
-.logo {
-
-  font-size: 22px;
-
-  font-weight: 800;
-
+.auth-section {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 6px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.logo span {
+.signup-btn {
+  background: #c7ff38;
+  color: #041102;
+  padding: 8px 18px;
+  border-radius: 999px;
+  transition: 0.2s ease;
+}
+.signup-btn:hover {
+  box-shadow: 0 10px 25px rgba(184,255,30,0.25);
+}
 
-  color: #c7ff38;
-
+.login-link {
+  color: white !important;
+  text-decoration: none;
+  font-size: 15px;
 }
 
 nav a {
-
-  margin-left: 20px;
-
+  color: rgba(255,255,255,0.85);
   text-decoration: none;
-
+  transition: 0.2s ease;
+  white-space: nowrap;
+}
+nav a:hover {
   color: white;
-
-  font-size: 14px;
-
 }
 
-nav a:hover {
-
-  opacity: 0.7;
-
+nav {
+  display: flex;
+  gap: 20px;
 }
 
 /* =========================
-
    CONTAINER
-
 ========================= */
 
 .container {
-
   max-width: 1080px;
-
   margin: auto;
-
   padding: 20px 40px 100px;
-
 }
 
 h1 {
-
   margin-bottom: 8px;
   font-size: 36px;
-
 }
 
 .subtitle {
@@ -139,8 +135,6 @@ h1 {
 /* =========================
 
    LEADERBOARD
-
-========================= */
 
 .leaderboard {
 
@@ -275,189 +269,143 @@ h1 {
 ========================= */
 
 .mobile-nav {
-
   display: none;
-
+  justify-content: space-around;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #111827;
+  padding: 10px 0;
+  border-top: 1px solid #333;
+  z-index: 1000;
+}
+@media (max-width: 768px) {
+  .mobile-nav { display: flex; }
+  .mobile-nav a { text-decoration: none; color: white; font-size: 12px; text-align: center; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 720px) {
+  header {
+    background: #000 !important;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
 
   nav {
-
-    display: none;
-
-  }
-
-  .mobile-nav {
-
-    display: flex;
-
-    justify-content: space-around;
-
-    position: fixed;
-
-    bottom: 0;
-
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
     width: 100%;
-
-    background: #111827;
-
-    padding: 10px 0;
-
-    border-top: 1px solid #333;
-
+    padding: 0 6px;
   }
 
-  .mobile-nav a {
+  nav a {
+    font-size: 12px;;
+    line-height: 1.2;
+  }
 
-    text-decoration: none;
+  .auth-section {
+    background: none;
+    border: none;
+    padding: 0;
+    gap: 12px;
+  }
 
-    color: white;
+  .login-link {
+    font-size: 12px !important;
+  }
 
+  .signup-btn {
+    padding: 6px 14px !important;
     font-size: 12px;
-
-    text-align: center;
-
-  }
-
-  .leader-header {
-
-    grid-template-columns: 40px 1fr 80px 70px;
-
   }
 
   .leader-row {
-
     grid-template-columns: 40px 1fr 80px 70px;
-
   }
-
 }
 
 </style>
-
 </head>
 
 <body>
 
 <header>
-
   <div class="logo">GAME <span>OF OPINIONS</span></div>
-
+  <div class="auth-section">
+    <a href="#" class="login-link">Log In</a>
+    <a href="#" class="signup-btn">Sign Up</a>
+  </div>
   <nav>
-
     <a href="index.html">Home</a>
-
     <a href="myxi.html">Your Team</a>
-
     <a href="season.html">Season Picks</a>
-
     <a href="league.html">League</a>
-
   </nav>
-
 </header>
 
 <div class="container">
-
-  <h1>League Table</h1>
+  <h1>League Leaderboard</h1>
+  <p class="subtitle">Global ranking of all opinion-based managers.</p>
 
   <div style="margin-bottom: 30px;"></div>
 
   <div class="leaderboard">
-
     <div class="leader-header">
-
       <div>#</div>
-
-      <div>Manager</div>
-
-      <div>Points</div>
-
-      <div>This Week</div>
-
+      <div>Team Name</div>
+      <div style="text-align: right;">Points</div>
+      <div style="text-align: right;">This Week</div>
     </div>
 
-    <!-- ROWS -->
-
     <div class="leader-row">
-
       <div class="rank">1</div>
-
       <div class="team">FootyWizard</div>
-
-      <div class="points">412</div>
-
-      <div class="week up">+38 ⬆️</div>
-
+      <div class="points">420</div>
+      <div class="week up">+42 ⬆️</div>
     </div>
 
     <div class="leader-row you">
-
       <div class="rank">2</div>
-
-      <div class="team">You</div>
-
+      <div class="team">TikiTakaTom (You)</div>
       <div class="points">398</div>
-
-      <div class="week up">+42 ⬆️</div>
-
-    </div>
-
-    <div class="leader-row">
-
-      <div class="rank">3</div>
-
-      <div class="team">CaptainChaos</div>
-
-      <div class="points">390</div>
-
       <div class="week down">-1 ⬇️</div>
-
     </div>
 
     <div class="leader-row">
-
-      <div class="rank">4</div>
-
-      <div class="team">TikiTakaTom</div>
-
-      <div class="points">376</div>
-
-      <div class="week same">0 ➖</div>
-
-    </div>
-
-    <div class="leader-row">
-
       <div class="rank">5</div>
-
       <div class="team">WildcardWill</div>
-
       <div class="points">355</div>
-
       <div class="week up">+12 ⬆️</div>
-
     </div>
-
   </div>
-
 </div>
 
-<!-- MOBILE NAV -->
+<footer>
+  <div class="footer-logo">GAME <span>OF OPINIONS</span></div>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="myxi.html">Your Team</a>
+    <a href="season.html">Season Picks</a>
+    <a href="league.html">League</a>
+  </div>
+  <div class="copyright">
+    &copy; 2024 Game of Opinions. All rights reserved.
+  </div>
+</footer>
 
 <div class="mobile-nav">
-
   <a href="index.html">🏠<br>Home</a>
-
   <a href="myxi.html">⚽<br>Team</a>
-
   <a href="season.html">🏆<br>Picks</a>
-
   <a href="league.html">📊<br>League</a>
-
 </div>
 
 </body>
-
 </html>
