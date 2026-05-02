@@ -19,19 +19,37 @@
 ========================= */
 
 body {
-
   margin: 0;
-
   font-family: 'Segoe UI', Arial, sans-serif;
-
   color: white;
-
   background:
+    radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 25%),
+    linear-gradient(180deg,#020611 0%,#071320 40%,#071a29 100%);
+  min-height: 100vh;
+}
 
-    radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 30%),
-
-    linear-gradient(180deg, #040812 0%, #07141f 40%, #071a29 100%);
-
+/* stadium glow layers */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(circle at center, rgba(120,255,120,0.08), transparent 40%),
+    repeating-radial-gradient(circle at 50% -20%, rgba(255,255,255,0.03) 0px, transparent 80px, transparent 120px);
+  pointer-events:none;
+  z-index: -1;
+}
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size:80px 80px;
+  opacity:0.2;
+  pointer-events:none;
+  z-index: -1;
 }
 
 /* =========================
