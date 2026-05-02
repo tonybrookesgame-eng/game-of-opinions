@@ -1202,30 +1202,6 @@ function saveWeekly(){
   weeklyStatus.innerText="Saved!";
 }
 
-function clearTeam() {
-  if (confirm("Are you sure you want to clear your entire team?")) {
-    const selects = document.querySelectorAll('.pitch select');
-    selects.forEach(select => {
-      select.value = "Select";
-      updateShirt(select);
-    });
-  }
-}
-
-function saveTeam() {
-  const selects = document.querySelectorAll('.pitch select');
-  const teamValues = Array.from(selects).map(s => s.value);
-  const formation = document.getElementById('formationSelect').value;
-  if (teamValues.includes("Select")) {
-    alert("Please fill all 11 positions first!");
-    return;
-  }
-  localStorage.setItem("myTeam", JSON.stringify({ team: teamValues, formation: formation }));
-  alert("Team XI Saved!");
-}
-
-let currentBetChoice = null;
-
 window.onload=function(){
   populateWeeklyOptions();
   loadCurrentBet();
@@ -1256,59 +1232,6 @@ window.onload=function(){
     setBetChoice(savedBet);
   }
 };
-</script>
-</body>
-</html>
-    minute:goalMinute.value
-
-  };
-
-  localStorage.setItem("weekly",JSON.stringify(data));
-
-  weeklyStatus.innerText="Saved!";
-
-}
-
-window.onload=function(){
-  populateWeeklyOptions();
-  loadCurrentBet();
-
-  const savedData = JSON.parse(localStorage.getItem("myTeam"));
-  if(savedData) {
-    const team = savedData.team || savedData;
-    const formation = savedData.formation || "4-4-2";
-    
-    document.getElementById('formationSelect').value = formation;
-    changeFormation();
-
-    const selects = document.querySelectorAll('.pitch select');
-    selects.forEach((s, i) => {
-      if(team[i] && team[i] !== "Select") {
-        s.value = team[i];
-        updateShirt(s);
-      }
-    });
-  } else {
-    populatePlayers();
-  }
-
-  const saved=JSON.parse(localStorage.getItem("weekly"));
-
-  if(saved){
-
-    firstScorer.value=saved.first;
-
-    goalMinute.value=saved.minute;
-
-  }
-
-  const savedBet = localStorage.getItem("betBuilder");
-  if(savedBet) {
-    setBetChoice(savedBet);
-  }
-
-};
-
 </script>
 </body>
 </html>
