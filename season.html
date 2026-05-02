@@ -555,6 +555,11 @@
       height: 50px;
       flex-shrink: 0; /* Prevent avatar from shrinking */
       transition: transform 0.2s ease;
+      border-radius: 50%;
+      background-size: cover;
+      background-position: center;
+      background-color: rgba(255,255,255,0.1);
+      border: 2px solid rgba(199, 255, 56, 0.4);
     }
     .ai-avatar-in-card:hover {
       transform: scale(1.05);
@@ -717,16 +722,8 @@
     <div class="card">
       <h3>Top Scorer</h3>
       <div class="scout-card-content">
-        <div class="ai-avatar-in-card" onclick="showAiScout('r9')">
+        <div class="ai-avatar-in-card" onclick="showAiScout('r9')" style="background-image: url('https://api.dicebear.com/7.x/avataaars/svg?seed=R9&top=NoHair&skinColor=ae5d29');">
           <div class="speech-bubble-in-card">R9 Analysis 🇧🇷</div>
-          <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="45" fill="#009b3a" /> <!-- Brazil Green -->
-            <path d="M50 85C65 85 78 75 82 60C75 52 65 48 50 48C35 48 25 52 18 60C22 75 35 85 50 85Z" fill="#fedd00" /> <!-- Brazil Yellow -->
-            <circle cx="50" cy="35" r="22" fill="#d2a679" /> <!-- Skin Tone -->
-            <path d="M40 18 Q50 14 60 18 L55 24 Q50 22 45 24 Z" fill="#1a1a1a" /> <!-- Iconic R9 Hair -->
-            <circle cx="42" cy="35" r="2" fill="#000" /> <!-- Eye L -->
-            <circle cx="58" cy="35" r="2" fill="#000" /> <!-- Eye R -->
-          </svg>
         </div>
         <div class="selection-area">
           <select>
@@ -742,14 +739,8 @@
     <div class="card">
       <h3>Top Assists</h3>
       <div class="scout-card-content">
-        <div class="ai-avatar-in-card" onclick="showAiScout('messi')">
+        <div class="ai-avatar-in-card" onclick="showAiScout('messi')" style="background-image: url('https://api.dicebear.com/7.x/avataaars/svg?seed=Messi&top=ShortHairShortFlat&facialHair=BeardLight&facialHairColor=4a3728&skinColor=edb98a');">
           <div class="speech-bubble-in-card">Leo Analysis 🇦🇷</div>
-          <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="45" fill="#74ACDF" /> <!-- Argentina Blue -->
-            <path d="M10 50 L90 50 M10 30 L90 30 M10 70 L90 70" stroke="white" stroke-width="15" /> <!-- Argentina Stripes -->
-            <circle cx="50" cy="35" r="22" fill="#d2a679" />
-            <path d="M35 25 Q50 15 65 25 L65 45 Q50 55 35 45 Z" fill="#4a3728" opacity="0.6" /> <!-- Beard -->
-          </svg>
         </div>
         <div class="selection-area">
           <select>
@@ -766,13 +757,8 @@
     <div class="card">
       <h3>Most Clean Sheets</h3>
       <div class="scout-card-content">
-        <div class="ai-avatar-in-card" onclick="showAiScout('buffon')">
+        <div class="ai-avatar-in-card" onclick="showAiScout('buffon')" style="background-image: url('https://api.dicebear.com/7.x/avataaars/svg?seed=Buffon&top=ShortHairShortWaved&hairColor=2c1b18&skinColor=edb98a');">
           <div class="speech-bubble-in-card">Gigi Analysis 🇮🇹</div>
-          <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="45" fill="#004FB9" /> <!-- Italy Blue -->
-            <circle cx="50" cy="35" r="22" fill="#d2a679" />
-            <path d="M30 60 L40 50 L50 60 L60 50 L70 60" stroke="white" stroke-width="4" stroke-linecap="round" /> <!-- Glove detail -->
-          </svg>
         </div>
         <div class="selection-area">
           <select>
@@ -789,14 +775,8 @@
     <div class="card">
       <h3>First Hat-Trick</h3>
       <div class="scout-card-content">
-        <div class="ai-avatar-in-card" onclick="showAiScout('cr7')">
+        <div class="ai-avatar-in-card" onclick="showAiScout('cr7')" style="background-image: url('https://api.dicebear.com/7.x/avataaars/svg?seed=CR7&top=ShortHairTheCaesar&hairColor=2c1b18&skinColor=edb98a');">
           <div class="speech-bubble-in-card">CR7 Analysis 🇵🇹</div>
-          <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="45" fill="#E42518" /> <!-- Portugal Red -->
-            <path d="M50 5 L50 95" stroke="#046A38" stroke-width="20" /> <!-- Portugal Green Stripe -->
-            <circle cx="50" cy="35" r="22" fill="#d2a679" />
-            <path d="M35 20 L65 20 L60 12 L40 12 Z" fill="#1a1a1a" /> <!-- Slick Hair -->
-          </svg>
         </div>
         <div class="selection-area">
           <select>
@@ -811,34 +791,27 @@
     </div>
 
     <div class="card">
-
       <h3>First Manager Sacked</h3>
-
-
-      <select>
-
-        <option>Select manager</option>
-
-        <option>Manager A</option>
-
-        <option>Manager B</option>
-
-      </select>
-
+      <div class="scout-card-content">
+        <div class="ai-avatar-in-card" onclick="showAiScout('fergie')" style="background-image: url('https://api.dicebear.com/7.x/avataaars/svg?seed=Fergie&top=ShortHairShortFlat&hairColor=e8e1e1&skinColor=edb98a');">
+          <div class="speech-bubble-in-card">Fergie Analysis 🏴󠁧󠁢󠁳󠁣󠁴󠁿</div>
+        </div>
+        <div class="selection-area">
+          <select>
+            <option>Select manager</option>
+            <option>Manager A</option>
+            <option>Manager B</option>
+          </select>
+        </div>
+      </div>
       <div class="points">50 points</div>
-
     </div>
 
     <div class="card">
       <h3>Most Red Cards</h3>
       <div class="scout-card-content">
-        <div class="ai-avatar-in-card" onclick="showAiScout('keane')">
+        <div class="ai-avatar-in-card" onclick="showAiScout('keane')" style="background-image: url('https://api.dicebear.com/7.x/avataaars/svg?seed=Roy&top=ShortHairShortFlat&facialHair=BeardMajestic&facialHairColor=2c1b18&skinColor=edb98a');">
           <div class="speech-bubble-in-card">Keano Analysis 🇮🇪</div>
-          <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="45" fill="#169B62" /> <!-- Ireland Green -->
-            <circle cx="50" cy="35" r="22" fill="#d2a679" />
-            <path d="M35 45 Q50 55 65 45" stroke="#4a3728" stroke-width="8" fill="none" /> <!-- Angry Beard -->
-          </svg>
         </div>
         <div class="selection-area">
           <select>
@@ -937,6 +910,12 @@ const scoutData = {
     title: "Intensity & Standards",
     insights: ["If you're not prepared to tackle, stay at home.", "That's his job! Don't celebrate a basic yellow card."],
     stats: [["Everton", "High Aggression"], ["Wolves", "Tactical Fouls"], ["AI Pick", "Everton"]]
+  },
+  fergie: {
+    name: "Sir Alex AI (Fergie)",
+    title: "Managerial Pressure Analysis",
+    insights: ["Losing three in a row? That's when the hair dryer comes out.", "Check the fixture list. A bad run in December is often the end."],
+    stats: [["Manager A", "High Pressure"], ["Manager B", "Moderate Risk"], ["AI Pick", "Manager A"]]
   }
 };
 
