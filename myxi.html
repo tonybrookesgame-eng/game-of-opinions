@@ -862,20 +862,15 @@ MOBILE
 
   <div class="bet-builder-panel">
     <h2>Bet Builder</h2>
-    <div class="bet-match">Liverpool vs Brentford</div>
-    <ul class="bet-list">
-      <li>Liverpool to win</li>
-      <li>Over 3.5 Goals</li>
-      <li>Over 9 Corners</li>
-      <li>Konate to be carded</li>
-    </ul>
+    <div class="bet-match" id="betMatchDisplay">Loading match...</div>
+    <ul class="bet-list" id="betPicksDisplay"></ul>
     <div class="bet-odds-box">
       <span class="odds-label">Est. Odds</span>
-      <span class="odds-value">30/1</span>
+      <span class="odds-value" id="betOddsDisplay">--</span>
     </div>
     <div class="bet-actions">
-      <button class="bet-choice" onclick="setBetChoice('yes')" id="btnYes">YES</button>
-      <button class="bet-choice" onclick="setBetChoice('no')" id="btnNo">NO</button>
+      <button class="bet-choice" onclick="setBetChoice('yes')" id="btnYes" title="Sacrifice: 5 pts. Win 155 pts if bet lands, lose 30 pts if it fails.">YES</button>
+      <button class="bet-choice" onclick="setBetChoice('no')" id="btnNo" title="Sacrifice: 5 pts. Win 30 pts if bet fails, lose 155 pts if it lands.">NO</button>
     </div>
     <div class="bet-info" id="betInfo">
       Pick if the bet lands. Cost: 5 pts to play.
@@ -982,8 +977,54 @@ const playersByPos = {
   ]
 };
 
+// Bet Builder Data - Add new weeks at the end of this array
+const weeklyBets = [
+  {
+    match: "Liverpool vs Brentford",
+    picks: ["Liverpool to win", "Over 3.5 Goals", "Over 9 Corners", "Konate to be carded"],
+    odds: "30/1"
+  }
+];
+
 const playerToClub = {};
 Object.values(playersByPos).flat().forEach(p => { if(typeof p === 'object') playerToClub[p.name] = p.club; });
+
+function loadCurrentBet() {
+  const currentBet = weeklyBets[weeklyBets.length - 1]; // Always load the latest bet
+  document.getElementById('betMatchDisplay').innerText = currentBet.match;
+  document.getElementById('betOddsDisplay').innerText = currentBet.odds;
+  
+  const list = document.getElementById('betPicksDisplay');
+  list.innerHTML = '';
+  currentBet.picks.forEach(pick => {
+    const li = document.createElement('li');
+    li.innerText = pick;
+    list.appendChild(li);
+  });
+}
+
+const colors = {
+  "Arsenal": "linear-gradient(#ef4444, #991b1b)",
+  "Aston Villa": "linear-gradient(#94bee5, #670e36)",
+  "Bournemouth": "linear-gradient(#da291c, #000000)",
+  "Brentford": "linear-gradient(#e30613, #ffffff)",
+  "Brighton": "linear-gradient(#0057b8, #ffffff)",
+  "Chelsea": "linear-gradient(#034694, #002d72)",
+  "Crystal Palace": "linear-gradient(#1b458f, #c4122e)",
+  "Everton": "linear-gradient(#003399, #002060)",
+  "Fulham": "linear-gradient(#ffffff, #000000)",
+  "Ipswich": "linear-gradient(#0055a5, #ffffff)",
+  "Leicester": "linear-gradient(#003090, #ffffff)",
+  "Liverpool": "linear-gradient(#c8102e, #8d0514)",
+  "Man City": "linear-gradient(#6cabdd, #1c2c5b)",
+  "Man Utd": "linear-gradient(#da291c, #000000)",
+  "Newcastle": "linear-gradient(#241f20, #ffffff)",
+  "Nott'm Forest": "linear-gradient(#dd0000, #ffffff)",
+  "Southampton": "linear-gradient(#d71920, #ffffff)",
+  "Spurs": "linear-gradient(#ffffff, #132257)",
+  "West Ham": "linear-gradient(#7a263a, #1bb1e7)",
+  "Wolves": "linear-gradient(#fdb913, #231f20)"
+};
 
 function updateShirt(select) {
   const shirt = select.parentElement.querySelector('.shirt');
@@ -998,28 +1039,6 @@ function updateShirt(select) {
   nameLabel.style.display = "block";
   const team = playerToClub[val] || val;
   nameLabel.innerText = clubAbbr[team] || team.substring(0,3).toUpperCase();
-  const colors = {
-    "Arsenal": "linear-gradient(#ef4444, #991b1b)",
-    "Aston Villa": "linear-gradient(#94bee5, #670e36)",
-    "Bournemouth": "linear-gradient(#da291c, #000000)",
-    "Brentford": "linear-gradient(#e30613, #ffffff)",
-    "Brighton": "linear-gradient(#0057b8, #ffffff)",
-    "Chelsea": "linear-gradient(#034694, #002d72)",
-    "Crystal Palace": "linear-gradient(#1b458f, #c4122e)",
-    "Everton": "linear-gradient(#003399, #002060)",
-    "Fulham": "linear-gradient(#ffffff, #000000)",
-    "Ipswich": "linear-gradient(#0055a5, #ffffff)",
-    "Leicester": "linear-gradient(#003090, #ffffff)",
-    "Liverpool": "linear-gradient(#c8102e, #8d0514)",
-    "Man City": "linear-gradient(#6cabdd, #1c2c5b)",
-    "Man Utd": "linear-gradient(#da291c, #000000)",
-    "Newcastle": "linear-gradient(#241f20, #ffffff)",
-    "Nott'm Forest": "linear-gradient(#dd0000, #ffffff)",
-    "Southampton": "linear-gradient(#d71920, #ffffff)",
-    "Spurs": "linear-gradient(#ffffff, #132257)",
-    "West Ham": "linear-gradient(#7a263a, #1bb1e7)",
-    "Wolves": "linear-gradient(#fdb913, #231f20)"
-  };
   shirt.style.background = colors[team] || "linear-gradient(#2563eb, #1d4ed8)";
   refreshDropdowns();
 }
@@ -1150,8 +1169,6 @@ function saveTeam() {
   alert("Team XI Saved!");
 }
 
-let currentBetChoice = null;
-
 function setBetChoice(choice) {
   currentBetChoice = choice;
   document.getElementById('btnYes').classList.remove('selected');
@@ -1176,66 +1193,12 @@ function saveBetBuilder() {
 }
 
 function saveWeekly(){
-
   const data = {
-
     first:firstScorer.value,
-
     minute:goalMinute.value
-
   };
-
   localStorage.setItem("weekly",JSON.stringify(data));
-
   weeklyStatus.innerText="Saved!";
-
-}
-
-window.onload=function(){
-  populateWeeklyOptions();
-
-  const savedData = JSON.parse(localStorage.getItem("myTeam"));
-  if(savedData) {
-    const team = savedData.team || savedData;
-    const formation = savedData.formation || "4-4-2";
-    
-    document.getElementById('formationSelect').value = formation;
-    changeFormation();
-
-    const selects = document.querySelectorAll('.pitch select');
-    selects.forEach((s, i) => {
-      if(team[i] && team[i] !== "Select") {
-        s.value = team[i];
-        updateShirt(s);
-      }
-    });
-  } else {
-    populatePlayers();
-  }
-
-  const saved=JSON.parse(localStorage.getItem("weekly"));
-
-  if(saved){
-
-    firstScorer.value=saved.first;
-
-    goalMinute.value=saved.minute;
-
-  }
-
-  const savedBet = localStorage.getItem("betBuilder");
-  if(savedBet) {
-    setBetChoice(savedBet);
-  }
-
-};
-
-</script>
-</body>
-</html>therOpt = document.createElement('option');
-  otherOpt.value = "Other";
-  otherOpt.innerHTML = "Other (90+)";
-  minuteSelect.appendChild(otherOpt);
 }
 
 function clearTeam() {
@@ -1252,7 +1215,6 @@ function saveTeam() {
   const selects = document.querySelectorAll('.pitch select');
   const teamValues = Array.from(selects).map(s => s.value);
   const formation = document.getElementById('formationSelect').value;
-  
   if (teamValues.includes("Select")) {
     alert("Please fill all 11 positions first!");
     return;
@@ -1261,12 +1223,41 @@ function saveTeam() {
   alert("Team XI Saved!");
 }
 
-function saveWeekly(){
+let currentBetChoice = null;
 
-  const data = {
+window.onload=function(){
+  populateWeeklyOptions();
+  loadCurrentBet();
 
-    first:firstScorer.value,
-
+  const savedData = JSON.parse(localStorage.getItem("myTeam"));
+  if(savedData) {
+    const team = savedData.team || savedData;
+    const formation = savedData.formation || "4-4-2";
+    document.getElementById('formationSelect').value = formation;
+    changeFormation();
+    const selects = document.querySelectorAll('.pitch select');
+    selects.forEach((s, i) => {
+      if(team[i] && team[i] !== "Select") {
+        s.value = team[i];
+        updateShirt(s);
+      }
+    });
+  } else {
+    populatePlayers();
+  }
+  const saved=JSON.parse(localStorage.getItem("weekly"));
+  if(saved){
+    firstScorer.value=saved.first;
+    goalMinute.value=saved.minute;
+  }
+  const savedBet = localStorage.getItem("betBuilder");
+  if(savedBet) {
+    setBetChoice(savedBet);
+  }
+};
+</script>
+</body>
+</html>
     minute:goalMinute.value
 
   };
@@ -1279,6 +1270,7 @@ function saveWeekly(){
 
 window.onload=function(){
   populateWeeklyOptions();
+  loadCurrentBet();
 
   const savedData = JSON.parse(localStorage.getItem("myTeam"));
   if(savedData) {
