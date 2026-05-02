@@ -874,21 +874,21 @@ nav a:hover {
 
   .hero {
 
-    padding: 160px 12px 60px;
+    padding: 140px 12px 30px;
     background: transparent;
     min-height: auto;
   }
 
   .hero::before {
-    height: 480px; /* Limits image height to stop above the button */
+    height: 350px; /* Limits image height to stop above the button */
     background:
       linear-gradient(rgba(0,0,0,0.40), rgba(0,0,0,0.80)),
       url("https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=1600&auto=format&fit=crop"),
       radial-gradient(circle at top, rgba(255,255,255,0.14), transparent 25%);
     background-size: cover;
-    background-position: center 40%; /* Focus on the ball and boot */
-    mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+    background-position: center 80%; /* Focus on the ball and boot */
+    mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
   }
 
   .hero-copy h1 {
@@ -933,6 +933,14 @@ nav a:hover {
 
     padding: 12px 20px;
 
+  }
+
+  .hero-visual {
+    display: none; /* Moves the features section up significantly by removing the large phone mockup on mobile */
+  }
+
+  .section {
+    padding-top: 20px;
   }
 
   .primary-btn {
