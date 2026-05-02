@@ -22,13 +22,40 @@ body {
 
   margin: 0;
 
-  background: #05070d;
+  background:
+    radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 25%),
+    linear-gradient(180deg,#020611 0%,#071320 40%,#071a29 100%);
 
   color: white;
 
   font-family: 'Segoe UI', Arial, sans-serif;
 
   overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* stadium glow layers from other pages */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(circle at center, rgba(120,255,120,0.08), transparent 40%),
+    repeating-radial-gradient(circle at 50% -20%, rgba(255,255,255,0.03) 0px, transparent 80px, transparent 120px);
+  pointer-events:none;
+  z-index: -1;
+}
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size:80px 80px;
+  opacity:0.2;
+  pointer-events:none;
+  z-index: -1;
 
 }
 
@@ -641,7 +668,7 @@ nav a:hover {
 
   padding: 40px 40px 90px;
 
-  background: #05070d;
+  background: transparent;
 
 }
 
@@ -847,8 +874,21 @@ nav a:hover {
 
   .hero {
 
-    padding: 180px 12px 90px;
+    padding: 160px 12px 60px;
+    background: transparent;
+    min-height: auto;
+  }
 
+  .hero::before {
+    height: 480px; /* Limits image height to stop above the button */
+    background:
+      linear-gradient(rgba(0,0,0,0.40), rgba(0,0,0,0.80)),
+      url("https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=1600&auto=format&fit=crop"),
+      radial-gradient(circle at top, rgba(255,255,255,0.14), transparent 25%);
+    background-size: cover;
+    background-position: center 40%; /* Focus on the ball and boot */
+    mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
   }
 
   .hero-copy h1 {
