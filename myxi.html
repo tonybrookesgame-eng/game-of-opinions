@@ -353,6 +353,16 @@ PITCH MARKINGS
 
 }
 
+.pitch-sub-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+}
+@media(max-width:768px) {
+  .pitch-sub-row { gap: 5px; }
+}
+
 /* =========================
 
 ROWS + PLAYERS
@@ -929,8 +939,29 @@ function changeFormation() {
 
 function updatePitchRow(row, pos, count) {
   row.innerHTML = '';
-  for(let i=0; i<count; i++) {
-    row.innerHTML += `<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="${pos}" onchange="updateShirt(this)"><option>Select</option></select></div>`;
+  row.style.flexDirection = 'row'; // Default
+
+  if (count === 5) {
+    row.style.flexDirection = 'column';
+    row.style.gap = '10px';
+    
+    const subBase = document.createElement('div');
+    subBase.className = 'pitch-sub-row';
+    const subAdvanced = document.createElement('div');
+    subAdvanced.className = 'pitch-sub-row';
+    
+    const playerHTML = `<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="${pos}" onchange="updateShirt(this)"><option>Select</option></select></div>`;
+    
+    for(let i=0; i<4; i++) subBase.innerHTML += playerHTML;
+    subAdvanced.innerHTML += playerHTML;
+
+    // For Midfielders, place the 1 advanced player closer to the strikers (after the row of 4)
+    row.appendChild(subBase);
+    row.appendChild(subAdvanced);
+  } else {
+    for(let i=0; i<count; i++) {
+      row.innerHTML += `<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="${pos}" onchange="updateShirt(this)"><option>Select</option></select></div>`;
+    }
   }
 }
 
