@@ -561,7 +561,8 @@
       flex-shrink: 0; /* Prevent avatar from shrinking */
       transition: transform 0.2s ease;
       border-radius: 50%;
-      background-size: contain;
+      background-size: cover;
+      background-repeat: no-repeat;
       background-repeat: no-repeat;
       background-position: center;
       background-color: rgba(255,255,255,0.1);
@@ -593,36 +594,16 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    /* AI Modal (remains fixed overlay) */
-    .ai-modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(8px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
-      padding: 20px;
-    }
-    .ai-report {
-      background: #0f172a;
-      border: 1px solid #c7ff38;
-      border-radius: 24px;
-      max-width: 450px;
-      width: 100%;
-      padding: 30px;
-      position: relative;
-    }
-    .ai-report h2 { color: #c7ff38; margin-top: 0; }
-    .ai-report p { font-size: 14px; color: #cbd5e1; line-height: 1.6; }
-    .stat-row {
+    /* Layout for cards with AI avatars (Side-by-side) */
+    .scout-card-content {
       display: flex;
-      justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+      align-items: center;
+      gap: 12px;
+      margin-top: 5px;
     }
-    .stat-val { color: #c7ff38; font-weight: bold; }
+    .selection-area {
+      flex: 1;
+    }
 
     /* Mobile specific adjustments for cards and avatar */
     @media (max-width: 768px) {
@@ -642,18 +623,6 @@
         margin-top: 8px;
       }
 
-      /* Layout for cards with AI avatars */
-      .card .scout-card-content {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .ai-avatar-in-card {
-        display: block; /* Show avatar on mobile */
-      }
-      .selection-area {
-        flex-grow: 1; /* Allow selection area to take remaining space */
-      }
     }
 
   </style>
@@ -728,7 +697,7 @@
     <div class="card">
       <h3>Top Scorer</h3>
       <div class="scout-card-content">
-        <div class="ai-avatar-in-card" onclick="showAiScout('r9')" style="background-image: url('https://api.dicebear.com/7.x/avataaars/svg?seed=R9&top=noHair&skinColor=ae5d29');">
+        <div class="ai-avatar-in-card" onclick="showAiScout('r9')" style="background-image: url('https://api.dicebear.com/9.x/avataaars/svg?seed=R9&top=none&skinColor=ae5d29');">
           <div class="speech-bubble-in-card">R9 Analysis 🇧🇷</div>
         </div>
         <div class="selection-area">
@@ -745,7 +714,7 @@
     <div class="card">
       <h3>Top Assists</h3>
       <div class="scout-card-content">
-        <div class="ai-avatar-in-card" onclick="showAiScout('messi')" style="background-image: url('https://api.dicebear.com/7.x/avataaars/svg?seed=Messi&top=shortHair&facialHair=beardLight&facialHairColor=4a3728&skinColor=edb98a');">
+        <div class="ai-avatar-in-card" onclick="showAiScout('messi')" style="background-image: url('https://api.dicebear.com/9.x/avataaars/svg?seed=Messi&top=shortHair&facialHair=beardLight');">
           <div class="speech-bubble-in-card">Leo Analysis 🇦🇷</div>
         </div>
         <div class="selection-area">
@@ -763,7 +732,7 @@
     <div class="card">
       <h3>Most Clean Sheets</h3>
       <div class="scout-card-content">
-        <div class="ai-avatar-in-card" onclick="showAiScout('buffon')" style="background-image: url('https://api.dicebear.com/7.x/avataaars/svg?seed=Buffon&top=shortHair&hairColor=2c1b18&skinColor=edb98a');">
+        <div class="ai-avatar-in-card" onclick="showAiScout('buffon')" style="background-image: url('https://api.dicebear.com/9.x/avataaars/svg?seed=Buffon&top=shortHair');">
           <div class="speech-bubble-in-card">Gigi Analysis 🇮🇹</div>
         </div>
         <div class="selection-area">
@@ -781,7 +750,7 @@
     <div class="card">
       <h3>First Hat-Trick</h3>
       <div class="scout-card-content">
-        <div class="ai-avatar-in-card" onclick="showAiScout('cr7')" style="background-image: url('https://api.dicebear.com/7.x/avataaars/svg?seed=CR7&top=shortHair&hairColor=2c1b18&skinColor=edb98a');">
+        <div class="ai-avatar-in-card" onclick="showAiScout('cr7')" style="background-image: url('https://api.dicebear.com/9.x/avataaars/svg?seed=CR7&top=shortHair');">
           <div class="speech-bubble-in-card">CR7 Analysis 🇵🇹</div>
         </div>
         <div class="selection-area">
@@ -799,7 +768,7 @@
     <div class="card">
       <h3>First Manager Sacked</h3>
       <div class="scout-card-content">
-        <div class="ai-avatar-in-card" onclick="showAiScout('fergie')" style="background-image: url('https://api.dicebear.com/7.x/avataaars/svg?seed=Fergie&top=shortHair&hairColor=e8e1e1&skinColor=edb98a');">
+        <div class="ai-avatar-in-card" onclick="showAiScout('fergie')" style="background-image: url('https://api.dicebear.com/9.x/avataaars/svg?seed=Fergie&top=shortHair&hairColor=e8e1e1');">
           <div class="speech-bubble-in-card">Fergie Analysis 🏴󠁧󠁢󠁳󠁣󠁴󠁿</div>
         </div>
         <div class="selection-area">
@@ -816,7 +785,7 @@
     <div class="card">
       <h3>Most Red Cards</h3>
       <div class="scout-card-content">
-        <div class="ai-avatar-in-card" onclick="showAiScout('keane')" style="background-image: url('https://api.dicebear.com/7.x/avataaars/svg?seed=Roy&top=shortHair&facialHair=beardMajestic&facialHairColor=2c1b18&skinColor=edb98a');">
+        <div class="ai-avatar-in-card" onclick="showAiScout('keane')" style="background-image: url('https://api.dicebear.com/9.x/avataaars/svg?seed=Roy&top=shortHair&facialHair=beardMajestic');">
           <div class="speech-bubble-in-card">Keano Analysis 🇮🇪</div>
         </div>
         <div class="selection-area">
@@ -982,6 +951,21 @@ function lockSeason() {
     picks.push(select.value);
   }
   localStorage.setItem("seasonPicks", JSON.stringify(picks));
+  alert("Season picks saved!");
+}
+
+window.onload = function() {
+  const saved = JSON.parse(localStorage.getItem("seasonPicks"));
+  if (saved) {
+    const selects = document.querySelectorAll("select");
+    selects.forEach((select, index) => {
+      select.value = saved[index];
+    });
+  }
+};
+</script>
+</body>
+</html>Storage.setItem("seasonPicks", JSON.stringify(picks));
   alert("Season picks saved!");
 }
 
