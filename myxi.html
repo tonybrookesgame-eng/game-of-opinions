@@ -184,6 +184,21 @@ p {
   color: #f8fafc; /* Consistent with season.html .summary-card h2 */
 }
 
+.formation-selector {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.formation-selector span {
+  font-weight: 800;
+  color: #c7ff38;
+}
+
 /* =========================
 
 STADIUM SHELL
@@ -528,6 +543,11 @@ MOBILE
     margin-bottom: 20px;
   }
 
+  .formation-selector {
+    justify-content: center;
+    padding: 10px;
+  }
+
   .container {
     padding: 20px 8px 100px;
   }
@@ -638,6 +658,17 @@ MOBILE
 <div class="container">
 
 <h1>Your Team</h1>
+
+<div class="formation-selector">
+  <span>Formation:</span>
+  <select id="formationSelect" onchange="changeFormation()" style="width: auto; min-width: 120px; margin-top: 0;">
+    <option value="4-4-2">4-4-2</option>
+    <option value="4-3-3">4-3-3</option>
+    <option value="3-5-2">3-5-2</option>
+    <option value="3-4-3">3-4-3</option>
+    <option value="4-5-1">4-5-1</option>
+  </select>
+</div>
 
 <div class="main-layout">
 
@@ -881,6 +912,28 @@ function updateShirt(select) {
   refreshDropdowns();
 }
 
+function changeFormation() {
+  const formation = document.getElementById('formationSelect').value;
+  const parts = formation.split('-').map(Number);
+  const pitch = document.querySelector('.pitch');
+  const rows = pitch.querySelectorAll('.row');
+  
+  // Rows: 0 is GK (always 1), 1 is DEF, 2 is MID, 3 is FWD
+  updatePitchRow(rows[1], 'DEF', parts[0]);
+  updatePitchRow(rows[2], 'MID', parts[1]);
+  updatePitchRow(rows[3], 'FWD', parts[2]);
+  
+  populatePlayers();
+  refreshDropdowns();
+}
+
+function updatePitchRow(row, pos, count) {
+  row.innerHTML = '';
+  for(let i=0; i<count; i++) {
+    row.innerHTML += `<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="${pos}" onchange="updateShirt(this)"><option>Select</option></select></div>`;
+  }
+}
+
 function refreshDropdowns() {
   const selects = document.querySelectorAll('.pitch select');
   const selectedClubs = Array.from(selects)
@@ -955,12 +1008,13 @@ function clearTeam() {
 function saveTeam() {
   const selects = document.querySelectorAll('.pitch select');
   const teamValues = Array.from(selects).map(s => s.value);
+  const formation = document.getElementById('formationSelect').value;
   
   if (teamValues.includes("Select")) {
     alert("Please fill all 11 positions first!");
     return;
   }
-  localStorage.setItem("myTeam", JSON.stringify(teamValues));
+  localStorage.setItem("myTeam", JSON.stringify({ team: teamValues, formation: formation }));
   alert("Team XI Saved!");
 }
 
@@ -981,18 +1035,25 @@ function saveWeekly(){
 }
 
 window.onload=function(){
-  populatePlayers();
   populateWeeklyOptions();
 
-  const savedTeam = JSON.parse(localStorage.getItem("myTeam"));
-  if(savedTeam) {
+  const savedData = JSON.parse(localStorage.getItem("myTeam"));
+  if(savedData) {
+    const team = savedData.team || savedData;
+    const formation = savedData.formation || "4-4-2";
+    
+    document.getElementById('formationSelect').value = formation;
+    changeFormation();
+
     const selects = document.querySelectorAll('.pitch select');
     selects.forEach((s, i) => {
-      if(savedTeam[i] && savedTeam[i] !== "Select") {
-        s.value = savedTeam[i];
+      if(team[i] && team[i] !== "Select") {
+        s.value = team[i];
         updateShirt(s);
       }
     });
+  } else {
+    populatePlayers();
   }
 
   const saved=JSON.parse(localStorage.getItem("weekly"));
@@ -1008,7 +1069,5 @@ window.onload=function(){
 };
 
 </script>
-
 </body>
-
 </html>
