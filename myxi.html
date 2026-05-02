@@ -163,13 +163,19 @@ p {
 
 .left-side{
 
-  flex: 2;
+  flex: 1.8;
 
 }
 
-.weekly-panel{
+.right-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
 
-  flex:1;
+.weekly-panel, .bet-builder-panel{
+
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 18px;
@@ -177,14 +183,83 @@ p {
   box-shadow: 0 10px 30px rgba(0,0,0,0.14);
   backdrop-filter: blur(12px);
 }
-.weekly-panel button {
-  margin-top: 24px;
+.weekly-panel button, .bet-builder-panel button.save-btn {
+  margin-top: 20px;
 }
 
-.weekly-panel h2 {
+.weekly-panel h2, .bet-builder-panel h2 {
   margin: 0 0 14px; /* Consistent with season.html .summary-card h2 */
   font-size: 18px; /* Consistent with season.html .summary-card h2 */
   color: #f8fafc; /* Consistent with season.html .summary-card h2 */
+}
+
+/* BET BUILDER STYLES */
+.bet-match {
+  background: rgba(184, 255, 30, 0.1);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 14px;
+  color: #c7ff38;
+  margin-bottom: 12px;
+  text-align: center;
+  border: 1px solid rgba(184, 255, 30, 0.2);
+}
+.bet-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 15px 0;
+}
+.bet-list li {
+  font-size: 13px;
+  color: #cbd5e1;
+  padding: 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.bet-list li::before {
+  content: "•";
+  color: #c7ff38;
+}
+.bet-odds-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0,0,0,0.3);
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+.odds-label { font-size: 12px; color: #9ca3af; }
+.odds-value { font-weight: 900; color: #fff; font-size: 18px; }
+
+.bet-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+.bet-choice {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: 0.2s;
+}
+.bet-choice.selected {
+  background: #c7ff38;
+  color: #041102;
+  border-color: #c7ff38;
+}
+.bet-info {
+  font-size: 11px;
+  color: #9ca3af;
+  line-height: 1.4;
+  text-align: center;
 }
 
 .formation-selector {
@@ -1100,6 +1175,97 @@ window.onload=function(){
 
     goalMinute.value=saved.minute;
 
+  }
+
+  const savedBet = localStorage.getItem("betBuilder");
+  if(savedBet) {
+    setBetChoice(savedBet);
+  }
+
+};
+
+</script>
+</body>
+</html>therOpt = document.createElement('option');
+  otherOpt.value = "Other";
+  otherOpt.innerHTML = "Other (90+)";
+  minuteSelect.appendChild(otherOpt);
+}
+
+function clearTeam() {
+  if (confirm("Are you sure you want to clear your entire team?")) {
+    const selects = document.querySelectorAll('.pitch select');
+    selects.forEach(select => {
+      select.value = "Select";
+      updateShirt(select);
+    });
+  }
+}
+
+function saveTeam() {
+  const selects = document.querySelectorAll('.pitch select');
+  const teamValues = Array.from(selects).map(s => s.value);
+  const formation = document.getElementById('formationSelect').value;
+  
+  if (teamValues.includes("Select")) {
+    alert("Please fill all 11 positions first!");
+    return;
+  }
+  localStorage.setItem("myTeam", JSON.stringify({ team: teamValues, formation: formation }));
+  alert("Team XI Saved!");
+}
+
+function saveWeekly(){
+
+  const data = {
+
+    first:firstScorer.value,
+
+    minute:goalMinute.value
+
+  };
+
+  localStorage.setItem("weekly",JSON.stringify(data));
+
+  weeklyStatus.innerText="Saved!";
+
+}
+
+window.onload=function(){
+  populateWeeklyOptions();
+
+  const savedData = JSON.parse(localStorage.getItem("myTeam"));
+  if(savedData) {
+    const team = savedData.team || savedData;
+    const formation = savedData.formation || "4-4-2";
+    
+    document.getElementById('formationSelect').value = formation;
+    changeFormation();
+
+    const selects = document.querySelectorAll('.pitch select');
+    selects.forEach((s, i) => {
+      if(team[i] && team[i] !== "Select") {
+        s.value = team[i];
+        updateShirt(s);
+      }
+    });
+  } else {
+    populatePlayers();
+  }
+
+  const saved=JSON.parse(localStorage.getItem("weekly"));
+
+  if(saved){
+
+    firstScorer.value=saved.first;
+
+    goalMinute.value=saved.minute;
+
+  }
+
+  const savedBet = localStorage.getItem("betBuilder");
+  if(savedBet) {
+    setBetChoice(savedBet);
   }
 
 };
