@@ -79,11 +79,13 @@ header {
 
   display: flex;
 
-  justify-content: space-between;
+  justify-content: flex-start;
+
+  gap: 40px;
 
   align-items: center;
 
-  padding: 20px 48px;
+  padding: 14px 48px;
 
   background: rgba(0,0,0,0.72);
 
@@ -121,13 +123,8 @@ nav {
 
   align-items: center;
 
-  gap: 26px;
+  gap: 24px;
 
-}
-
-.main-nav-links {
-  display: flex;
-  gap: 26px;
 }
 
 nav a {
@@ -154,8 +151,11 @@ nav a:hover {
 .auth-section {
   display: flex;
   align-items: center;
-  gap: 20px;
-  margin-left: 10px;
+  gap: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 6px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .signup-btn {
@@ -164,7 +164,7 @@ nav a:hover {
 
   color: #041102 !important;
 
-  padding: 13px 26px;
+  padding: 8px 18px;
 
   border-radius: 999px;
 
@@ -1038,28 +1038,19 @@ nav a:hover {
 <header>
 
 <div class="logo">
-
   GAME <span>OF OPINIONS</span>
+</div>
 
+<div class="auth-section">
+  <a href="#" class="login-link">Log In</a>
+  <a href="#" class="signup-btn">Sign Up</a>
 </div>
 
 <nav>
-
-  
-
-  <div class="auth-section">
-    <a href="#" class="login-link">Log In</a>
-    <a href="#" class="signup-btn">Sign Up</a>
-  </div>
-
-  <div class="main-nav-links">
-    <a href="index.html">Home</a>
-    <a href="myxi.html">Your Team</a>
-    <a href="season.html">Season Picks</a>
-    <a href="league.html">League</a>
-    <a href="#how-it-works">How It Works</a>
-  </div>
-
+  <a href="myxi.html">Your Team</a>
+  <a href="season.html">Season Picks</a>
+  <a href="league.html">League</a>
+  <a href="#how-it-works">How It Works</a>
 </nav>
 
 </header>
