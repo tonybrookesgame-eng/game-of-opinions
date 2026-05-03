@@ -310,6 +310,75 @@ footer {
   color: #c7ff38;
 }
 
+/* AI Scout Styles */
+.scouts-container {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  margin-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.ai-mini-avatar {
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.2s;
+  border-radius: 50%;
+  border: 1px solid rgba(199, 255, 56, 0.3);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+.ai-mini-avatar:hover {
+  transform: scale(1.1);
+  border-color: #c7ff38;
+}
+.striker-img { background-image: url('the ai legend.png'); }
+.scout-img { background-image: url('the tactical mentor.png'); }
+.analyst-img { background-image: url('the opinion architect.png'); }
+
+.ai-mini-avatar:hover::after {
+  content: attr(data-label);
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #c7ff38;
+  color: #041102;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+/* Modal Overlay */
+.ai-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+.ai-report {
+  background: #0f172a;
+  border: 1px solid #c7ff38;
+  border-radius: 24px;
+  max-width: 450px;
+  width: 100%;
+  padding: 30px;
+  position: relative;
+}
+.ai-report h2 { color: #c7ff38; margin-top: 0; }
+.ai-report p { font-size: 14px; color: #cbd5e1; line-height: 1.6; }
+
 /* =========================
 
 STADIUM SHELL
@@ -876,7 +945,12 @@ MOBILE
 <div class="right-side">
 
   <div class="weekly-panel">
-    <h2>Weekly Picks</h2>
+    <h2>Weekly Advice</h2>
+    <div class="scouts-container">
+      <div class="ai-mini-avatar striker-img" data-label="The AI Legend" onclick="showWeeklyAdvice('striker')"></div>
+      <div class="ai-mini-avatar scout-img" data-label="The Tactical Mentor" onclick="showWeeklyAdvice('scout')"></div>
+      <div class="ai-mini-avatar analyst-img" data-label="The Opinion Architect" onclick="showWeeklyAdvice('analyst')"></div>
+    </div>
     <p style="font-size: 13px; color: #9ca3af; margin-bottom: 5px; display: flex; justify-content: space-between;">
       <span>Club to score first:</span>
       <span style="color: #c7ff38; font-weight: bold;">10 pts</span>
@@ -917,6 +991,17 @@ MOBILE
 
 </div>
 
+</div>
+
+<!-- AI REPORT MODAL -->
+<div class="ai-modal" id="aiModal" onclick="this.style.display='none'">
+  <div class="ai-report" onclick="event.stopPropagation()">
+    <h2>🤖 Scout Report</h2>
+    <p id="aiContent">Connecting...</p>
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+      <button onclick="document.getElementById('aiModal').style.display='none'" style="flex: 1; background: #c7ff38; color: #041102; font-weight:800; border-radius:999px; border:none; padding:10px; cursor:pointer;">Got it!</button>
+    </div>
+  </div>
 </div>
 
 <!-- FOOTER -->
@@ -1208,6 +1293,28 @@ function clearTeam() {
       updateShirt(select);
     });
   }
+}
+
+function showWeeklyAdvice(scoutKey) {
+  const modal = document.getElementById('aiModal');
+  const content = document.getElementById('aiContent');
+  const title = modal.querySelector('h2');
+  
+  const names = {
+    striker: "The AI Legend",
+    scout: "The Tactical Mentor",
+    analyst: "The Opinion Architect"
+  };
+  
+  const advice = {
+    striker: "Look at the big games. Legends thrive under pressure. I'd back Liverpool for the opener.",
+    scout: "Tactically, Brentford's low block is hard to break. The goal might come from a set-piece around the 35th minute.",
+    analyst: "The data shows a 68% probability of a goal before the 40th minute in this fixture. Focus on the early window."
+  };
+
+  title.innerText = `🤖 ${names[scoutKey]}`;
+  content.innerText = advice[scoutKey];
+  modal.style.display = 'flex';
 }
 
 function saveTeam() {
