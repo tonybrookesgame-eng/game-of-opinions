@@ -598,7 +598,16 @@
       transition: transform 0.2s;
       border-radius: 50%;
       border: 1px solid rgba(199, 255, 56, 0.3);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
     }
+
+    /* AI Image Classes */
+    .striker-img { background-image: url('assets/striker.png'); }
+    .analyst-img { background-image: url('assets/analyst.png'); }
+    .scout-img { background-image: url('assets/scout.png'); }
+
     .ai-mini-avatar:hover {
       transform: scale(1.1);
       border-color: #c7ff38;
@@ -671,17 +680,14 @@
 
       <h3>Premier League Winner</h3>
       <div class="scouts-container">
-        <div class="ai-mini-avatar" onclick="showAiScout('striker', 'winner')">
+        <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'winner')">
           <div class="speech-bubble-in-card">Striker AI</div>
-          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#009b3a"/><path d="M50 85C65 85 78 75 82 60C75 52 65 48 50 48C35 48 25 52 18 60C22 75 35 85 50 85Z" fill="#fedd00"/><circle cx="50" cy="35" r="22" fill="#d2a679"/><path d="M40 18 Q50 14 60 18 L55 24 Q50 22 45 24 Z" fill="#1a1a1a"/></svg>
         </div>
-        <div class="ai-mini-avatar" onclick="showAiScout('analyst', 'winner')">
+        <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'winner')">
           <div class="speech-bubble-in-card">Analyst AI</div>
-          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#0f172a"/><circle cx="50" cy="38" r="20" fill="#94a3b8"/><rect x="35" y="32" width="30" height="8" rx="2" fill="#38bdf8"/></svg>
         </div>
-        <div class="ai-mini-avatar" onclick="showAiScout('scout', 'winner')">
+        <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'winner')">
           <div class="speech-bubble-in-card">Scout AI</div>
-          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#052e16"/><circle cx="50" cy="38" r="20" fill="#4ade80"/><path d="M35 35 L45 35 M55 35 L65 35" stroke="#000" stroke-width="3"/></svg>
         </div>
       </div>
       <select>
@@ -702,17 +708,14 @@
 
       <h3>FA Cup Winner</h3>
       <div class="scouts-container">
-        <div class="ai-mini-avatar" onclick="showAiScout('striker', 'facup')">
+        <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'facup')">
           <div class="speech-bubble-in-card">Striker AI</div>
-          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#009b3a"/><path d="M50 85C65 85 78 75 82 60C75 52 65 48 50 48C35 48 25 52 18 60C22 75 35 85 50 85Z" fill="#fedd00"/><circle cx="50" cy="35" r="22" fill="#d2a679"/><path d="M40 18 Q50 14 60 18 L55 24 Q50 22 45 24 Z" fill="#1a1a1a"/></svg>
         </div>
-        <div class="ai-mini-avatar" onclick="showAiScout('analyst', 'facup')">
+        <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'facup')">
           <div class="speech-bubble-in-card">Analyst AI</div>
-          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#0f172a"/><circle cx="50" cy="38" r="20" fill="#94a3b8"/><rect x="35" y="32" width="30" height="8" rx="2" fill="#38bdf8"/></svg>
         </div>
-        <div class="ai-mini-avatar" onclick="showAiScout('scout', 'facup')">
+        <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'facup')">
           <div class="speech-bubble-in-card">Scout AI</div>
-          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#052e16"/><circle cx="50" cy="38" r="20" fill="#4ade80"/><path d="M35 35 L45 35 M55 35 L65 35" stroke="#000" stroke-width="3"/></svg>
         </div>
       </div>
 
@@ -733,17 +736,14 @@
     <div class="card">
       <h3>Top Scorer</h3>
       <div class="scouts-container">
-        <div class="ai-mini-avatar" onclick="showAiScout('striker', 'scorer')">
+        <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'scorer')">
           <div class="speech-bubble-in-card">Striker AI</div>
-          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#009b3a"/><path d="M50 85C65 85 78 75 82 60C75 52 65 48 50 48C35 48 25 52 18 60C22 75 35 85 50 85Z" fill="#fedd00"/><circle cx="50" cy="35" r="22" fill="#d2a679"/><path d="M40 18 Q50 14 60 18 L55 24 Q50 22 45 24 Z" fill="#1a1a1a"/></svg>
         </div>
-        <div class="ai-mini-avatar" onclick="showAiScout('analyst', 'scorer')">
+        <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'scorer')">
           <div class="speech-bubble-in-card">Analyst AI</div>
-          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#0f172a"/><circle cx="50" cy="38" r="20" fill="#94a3b8"/><rect x="35" y="32" width="30" height="8" rx="2" fill="#38bdf8"/></svg>
         </div>
-        <div class="ai-mini-avatar" onclick="showAiScout('scout', 'scorer')">
+        <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'scorer')">
           <div class="speech-bubble-in-card">Scout AI</div>
-          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#052e16"/><circle cx="50" cy="38" r="20" fill="#4ade80"/><path d="M35 35 L45 35 M55 35 L65 35" stroke="#000" stroke-width="3"/></svg>
         </div>
       </div>
       <select>
@@ -757,17 +757,14 @@
     <div class="card">
       <h3>Top Assists</h3>
       <div class="scouts-container">
-        <div class="ai-mini-avatar" onclick="showAiScout('striker', 'assists')">
+        <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'assists')">
           <div class="speech-bubble-in-card">Striker AI</div>
-          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#009b3a"/><path d="M50 85C65 85 78 75 82 60C75 52 65 48 50 48C35 48 25 52 18 60C22 75 35 85 50 85Z" fill="#fedd00"/><circle cx="50" cy="35" r="22" fill="#d2a679"/><path d="M40 18 Q50 14 60 18 L55 24 Q50 22 45 24 Z" fill="#1a1a1a"/></svg>
         </div>
-        <div class="ai-mini-avatar" onclick="showAiScout('analyst', 'assists')">
+        <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'assists')">
           <div class="speech-bubble-in-card">Analyst AI</div>
-          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#0f172a"/><circle cx="50" cy="38" r="20" fill="#94a3b8"/><rect x="35" y="32" width="30" height="8" rx="2" fill="#38bdf8"/></svg>
         </div>
-        <div class="ai-mini-avatar" onclick="showAiScout('scout', 'assists')">
+        <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'assists')">
           <div class="speech-bubble-in-card">Scout AI</div>
-          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#052e16"/><circle cx="50" cy="38" r="20" fill="#4ade80"/><path d="M35 35 L45 35 M55 35 L65 35" stroke="#000" stroke-width="3"/></svg>
         </div>
       </div>
       <select>
@@ -781,17 +778,14 @@
     <div class="card">
       <h3>Most Clean Sheets</h3>
       <div class="scouts-container">
-        <div class="ai-mini-avatar" onclick="showAiScout('striker', 'cleansheets')">
+        <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'cleansheets')">
           <div class="speech-bubble-in-card">Striker AI</div>
-          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#009b3a"/><path d="M50 85C65 85 78 75 82 60C75 52 65 48 50 48C35 48 25 52 18 60C22 75 35 85 50 85Z" fill="#fedd00"/><circle cx="50" cy="35" r="22" fill="#d2a679"/><path d="M40 18 Q50 14 60 18 L55 24 Q50 22 45 24 Z" fill="#1a1a1a"/></svg>
         </div>
-        <div class="ai-mini-avatar" onclick="showAiScout('analyst', 'cleansheets')">
+        <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'cleansheets')">
           <div class="speech-bubble-in-card">Analyst AI</div>
-          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#0f172a"/><circle cx="50" cy="38" r="20" fill="#94a3b8"/><rect x="35" y="32" width="30" height="8" rx="2" fill="#38bdf8"/></svg>
         </div>
-        <div class="ai-mini-avatar" onclick="showAiScout('scout', 'cleansheets')">
+        <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'cleansheets')">
           <div class="speech-bubble-in-card">Scout AI</div>
-          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#052e16"/><circle cx="50" cy="38" r="20" fill="#4ade80"/><path d="M35 35 L45 35 M55 35 L65 35" stroke="#000" stroke-width="3"/></svg>
         </div>
       </div>
       <select>
@@ -805,17 +799,14 @@
     <div class="card">
       <h3>First Hat-Trick</h3>
       <div class="scouts-container">
-        <div class="ai-mini-avatar" onclick="showAiScout('striker', 'hattrick')">
+        <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'hattrick')">
           <div class="speech-bubble-in-card">Striker AI</div>
-          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#009b3a"/><path d="M50 85C65 85 78 75 82 60C75 52 65 48 50 48C35 48 25 52 18 60C22 75 35 85 50 85Z" fill="#fedd00"/><circle cx="50" cy="35" r="22" fill="#d2a679"/><path d="M40 18 Q50 14 60 18 L55 24 Q50 22 45 24 Z" fill="#1a1a1a"/></svg>
         </div>
-        <div class="ai-mini-avatar" onclick="showAiScout('analyst', 'hattrick')">
+        <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'hattrick')">
           <div class="speech-bubble-in-card">Analyst AI</div>
-          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#0f172a"/><circle cx="50" cy="38" r="20" fill="#94a3b8"/><rect x="35" y="32" width="30" height="8" rx="2" fill="#38bdf8"/></svg>
         </div>
-        <div class="ai-mini-avatar" onclick="showAiScout('scout', 'hattrick')">
+        <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'hattrick')">
           <div class="speech-bubble-in-card">Scout AI</div>
-          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#052e16"/><circle cx="50" cy="38" r="20" fill="#4ade80"/><path d="M35 35 L45 35 M55 35 L65 35" stroke="#000" stroke-width="3"/></svg>
         </div>
       </div>
       <select>
@@ -829,17 +820,14 @@
     <div class="card">
       <h3>First Manager Sacked</h3>
       <div class="scouts-container">
-        <div class="ai-mini-avatar" onclick="showAiScout('striker', 'sacked')">
+        <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'sacked')">
           <div class="speech-bubble-in-card">Striker AI</div>
-          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#009b3a"/><path d="M50 85C65 85 78 75 82 60C75 52 65 48 50 48C35 48 25 52 18 60C22 75 35 85 50 85Z" fill="#fedd00"/><circle cx="50" cy="35" r="22" fill="#d2a679"/><path d="M40 18 Q50 14 60 18 L55 24 Q50 22 45 24 Z" fill="#1a1a1a"/></svg>
         </div>
-        <div class="ai-mini-avatar" onclick="showAiScout('analyst', 'sacked')">
+        <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'sacked')">
           <div class="speech-bubble-in-card">Analyst AI</div>
-          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#0f172a"/><circle cx="50" cy="38" r="20" fill="#94a3b8"/><rect x="35" y="32" width="30" height="8" rx="2" fill="#38bdf8"/></svg>
         </div>
-        <div class="ai-mini-avatar" onclick="showAiScout('scout', 'sacked')">
+        <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'sacked')">
           <div class="speech-bubble-in-card">Scout AI</div>
-          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#052e16"/><circle cx="50" cy="38" r="20" fill="#4ade80"/><path d="M35 35 L45 35 M55 35 L65 35" stroke="#000" stroke-width="3"/></svg>
         </div>
       </div>
       <select>
@@ -853,17 +841,14 @@
     <div class="card">
       <h3>Most Red Cards</h3>
       <div class="scouts-container">
-        <div class="ai-mini-avatar" onclick="showAiScout('striker', 'redcards')">
+        <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'redcards')">
           <div class="speech-bubble-in-card">Striker AI</div>
-          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#009b3a"/><path d="M50 85C65 85 78 75 82 60C75 52 65 48 50 48C35 48 25 52 18 60C22 75 35 85 50 85Z" fill="#fedd00"/><circle cx="50" cy="35" r="22" fill="#d2a679"/><path d="M40 18 Q50 14 60 18 L55 24 Q50 22 45 24 Z" fill="#1a1a1a"/></svg>
         </div>
-        <div class="ai-mini-avatar" onclick="showAiScout('analyst', 'redcards')">
+        <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'redcards')">
           <div class="speech-bubble-in-card">Analyst AI</div>
-          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#0f172a"/><circle cx="50" cy="38" r="20" fill="#94a3b8"/><rect x="35" y="32" width="30" height="8" rx="2" fill="#38bdf8"/></svg>
         </div>
-        <div class="ai-mini-avatar" onclick="showAiScout('scout', 'redcards')">
+        <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'redcards')">
           <div class="speech-bubble-in-card">Scout AI</div>
-          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#052e16"/><circle cx="50" cy="38" r="20" fill="#4ade80"/><path d="M35 35 L45 35 M55 35 L65 35" stroke="#000" stroke-width="3"/></svg>
         </div>
       </div>
       <select>
