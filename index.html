@@ -193,6 +193,58 @@ nav a:hover {
 }
 
 /* =========================
+   STADIUM TICKET STYLES
+========================= */
+.ticket {
+  display: flex;
+  background: #0f172a;
+  border: 1px solid #c7ff38;
+  border-radius: 16px;
+  overflow: hidden;
+  max-width: 480px;
+  margin: auto;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+.ticket-stub {
+  width: 60px;
+  background: #c7ff38;
+  color: #041102;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-right: 2px dashed rgba(15, 23, 42, 0.3);
+}
+.stub-text {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+.ticket-content {
+  flex: 1;
+  padding: 30px;
+  text-align: left;
+}
+.ticket-content h2 {
+  margin: 0 0 5px 0;
+  font-size: 22px;
+  text-transform: uppercase;
+}
+.barcode {
+  height: 30px;
+  width: 100%;
+  background: repeating-linear-gradient(90deg, #fff, #fff 1px, transparent 1px, transparent 3px, #fff 3px, #fff 4px);
+  opacity: 0.3;
+  margin-top: 20px;
+  border-radius: 2px;
+}
+
+/* =========================
 
    HERO
 
@@ -1071,16 +1123,45 @@ nav a:hover {
   <a href="season.html">Season Picks</a>
   <a href="league.html">League</a>
   <a href="rules.html">Rules</a>
-  <a href="#" class="login-link" onclick="login()">Log In</a>
-  <a href="#" class="signup-btn" onclick="signUp()">Sign Up</a>
+  <a href="#login-section" class="login-link">Log In</a>
+  <a href="#" class="signup-btn" onclick="openSignup()">Sign Up</a>
 </nav>
 </header>
 
-<!-- LOGIN INPUTS (Moved to be visible below fixed header) -->
-<div style="margin-top: 100px; text-align: center; position: relative; z-index: 10;">
-  <input id="email" type="email" placeholder="Email" style="padding:10px; border-radius:8px; border:1px solid #334155; background:#0f172a; color:white;">
-  <input id="password" type="password" placeholder="Password" style="padding:10px; border-radius:8px; border:1px solid #334155; background:#0f172a; color:white;">
-  <p style="font-size: 12px; color: #9ca3af;">Enter details then click Sign Up or Log In above</p>
+<!-- STADIUM TICKET LOGIN -->
+<div id="login-section" style="margin-top: 140px; text-align: center; position: relative; z-index: 10; padding: 40px 20px;">
+  <div class="ticket">
+    <div class="ticket-stub">
+      <div class="stub-text">ADMIT ONE</div>
+      <div style="font-size: 10px; opacity: 0.6;">GOO-2024</div>
+    </div>
+    <div class="ticket-content">
+      <div style="color: #9ca3af; font-size: 11px; letter-spacing: 2px;">MANAGER ACCESS</div>
+      <h2 style="color: #c7ff38;">OFFICIAL ENTRY</h2>
+      <p style="font-size: 13px; color: #9ca3af; margin-bottom: 20px;">Please provide your Manager credentials.</p>
+      
+      <input id="login-email" type="email" placeholder="MANAGER EMAIL" style="width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 4px; border: 1px solid #334155; background: #1e293b; color: white; box-sizing: border-box; font-family: monospace;">
+      <input id="login-password" type="password" placeholder="ACCESS CODE" style="width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 4px; border: 1px solid #334155; background: #1e293b; color: white; box-sizing: border-box; font-family: monospace;">
+      
+      <button onclick="login()" style="width: 100%; padding: 14px; background: #c7ff38; color: #041102; font-weight: 800; border-radius: 4px; border: none; cursor: pointer; font-size: 16px; text-transform: uppercase;">Validate Ticket</button>
+      
+      <div class="barcode"></div>
+      <p style="font-size: 11px; color: #4b5563; margin-top: 10px; text-align: center;">ENCRYPTED AUTHENTICATION v1.2</p>
+    </div>
+  </div>
+  <p style="font-size: 13px; color: #9ca3af; margin-top: 20px;">First time in the stadium? <a href="#" onclick="openSignup()" style="color: #c7ff38; text-decoration: none; font-weight: bold;">Apply for Membership</a></p>
+</div>
+
+<!-- SIGNUP MODAL -->
+<div id="signup-modal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px;">
+  <div style="background: #0f172a; border: 1px solid #c7ff38; border-radius: 24px; max-width: 400px; width: 100%; padding: 30px; text-align: center;">
+    <h2 style="color: #c7ff38; margin-top: 0; font-size: 28px;">Manager Registration</h2>
+    <p style="color: #9ca3af; font-size: 14px; margin-bottom: 20px;">Your journey to the top of the global league begins here.</p>
+    <input id="signup-email" type="email" placeholder="EMAIL ADDRESS" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #334155; background: #1e293b; color: white; box-sizing: border-box;">
+    <input id="signup-password" type="password" placeholder="CREATE ACCESS CODE" style="width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #334155; background: #1e293b; color: white; box-sizing: border-box;">
+    <button onclick="signUp()" style="width: 100%; padding: 14px; background: #c7ff38; color: #041102; font-weight: 800; border-radius: 999px; border: none; cursor: pointer; font-size: 16px; margin-bottom: 10px;">Finalize Application</button>
+    <button onclick="closeSignup()" style="width: 100%; background: transparent; color: #9ca3af; border: none; cursor: pointer; font-size: 13px;">Dismiss</button>
+  </div>
 </div>
 
 <!-- HERO -->
@@ -1379,16 +1460,22 @@ nav a:hover {
     <h3>Global Competition</h3>
 
     <p>
-      Compete against your friends in private leagues or test your football acumen against others across the globe. Weekly points decide everything.
+      Compete against your friends in private l);
+
+// AUTH SCREEN CONTROLS
+window.openSignup = () => { document.getElementById('signup-modal').style.display = 'flex'; };
+window.closeSignup = () => { document.getElementById('signup-modal'e.style.display = 'none'; }agues or test your football acumen against others across the globe. Weekly points decide everything.
     </p>
 
   </div>
-
-</div>
+signup-
+</div>signup-
 
 </section>
 
-<script type="module">
+<script type="module">);
+    closeSignup(;
+    window.location.href = "myxi.html"
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
@@ -1396,22 +1483,30 @@ const firebaseConfig = {
   apiKey: "AIzaSyBS3Fpobk342TpJw73mMgYOyUrWb-jBtfM",
   authDomain: "game-of-opinions-97b14.firebaseapp.com",
   projectId: "game-of-opinions-97b14",
-  storageBucket: "game-of-opinions-97b14.firebasestorage.app",
-  appId: "1:863518863234:web:3a2c2378a2a358e0b2299b" // <-- REPLACE THIS WITH YOUR ACTUAL APP ID
+  storageBucket: "game-of-opinions-97b14.login-firebasestorage.app",
+  appId: "1:863518863234:web:3a2c2378a2a358elogin-0b2299b" // <-- REPLACE THIS WITH YOUR ACTUAL APP ID
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+conswindow.loctti n.hrtf =u"myxt.htmlap);
 console.log("Firebase initialized successfully");
+
+// AUTH SCREEN CONTROLS
+window.openSignup = () => { document.getElementById('signup-modal').style.display = 'flex'; };
+window.closeSignup = () => { document.getElementById('signup-modal').style.display = 'none'; };
 
 // SIGN UP
 window.signUp = async function() {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
+  const email = document.getElementById("signup-email").value;
+  const password = document.getElementById("signup-password").value;
 
   try {
     await createUserWithEmailAndPassword(auth, email, password);
     alert("Account created!");
+    closeSignup();
+    window.location.href = "myxi.html";
   } catch (error) {
     alert(error.message);
   }
@@ -1421,10 +1516,13 @@ window.signUp = async function() {
 window.login = async function() {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
+  const email = document.getElementById("login-email").value;
+  const password = document.getElementById("login-password").value;
 
   try {
     await signInWithEmailAndPassword(auth, email, password);
     alert("Logged in!");
+    window.location.href = "myxi.html";
   } catch (error) {
     alert(error.message);
   }
