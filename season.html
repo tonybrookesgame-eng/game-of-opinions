@@ -1020,7 +1020,7 @@ const PL_CLUBS = [
 ];
 
 const TOP_SCORER_CANDIDATES = [
-  "Haaland", "Ollie Watkins", "Mohamed Salah", "Son Heung-min", "Alexander Isak", "Dominic Solanke"
+  "Erling Haaland", "Ollie Watkins", "Mohamed Salah", "Son Heung-min", "Alexander Isak", "Dominic Solanke"
 ];
 
 const TOP_ASSIST_CANDIDATES = [
@@ -1028,7 +1028,7 @@ const TOP_ASSIST_CANDIDATES = [
 ];
 
 const HAT_TRICK_CANDIDATES = [
-  "Haaland", "Mohamed Salah", "Son Heung-min", "Ollie Watkins", "Dominic Solanke", "Darwin Núñez"
+  "Erling Haaland", "Mohamed Salah", "Son Heung-min", "Ollie Watkins", "Dominic Solanke", "Darwin Núñez"
 ];
 
 const CLEAN_SHEET_CANDIDATES = [
@@ -1083,17 +1083,7 @@ function populateAllSelects() {
   });
 }
 
-// Initial population of selects
-populateAllSelects();
-
-// Clear hardcoded options from HTML after dynamic population
-// This ensures that if JS fails, there are still some options, but when JS runs, it's clean.
-document.querySelectorAll("select option:not([value='Select team']):not([value='Select player']):not([value='Select manager'])").forEach(option => {
-  if (option.parentElement.options.length > 1) option.remove();
-});
-
-
-function refreshRelegated() {
+window.refreshRelegated = function() {
   const selects = document.querySelectorAll('.relegated-select');
   const selectedValues = Array.from(selects)
     .map(s => s.value)
@@ -1108,7 +1098,7 @@ function refreshRelegated() {
   });
 }
 
-function showAiScout(scoutKey, category) {
+window.showAiScout = function(scoutKey, category) {
   currentScoutKey = scoutKey;
   currentCategory = category;
   const scout = scoutData[scoutKey];
@@ -1126,10 +1116,10 @@ function showAiScout(scoutKey, category) {
   content.innerText = `${scout.name} is ready. \n\nRisk Profile: ${scout.risk}\n\n${scout.blurb}`;
   stats.innerHTML = "";
   actionBtn.innerText = "Proceed to Opinion";
-  actionBtn.onclick = () => loadAiReport();
+  actionBtn.onclick = () => window.loadAiReport();
 }
 
-function loadAiReport() {
+window.loadAiReport = function() {
   const scout = scoutData[currentScoutKey];
   const adviceList = scout.advice[currentCategory];
   const content = document.getElementById('aiContent');
@@ -1144,7 +1134,7 @@ function loadAiReport() {
   // Show "Next" button once content loads
   actionBtn.innerText = "Processing...";
   actionBtn.disabled = true;
-  actionBtn.onclick = nextAiPage;
+  actionBtn.onclick = window.nextAiPage;
 
   setTimeout(() => {
     const randomAdvice = adviceList[Math.floor(Math.random() * adviceList.length)];
@@ -1154,17 +1144,17 @@ function loadAiReport() {
         "${randomAdvice}"
       </div>
       <div style="margin-top: 15px; font-size: 12px; color: #c7ff38;">
-        <strong>AI Recommended Profile:</strong> 
-        ${currentCategory === 'scorer' ? 'High volume poacher' : currentCategory === 'winner' ? 'Consistent high-pressers' : 'Tactical specialist'}
+        <strong>${scout.flavor} Recommendation:</strong> 
+        ${currentCategory === 'scorer' ? 'High volume poacher' : currentCategory === 'winner' ? 'Consistent top-four pedigree' : 'Tactical specialist'}
       </div>
     `;
     actionBtn.disabled = false;
     actionBtn.innerText = "Next: Advanced Stats";
-    actionBtn.onclick = nextAiPage;
+    actionBtn.onclick = window.nextAiPage;
   }, 800);
 }
 
-function nextAiPage() {
+window.nextAiPage = function() {
   if (aiPage === 2) {
     document.getElementById('aiModal').style.display = 'none';
     return;
@@ -1239,13 +1229,8 @@ async function loadSeasonPicks(uid) {
   }
 }
 
-window.addEventListener('DOMContentLoaded', () => {
   populateAllSelects();
-});
 
-</script>
-</body>
-</html>
 </script>
 </body>
 </html>

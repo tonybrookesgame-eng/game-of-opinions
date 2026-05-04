@@ -296,19 +296,58 @@ footer {
   text-align: center;
 }
 
-.formation-selector {
-  margin-bottom: 20px;
+.team-name-ribbon {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 15px;
   background: rgba(255, 255, 255, 0.04);
-  padding: 12px 20px;
+  padding: 15px 25px;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 20px;
 }
-.formation-selector span {
+.team-name-ribbon span {
   font-weight: 800;
   color: #c7ff38;
+  font-size: 14px;
+}
+.team-name-ribbon input {
+  flex: 1;
+  max-width: 300px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(0,0,0,0.3);
+  color: white;
+  font-size: 14px;
+}
+
+.formation-selector {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+}
+.formation-selector span {
+  font-size: 11px;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+}
+.formation-selector select {
+  width: auto;
+  min-width: auto;
+  padding: 2px 4px;
+  font-size: 11px;
+  margin-top: 0;
 }
 
 /* =========================
@@ -781,24 +820,13 @@ MOBILE
 
 <div class="container">
 
-<h1 style="display: flex; align-items: center; gap: 10px;">
-  <span id="teamNameDisplay">Your Team</span>
-  <input type="text" id="teamNameInput" placeholder="Enter Team Name" style="display: none; padding: 5px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: white; font-size: 24px; font-weight: bold; max-width: 300px;">
-  <button id="editTeamNameBtn" onclick="toggleTeamNameEdit()" style="width: auto; padding: 5px 10px; font-size: 14px; border-radius: 8px; background: rgba(255,255,255,0.1); color: white; font-weight: normal; margin-top: 0; transform: none; box-shadow: none;">Edit</button>
-</h1>
-
-<div style="margin-bottom: 30px;"></div>
-
-<div class="formation-selector">
-  <span>Formation:</span>
-  <select id="formationSelect" onchange="changeFormation()" style="width: auto; min-width: 120px; margin-top: 0;">
-    <option value="4-4-2">4-4-2</option>
-    <option value="4-3-3">4-3-3</option>
-    <option value="3-5-2">3-5-2</option>
-    <option value="3-4-3">3-4-3</option>
-    <option value="4-5-1">4-5-1</option>
-  </select>
+<div class="team-name-ribbon">
+  <span>Create Team Name:</span>
+  <input type="text" id="teamNameInput" placeholder="Enter Team Name">
+  <button onclick="saveTeam()" style="width: auto; padding: 8px 16px;">Save Name</button>
 </div>
+
+<h1 id="teamNameDisplay">Your Team</h1>
 
 <div class="main-layout">
 
@@ -811,6 +839,17 @@ MOBILE
 <div class="pitch-frame">
 
 <div class="pitch">
+
+<div class="formation-selector">
+  <span>Formation:</span>
+  <select id="formationSelect" onchange="changeFormation()">
+    <option value="4-4-2">4-4-2</option>
+    <option value="4-3-3">4-3-3</option>
+    <option value="3-5-2">3-5-2</option>
+    <option value="3-4-3">3-4-3</option>
+    <option value="4-5-1">4-5-1</option>
+  </select>
+</div>
 
 <div class="center-circle"></div>
 
@@ -946,7 +985,10 @@ MOBILE
   <a href="league.html">📊<br>League</a>
 </div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const clubAbbr = {
   "Arsenal": "ARS", "Aston Villa": "AVL", "Bournemouth": "BOU", "Brentford": "BRE",
@@ -1082,7 +1124,7 @@ const colors = {
   "Wolves": "linear-gradient(#fdb913, #231f20)"
 };
 
-function updateShirt(select) {
+const updateShirt = function(select) {
   const shirt = select.parentElement.querySelector('.shirt');
   const nameLabel = shirt.querySelector('.shirt-name');
   const val = select.value;
@@ -1100,8 +1142,9 @@ function updateShirt(select) {
   shirt.style.background = colors[team] || "linear-gradient(#2563eb, #1d4ed8)";
   refreshDropdowns();
 }
+window.updateShirt = updateShirt;
 
-function changeFormation() {
+const changeFormation = function() {
   const formation = document.getElementById('formationSelect').value;
   const parts = formation.split('-').map(Number);
   const pitch = document.querySelector('.pitch');
@@ -1115,8 +1158,9 @@ function changeFormation() {
   populatePlayers();
   refreshDropdowns();
 }
+window.changeFormation = changeFormation;
 
-function updatePitchRow(row, pos, count) {
+const updatePitchRow = function(row, pos, count) {
   row.innerHTML = '';
   row.style.flexDirection = 'row'; // Default
 
@@ -1129,7 +1173,7 @@ function updatePitchRow(row, pos, count) {
     const subAdvanced = document.createElement('div');
     subAdvanced.className = 'pitch-sub-row';
     
-    const playerHTML = `<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="${pos}" onchange="updateShirt(this)"><option>Select</option></select></div>`;
+    const playerHTML = `<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="${pos}" onchange="window.updateShirt(this)"><option>Select</option></select></div>`;
     
     for(let i=0; i<4; i++) subBase.innerHTML += playerHTML;
     subAdvanced.innerHTML += playerHTML;
@@ -1139,12 +1183,13 @@ function updatePitchRow(row, pos, count) {
     row.appendChild(subAdvanced);
   } else {
     for(let i=0; i<count; i++) {
-      row.innerHTML += `<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="${pos}" onchange="updateShirt(this)"><option>Select</option></select></div>`;
+      row.innerHTML += `<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="${pos}" onchange="window.updateShirt(this)"><option>Select</option></select></div>`;
     }
   }
 }
+window.updatePitchRow = updatePitchRow;
 
-function refreshDropdowns() {
+const refreshDropdowns = function() {
   const selects = document.querySelectorAll('.pitch select');
   const selectedClubs = Array.from(selects)
     .map(s => playerToClub[s.value] || s.value)
@@ -1159,11 +1204,14 @@ function refreshDropdowns() {
     });
   });
 }
+window.refreshDropdowns = refreshDropdowns;
 
-function populatePlayers() {
+const populatePlayers = function() {
   const selects = document.querySelectorAll('.pitch .player select');
   selects.forEach(s => {
     const pos = s.dataset.pos;
+    const currentVal = s.value;
+    s.innerHTML = '<option>Select</option>';
     if (pos && playersByPos[pos]) {
       playersByPos[pos].forEach(p => {
         let opt = document.createElement('option');
@@ -1177,10 +1225,12 @@ function populatePlayers() {
         s.appendChild(opt);
       });
     }
+    s.value = currentVal;
   });
 }
+window.populatePlayers = populatePlayers;
 
-function populateWeeklyOptions() {
+const populateWeeklyOptions = function() {
   const clubSelect = document.getElementById('firstScorer');
   const minuteSelect = document.getElementById('goalMinute');
 
@@ -1204,31 +1254,10 @@ function populateWeeklyOptions() {
   otherOpt.innerHTML = "Other (90+)";
   minuteSelect.appendChild(otherOpt);
 }
+window.populateWeeklyOptions = populateWeeklyOptions;
 
-function clearTeam() {
-  if (confirm("Are you sure you want to clear your entire team?")) {
-    const selects = document.querySelectorAll('.pitch select');
-    selects.forEach(select => {
-      select.value = "Select";
-      updateShirt(select);
-    });
-  }
-}
-
-function saveTeam() {
-  const selects = document.querySelectorAll('.pitch select');
-  const teamValues = Array.from(selects).map(s => s.value);
-  const formation = document.getElementById('formationSelect').value;
-  
-  if (teamValues.includes("Select")) {
-    alert("Please fill all 11 positions first!");
-    return;
-  }
-  localStorage.setItem("myTeam", JSON.stringify({ team: teamValues, formation: formation }));
-  alert("Team XI Saved!");
-}
-
-function setBetChoice(choice) {
+let currentUser = null;
+const setBetChoice = function(choice) {
   currentBetChoice = choice;
   document.getElementById('btnYes').classList.remove('selected');
   document.getElementById('btnNo').classList.remove('selected');
@@ -1241,31 +1270,7 @@ function setBetChoice(choice) {
     document.getElementById('betInfo').innerHTML = "Reward: <strong>30 pts</strong> | Risk: <strong>155 pts</strong>";
   }
 }
-
-function saveBetBuilder() {
-  if(!currentBetChoice) {
-    alert("Please select Yes or No first!");
-    return;
-  }
-  localStorage.setItem("betBuilder", currentBetChoice);
-  alert("Bet Builder Prediction Saved!");
-}
-
-let currentUser = null; // To store the authenticated user
-
-
-
-function saveWeekly(){
-  const data = {
-    first:firstScorer.value,
-    minute:goalMinute.value
-  };
-  localStorage.setItem("weekly",JSON.stringify(data));
-  weeklyStatus.innerText="Saved!";
-}
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+window.setBetChoice = setBetChoice;
 
 const firebaseConfig = {
   apiKey: "AIzaSyBS3Fpobk342TpJw73mMgYOyUrWb-jBtfM",
@@ -1279,17 +1284,23 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
+let authRedirectTimer;
+
 onAuthStateChanged(auth, (user) => {
   if (user) {
+    if (authRedirectTimer) clearTimeout(authRedirectTimer);
     currentUser = user;
     loadUserData(user.uid);
   } else {
-    // User is signed out, redirect to login page
-    window.location.href = "index.html";
+    authRedirectTimer = setTimeout(() => {
+      if (!auth.currentUser) {
+        window.location.href = "index.html";
+      }
+    }, 2000); // Increased grace period to 2 seconds
   }
 });
 
-async function loadUserData(uid) {
+const loadUserData = async function(uid) {
   populateWeeklyOptions();
   loadCurrentBet();
   populatePlayers(); // Populate all dropdowns initially
@@ -1299,7 +1310,7 @@ async function loadUserData(uid) {
   const teamDocSnap = await getDoc(teamDocRef);
   if (teamDocSnap.exists()) {
     const teamData = teamDocSnap.data();
-    document.getElementById('teamNameDisplay').innerText = teamData.teamName || "Your Team";
+    document.getElementById('teamNameDisplay').innerText = teamData.teamName || "Your Team XI";
     document.getElementById('teamNameInput').value = teamData.teamName || "";
     
     if (teamData.formation) {
@@ -1308,7 +1319,8 @@ async function loadUserData(uid) {
     }
 
     if (teamData.players) {
-      const selects = document.querySelectorAll('.pitch select');
+      // Wait a tiny bit for changeFormation to finish rendering rows if necessary
+      const selects = document.querySelectorAll('.pitch .player select');
       selects.forEach((s, i) => {
         if (teamData.players[i] && teamData.players[i] !== "Select") {
           s.value = teamData.players[i];
@@ -1336,8 +1348,9 @@ async function loadUserData(uid) {
   }
   refreshDropdowns(); // Ensure dropdowns reflect loaded selections
 }
+window.loadUserData = loadUserData;
 
-async function saveTeam() {
+const saveTeam = async function() {
   if (!currentUser) {
     alert("Please log in to save your team.");
     return;
@@ -1348,10 +1361,6 @@ async function saveTeam() {
   const formation = document.getElementById('formationSelect').value;
   const teamName = document.getElementById('teamNameInput').value.trim();
   
-  if (teamPlayers.includes("Select")) {
-    alert("Please fill all 11 positions first!");
-    return;
-  }
   if (!teamName) {
     alert("Please enter a team name!");
     return;
@@ -1371,8 +1380,9 @@ async function saveTeam() {
     alert("Failed to save team. Please try again.");
   }
 }
+window.saveTeam = saveTeam;
 
-async function saveWeekly(){
+const saveWeekly = async function() {
   if (!currentUser) {
     alert("Please log in to save your weekly picks.");
     return;
@@ -1390,8 +1400,9 @@ async function saveWeekly(){
     weeklyStatus.innerText="Save Failed!";
   }
 }
+window.saveWeekly = saveWeekly;
 
-async function saveBetBuilder() {
+const saveBetBuilder = async function() {
   if (!currentUser) {
     alert("Please log in to save your bet prediction.");
     return;
@@ -1409,8 +1420,9 @@ async function saveBetBuilder() {
     alert("Failed to save bet prediction. Please try again.");
   }
 }
+window.saveBetBuilder = saveBetBuilder;
 
-async function clearTeam() {
+const clearTeam = async function() {
   if (!currentUser) {
     alert("Please log in to clear your team.");
     return;
@@ -1435,36 +1447,12 @@ async function clearTeam() {
     }
   }
 }
+window.clearTeam = clearTeam;
 
-function toggleTeamNameEdit() {
-  const display = document.getElementById('teamNameDisplay');
-  const input = document.getElementById('teamNameInput');
-  const button = document.getElementById('editTeamNameBtn');
-
-  if (input.style.display === 'none') {
-    display.style.display = 'none';
-    input.style.display = 'inline-block';
-    input.focus();
-    button.innerText = 'Save';
-  } else {
-    display.style.display = 'inline-block';
-    input.style.display = 'none';
-    display.innerText = input.value || "Your Team";
-    button.innerText = 'Edit';
-    // Automatically save the team name when editing is done
-    saveTeam(); 
-  }
-}
-
-window.onload = function() {
-  // Initial population of options for weekly picks and players
-  // These will be overwritten by loaded data if available
-  populateWeeklyOptions();
-  loadCurrentBet();
-  populatePlayers(); // Ensure all player dropdowns have options
-  refreshDropdowns(); // Disable already selected players
-};
-
+populateWeeklyOptions();
+loadCurrentBet();
+populatePlayers(); 
+refreshDropdowns();
 </script>
 </body>
 </html>
