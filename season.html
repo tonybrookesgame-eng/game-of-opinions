@@ -920,10 +920,40 @@
 
 <!-- SCRIPT GOES HERE (IMPORTANT POSITION) -->
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBS3Fpobk342TpJw73mMgYOyUrWb-jBtfM",
+  authDomain: "game-of-opinions-97b14.firebaseapp.com",
+  projectId: "game-of-opinions-97b14",
+  storageBucket: "game-of-opinions-97b14.firebasestorage.app",
+  appId: "1:863518863234:web:3a2c2378a2a358e0b2299b"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+let currentUser = null;
+
 let aiPage = 1;
 let currentScoutKey = 'striker';
 let currentCategory = 'scorer';
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    currentUser = user;
+    loadSeasonPicks(user.uid);
+  } else {
+    // If not logged in, we can redirect or just keep them as guest
+    // For season picks, they usually need an account to save
+    console.log("No user logged in.");
+  }
+});
+
 
 const scoutData = {
   striker: {
@@ -1160,30 +1190,59 @@ function nextAiPage() {
   }
 }
 
-function lockSeason() {
+window.lockSeason = async function() {
+  if (!currentUser) {
+    alert("Please log in to save your season picks.");
+    return;
+  }
+
   const selects = document.querySelectorAll("select");
-  let picks = [];
+  let picks = {};
   for (let select of selects) {
+    const title = select.parentElement.querySelector('h3').innerText;
     if (select.value.includes("Select")) {
       alert("Please complete all season picks.");
       return;
     }
-    picks.push(select.value);
+    picks[title] = select.value;
   }
-  localStorage.setItem("seasonPicks", JSON.stringify(picks));
-  alert("Season picks saved!");
-}
 
-window.onload = function() {
-  const saved = JSON.parse(localStorage.getItem("seasonPicks"));
-  if (saved) {
-    const selects = document.querySelectorAll("select");
-    selects.forEach((select, index) => {
-      if (saved[index]) select.value = saved[index];
-    });
-    refreshRelegated();
+  try {
+    const seasonDocRef = doc(db, "users", currentUser.uid, "predictions", "season");
+    await setDoc(seasonDocRef, picks);
+    alert("Season picks locked and saved to Firestore!");
+  } catch (error) {
+    console.error("Error saving season picks:", error);
+    alert("Failed to save picks. Please try again.");
   }
 };
+
+async function loadSeasonPicks(uid) {
+  try {
+    const seasonDocRef = doc(db, "users", uid, "predictions", "season");
+    const docSnap = await getDoc(seasonDocRef);
+    
+    if (docSnap.exists()) {
+      const saved = docSnap.data();
+      const selects = document.querySelectorAll("select");
+      
+      selects.forEach((select) => {
+        const title = select.parentElement.querySelector('h3').innerText;
+        if (saved[title]) {
+          select.value = saved[title];
+        }
+      });
+      refreshRelegated();
+    }
+  } catch (error) {
+    console.error("Error loading season picks:", error);
+  }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  populateAllSelects();
+});
+
 </script>
 </body>
 </html>

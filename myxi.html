@@ -781,7 +781,11 @@ MOBILE
 
 <div class="container">
 
-<h1>Your Team</h1>
+<h1 style="display: flex; align-items: center; gap: 10px;">
+  <span id="teamNameDisplay">Your Team</span>
+  <input type="text" id="teamNameInput" placeholder="Enter Team Name" style="display: none; padding: 5px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: white; font-size: 24px; font-weight: bold; max-width: 300px;">
+  <button id="editTeamNameBtn" onclick="toggleTeamNameEdit()" style="width: auto; padding: 5px 10px; font-size: 14px; border-radius: 8px; background: rgba(255,255,255,0.1); color: white; font-weight: normal; margin-top: 0; transform: none; box-shadow: none;">Edit</button>
+</h1>
 
 <div style="margin-bottom: 30px;"></div>
 
@@ -1247,6 +1251,10 @@ function saveBetBuilder() {
   alert("Bet Builder Prediction Saved!");
 }
 
+let currentUser = null; // To store the authenticated user
+
+
+
 function saveWeekly(){
   const data = {
     first:firstScorer.value,
@@ -1255,37 +1263,208 @@ function saveWeekly(){
   localStorage.setItem("weekly",JSON.stringify(data));
   weeklyStatus.innerText="Saved!";
 }
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-window.onload=function(){
+const firebaseConfig = {
+  apiKey: "AIzaSyBS3Fpobk342TpJw73mMgYOyUrWb-jBtfM",
+  authDomain: "game-of-opinions-97b14.firebaseapp.com",
+  projectId: "game-of-opinions-97b14",
+  storageBucket: "game-of-opinions-97b14.firebasestorage.app",
+  appId: "1:863518863234:web:3a2c2378a2a358e0b2299b"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    currentUser = user;
+    loadUserData(user.uid);
+  } else {
+    // User is signed out, redirect to login page
+    window.location.href = "index.html";
+  }
+});
+
+async function loadUserData(uid) {
   populateWeeklyOptions();
   loadCurrentBet();
+  populatePlayers(); // Populate all dropdowns initially
 
-  const savedData = JSON.parse(localStorage.getItem("myTeam"));
-  if(savedData) {
-    const team = savedData.team || savedData;
-    const formation = savedData.formation || "4-4-2";
-    document.getElementById('formationSelect').value = formation;
-    changeFormation();
-    const selects = document.querySelectorAll('.pitch select');
-    selects.forEach((s, i) => {
-      if(team[i] && team[i] !== "Select") {
-        s.value = team[i];
-        updateShirt(s);
-      }
+  // Load Team Data
+  const teamDocRef = doc(db, "users", uid, "myxi", "team");
+  const teamDocSnap = await getDoc(teamDocRef);
+  if (teamDocSnap.exists()) {
+    const teamData = teamDocSnap.data();
+    document.getElementById('teamNameDisplay').innerText = teamData.teamName || "Your Team";
+    document.getElementById('teamNameInput').value = teamData.teamName || "";
+    
+    if (teamData.formation) {
+      document.getElementById('formationSelect').value = teamData.formation;
+      changeFormation(); // This will re-render rows and populate players
+    }
+
+    if (teamData.players) {
+      const selects = document.querySelectorAll('.pitch select');
+      selects.forEach((s, i) => {
+        if (teamData.players[i] && teamData.players[i] !== "Select") {
+          s.value = teamData.players[i];
+          updateShirt(s);
+        }
+      });
+    }
+  }
+
+  // Load Weekly Picks
+  const weeklyDocRef = doc(db, "users", uid, "myxi", "weeklyPicks");
+  const weeklyDocSnap = await getDoc(weeklyDocRef);
+  if (weeklyDocSnap.exists()) {
+    const weeklyData = weeklyDocSnap.data();
+    if (weeklyData.first) firstScorer.value = weeklyData.first;
+    if (weeklyData.minute) goalMinute.value = weeklyData.minute;
+  }
+
+  // Load Bet Builder
+  const betBuilderDocRef = doc(db, "users", uid, "myxi", "betBuilder");
+  const betBuilderDocSnap = await getDoc(betBuilderDocRef);
+  if (betBuilderDocSnap.exists()) {
+    const betBuilderData = betBuilderDocSnap.data();
+    if (betBuilderData.choice) setBetChoice(betBuilderData.choice);
+  }
+  refreshDropdowns(); // Ensure dropdowns reflect loaded selections
+}
+
+async function saveTeam() {
+  if (!currentUser) {
+    alert("Please log in to save your team.");
+    return;
+  }
+
+  const selects = document.querySelectorAll('.pitch select');
+  const teamPlayers = Array.from(selects).map(s => s.value);
+  const formation = document.getElementById('formationSelect').value;
+  const teamName = document.getElementById('teamNameInput').value.trim();
+  
+  if (teamPlayers.includes("Select")) {
+    alert("Please fill all 11 positions first!");
+    return;
+  }
+  if (!teamName) {
+    alert("Please enter a team name!");
+    return;
+  }
+
+  try {
+    const teamDocRef = doc(db, "users", currentUser.uid, "myxi", "team");
+    await setDoc(teamDocRef, {
+      players: teamPlayers,
+      formation: formation,
+      teamName: teamName
     });
+    document.getElementById('teamNameDisplay').innerText = teamName;
+    alert("Team XI Saved!");
+  } catch (error) {
+    console.error("Error saving team: ", error);
+    alert("Failed to save team. Please try again.");
+  }
+}
+
+async function saveWeekly(){
+  if (!currentUser) {
+    alert("Please log in to save your weekly picks.");
+    return;
+  }
+  const data = {
+    first: firstScorer.value,
+    minute: goalMinute.value
+  };
+  try {
+    const weeklyDocRef = doc(db, "users", currentUser.uid, "myxi", "weeklyPicks");
+    await setDoc(weeklyDocRef, data);
+    weeklyStatus.innerText="Saved!";
+  } catch (error) {
+    console.error("Error saving weekly picks: ", error);
+    weeklyStatus.innerText="Save Failed!";
+  }
+}
+
+async function saveBetBuilder() {
+  if (!currentUser) {
+    alert("Please log in to save your bet prediction.");
+    return;
+  }
+  if(!currentBetChoice) {
+    alert("Please select Yes or No first!");
+    return;
+  }
+  try {
+    const betBuilderDocRef = doc(db, "users", currentUser.uid, "myxi", "betBuilder");
+    await setDoc(betBuilderDocRef, { choice: currentBetChoice });
+    alert("Bet Builder Prediction Saved!");
+  } catch (error) {
+    console.error("Error saving bet builder: ", error);
+    alert("Failed to save bet prediction. Please try again.");
+  }
+}
+
+async function clearTeam() {
+  if (!currentUser) {
+    alert("Please log in to clear your team.");
+    return;
+  }
+  if (confirm("Are you sure you want to clear your entire team?")) {
+    const selects = document.querySelectorAll('.pitch select');
+    selects.forEach(select => {
+      select.value = "Select";
+      updateShirt(select);
+    });
+    try {
+      const teamDocRef = doc(db, "users", currentUser.uid, "myxi", "team");
+      await setDoc(teamDocRef, { players: [], formation: "4-4-2", teamName: "" }); // Clear data in Firestore
+      document.getElementById('teamNameDisplay').innerText = "Your Team";
+      document.getElementById('teamNameInput').value = "";
+      document.getElementById('formationSelect').value = "4-4-2";
+      changeFormation(); // Reset formation
+      alert("Team cleared successfully!");
+    } catch (error) {
+      console.error("Error clearing team: ", error);
+      alert("Failed to clear team. Please try again.");
+    }
+  }
+}
+
+function toggleTeamNameEdit() {
+  const display = document.getElementById('teamNameDisplay');
+  const input = document.getElementById('teamNameInput');
+  const button = document.getElementById('editTeamNameBtn');
+
+  if (input.style.display === 'none') {
+    display.style.display = 'none';
+    input.style.display = 'inline-block';
+    input.focus();
+    button.innerText = 'Save';
   } else {
-    populatePlayers();
+    display.style.display = 'inline-block';
+    input.style.display = 'none';
+    display.innerText = input.value || "Your Team";
+    button.innerText = 'Edit';
+    // Automatically save the team name when editing is done
+    saveTeam(); 
   }
-  const saved=JSON.parse(localStorage.getItem("weekly"));
-  if(saved){
-    firstScorer.value=saved.first;
-    goalMinute.value=saved.minute;
-  }
-  const savedBet = localStorage.getItem("betBuilder");
-  if(savedBet) {
-    setBetChoice(savedBet);
-  }
+}
+
+window.onload = function() {
+  // Initial population of options for weekly picks and players
+  // These will be overwritten by loaded data if available
+  populateWeeklyOptions();
+  loadCurrentBet();
+  populatePlayers(); // Ensure all player dropdowns have options
+  refreshDropdowns(); // Disable already selected players
 };
+
 </script>
 </body>
 </html>
