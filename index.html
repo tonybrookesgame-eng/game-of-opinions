@@ -97,7 +97,6 @@ header {
 
 .logo {
 
-  font-size: 26px;
   font-size: 22px;
 
   font-weight: 800;
@@ -131,7 +130,6 @@ nav a {
   color: rgba(255,255,255,0.85);
 
   text-decoration: none;
-  font-size: 18px;
   font-size: 16px;
 
   transition: 0.2s ease;
@@ -166,7 +164,6 @@ nav a:hover {
   padding: 8px 18px;
 
   border-radius: 999px;
-  font-size: 18px;
   font-size: 16px;
 
   font-weight: 800;
@@ -191,7 +188,6 @@ nav a:hover {
 
   color: white !important;
   opacity: 1;
-  font-size: 18px; /* Align with nav links and signup button */
   font-size: 16px; /* Align with nav links and signup button */
 
 }
@@ -1080,12 +1076,11 @@ nav a:hover {
 </nav>
 </header>
 
-<div style="margin-top:20px;">
-
-  <input id="email" type="email" placeholder="Email" style="padding:8px; margin-right:6px;">
-
-  <input id="password" type="password" placeholder="Password" style="padding:8px;">
-
+<!-- LOGIN INPUTS (Moved to be visible below fixed header) -->
+<div style="margin-top: 100px; text-align: center; position: relative; z-index: 10;">
+  <input id="email" type="email" placeholder="Email" style="padding:10px; border-radius:8px; border:1px solid #334155; background:#0f172a; color:white;">
+  <input id="password" type="password" placeholder="Password" style="padding:10px; border-radius:8px; border:1px solid #334155; background:#0f172a; color:white;">
+  <p style="font-size: 12px; color: #9ca3af;">Enter details then click Sign Up or Log In above</p>
 </div>
 
 <!-- HERO -->
@@ -1393,7 +1388,6 @@ nav a:hover {
 
 </section>
 
-}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -1401,11 +1395,14 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } f
 const firebaseConfig = {
   apiKey: "AIzaSyBS3Fpobk342TpJw73mMgYOyUrWb-jBtfM",
   authDomain: "game-of-opinions-97b14.firebaseapp.com",
-  projectId: "game-of-opinions-97b14"
+  projectId: "game-of-opinions-97b14",
+  storageBucket: "game-of-opinions-97b14.firebasestorage.app",
+  appId: "1:863518863234:web:3a2c2378a2a358e0b2299b" // <-- REPLACE THIS WITH YOUR ACTUAL APP ID
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+console.log("Firebase initialized successfully");
 
 // SIGN UP
 window.signUp = async function() {

@@ -694,17 +694,9 @@
         </div>
       </div>
       <select>
-
         <option>Select team</option>
-
-        <option>Man City</option>
-
-        <option>Arsenal</option>
-
       </select>
-
       <div class="points">25 points</div>
-
     </div>
 
     <div class="card">
@@ -721,19 +713,10 @@
           <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
         </div>
       </div>
-
       <select>
-
         <option>Select team</option>
-
-        <option>Liverpool</option>
-
-        <option>Chelsea</option>
-
       </select>
-
       <div class="points">50 points</div>
-
     </div>
 
     <div class="card">
@@ -749,10 +732,8 @@
           <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
         </div>
       </div>
-      <select>
+      <select id="topScorerSelect">
         <option>Select player</option>
-        <option>Haaland</option>
-        <option>Watkins</option>
       </select>
       <div class="points">25 points</div>
     </div>
@@ -770,10 +751,8 @@
           <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
         </div>
       </div>
-      <select>
+      <select id="topAssistsSelect">
         <option>Select player</option>
-        <option>De Bruyne</option>
-        <option>Palmer</option>
       </select>
       <div class="points">50 points</div>
     </div>
@@ -791,10 +770,8 @@
           <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
         </div>
       </div>
-      <select>
+      <select id="cleanSheetsSelect">
         <option>Select player</option>
-        <option>Alisson</option>
-        <option>Ederson</option>
       </select>
       <div class="points">50 points</div>
     </div>
@@ -812,10 +789,8 @@
           <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
         </div>
       </div>
-      <select>
+      <select id="hatTrickSelect">
         <option>Select player</option>
-        <option>Haaland</option>
-        <option>Son</option>
       </select>
       <div class="points">50 points</div>
     </div>
@@ -833,10 +808,8 @@
           <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
         </div>
       </div>
-      <select>
+      <select id="managerSackedSelect">
         <option>Select manager</option>
-        <option>Manager A</option>
-        <option>Manager B</option>
       </select>
       <div class="points">50 points</div>
     </div>
@@ -854,10 +827,8 @@
           <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
         </div>
       </div>
-      <select>
+      <select id="redCardsSelect">
         <option>Select team</option>
-        <option>Everton</option>
-        <option>Burnley</option>
       </select>
       <div class="points">75 points</div>
     </div>
@@ -968,7 +939,6 @@ const scoutData = {
       cleansheets: ["Defense starts from the front. But even I know Alisson is a wall.", "Clean sheets come from keeping the ball in the other half."],
       hattrick: ["Haaland is the obvious beast here. He's never satisfied with one.", "Look for the players who stay on for 90 minutes even when 3-0 up."],
       sacked: ["When the goals dry up, the manager goes. Look for the low-scorers.", "A dressing room that stops scoring has stopped playing for the boss."],
-      redcards: ["Defending against speed makes players desperate. Who is the slowest backline?", "Frustration leads to cards. Look for the teams struggling to hit the target."],
       relegated: ["Teams that can't score, go down. It's that simple.", "Look for the squads that lack a 10-goal-a-season man; they'll struggle to stay up."],
       yellows: ["Midfield enforcers are your best bet. Look for the ones who break up play.", "Consistency in tackling leads to cautions."]
     }
@@ -986,7 +956,6 @@ const scoutData = {
       cleansheets: ["Arsenal's high-line suppression metrics suggest the most shutouts.", "Alisson's post-shot xG prevented is still world-class."],
       hattrick: ["High volume shooters have a 12% higher chance of multiple goals.", "Look for high-variance games (Top vs Bottom) for hat-trick potential."],
       sacked: ["Underperformance against xPoints is the leading indicator of dismissal.", "Market odds show Manager A is the statistical favorite for departure."],
-      redcards: ["Everton's high-press intensity leads to more tactical fouls.", "Look at the 'Aggression Index' - some teams simply average more bookings."],
       relegated: ["Expected Points (xP) metrics often highlight teams performing above their true level.", "Data suggests the jump from the Championship is getting harder every year."],
       yellows: ["Look for players with high 'Fouls per 90' but low tackle success rates.", "Historical booking data points toward a high frequency in defensive transitions."]
     }
@@ -1004,7 +973,6 @@ const scoutData = {
       cleansheets: ["The double pivot is the key to clean sheets. Who has the best DM duo?", "Defensive organization is more important than individual keepers."],
       hattrick: ["Exploit the high line. Who is playing against a team that doesn't track back?", "Transition-based teams are the ones that rack up multiple goals."],
       sacked: ["Fixture congestion early on will break the managers with thin squads.", "Watch the post-match interviews. The tactical 'lost' feeling is easy to spot."],
-      redcards: ["Tactical fouling is a system. Some teams use it more than others.", "Target the high-intensity derbies. Those are where the reds live."],
       relegated: ["A weak bench is a death sentence during the winter schedule.", "Look for teams with high turnover in the defensive line; lack of chemistry leads to the drop."],
       yellows: ["Aggressive pressing systems naturally lead to more 'tactical' bookings.", "Identify players tasked with stopping counter-attacks at all costs."]
     }
@@ -1018,11 +986,41 @@ const PL_CLUBS = [
   "West Ham", "Wolves"
 ];
 
+const TOP_SCORER_CANDIDATES = [
+  "Haaland", "Ollie Watkins", "Mohamed Salah", "Son Heung-min", "Alexander Isak", "Dominic Solanke"
+];
+
+const TOP_ASSIST_CANDIDATES = [
+  "Kevin De Bruyne", "Bruno Fernandes", "Bukayo Saka", "Cole Palmer", "Pascal Groß", "James Maddison"
+];
+
+const HAT_TRICK_CANDIDATES = [
+  "Haaland", "Mohamed Salah", "Son Heung-min", "Ollie Watkins", "Dominic Solanke", "Darwin Núñez"
+];
+
+const CLEAN_SHEET_CANDIDATES = [
+  "Alisson", "Ederson", "David Raya", "Guglielmo Vicario", "Jordan Pickford", "Bernd Leno"
+];
+
+const MANAGER_CANDIDATES = [
+  "Erik ten Hag", "Mauricio Pochettino", "Vincent Kompany", "Steve Cooper", "David Moyes", "Marco Silva"
+];
+
 const YELLOW_CANDIDATES = [
   "Palhinha", "Edson Alvarez", "Christian Norgaard", "Bruno Guimaraes", 
   "Douglas Luiz", "Joelinton", "Nicolas Jackson", "Mario Lemina", 
   "Abdoulaye Doucoure", "Alexis Mac Allister"
 ];
+
+// Helper to add options to a select element
+function addOptionsToSelect(selectElement, optionsArray) {
+  optionsArray.forEach(item => {
+    let opt = document.createElement('option');
+    opt.value = item;
+    opt.innerHTML = item;
+    selectElement.appendChild(opt);
+  });
+}
 
 function populateAllSelects() {
   const selects = document.querySelectorAll("select");
@@ -1036,18 +1034,31 @@ function populateAllSelects() {
         opt.innerHTML = club;
         select.appendChild(opt);
       });
-    }
-
-    if (title.includes("Yellow Cards")) {
-      YELLOW_CANDIDATES.forEach(player => {
-        let opt = document.createElement('option');
-        opt.value = player;
-        opt.innerHTML = player;
-        select.appendChild(opt);
-      });
+    } else if (title.includes("Top Scorer")) {
+      addOptionsToSelect(select, TOP_SCORER_CANDIDATES);
+    } else if (title.includes("Top Assists")) {
+      addOptionsToSelect(select, TOP_ASSIST_CANDIDATES);
+    } else if (title.includes("Hat-Trick")) {
+      addOptionsToSelect(select, HAT_TRICK_CANDIDATES);
+    } else if (title.includes("Clean Sheets")) {
+      addOptionsToSelect(select, CLEAN_SHEET_CANDIDATES);
+    } else if (title.includes("Manager Sacked")) {
+      addOptionsToSelect(select, MANAGER_CANDIDATES);
+    } else if (title.includes("Yellow Cards")) {
+      addOptionsToSelect(select, YELLOW_CANDIDATES);
     }
   });
 }
+
+// Initial population of selects
+populateAllSelects();
+
+// Clear hardcoded options from HTML after dynamic population
+// This ensures that if JS fails, there are still some options, but when JS runs, it's clean.
+document.querySelectorAll("select option:not([value='Select team']):not([value='Select player']):not([value='Select manager'])").forEach(option => {
+  if (option.parentElement.options.length > 1) option.remove();
+});
+
 
 function refreshRelegated() {
   const selects = document.querySelectorAll('.relegated-select');
@@ -1161,116 +1172,10 @@ function lockSeason() {
 }
 
 window.onload = function() {
-  populateAllSelects();
-
   const saved = JSON.parse(localStorage.getItem("seasonPicks"));
   if (saved) {
     const selects = document.querySelectorAll("select");
     selects.forEach((select, index) => {
-      select.value = saved[index];
-      if (saved[index]) select.value = saved[index];
-    });
-    refreshRelegated();
-  }
-};
-</script>
-</body>
-</html> actionBtn = document.getElementById('aiActionBtn');
-  const title = modal.querySelector('h2');
-  
-  aiPage = 0; // Start at Risk Warning
-  modal.style.display = 'flex';
-  title.innerText = `⚠️ Scout Warning`;
-  content.innerText = `${scout.name} is ready. \n\nRisk Profile: ${scout.risk}\n\n${scout.blurb}`;
-  stats.innerHTML = "";
-  actionBtn.innerText = "Proceed to Opinion";
-  actionBtn.onclick = () => loadAiReport();
-}
-
-function loadAiReport() {
-  const scout = scoutData[currentScoutKey];
-  const adviceList = scout.advice[currentCategory];
-  const content = document.getElementById('aiContent');
-  const stats = document.getElementById('aiStats');
-  const actionBtn = document.getElementById('aiActionBtn');
-  const title = document.getElementById('aiModal').querySelector('h2');
-
-  aiPage = 1;
-  title.innerText = `🤖 ${scout.name}`;
-  content.innerText = `${scout.name} is analyzing the field...`;
-  
-  // Show "Next" button once content loads
-  actionBtn.innerText = "Processing...";
-  actionBtn.disabled = true;
-  actionBtn.onclick = nextAiPage;
-
-  setTimeout(() => {
-    const randomAdvice = adviceList[Math.floor(Math.random() * adviceList.length)];
-    content.innerText = `Page 1: Tactical Perspective. My scouting report for this category:`;
-    stats.innerHTML = `
-      <div style="padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px; font-style: italic;">
-        "${randomAdvice}"
-      </div>
-      <div style="margin-top: 15px; font-size: 12px; color: #c7ff38;">
-        <strong>AI Recommended Profile:</strong> 
-        ${category === 'scorer' ? 'High volume poacher' : category === 'winner' ? 'Consistent high-pressers' : 'Tactical specialist'}
-        ${currentCategory === 'scorer' ? 'High volume poacher' : currentCategory === 'winner' ? 'Consistent high-pressers' : 'Tactical specialist'}
-      </div>
-    `;
-    actionBtn.disabled = false;
-    actionBtn.innerText = "Next: Advanced Stats";
-    actionBtn.onclick = nextAiPage;
-  }, 800);
-}
-
-function nextAiPage() {
-  if (aiPage === 2) {
-    document.getElementById('aiModal').style.display = 'none';
-    return;
-  }
-
-  const content = document.getElementById('aiContent');
-  const stats = document.getElementById('aiStats');
-  const actionBtn = document.getElementById('aiActionBtn');
-
-  if (aiPage === 1) {
-    aiPage = 2;
-    content.innerText = "Page 2: Deep Dive - Underlying Metrics";
-    actionBtn.innerText = "Close Report";
-    actionBtn.onclick = () => document.getElementById('aiModal').style.display = 'none';
-    
-    stats.innerHTML = `
-      <div class="stat-row"><span>Avg xG per 90</span> <span class="stat-val">0.92</span></div>
-      <div class="stat-row"><span>Conversion Rate</span> <span class="stat-val">24.2%</span></div>
-      <div class="stat-row"><span>Big Chances Missed</span> <span class="stat-val">Low</span></div>
-      <div class="stat-row"><span>AI Recommended Pick</span> <span class="stat-val" style="color:#c7ff38">Haaland</span></div>
-      <p style="margin-top:15px; font-size:12px; color:#9ca3af;">Data processed via Game of Opinions Scout Algorithm v1.2</p>
-    `;
-  }
-}
-
-function lockSeason() {
-  const selects = document.querySelectorAll("select");
-  let picks = [];
-  for (let select of selects) {
-    if (select.value.includes("Select")) {
-      alert("Please complete all season picks.");
-      return;
-    }
-    picks.push(select.value);
-  }
-  localStorage.setItem("seasonPicks", JSON.stringify(picks));
-  alert("Season picks saved!");
-}
-
-window.onload = function() {
-  populateAllSelects();
-
-  const saved = JSON.parse(localStorage.getItem("seasonPicks"));
-  if (saved) {
-    const selects = document.querySelectorAll("select");
-    selects.forEach((select, index) => {
-      select.value = saved[index];
       if (saved[index]) select.value = saved[index];
     });
     refreshRelegated();
