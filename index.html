@@ -192,56 +192,37 @@ nav a:hover {
 
 }
 
-/* =========================
-   STADIUM TICKET STYLES
-========================= */
-.ticket {
-  display: flex;
-  background: #0f172a;
-  border: 1px solid #c7ff38;
-  border-radius: 16px;
-  overflow: hidden;
-  max-width: 480px;
-  margin: auto;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+.auth-container {
+  max-width: 400px;
+  margin: 120px auto 40px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 40px;
+  text-align: center;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
   position: relative;
+  z-index: 10;
 }
-.ticket-stub {
-  width: 60px;
-  background: #c7ff38;
-  color: #041102;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  border-right: 2px dashed rgba(15, 23, 42, 0.3);
+
+.auth-container h2 {
+  margin-top: 0;
+  color: #c7ff38;
+  font-size: 28px;
 }
-.stub-text {
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  font-size: 14px;
-  margin-bottom: 10px;
-}
-.ticket-content {
-  flex: 1;
-  padding: 30px;
-  text-align: left;
-}
-.ticket-content h2 {
-  margin: 0 0 5px 0;
-  font-size: 22px;
-  text-transform: uppercase;
-}
-.barcode {
-  height: 30px;
+
+.auth-input {
   width: 100%;
-  background: repeating-linear-gradient(90deg, #fff, #fff 1px, transparent 1px, transparent 3px, #fff 3px, #fff 4px);
-  opacity: 0.3;
-  margin-top: 20px;
-  border-radius: 2px;
+  padding: 14px;
+  margin-bottom: 15px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
+  color: white;
+  font-size: 16px;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 /* =========================
@@ -1124,43 +1105,32 @@ nav a:hover {
   <a href="league.html">League</a>
   <a href="rules.html">Rules</a>
   <a href="#login-section" class="login-link">Log In</a>
-  <a href="#" class="signup-btn" onclick="openSignup()">Sign Up</a>
+  <a href="#login-section" class="signup-btn" onclick="showAuth('signup')">Sign Up</a>
 </nav>
 </header>
 
-<!-- STADIUM TICKET LOGIN -->
-<div id="login-section" style="margin-top: 140px; text-align: center; position: relative; z-index: 10; padding: 40px 20px;">
-  <div class="ticket">
-    <div class="ticket-stub">
-      <div class="stub-text">ADMIT ONE</div>
-      <div style="font-size: 10px; opacity: 0.6;">GOO-2024</div>
-    </div>
-    <div class="ticket-content">
-      <div style="color: #9ca3af; font-size: 11px; letter-spacing: 2px;">MANAGER ACCESS</div>
-      <h2 style="color: #c7ff38;">OFFICIAL ENTRY</h2>
-      <p style="font-size: 13px; color: #9ca3af; margin-bottom: 20px;">Please provide your Manager credentials.</p>
-      
-      <input id="login-email" type="email" placeholder="MANAGER EMAIL" style="width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 4px; border: 1px solid #334155; background: #1e293b; color: white; box-sizing: border-box; font-family: monospace;">
-      <input id="login-password" type="password" placeholder="ACCESS CODE" style="width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 4px; border: 1px solid #334155; background: #1e293b; color: white; box-sizing: border-box; font-family: monospace;">
-      
-      <button onclick="login()" style="width: 100%; padding: 14px; background: #c7ff38; color: #041102; font-weight: 800; border-radius: 4px; border: none; cursor: pointer; font-size: 16px; text-transform: uppercase;">Validate Ticket</button>
-      
-      <div class="barcode"></div>
-      <p style="font-size: 11px; color: #4b5563; margin-top: 10px; text-align: center;">ENCRYPTED AUTHENTICATION v1.2</p>
-    </div>
+<!-- AUTH SECTION -->
+<div id="login-section" class="auth-container">
+  <div id="login-form">
+    <h2>Manager Login</h2>
+    <p style="color: #9ca3af; margin-bottom: 25px;">Welcome back to the stadium.</p>
+    <input id="login-email" class="auth-input" type="email" placeholder="Email Address">
+    <input id="login-password" class="auth-input" type="password" placeholder="Password">
+    <button onclick="login()" style="width: 100%; padding: 14px; background: #c7ff38; color: #041102; font-weight: 800; border-radius: 12px; border: none; cursor: pointer; font-size: 16px;">Log In</button>
+    <p style="margin-top: 20px; font-size: 14px; color: #9ca3af;">
+      New Manager? <a href="javascript:void(0)" onclick="showAuth('signup')" style="color: #c7ff38; text-decoration: none;">Create an account</a>
+    </p>
   </div>
-  <p style="font-size: 13px; color: #9ca3af; margin-top: 20px;">First time in the stadium? <a href="#" onclick="openSignup()" style="color: #c7ff38; text-decoration: none; font-weight: bold;">Apply for Membership</a></p>
-</div>
 
-<!-- SIGNUP MODAL -->
-<div id="signup-modal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px;">
-  <div style="background: #0f172a; border: 1px solid #c7ff38; border-radius: 24px; max-width: 400px; width: 100%; padding: 30px; text-align: center;">
-    <h2 style="color: #c7ff38; margin-top: 0; font-size: 28px;">Manager Registration</h2>
-    <p style="color: #9ca3af; font-size: 14px; margin-bottom: 20px;">Your journey to the top of the global league begins here.</p>
-    <input id="signup-email" type="email" placeholder="EMAIL ADDRESS" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #334155; background: #1e293b; color: white; box-sizing: border-box;">
-    <input id="signup-password" type="password" placeholder="CREATE ACCESS CODE" style="width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #334155; background: #1e293b; color: white; box-sizing: border-box;">
-    <button onclick="signUp()" style="width: 100%; padding: 14px; background: #c7ff38; color: #041102; font-weight: 800; border-radius: 999px; border: none; cursor: pointer; font-size: 16px; margin-bottom: 10px;">Finalize Application</button>
-    <button onclick="closeSignup()" style="width: 100%; background: transparent; color: #9ca3af; border: none; cursor: pointer; font-size: 13px;">Dismiss</button>
+  <div id="signup-form" style="display: none;">
+    <h2>Manager Sign Up</h2>
+    <p style="color: #9ca3af; margin-bottom: 25px;">Start your journey to the top.</p>
+    <input id="signup-email" class="auth-input" type="email" placeholder="Email Address">
+    <input id="signup-password" class="auth-input" type="password" placeholder="Create Password">
+    <button onclick="signUp()" style="width: 100%; padding: 14px; background: #c7ff38; color: #041102; font-weight: 800; border-radius: 12px; border: none; cursor: pointer; font-size: 16px;">Create Account</button>
+    <p style="margin-top: 20px; font-size: 14px; color: #9ca3af;">
+      Already have an account? <a href="javascript:void(0)" onclick="showAuth('login')" style="color: #c7ff38; text-decoration: none;">Log In</a>
+    </p>
   </div>
 </div>
 
@@ -1514,17 +1484,19 @@ window.signUp = async function() {
 
 // LOGIN
 window.login = async function() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
   const email = document.getElementById("login-email").value;
   const password = document.getElementById("login-password").value;
 
+  if (!email || !password) {
+    alert("Please enter both email and password.");
+    return;
+  }
+
   try {
     await signInWithEmailAndPassword(auth, email, password);
-    alert("Logged in!");
     window.location.href = "myxi.html";
   } catch (error) {
-    alert(error.message);
+    alert("Login failed: " + error.message);
   }
 }
 </script>
