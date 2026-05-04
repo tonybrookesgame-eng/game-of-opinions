@@ -83,6 +83,7 @@
       margin-left: 20px;
 
       text-decoration: none;
+      font-size: 16px;
 
     }
 
@@ -570,9 +571,10 @@
       color: #041102;
       padding: 5px 8px;
       border-radius: 8px;
-      font-size: 9px;
+      font-size: 10px;
       font-weight: 800;
-      white-space: nowrap;
+      width: 140px;
+      text-align: center;
       opacity: 0;
       transition: 0.2s;
       pointer-events: none;
@@ -598,7 +600,7 @@
       transition: transform 0.2s;
       border-radius: 50%;
       border: 1px solid rgba(199, 255, 56, 0.3);
-      background-size: cover;
+      background-size: contain;
       background-position: center;
       background-repeat: no-repeat;
       background-color: rgba(255, 255, 255, 0.05); /* Fallback grey circle */
@@ -682,13 +684,13 @@
       <h3>Premier League Winner</h3>
       <div class="scouts-container">
         <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'winner')">
-          <div class="speech-bubble-in-card">The AI Legend</div>
+          <div class="speech-bubble-in-card">The AI Legend<br><small style="font-weight:400">Cautious Picks</small></div>
         </div>
         <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'winner')">
-          <div class="speech-bubble-in-card">The Tactical Mentor</div>
+          <div class="speech-bubble-in-card">The Tactical Mentor<br><small style="font-weight:400">Bold Picks</small></div>
         </div>
         <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'winner')">
-          <div class="speech-bubble-in-card">The Opinion Architect</div>
+          <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
         </div>
       </div>
       <select>
@@ -710,13 +712,13 @@
       <h3>FA Cup Winner</h3>
       <div class="scouts-container">
         <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'facup')">
-          <div class="speech-bubble-in-card">The AI Legend</div>
+          <div class="speech-bubble-in-card">The AI Legend<br><small style="font-weight:400">Cautious Picks</small></div>
         </div>
         <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'facup')">
-          <div class="speech-bubble-in-card">The Tactical Mentor</div>
+          <div class="speech-bubble-in-card">The Tactical Mentor<br><small style="font-weight:400">Bold Picks</small></div>
         </div>
         <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'facup')">
-          <div class="speech-bubble-in-card">The Opinion Architect</div>
+          <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
         </div>
       </div>
 
@@ -738,13 +740,13 @@
       <h3>Top Scorer</h3>
       <div class="scouts-container">
         <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'scorer')">
-          <div class="speech-bubble-in-card">The AI Legend</div>
+          <div class="speech-bubble-in-card">The AI Legend<br><small style="font-weight:400">Cautious Picks</small></div>
         </div>
         <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'scorer')">
-          <div class="speech-bubble-in-card">The Tactical Mentor</div>
+          <div class="speech-bubble-in-card">The Tactical Mentor<br><small style="font-weight:400">Bold Picks</small></div>
         </div>
         <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'scorer')">
-          <div class="speech-bubble-in-card">The Opinion Architect</div>
+          <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
         </div>
       </div>
       <select>
@@ -759,13 +761,13 @@
       <h3>Top Assists</h3>
       <div class="scouts-container">
         <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'assists')">
-          <div class="speech-bubble-in-card">The AI Legend</div>
+          <div class="speech-bubble-in-card">The AI Legend<br><small style="font-weight:400">Cautious Picks</small></div>
         </div>
         <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'assists')">
-          <div class="speech-bubble-in-card">The Tactical Mentor</div>
+          <div class="speech-bubble-in-card">The Tactical Mentor<br><small style="font-weight:400">Bold Picks</small></div>
         </div>
         <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'assists')">
-          <div class="speech-bubble-in-card">The Opinion Architect</div>
+          <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
         </div>
       </div>
       <select>
@@ -780,13 +782,13 @@
       <h3>Most Clean Sheets</h3>
       <div class="scouts-container">
         <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'cleansheets')">
-          <div class="speech-bubble-in-card">The AI Legend</div>
+          <div class="speech-bubble-in-card">The AI Legend<br><small style="font-weight:400">Cautious Picks</small></div>
         </div>
         <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'cleansheets')">
-          <div class="speech-bubble-in-card">The Tactical Mentor</div>
+          <div class="speech-bubble-in-card">The Tactical Mentor<br><small style="font-weight:400">Bold Picks</small></div>
         </div>
         <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'cleansheets')">
-          <div class="speech-bubble-in-card">The Opinion Architect</div>
+          <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
         </div>
       </div>
       <select>
@@ -801,13 +803,13 @@
       <h3>First Hat-Trick</h3>
       <div class="scouts-container">
         <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'hattrick')">
-          <div class="speech-bubble-in-card">The AI Legend</div>
+          <div class="speech-bubble-in-card">The AI Legend<br><small style="font-weight:400">Cautious Picks</small></div>
         </div>
         <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'hattrick')">
-          <div class="speech-bubble-in-card">The Tactical Mentor</div>
+          <div class="speech-bubble-in-card">The Tactical Mentor<br><small style="font-weight:400">Bold Picks</small></div>
         </div>
         <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'hattrick')">
-          <div class="speech-bubble-in-card">The Opinion Architect</div>
+          <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
         </div>
       </div>
       <select>
@@ -822,13 +824,13 @@
       <h3>First Manager Sacked</h3>
       <div class="scouts-container">
         <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'sacked')">
-          <div class="speech-bubble-in-card">The AI Legend</div>
+          <div class="speech-bubble-in-card">The AI Legend<br><small style="font-weight:400">Cautious Picks</small></div>
         </div>
         <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'sacked')">
-          <div class="speech-bubble-in-card">The Tactical Mentor</div>
+          <div class="speech-bubble-in-card">The Tactical Mentor<br><small style="font-weight:400">Bold Picks</small></div>
         </div>
         <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'sacked')">
-          <div class="speech-bubble-in-card">The Opinion Architect</div>
+          <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
         </div>
       </div>
       <select>
@@ -843,13 +845,13 @@
       <h3>Most Red Cards</h3>
       <div class="scouts-container">
         <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'redcards')">
-          <div class="speech-bubble-in-card">The AI Legend</div>
+          <div class="speech-bubble-in-card">The AI Legend<br><small style="font-weight:400">Cautious Picks</small></div>
         </div>
         <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'redcards')">
-          <div class="speech-bubble-in-card">The Tactical Mentor</div>
+          <div class="speech-bubble-in-card">The Tactical Mentor<br><small style="font-weight:400">Bold Picks</small></div>
         </div>
         <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'redcards')">
-          <div class="speech-bubble-in-card">The Opinion Architect</div>
+          <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
         </div>
       </div>
       <select>
@@ -858,6 +860,42 @@
         <option>Burnley</option>
       </select>
       <div class="points">75 points</div>
+    </div>
+
+    <div class="card">
+      <h3>Bottom 3 Finishers (Relegation)</h3>
+      <div class="scouts-container">
+        <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'relegated')">
+          <div class="speech-bubble-in-card">The AI Legend<br><small style="font-weight:400">Cautious Picks</small></div>
+        </div>
+        <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'relegated')">
+          <div class="speech-bubble-in-card">The Tactical Mentor<br><small style="font-weight:400">Bold Picks</small></div>
+        </div>
+        <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'relegated')">
+          <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
+        </div>
+      </div>
+      <select class="relegated-select" onchange="refreshRelegated()"><option>Select team</option></select>
+      <select class="relegated-select" onchange="refreshRelegated()" style="margin-top: 10px;"><option>Select team</option></select>
+      <select class="relegated-select" onchange="refreshRelegated()" style="margin-top: 10px;"><option>Select team</option></select>
+      <div class="points">40 points per team</div>
+    </div>
+
+    <div class="card">
+      <h3>Most Yellow Cards</h3>
+      <div class="scouts-container">
+        <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'yellows')">
+          <div class="speech-bubble-in-card">The AI Legend<br><small style="font-weight:400">Cautious Picks</small></div>
+        </div>
+        <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'yellows')">
+          <div class="speech-bubble-in-card">The Tactical Mentor<br><small style="font-weight:400">Bold Picks</small></div>
+        </div>
+        <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'yellows')">
+          <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
+        </div>
+      </div>
+      <select id="yellowCardSelect"><option>Select player</option></select>
+      <div class="points">50 points</div>
     </div>
 
   </div>
@@ -895,7 +933,7 @@
     <p id="aiContent">Initializing R9 AI...</p>
     <div id="aiStats"></div>
     <div style="display: flex; gap: 10px; margin-top: 20px;">
-      <button id="aiActionBtn" onclick="nextAiPage()" style="flex: 2;">Next: Advanced Stats</button>
+      <button id="aiActionBtn" onclick="nextAiPage()" style="flex: 2; background: #c7ff38; color: #041102; font-weight:800; border-radius:999px; border:none; padding:10px; cursor:pointer;">Next</button>
       <button onclick="document.getElementById('aiModal').style.display='none'" style="flex: 1; background: #334155; color: white;">Close</button>
     </div>
   </div>
@@ -919,6 +957,8 @@ let currentCategory = 'scorer';
 const scoutData = {
   striker: {
     name: "The AI Legend",
+    risk: "Low (Cautious)",
+    blurb: "Focuses on high-probability outcomes and proven goalscorers. Minimal risk, steady gains.",
     flavor: "Clinical Instinct",
     advice: {
       winner: ["Winners need a striker who can score 20+. Back the team with the best #9.", "Champions are built on late goals. Who has that 'winning DNA'?"],
@@ -928,11 +968,15 @@ const scoutData = {
       cleansheets: ["Defense starts from the front. But even I know Alisson is a wall.", "Clean sheets come from keeping the ball in the other half."],
       hattrick: ["Haaland is the obvious beast here. He's never satisfied with one.", "Look for the players who stay on for 90 minutes even when 3-0 up."],
       sacked: ["When the goals dry up, the manager goes. Look for the low-scorers.", "A dressing room that stops scoring has stopped playing for the boss."],
-      redcards: ["Defending against speed makes players desperate. Who is the slowest backline?", "Frustration leads to cards. Look for the teams struggling to hit the target."]
+      redcards: ["Defending against speed makes players desperate. Who is the slowest backline?", "Frustration leads to cards. Look for the teams struggling to hit the target."],
+      relegated: ["Teams that can't score, go down. It's that simple.", "Look for the squads that lack a 10-goal-a-season man; they'll struggle to stay up."],
+      yellows: ["Midfield enforcers are your best bet. Look for the ones who break up play.", "Consistency in tackling leads to cautions."]
     }
   },
   analyst: {
     name: "The Opinion Architect",
+    risk: "High (Extreme)",
+    blurb: "Chases massive rewards by identifying high-variance anomalies that others ignore.",
     flavor: "Probabilistic Modelling",
     advice: {
       winner: ["Man City has a 42% probability based on squad depth and historical trends.", "Arsenal's xG difference is closing the gap. It's a data-driven toss-up."],
@@ -942,11 +986,15 @@ const scoutData = {
       cleansheets: ["Arsenal's high-line suppression metrics suggest the most shutouts.", "Alisson's post-shot xG prevented is still world-class."],
       hattrick: ["High volume shooters have a 12% higher chance of multiple goals.", "Look for high-variance games (Top vs Bottom) for hat-trick potential."],
       sacked: ["Underperformance against xPoints is the leading indicator of dismissal.", "Market odds show Manager A is the statistical favorite for departure."],
-      redcards: ["Everton's high-press intensity leads to more tactical fouls.", "Look at the 'Aggression Index' - some teams simply average more bookings."]
+      redcards: ["Everton's high-press intensity leads to more tactical fouls.", "Look at the 'Aggression Index' - some teams simply average more bookings."],
+      relegated: ["Expected Points (xP) metrics often highlight teams performing above their true level.", "Data suggests the jump from the Championship is getting harder every year."],
+      yellows: ["Look for players with high 'Fouls per 90' but low tackle success rates.", "Historical booking data points toward a high frequency in defensive transitions."]
     }
   },
   scout: {
     name: "The Tactical Mentor",
+    risk: "Medium (Bold)",
+    blurb: "Suggests 'out there' picks based on tactical matchups and system advantages.",
     flavor: "Strategic Vision",
     advice: {
       winner: ["It's about the mid-season grind. Who handles the European fatigue better?", "Squad depth is the ultimate tactical advantage in the Premier League."],
@@ -956,10 +1004,65 @@ const scoutData = {
       cleansheets: ["The double pivot is the key to clean sheets. Who has the best DM duo?", "Defensive organization is more important than individual keepers."],
       hattrick: ["Exploit the high line. Who is playing against a team that doesn't track back?", "Transition-based teams are the ones that rack up multiple goals."],
       sacked: ["Fixture congestion early on will break the managers with thin squads.", "Watch the post-match interviews. The tactical 'lost' feeling is easy to spot."],
-      redcards: ["Tactical fouling is a system. Some teams use it more than others.", "Target the high-intensity derbies. Those are where the reds live."]
+      redcards: ["Tactical fouling is a system. Some teams use it more than others.", "Target the high-intensity derbies. Those are where the reds live."],
+      relegated: ["A weak bench is a death sentence during the winter schedule.", "Look for teams with high turnover in the defensive line; lack of chemistry leads to the drop."],
+      yellows: ["Aggressive pressing systems naturally lead to more 'tactical' bookings.", "Identify players tasked with stopping counter-attacks at all costs."]
     }
   }
 };
+
+const PL_CLUBS = [
+  "Arsenal", "Aston Villa", "Bournemouth", "Brentford", "Brighton", "Chelsea", 
+  "Crystal Palace", "Everton", "Fulham", "Ipswich", "Leicester", "Liverpool", 
+  "Man City", "Man Utd", "Newcastle", "Nott'm Forest", "Southampton", "Spurs", 
+  "West Ham", "Wolves"
+];
+
+const YELLOW_CANDIDATES = [
+  "Palhinha", "Edson Alvarez", "Christian Norgaard", "Bruno Guimaraes", 
+  "Douglas Luiz", "Joelinton", "Nicolas Jackson", "Mario Lemina", 
+  "Abdoulaye Doucoure", "Alexis Mac Allister"
+];
+
+function populateAllSelects() {
+  const selects = document.querySelectorAll("select");
+  selects.forEach(select => {
+    const title = select.parentElement.querySelector('h3').innerText;
+    
+    if (title.includes("Winner") || title.includes("Red Cards") || title.includes("Bottom 3")) {
+      PL_CLUBS.forEach(club => {
+        let opt = document.createElement('option');
+        opt.value = club;
+        opt.innerHTML = club;
+        select.appendChild(opt);
+      });
+    }
+
+    if (title.includes("Yellow Cards")) {
+      YELLOW_CANDIDATES.forEach(player => {
+        let opt = document.createElement('option');
+        opt.value = player;
+        opt.innerHTML = player;
+        select.appendChild(opt);
+      });
+    }
+  });
+}
+
+function refreshRelegated() {
+  const selects = document.querySelectorAll('.relegated-select');
+  const selectedValues = Array.from(selects)
+    .map(s => s.value)
+    .filter(val => val !== "Select team");
+
+  selects.forEach(select => {
+    const currentVal = select.value;
+    Array.from(select.options).forEach(opt => {
+      if (opt.text === "Select team") return;
+      opt.disabled = selectedValues.includes(opt.value) && opt.value !== currentVal;
+    });
+  });
+}
 
 function showAiScout(scoutKey, category) {
   currentScoutKey = scoutKey;
@@ -973,12 +1076,30 @@ function showAiScout(scoutKey, category) {
   const actionBtn = document.getElementById('aiActionBtn');
   const title = modal.querySelector('h2');
   
-  aiPage = 1;
+  aiPage = 0; // Start at Risk Warning
   modal.style.display = 'flex';
-  title.innerText = `🤖 ${scout.name}`;
-  content.innerText = `${scout.name} (${scout.flavor}) is analyzing this selection...`;
+  title.innerText = `⚠️ Scout Warning`;
+  content.innerText = `${scout.name} is ready. \n\nRisk Profile: ${scout.risk}\n\n${scout.blurb}`;
   stats.innerHTML = "";
-  actionBtn.innerText = "Next: Advanced Stats";
+  actionBtn.innerText = "Proceed to Opinion";
+  actionBtn.onclick = () => loadAiReport();
+}
+
+function loadAiReport() {
+  const scout = scoutData[currentScoutKey];
+  const adviceList = scout.advice[currentCategory];
+  const content = document.getElementById('aiContent');
+  const stats = document.getElementById('aiStats');
+  const actionBtn = document.getElementById('aiActionBtn');
+  const title = document.getElementById('aiModal').querySelector('h2');
+
+  aiPage = 1;
+  title.innerText = `🤖 ${scout.name}`;
+  content.innerText = `${scout.name} is analyzing the field...`;
+  
+  // Show "Next" button once content loads
+  actionBtn.innerText = "Processing...";
+  actionBtn.disabled = true;
   actionBtn.onclick = nextAiPage;
 
   setTimeout(() => {
@@ -990,10 +1111,13 @@ function showAiScout(scoutKey, category) {
       </div>
       <div style="margin-top: 15px; font-size: 12px; color: #c7ff38;">
         <strong>AI Recommended Profile:</strong> 
-        ${category === 'scorer' ? 'High volume poacher' : category === 'winner' ? 'Consistent high-pressers' : 'Tactical specialist'}
+        ${currentCategory === 'scorer' ? 'High volume poacher' : currentCategory === 'winner' ? 'Consistent high-pressers' : 'Tactical specialist'}
       </div>
     `;
-  }, 600);
+    actionBtn.disabled = false;
+    actionBtn.innerText = "Next: Advanced Stats";
+    actionBtn.onclick = nextAiPage;
+  }, 800);
 }
 
 function nextAiPage() {
@@ -1037,12 +1161,119 @@ function lockSeason() {
 }
 
 window.onload = function() {
+  populateAllSelects();
+
   const saved = JSON.parse(localStorage.getItem("seasonPicks"));
   if (saved) {
     const selects = document.querySelectorAll("select");
     selects.forEach((select, index) => {
       select.value = saved[index];
+      if (saved[index]) select.value = saved[index];
     });
+    refreshRelegated();
+  }
+};
+</script>
+</body>
+</html> actionBtn = document.getElementById('aiActionBtn');
+  const title = modal.querySelector('h2');
+  
+  aiPage = 0; // Start at Risk Warning
+  modal.style.display = 'flex';
+  title.innerText = `⚠️ Scout Warning`;
+  content.innerText = `${scout.name} is ready. \n\nRisk Profile: ${scout.risk}\n\n${scout.blurb}`;
+  stats.innerHTML = "";
+  actionBtn.innerText = "Proceed to Opinion";
+  actionBtn.onclick = () => loadAiReport();
+}
+
+function loadAiReport() {
+  const scout = scoutData[currentScoutKey];
+  const adviceList = scout.advice[currentCategory];
+  const content = document.getElementById('aiContent');
+  const stats = document.getElementById('aiStats');
+  const actionBtn = document.getElementById('aiActionBtn');
+  const title = document.getElementById('aiModal').querySelector('h2');
+
+  aiPage = 1;
+  title.innerText = `🤖 ${scout.name}`;
+  content.innerText = `${scout.name} is analyzing the field...`;
+  
+  // Show "Next" button once content loads
+  actionBtn.innerText = "Processing...";
+  actionBtn.disabled = true;
+  actionBtn.onclick = nextAiPage;
+
+  setTimeout(() => {
+    const randomAdvice = adviceList[Math.floor(Math.random() * adviceList.length)];
+    content.innerText = `Page 1: Tactical Perspective. My scouting report for this category:`;
+    stats.innerHTML = `
+      <div style="padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px; font-style: italic;">
+        "${randomAdvice}"
+      </div>
+      <div style="margin-top: 15px; font-size: 12px; color: #c7ff38;">
+        <strong>AI Recommended Profile:</strong> 
+        ${category === 'scorer' ? 'High volume poacher' : category === 'winner' ? 'Consistent high-pressers' : 'Tactical specialist'}
+        ${currentCategory === 'scorer' ? 'High volume poacher' : currentCategory === 'winner' ? 'Consistent high-pressers' : 'Tactical specialist'}
+      </div>
+    `;
+    actionBtn.disabled = false;
+    actionBtn.innerText = "Next: Advanced Stats";
+    actionBtn.onclick = nextAiPage;
+  }, 800);
+}
+
+function nextAiPage() {
+  if (aiPage === 2) {
+    document.getElementById('aiModal').style.display = 'none';
+    return;
+  }
+
+  const content = document.getElementById('aiContent');
+  const stats = document.getElementById('aiStats');
+  const actionBtn = document.getElementById('aiActionBtn');
+
+  if (aiPage === 1) {
+    aiPage = 2;
+    content.innerText = "Page 2: Deep Dive - Underlying Metrics";
+    actionBtn.innerText = "Close Report";
+    actionBtn.onclick = () => document.getElementById('aiModal').style.display = 'none';
+    
+    stats.innerHTML = `
+      <div class="stat-row"><span>Avg xG per 90</span> <span class="stat-val">0.92</span></div>
+      <div class="stat-row"><span>Conversion Rate</span> <span class="stat-val">24.2%</span></div>
+      <div class="stat-row"><span>Big Chances Missed</span> <span class="stat-val">Low</span></div>
+      <div class="stat-row"><span>AI Recommended Pick</span> <span class="stat-val" style="color:#c7ff38">Haaland</span></div>
+      <p style="margin-top:15px; font-size:12px; color:#9ca3af;">Data processed via Game of Opinions Scout Algorithm v1.2</p>
+    `;
+  }
+}
+
+function lockSeason() {
+  const selects = document.querySelectorAll("select");
+  let picks = [];
+  for (let select of selects) {
+    if (select.value.includes("Select")) {
+      alert("Please complete all season picks.");
+      return;
+    }
+    picks.push(select.value);
+  }
+  localStorage.setItem("seasonPicks", JSON.stringify(picks));
+  alert("Season picks saved!");
+}
+
+window.onload = function() {
+  populateAllSelects();
+
+  const saved = JSON.parse(localStorage.getItem("seasonPicks"));
+  if (saved) {
+    const selects = document.querySelectorAll("select");
+    selects.forEach((select, index) => {
+      select.value = saved[index];
+      if (saved[index]) select.value = saved[index];
+    });
+    refreshRelegated();
   }
 };
 </script>
