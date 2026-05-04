@@ -707,8 +707,10 @@ MOBILE
   }
 
   .formation-selector {
-    justify-content: center;
-    padding: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 10px;
+    width: max-content;
   }
 
   .container {
@@ -725,7 +727,7 @@ MOBILE
   }
 
   .pitch {
-    padding: 20px 5px;
+    padding: 60px 5px 20px;
     gap: 12px;
   }
 
@@ -1312,6 +1314,9 @@ const loadUserData = async function(uid) {
     const teamData = teamDocSnap.data();
     document.getElementById('teamNameDisplay').innerText = teamData.teamName || "Your Team XI";
     document.getElementById('teamNameInput').value = teamData.teamName || "";
+    if (teamData.teamName) {
+      document.querySelector('.team-name-ribbon').style.display = 'none';
+    }
     
     if (teamData.formation) {
       document.getElementById('formationSelect').value = teamData.formation;
@@ -1374,6 +1379,7 @@ const saveTeam = async function() {
       teamName: teamName
     });
     document.getElementById('teamNameDisplay').innerText = teamName;
+    document.querySelector('.team-name-ribbon').style.display = 'none';
     alert("Team XI Saved!");
   } catch (error) {
     console.error("Error saving team: ", error);
@@ -1438,6 +1444,7 @@ const clearTeam = async function() {
       await setDoc(teamDocRef, { players: [], formation: "4-4-2", teamName: "" }); // Clear data in Firestore
       document.getElementById('teamNameDisplay').innerText = "Your Team";
       document.getElementById('teamNameInput').value = "";
+      document.querySelector('.team-name-ribbon').style.display = 'flex';
       document.getElementById('formationSelect').value = "4-4-2";
       changeFormation(); // Reset formation
       alert("Team cleared successfully!");
