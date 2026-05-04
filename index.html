@@ -98,6 +98,7 @@ header {
 .logo {
 
   font-size: 26px;
+  font-size: 22px;
 
   font-weight: 800;
 
@@ -131,6 +132,7 @@ nav a {
 
   text-decoration: none;
   font-size: 18px;
+  font-size: 16px;
 
   transition: 0.2s ease;
 
@@ -165,6 +167,7 @@ nav a:hover {
 
   border-radius: 999px;
   font-size: 18px;
+  font-size: 16px;
 
   font-weight: 800;
 
@@ -189,6 +192,7 @@ nav a:hover {
   color: white !important;
   opacity: 1;
   font-size: 18px; /* Align with nav links and signup button */
+  font-size: 16px; /* Align with nav links and signup button */
 
 }
 
@@ -1071,10 +1075,18 @@ nav a:hover {
   <a href="season.html">Season Picks</a>
   <a href="league.html">League</a>
   <a href="rules.html">Rules</a>
-  <a href="#" class="login-link">Log In</a>
-  <a href="#" class="signup-btn">Sign Up</a>
+  <a href="#" class="login-link" onclick="login()">Log In</a>
+  <a href="#" class="signup-btn" onclick="signUp()">Sign Up</a>
 </nav>
 </header>
+
+<div style="margin-top:20px;">
+
+  <input id="email" type="email" placeholder="Email" style="padding:8px; margin-right:6px;">
+
+  <input id="password" type="password" placeholder="Password" style="padding:8px;">
+
+</div>
 
 <!-- HERO -->
 
@@ -1380,6 +1392,47 @@ nav a:hover {
 </div>
 
 </section>
+
+}
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBS3Fpobk342TpJw73mMgYOyUrWb-jBtfM",
+  authDomain: "game-of-opinions-97b14.firebaseapp.com",
+  projectId: "game-of-opinions-97b14"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// SIGN UP
+window.signUp = async function() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  try {
+    await createUserWithEmailAndPassword(auth, email, password);
+    alert("Account created!");
+  } catch (error) {
+    alert(error.message);
+  }
+}
+
+// LOGIN
+window.login = async function() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    alert("Logged in!");
+  } catch (error) {
+    alert(error.message);
+  }
+}
+</script>
 
 </body>
 
