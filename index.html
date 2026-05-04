@@ -173,13 +173,12 @@ nav a:hover {
 }
 
 .login-link {
-
   color: white !important;
   opacity: 1;
   font-size: 16px; /* Align with nav links and signup button */
-
 }
 
+.auth-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.85);
@@ -1100,36 +1099,31 @@ nav a:hover {
   <a href="season.html">Season Picks</a>
   <a href="league.html">League</a>
   <a href="rules.html">Rules</a>
-  <a href="javascript:void(0)" class="login-link" onclick="showAuth('login')">Log In</a>
-  <a href="javascript:void(0)" class="signup-btn" onclick="showAuth('signup')">Sign Up</a>
+  <a href="#login-section" class="login-link">Log In</a>
+  <a href="javascript:void(0)" class="signup-btn" onclick="openSignup()">Sign Up</a>
 </nav>
 </header>
 
-<!-- AUTH OVERLAY -->
-<div id="auth-overlay" class="auth-overlay" onclick="closeAuth()">
-  <div class="auth-card" onclick="event.stopPropagation()">
-    <div id="login-form">
-      <h2>Manager Login</h2>
-      <p style="color: #9ca3af; margin-bottom: 25px; font-size: 14px;">Welcome back to the stadium.</p>
-      <input id="login-email" class="auth-input" type="email" placeholder="Email Address">
-      <input id="login-password" class="auth-input" type="password" placeholder="Password">
-      <button onclick="login()" style="width: 100%; padding: 14px; background: #c7ff38; color: #041102; font-weight: 800; border-radius: 12px; border: none; cursor: pointer; font-size: 16px;">Log In</button>
-      <p style="margin-top: 20px; font-size: 14px; color: #9ca3af;">
-        New Manager? <a href="javascript:void(0)" onclick="toggleAuth('signup')" style="color: #c7ff38; text-decoration: none;">Create an account</a>
-      </p>
-    </div>
+<!-- ON-PAGE LOGIN SECTION -->
+<div id="login-section" style="margin-top: 120px; text-align: center; position: relative; z-index: 10; padding: 20px;">
+  <div style="max-width: 400px; margin: auto; background: rgba(255, 255, 255, 0.04); padding: 30px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(12px); box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
+    <h2 style="margin-top: 0; color: #c7ff38; font-size: 24px;">Manager Login</h2>
+    <p style="color: #9ca3af; margin-bottom: 20px; font-size: 14px;">Welcome back to the stadium.</p>
+    <input id="login-email" type="email" placeholder="Email Address" style="width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; box-sizing: border-box;">
+    <input id="login-password" type="password" placeholder="Password" style="width: 100%; padding: 14px; margin-bottom: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; box-sizing: border-box;">
+    <button onclick="login()" style="width: 100%; padding: 14px; background: #c7ff38; color: #041102; font-weight: 800; border-radius: 999px; border: none; cursor: pointer; font-size: 16px;">Enter Stadium</button>
+    <p style="font-size: 14px; color: #9ca3af; margin-top: 20px;">New Manager? <a href="javascript:void(0)" onclick="openSignup()" style="color: #c7ff38; text-decoration: none; font-weight: bold;">Join the Academy</a></p>
+  </div>
+</div>
 
-    <div id="signup-form" style="display: none;">
-      <h2>Manager Sign Up</h2>
-      <p style="color: #9ca3af; margin-bottom: 25px; font-size: 14px;">Start your journey to the top.</p>
-      <input id="signup-email" class="auth-input" type="email" placeholder="Email Address">
-      <input id="signup-password" class="auth-input" type="password" placeholder="Create Password">
-      <button onclick="signUp()" style="width: 100%; padding: 14px; background: #c7ff38; color: #041102; font-weight: 800; border-radius: 12px; border: none; cursor: pointer; font-size: 16px;">Create Account</button>
-      <p style="margin-top: 20px; font-size: 14px; color: #9ca3af;">
-        Already have an account? <a href="javascript:void(0)" onclick="toggleAuth('login')" style="color: #c7ff38; text-decoration: none;">Log In</a>
-      </p>
-    </div>
-    
+<!-- SIGNUP OVERLAY (POP-UP) -->
+<div id="auth-overlay" class="auth-overlay">
+  <div class="auth-card">
+    <h2 style="color: #c7ff38; margin-top: 0;">Manager Registration</h2>
+    <p style="color: #9ca3af; font-size: 14px; margin-bottom: 25px;">Your journey to the top of the global league begins here.</p>
+    <input id="signup-email" class="auth-input" type="email" placeholder="Create Email">
+    <input id="signup-password" class="auth-input" type="password" placeholder="Create Password">
+    <button onclick="signUp()" style="width: 100%; padding: 14px; background: #c7ff38; color: #041102; font-weight: 800; border-radius: 999px; border: none; cursor: pointer; font-size: 16px;">Finalize Application</button>
     <button onclick="closeAuth()" style="margin-top: 20px; background: transparent; border: none; color: #4b5563; cursor: pointer; font-size: 13px;">Cancel</button>
   </div>
 </div>
@@ -1430,22 +1424,13 @@ nav a:hover {
     <h3>Global Competition</h3>
 
     <p>
-      Compete against your friends in private l);
-
-// AUTH SCREEN CONTROLS
-window.openSignup = () => { document.getElementById('signup-modal').style.display = 'flex'; };
-window.closeSignup = () => { document.getElementById('signup-modal'e.style.display = 'none'; }agues or test your football acumen against others across the globe. Weekly points decide everything.
+      Compete against your friends in private leagues or test your football acumen against others across the globe. Weekly points decide everything.
     </p>
-
   </div>
-signup-
-</div>signup-
-
+</div>
 </section>
 
-<script type="module">);
-    closeSignup(;
-    window.location.href = "myxi.html"
+<script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
@@ -1453,29 +1438,37 @@ const firebaseConfig = {
   apiKey: "AIzaSyBS3Fpobk342TpJw73mMgYOyUrWb-jBtfM",
   authDomain: "game-of-opinions-97b14.firebaseapp.com",
   projectId: "game-of-opinions-97b14",
-  storageBucket: "game-of-opinions-97b14.login-firebasestorage.app",
-  appId: "1:863518863234:web:3a2c2378a2a358elogin-0b2299b" // <-- REPLACE THIS WITH YOUR ACTUAL APP ID
+  storageBucket: "game-of-opinions-97b14.firebasestorage.app",
+  appId: "1:863518863234:web:3a2c2378a2a358e0b2299b"
 };
 
 const app = initializeApp(firebaseConfig);
-conswindow.loctti n.hrtf =u"myxt.htmlap);
+const auth = getAuth(app);
 console.log("Firebase initialized successfully");
 
 // AUTH SCREEN CONTROLS
-window.openSignup = () => { document.getElementById('signup-modal').style.display = 'flex'; };
-window.closeSignup = () => { document.getElementById('signup-modal').style.display = 'none'; };
+window.openSignup = () => {
+  document.getElementById('auth-overlay').style.display = 'flex';
+};
+
+window.closeAuth = () => {
+  document.getElementById('auth-overlay').style.display = 'none';
+};
 
 // SIGN UP
 window.signUp = async function() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
   const email = document.getElementById("signup-email").value;
   const password = document.getElementById("signup-password").value;
 
+  if (!email || !password) {
+    alert("Please provide credentials to Join the Academy.");
+    return;
+  }
+
   try {
     await createUserWithEmailAndPassword(auth, email, password);
-    alert("Account created!");
-    closeSignup();
+    alert("Welcome to the Academy!");
+    closeAuth();
     window.location.href = "myxi.html";
   } catch (error) {
     alert(error.message);
@@ -1488,7 +1481,7 @@ window.login = async function() {
   const password = document.getElementById("login-password").value;
 
   if (!email || !password) {
-    alert("Please enter both email and password.");
+    alert("Credentials required for stadium entry.");
     return;
   }
 
@@ -1496,7 +1489,7 @@ window.login = async function() {
     await signInWithEmailAndPassword(auth, email, password);
     window.location.href = "myxi.html";
   } catch (error) {
-    alert("Login failed: " + error.message);
+    alert("Entry denied: " + error.message);
   }
 }
 </script>
