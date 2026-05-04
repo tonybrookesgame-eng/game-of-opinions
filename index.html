@@ -86,10 +86,9 @@ header {
   padding: 20px 40px;
 
   background: rgba(0,0,0,0.72);
-
   backdrop-filter: blur(10px);
 
-  border-bottom: 1px solid rgba(167,255,63,0.08);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
 
   box-sizing: border-box;
 
@@ -144,17 +143,6 @@ nav a:hover {
 
 }
 
-/* AUTH BUTTONS */
-.auth-section {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  background: rgba(255, 255, 255, 0.04);
-  padding: 6px 16px;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
 .signup-btn {
 
   background: #b8ff1e;
@@ -192,37 +180,45 @@ nav a:hover {
 
 }
 
-.auth-container {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.auth-card {
   max-width: 400px;
-  margin: 120px auto 40px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  width: 100%;
+  background: #0f172a;
+  border: 1px solid rgba(199, 255, 56, 0.3);
   border-radius: 24px;
   padding: 40px;
   text-align: center;
-  backdrop-filter: blur(12px);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
   position: relative;
-  z-index: 10;
+  box-shadow: 0 0 40px rgba(199, 255, 56, 0.1);
 }
 
-.auth-container h2 {
+.auth-card h2 {
   margin-top: 0;
   color: #c7ff38;
-  font-size: 28px;
+  font-size: 24px;
 }
 
 .auth-input {
   width: 100%;
   padding: 14px;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(0, 0, 0, 0.2);
+  background: #1e293b;
   color: white;
   font-size: 16px;
   box-sizing: border-box;
-  overflow: hidden;
 }
 
 /* =========================
@@ -1104,33 +1100,37 @@ nav a:hover {
   <a href="season.html">Season Picks</a>
   <a href="league.html">League</a>
   <a href="rules.html">Rules</a>
-  <a href="#login-section" class="login-link">Log In</a>
-  <a href="#login-section" class="signup-btn" onclick="showAuth('signup')">Sign Up</a>
+  <a href="javascript:void(0)" class="login-link" onclick="showAuth('login')">Log In</a>
+  <a href="javascript:void(0)" class="signup-btn" onclick="showAuth('signup')">Sign Up</a>
 </nav>
 </header>
 
-<!-- AUTH SECTION -->
-<div id="login-section" class="auth-container">
-  <div id="login-form">
-    <h2>Manager Login</h2>
-    <p style="color: #9ca3af; margin-bottom: 25px;">Welcome back to the stadium.</p>
-    <input id="login-email" class="auth-input" type="email" placeholder="Email Address">
-    <input id="login-password" class="auth-input" type="password" placeholder="Password">
-    <button onclick="login()" style="width: 100%; padding: 14px; background: #c7ff38; color: #041102; font-weight: 800; border-radius: 12px; border: none; cursor: pointer; font-size: 16px;">Log In</button>
-    <p style="margin-top: 20px; font-size: 14px; color: #9ca3af;">
-      New Manager? <a href="javascript:void(0)" onclick="showAuth('signup')" style="color: #c7ff38; text-decoration: none;">Create an account</a>
-    </p>
-  </div>
+<!-- AUTH OVERLAY -->
+<div id="auth-overlay" class="auth-overlay" onclick="closeAuth()">
+  <div class="auth-card" onclick="event.stopPropagation()">
+    <div id="login-form">
+      <h2>Manager Login</h2>
+      <p style="color: #9ca3af; margin-bottom: 25px; font-size: 14px;">Welcome back to the stadium.</p>
+      <input id="login-email" class="auth-input" type="email" placeholder="Email Address">
+      <input id="login-password" class="auth-input" type="password" placeholder="Password">
+      <button onclick="login()" style="width: 100%; padding: 14px; background: #c7ff38; color: #041102; font-weight: 800; border-radius: 12px; border: none; cursor: pointer; font-size: 16px;">Log In</button>
+      <p style="margin-top: 20px; font-size: 14px; color: #9ca3af;">
+        New Manager? <a href="javascript:void(0)" onclick="toggleAuth('signup')" style="color: #c7ff38; text-decoration: none;">Create an account</a>
+      </p>
+    </div>
 
-  <div id="signup-form" style="display: none;">
-    <h2>Manager Sign Up</h2>
-    <p style="color: #9ca3af; margin-bottom: 25px;">Start your journey to the top.</p>
-    <input id="signup-email" class="auth-input" type="email" placeholder="Email Address">
-    <input id="signup-password" class="auth-input" type="password" placeholder="Create Password">
-    <button onclick="signUp()" style="width: 100%; padding: 14px; background: #c7ff38; color: #041102; font-weight: 800; border-radius: 12px; border: none; cursor: pointer; font-size: 16px;">Create Account</button>
-    <p style="margin-top: 20px; font-size: 14px; color: #9ca3af;">
-      Already have an account? <a href="javascript:void(0)" onclick="showAuth('login')" style="color: #c7ff38; text-decoration: none;">Log In</a>
-    </p>
+    <div id="signup-form" style="display: none;">
+      <h2>Manager Sign Up</h2>
+      <p style="color: #9ca3af; margin-bottom: 25px; font-size: 14px;">Start your journey to the top.</p>
+      <input id="signup-email" class="auth-input" type="email" placeholder="Email Address">
+      <input id="signup-password" class="auth-input" type="password" placeholder="Create Password">
+      <button onclick="signUp()" style="width: 100%; padding: 14px; background: #c7ff38; color: #041102; font-weight: 800; border-radius: 12px; border: none; cursor: pointer; font-size: 16px;">Create Account</button>
+      <p style="margin-top: 20px; font-size: 14px; color: #9ca3af;">
+        Already have an account? <a href="javascript:void(0)" onclick="toggleAuth('login')" style="color: #c7ff38; text-decoration: none;">Log In</a>
+      </p>
+    </div>
+    
+    <button onclick="closeAuth()" style="margin-top: 20px; background: transparent; border: none; color: #4b5563; cursor: pointer; font-size: 13px;">Cancel</button>
   </div>
 </div>
 
