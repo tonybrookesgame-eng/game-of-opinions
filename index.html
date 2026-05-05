@@ -1232,9 +1232,8 @@ nav a:hover {
 
     </p>
 
-  </div>
-
-  </div>
+    </div>
+    <!-- LEFT END -->
 
   <div class="hero-visual">
     <div class="phone phone-left">
@@ -1319,6 +1318,8 @@ nav a:hover {
       </div>
     </div>
   </div>
+</div>
+
 </div>
 </section>
 
@@ -1461,24 +1462,6 @@ window.handleAuth = async function() {
   }
 };
 
-// Fix for duplicate scripts previously at end of file
-</script>
-</body>
-</html> password = document.getElementById("auth-password").value;
-
-  if (!email || !password) {
-    alert("Please enter your email and password.");
-    return;
-  }
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-    window.location.href = "myxi.html";
-  } catch (error) {
-    alert(error.message);
-  }
-};
-
-// Fix for duplicate scripts previously at end of file
 </script>
 </body>
 </html>
