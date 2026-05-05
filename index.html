@@ -985,12 +985,14 @@ nav a:hover {
   #login-section { /* Manager's Office on mobile */
     flex-direction: column !important;
     height: auto !important;
-    min-height: 650px !important;
+    min-height: auto !important;
+    aspect-ratio: 16 / 9;
     margin-top: 0 !important;
     justify-content: center !important;
     align-items: center !important;
-    padding: 40px 20px !important;
-    background-position: 75% center !important; /* Focal point shift for mobile */
+    padding: 0 !important;
+    background-position: center !important;
+    background-size: contain !important;
   }
 
   nav { /* Mobile nav */
