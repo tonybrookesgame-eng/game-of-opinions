@@ -299,21 +299,48 @@ footer {
 .team-name-ribbon {
   display: flex;
   align-items: center;
-  gap: 15px;
+  justify-content: space-between;
+  gap: 20px;
   background: rgba(255, 255, 255, 0.04);
-  padding: 15px 25px;
+  padding: 20px 25px;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.name-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 300px;
+}
+.points-summary {
+  display: flex;
+  gap: 20px;
+  background: rgba(0,0,0,0.3);
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: 1px solid rgba(199, 255, 56, 0.2);
+}
+.point-item {
+  text-align: center;
 }
 .team-name-ribbon span {
   font-weight: 800;
   color: #c7ff38;
   font-size: 14px;
 }
+.point-item label {
+  display: block;
+  font-size: 10px;
+  color: #9ca3af;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
 .team-name-ribbon input {
   flex: 1;
-  max-width: 300px;
+  max-width: 250px;
   padding: 8px 12px;
   border-radius: 8px;
   border: 1px solid rgba(255,255,255,0.2);
@@ -823,9 +850,21 @@ MOBILE
 <div class="container">
 
 <div class="team-name-ribbon">
-  <span>Create Team Name:</span>
-  <input type="text" id="teamNameInput" placeholder="Enter Team Name">
-  <button onclick="saveTeam()" style="width: auto; padding: 8px 16px;">Save Name</button>
+  <div class="name-section">
+    <span>Team Name:</span>
+    <input type="text" id="teamNameInput" placeholder="Enter Team Name">
+    <button onclick="saveTeam()" style="width: auto; padding: 8px 16px;">Save</button>
+  </div>
+  
+  <div class="points-summary">
+    <div class="point-item"><label>Selection</label><span id="pts-selection">0</span></div>
+    <div class="point-item"><label>Picks</label><span id="pts-picks">0</span></div>
+    <div class="point-item"><label>Bet</label><span id="pts-bet">0</span></div>
+    <div class="point-item" style="border-left: 1px solid rgba(255,255,255,0.1); padding-left: 15px;">
+      <label style="color: #c7ff38;">Total Points</label>
+      <span id="pts-total" style="color: #c7ff38; font-weight: 900;">0</span>
+    </div>
+  </div>
 </div>
 
 <h1 id="teamNameDisplay">Your Team</h1>
@@ -1314,9 +1353,6 @@ const loadUserData = async function(uid) {
     const teamData = teamDocSnap.data();
     document.getElementById('teamNameDisplay').innerText = teamData.teamName || "Your Team XI";
     document.getElementById('teamNameInput').value = teamData.teamName || "";
-    if (teamData.teamName) {
-      document.querySelector('.team-name-ribbon').style.display = 'none';
-    }
     
     if (teamData.formation) {
       document.getElementById('formationSelect').value = teamData.formation;
@@ -1351,6 +1387,18 @@ const loadUserData = async function(uid) {
     const betBuilderData = betBuilderDocSnap.data();
     if (betBuilderData.choice) setBetChoice(betBuilderData.choice);
   }
+
+  // Load Points Data (This would be updated by your server/backend script)
+  const statsDocRef = doc(db, "users", uid, "stats", "points");
+  const statsDocSnap = await getDoc(statsDocRef);
+  if (statsDocSnap.exists()) {
+    const s = statsDocSnap.data();
+    document.getElementById('pts-selection').innerText = s.selectionPts || 0;
+    document.getElementById('pts-picks').innerText = s.picksPts || 0;
+    document.getElementById('pts-bet').innerText = s.betPts || 0;
+    document.getElementById('pts-total').innerText = s.totalPts || 0;
+  }
+
   refreshDropdowns(); // Ensure dropdowns reflect loaded selections
 }
 window.loadUserData = loadUserData;
@@ -1379,7 +1427,6 @@ const saveTeam = async function() {
       teamName: teamName
     });
     document.getElementById('teamNameDisplay').innerText = teamName;
-    document.querySelector('.team-name-ribbon').style.display = 'none';
     alert("Team XI Saved!");
   } catch (error) {
     console.error("Error saving team: ", error);
