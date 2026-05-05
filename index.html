@@ -337,7 +337,8 @@ nav a:hover {
 .hero-visual {
   display: flex;
   align-items: center;
-  gap: 40px;
+  gap: 60px;
+  gap: 60px;
   justify-content: center;
   perspective: 1200px;
 }
@@ -371,7 +372,8 @@ nav a:hover {
 /* PHONE LABELS */
 .phone-label {
   position: absolute;
-  top: -80px;
+  position: absolute;
+  top: -90px;
   left: 50%;
   transform: translateX(-50%);
   background: rgba(15, 23, 42, 0.85);
@@ -1056,11 +1058,15 @@ nav a:hover {
   }
   .phone-label {
     width: 280px;
-    top: -75px;
+    top: -85px;
     border-color: #c7ff38;
     box-shadow: 0 0 20px rgba(199, 255, 56, 0.2);
     animation: mobileGlow 3s infinite alternate;
   }
+  .phone-left {
+    max-width: 260px !important;
+  }
+
   @keyframes mobileGlow {
     from { box-shadow: 0 0 10px rgba(199, 255, 56, 0.1); }
     to { box-shadow: 0 0 25px rgba(199, 255, 56, 0.3); }
@@ -1150,15 +1156,14 @@ nav a:hover {
   .phone {
 
     width: 100%;
-
-    max-width: 300px;
-
+    max-width: none !important;
   }
 
   .phone-screen {
 
     min-height: 420px;
 
+    min-height: auto !important;
   }
 
 }
@@ -1303,7 +1308,6 @@ nav a:hover {
           </div>
           <div class="pitch-row">
             <div class="player-card"><div class="shirt westham"></div><span>Bowen</span></div>
-            <div class="player-card"><div class="shirt manutd"></div><span>Fernandes</span></div>
             <div class="player-card"><div class="shirt chelsea"></div><span>Palmer</span></div>
           </div>
           <div class="pitch-row">
@@ -1333,14 +1337,16 @@ nav a:hover {
             <span style="background: #c7ff38; color: #000; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px;">HOT</span>
           </div>
           <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 8px; border-left: 3px solid #c7ff38;">
-             <div style="font-size: 12px; color: #fff; font-weight: bold; margin-bottom: 4px;">Liverpool vs Arsenal</div>
              <div style="font-size: 11px; color: #9ca3af;">Salah to score, 10+ Corners, Over 3.5 Cards</div>
           </div>
           <div style="display: flex; gap: 10px; margin-top: 5px;">
             <div style="flex: 1; background: rgba(199,255,56,0.1); border: 1px solid #c7ff38; color: #c7ff38; padding: 8px; border-radius: 6px; text-align: center; font-size: 11px; font-weight: 800;">YES</div>
             <div style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 8px; border-radius: 6px; text-align: center; font-size: 11px;">NO</div>
           </div>
-          <p style="font-size: 10px; color: #64748b; margin-top: auto; text-align: center;">Predict the outcome to win massive league points.</p>
+          <div style="font-size: 10px; color: #9ca3af; margin-top: 10px; line-height: 1.4; text-align: center;">
+            <strong>5 PT ENTRY FEE:</strong> Back the Scout (YES) for 155 PTS, or play for stability (NO).
+          </div>
+          <p style="font-size: 10px; color: #64748b; margin-top: 10px; text-align: center;">Winners climb the global leaderboard.</p>
         </div>
       </div>
     </div>
@@ -1540,6 +1546,11 @@ window.handleAuth = async function() {
   } catch (error) {
     alert(error.message);
   }
+};
+
+</script>
+</body>
+</html>
 };
 
 </script>
