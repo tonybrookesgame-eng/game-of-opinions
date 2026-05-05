@@ -364,6 +364,38 @@ nav a:hover {
 .phone-middle { transform: translateY(-20px) scale(1.05); z-index: 10; }
 .phone-right { transform: rotateY(-20deg) rotateX(5deg); }
 
+/* PHONE LABELS */
+.phone-label {
+  position: absolute;
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(184, 255, 30, 0.4);
+  backdrop-filter: blur(8px);
+  padding: 12px 16px;
+  border-radius: 16px;
+  width: 220px;
+  text-align: center;
+  z-index: 20;
+  pointer-events: none;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+}
+.phone-label strong {
+  display: block;
+  color: #b8ff1e;
+  font-size: 13px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  letter-spacing: 0.5px;
+}
+.phone-label p {
+  margin: 0;
+  font-size: 11px;
+  color: #cbd5e1;
+  line-height: 1.4;
+}
+
 .phone::before {
 
   content: "";
@@ -551,7 +583,7 @@ nav a:hover {
   align-items: center; /* Center items horizontally */
   text-align: center; /* Center text within items */
 
-  gap: 60px;
+  gap: 100px; /* Increased gap to accommodate phone labels */
 
   align-items: center;
 
@@ -1013,6 +1045,12 @@ nav a:hover {
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 120px; /* More space for labels when stacked */
+    margin-top: 60px;
+  }
+  .phone-label {
+    width: 280px;
+    top: -75px;
   }
   .phone-left, .phone-right { transform: none !important; }
   .hero-buttons { display: none !important; } /* Hide desktop hero buttons on mobile */
@@ -1221,6 +1259,10 @@ nav a:hover {
     </div>
     <div class="hero-visual">
       <div class="phone phone-left">
+      <div class="phone-label">
+        <strong>Squad Builder</strong>
+        <p>Select 11 stars from 11 different clubs. No budget, just pure tactics.</p>
+      </div>
       <div class="phone-screen">
         <div class="app-header">
           <strong>Your Team</strong>
@@ -1253,6 +1295,10 @@ nav a:hover {
     </div>
 
     <div class="phone phone-middle">
+      <div class="phone-label">
+        <strong>Match Predictions</strong>
+        <p>Call the weekend results and climb the global leaderboard.</p>
+      </div>
       <div class="phone-screen" style="padding: 0; background: #000; display: flex; flex-direction: column;">
         <div style="height: 220px; overflow: hidden; border-bottom: 1px solid rgba(199,255,56,0.3); position: relative;">
           <img src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?q=80&w=800&auto=format&fit=crop" alt="Match Predictor" style="width: 100%; height: 100%; object-fit: cover; display: block;">
@@ -1278,6 +1324,10 @@ nav a:hover {
     </div>
 
     <div class="phone phone-right">
+      <div class="phone-label">
+        <strong>Scout Intelligence</strong>
+        <p>Get data-driven insights and strategic advice from AI legends.</p>
+      </div>
       <div class="phone-screen" style="padding: 0; background: #000; display: flex; flex-direction: column;">
         <div style="height: 210px; overflow: hidden; border-bottom: 1px solid rgba(199,255,56,0.3);">
           <img src="avatars.png" alt="AI Scouts" style="width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block;">
