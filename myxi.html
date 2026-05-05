@@ -1433,10 +1433,17 @@ const saveTeam = async function() {
 
   try {
     const teamDocRef = doc(db, "users", currentUser.uid, "myxi", "team");
+    const leaderboardRef = doc(db, "leaderboard", currentUser.uid);
+    
     await setDoc(teamDocRef, {
       players: teamPlayers,
       formation: formation,
       teamName: teamName
+    });
+
+    await setDoc(leaderboardRef, {
+      teamName: teamName,
+      userId: currentUser.uid
     });
     document.getElementById('saveTeamBtn').style.display = 'none';
     alert("Team XI Saved!");

@@ -332,29 +332,78 @@ footer {
       <div style="text-align: right;">Points</div>
       <div style="text-align: right;">This Week</div>
     </div>
-
-    <div class="leader-row">
-      <div class="rank">1</div>
-      <div class="team">FootyWizard</div>
-      <div class="points">420</div>
-      <div class="week up">+42 ⬆️</div>
-    </div>
-
-    <div class="leader-row you">
-      <div class="rank">2</div>
-      <div class="team">TikiTakaTom (You)</div>
-      <div class="points">398</div>
-      <div class="week down">-1 ⬇️</div>
-    </div>
-
-    <div class="leader-row">
-      <div class="rank">3</div>
-      <div class="team">WildcardWill</div>
-      <div class="points">355</div>
-      <div class="week up">+12 ⬆️</div>
+    <div id="leaderboard-body">
+      <!-- Dynamic rows will load here -->
     </div>
   </div>
 </div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBS3Fpobk342TpJw73mMgYOyUrWb-jBtfM",
+    authDomain: "game-of-opinions-97b14.firebaseapp.com",
+    projectId: "game-of-opinions-97b14",
+    storageBucket: "game-of-opinions-97b14.firebasestorage.app",
+    appId: "1:863518863234:web:3a2c2378a2a358e0b2299b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  async function loadLeaderboard(currentUser) {
+    const leaderboardBody = document.getElementById('leaderboard-body');
+    leaderboardBody.innerHTML = '<div style="padding: 20px; text-align: center;">Scouting the league...</div>';
+
+    try {
+      // Query the leaderboard collection, sorted by points
+      const q = query(collection(db, "leaderboard"), orderBy("totalPoints", "desc"));
+      const querySnapshot = await getDocs(q);
+      
+      leaderboardBody.innerHTML = '';
+      let rank = 1;
+
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const isYou = currentUser && doc.id === currentUser.uid;
+        
+        const row = document.createElement('div');
+        row.className = `leader-row ${isYou ? 'you' : ''}`;
+        
+        // Calculate movement icons/classes if you have weeklyPoints or previousRank
+        const weeklyChange = data.weeklyPoints || 0;
+        const changeClass = weeklyChange > 0 ? 'up' : (weeklyChange < 0 ? 'down' : 'same');
+        const changeIcon = weeklyChange > 0 ? '⬆️' : (weeklyChange < 0 ? '⬇️' : '—');
+
+        row.innerHTML = `
+          <div class="rank">${rank}</div>
+          <div class="team">${data.teamName || 'Anonymous Manager'} ${isYou ? '(You)' : ''}</div>
+          <div class="points">${data.totalPoints || 0}</div>
+          <div class="week ${changeClass}">${weeklyChange > 0 ? '+' : ''}${weeklyChange} ${changeIcon}</div>
+        `;
+        
+        leaderboardBody.appendChild(row);
+        rank++;
+      });
+
+      if (rank === 1) {
+        leaderboardBody.innerHTML = '<div style="padding: 20px; text-align: center;">No managers in the stadium yet.</div>';
+      }
+
+    } catch (error) {
+      console.error("Error loading leaderboard:", error);
+      leaderboardBody.innerHTML = '<div style="padding: 20px; text-align: center; color: #f87171;">Failed to load leaderboard.</div>';
+    }
+  }
+
+  onAuthStateChanged(auth, (user) => {
+    loadLeaderboard(user);
+  });
+</script>
 
 <footer>
   <div class="footer-logo">GAME <span>OF OPINIONS</span></div>
