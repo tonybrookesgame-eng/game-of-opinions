@@ -18,6 +18,10 @@
 
 ========================= */
 
+* {
+  box-sizing: border-box;
+}
+
 body {
 
   margin: 0;
@@ -89,8 +93,6 @@ header {
   backdrop-filter: blur(10px);
 
   border-bottom: 1px solid rgba(255,255,255,0.12);
-
-  box-sizing: border-box;
 
 }
 
@@ -211,7 +213,8 @@ nav a:hover {
   min-height: 750px;
   padding: 60px 12%; 
   overflow: hidden;
-  background: url('managers office.png') no-repeat center center / cover;
+  background: url('managers office.png') no-repeat center center;
+  background-size: cover;
 }
 
 .whiteboard-login {
@@ -288,7 +291,6 @@ nav a:hover {
   background: #1e293b;
   color: white;
   font-size: 16px;
-  box-sizing: border-box;
 }
 
 /* =========================
@@ -554,7 +556,7 @@ nav a:hover {
 
   width: 100%;
 
-  max-width: 100%;
+  max-width: 1200px;
 
   margin: auto;
 
@@ -1446,6 +1448,23 @@ window.handleAuth = async function() {
   // This handler is now exclusively for login.
   const email = document.getElementById("auth-email").value;
   const password = document.getElementById("auth-password").value;
+
+  if (!email || !password) {
+    alert("Please enter your email and password.");
+    return;
+  }
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    window.location.href = "myxi.html";
+  } catch (error) {
+    alert(error.message);
+  }
+};
+
+// Fix for duplicate scripts previously at end of file
+</script>
+</body>
+</html> password = document.getElementById("auth-password").value;
 
   if (!email || !password) {
     alert("Please enter your email and password.");
