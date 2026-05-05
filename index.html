@@ -366,11 +366,69 @@ nav a:hover {
 }
 .phone-left { transform: rotateY(20deg) rotateX(5deg); }
 .phone-middle { transform: translateY(-20px) scale(1.05); z-index: 10; }
-.phone-right { transform: rotateY(-20deg) rotateX(5deg); }
+.phone-right { transform: rotateY(-20deg) rotateX(5deg) translateY(-20px); }
+
+/* BET BUILDER STYLES (Replicated from myxi.html) */
+.bet-match {
+  background: rgba(184, 255, 30, 0.1);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 14px;
+  color: #c7ff38;
+  margin-bottom: 12px;
+  text-align: center;
+  border: 1px solid rgba(184, 255, 30, 0.2);
+}
+.bet-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 15px 0;
+}
+.bet-list li {
+  font-size: 12px;
+  color: #cbd5e1;
+  padding: 3px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+}
+.bet-list li::before {
+  content: "•";
+  color: #c7ff38;
+}
+.bet-odds-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0,0,0,0.3);
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+.odds-label { font-size: 11px; color: #9ca3af; }
+.odds-value { font-weight: 900; color: #fff; font-size: 16px; }
+
+.bet-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+.bet-choice-mock {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: white;
+  padding: 8px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 12px;
+  text-align: center;
+}
 
 /* PHONE LABELS */
 .phone-label {
-  position: absolute;
   position: absolute;
   top: -90px;
   left: 50%;
@@ -1052,7 +1110,7 @@ nav a:hover {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 150px; /* More space for labels when stacked */
+    gap: 120px; /* Tightened gap to move sections up */
     margin-top: 60px;
   }
   .phone-label {
@@ -1335,17 +1393,26 @@ nav a:hover {
             <span style="font-size: 10px; color: #9ca3af;">FEATURED BET BUILDER</span>
             <span style="background: #c7ff38; color: #000; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px;">HOT</span>
           </div>
-          <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 8px; border-left: 3px solid #c7ff38;">
-             <div style="font-size: 11px; color: #9ca3af;">Salah to score, 10+ Corners, Over 3.5 Cards</div>
+          
+          <div class="bet-match">Liverpool vs Brentford</div>
+          
+          <ul class="bet-list">
+            <li>Liverpool to win</li>
+            <li>Over 3.5 Goals</li>
+            <li>Konate to be carded</li>
+          </ul>
+
+          <div class="bet-odds-box">
+            <span class="odds-label">Est. Odds</span>
+            <span class="odds-value">30/1</span>
           </div>
-          <div style="display: flex; gap: 10px; margin-top: 5px;">
-            <div style="flex: 1; background: rgba(199,255,56,0.1); border: 1px solid #c7ff38; color: #c7ff38; padding: 8px; border-radius: 6px; text-align: center; font-size: 11px; font-weight: 800;">YES</div>
-            <div style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 8px; border-radius: 6px; text-align: center; font-size: 11px;">NO</div>
+
+          <div class="bet-actions">
+            <div class="bet-choice-mock" style="background: #c7ff38; color: #041102; border-color: #c7ff38;">YES</div>
+            <div class="bet-choice-mock">NO</div>
           </div>
-          <div style="font-size: 10px; color: #9ca3af; margin-top: 10px; line-height: 1.4; text-align: center;">
-            <strong>5 PT ENTRY FEE:</strong> Back the Scout (YES) for 155 PTS, or play for stability (NO).
-          </div>
-          <p style="font-size: 10px; color: #64748b; margin-top: 10px; text-align: center;">Winners climb the global leaderboard.</p>
+
+          <p style="font-size: 10px; color: #64748b; margin-top: 0; text-align: center;">5 PT Entry. Risk vs Reward.</p>
         </div>
       </div>
     </div>
@@ -1356,7 +1423,7 @@ nav a:hover {
         <p>Get data-driven insights and strategic advice from AI legends.</p>
       </div>
       <div class="phone-screen" style="padding: 0; background: #000; display: flex; flex-direction: column;">
-        <div style="height: 210px; overflow: hidden; border-bottom: 1px solid rgba(199,255,56,0.3);">
+        <div style="height: 160px; overflow: hidden; border-bottom: 1px solid rgba(199,255,56,0.3);">
           <img src="avatars.png" alt="AI Scouts" style="width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block;">
         </div>
         <div style="padding: 24px 20px; flex: 1; display: flex; flex-direction: column; gap: 15px;">
