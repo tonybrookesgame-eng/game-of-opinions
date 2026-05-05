@@ -63,6 +63,10 @@ body::after{
 
 }
 
+.user-only, .guest-only {
+  display: none;
+}
+
 /* =========================
 
    HEADER
@@ -1217,12 +1221,13 @@ nav a:hover {
   GAME <span>OF OPINIONS</span>
 </div>
 <nav>
-  <a href="myxi.html">Your Team</a>
-  <a href="season.html">Season Picks</a>
-  <a href="league.html">League</a>
-  <a href="rules.html">Rules</a>
-  <a href="javascript:void(0)" class="login-link" onclick="openLogin()">Log In</a>
-  <a href="signup.html" class="signup-btn">Sign Up</a>
+  <a href="myxi.html" class="user-only">Your Team</a>
+  <a href="season.html" class="user-only">Season Picks</a>
+  <a href="league.html" class="user-only">League</a>
+  <a href="rules.html" class="guest-only">Rules</a>
+  <a href="javascript:void(0)" class="login-link guest-only" onclick="openLogin()">Log In</a>
+  <a href="signup.html" class="signup-btn guest-only">Sign Up</a>
+  <a href="javascript:void(0)" class="user-only" onclick="handleLogout()">Log Out</a>
 </nav>
 </header>
 
@@ -1455,7 +1460,7 @@ nav a:hover {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBS3Fpobk342TpJw73mMgYOyUrWb-jBtfM",
@@ -1468,6 +1473,30 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 console.log("Firebase initialized successfully");
+
+// NAV VISIBILITY
+onAuthStateChanged(auth, (user) => {
+  const userLinks = document.querySelectorAll('.user-only');
+  const guestLinks = document.querySelectorAll('.guest-only');
+  if (user) {
+    userLinks.forEach(link => { link.style.display = 'inline-block'; });
+    guestLinks.forEach(link => { link.style.display = 'none'; });
+  } else {
+    userLinks.forEach(link => { link.style.display = 'none'; });
+    guestLinks.forEach(link => { link.style.display = 'inline-block'; });
+  }
+});
+
+window.handleLogout = () => {
+  signOut(auth).then(() => {
+    window.location.reload();
+  });
+};
+
+// Check for login redirect from other pages
+if (window.location.search.includes('login=true')) {
+  window.openLogin();
+}
 
 // AUTH SCREEN CONTROLS
 window.openLogin = () => {

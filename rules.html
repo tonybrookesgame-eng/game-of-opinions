@@ -24,6 +24,9 @@
       pointer-events:none;
       z-index: -1;
     }
+    .user-only, .guest-only {
+      display: none;
+    }
     header {
       display: flex;
       justify-content: space-between;
@@ -87,9 +90,13 @@
   <div class="logo">GAME <span>OF OPINIONS</span></div>
   <nav>
     <a href="index.html">Home</a>
-    <a href="myxi.html">Your Team</a>
-    <a href="season.html">Season Picks</a>
-    <a href="league.html">League</a>
+    <a href="myxi.html" class="user-only">Your Team</a>
+    <a href="season.html" class="user-only">Season Picks</a>
+    <a href="league.html" class="user-only">League</a>
+    <a href="rules.html" class="guest-only">Rules</a>
+    <a href="javascript:void(0)" class="guest-only" onclick="location.href='index.html?login=true'">Log In</a>
+    <a href="signup.html" class="guest-only">Sign Up</a>
+    <a href="javascript:void(0)" class="user-only" onclick="handleLogout()">Log Out</a>
   </nav>
 </header>
 
@@ -176,6 +183,40 @@
   <a href="season.html">🏆<br>Picks</a>
   <a href="league.html">📊<br>League</a>
 </div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBS3Fpobk342TpJw73mMgYOyUrWb-jBtfM",
+    authDomain: "game-of-opinions-97b14.firebaseapp.com",
+    projectId: "game-of-opinions-97b14",
+    storageBucket: "game-of-opinions-97b14.firebasestorage.app",
+    appId: "1:863518863234:web:3a2c2378a2a358e0b2299b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  onAuthStateChanged(auth, (user) => {
+    const userLinks = document.querySelectorAll('.user-only');
+    const guestLinks = document.querySelectorAll('.guest-only');
+    if (user) {
+      userLinks.forEach(l => l.style.display = 'inline-block');
+      guestLinks.forEach(l => l.style.display = 'none');
+    } else {
+      userLinks.forEach(l => l.style.display = 'none');
+      guestLinks.forEach(l => l.style.display = 'inline-block');
+    }
+  });
+
+  window.handleLogout = () => {
+    signOut(auth).then(() => {
+      window.location.href = "index.html";
+    });
+  };
+</script>
 
 </body>
 </html>
