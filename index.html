@@ -1055,6 +1055,21 @@ nav a:hover {
   .phone-label {
     width: 280px;
     top: -75px;
+    border-color: #c7ff38;
+    box-shadow: 0 0 20px rgba(199, 255, 56, 0.2);
+    animation: mobileGlow 3s infinite alternate;
+  }
+  @keyframes mobileGlow {
+    from { box-shadow: 0 0 10px rgba(199, 255, 56, 0.1); }
+    to { box-shadow: 0 0 25px rgba(199, 255, 56, 0.3); }
+  }
+  .hero-visual::before {
+    content: "";
+    position: absolute;
+    width: 100vw;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(184, 255, 30, 0.08) 0%, transparent 70%);
+    z-index: -1;
   }
   .phone-left, .phone-right { transform: none !important; }
   .hero-buttons { display: none !important; } /* Hide desktop hero buttons on mobile */
