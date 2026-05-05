@@ -1447,6 +1447,9 @@ const saveTeam = async function() {
   const formation = document.getElementById('formationSelect').value;
   const teamName = document.getElementById('teamNameInput').value.trim();
   
+  const totalPts = parseInt(document.getElementById('pts-total').innerText) || 0;
+  const weeklyPts = 0; // Initialize for league visibility
+
   if (!teamName) {
     alert("Please enter a team name!");
     return;
@@ -1464,7 +1467,9 @@ const saveTeam = async function() {
 
     await setDoc(leaderboardRef, {
       teamName: teamName,
-      userId: currentUser.uid
+      userId: currentUser.uid,
+      totalPoints: totalPts,
+      weeklyPoints: weeklyPts
     }, { merge: true });
     document.getElementById('teamNameInput').disabled = true;
     document.getElementById('saveTeamBtn').style.display = 'none';
@@ -1540,6 +1545,12 @@ const clearTeam = async function() {
 }
 window.clearTeam = clearTeam;
 
+populateWeeklyOptions();
+loadCurrentBet();
+changeFormation(); // This ensures 4-4-2 is the default rendered state
+</script>
+</body>
+</html>
 populateWeeklyOptions();
 loadCurrentBet();
 changeFormation(); // This ensures 4-4-2 is the default rendered state
