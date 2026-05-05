@@ -24,7 +24,7 @@
       pointer-events:none;
       z-index: -1;
     }
-    .user-o-nly, .guest-only {
+    .user-only, .guest-only {
       display: none;
     }
     header {
@@ -78,6 +78,9 @@
     .footer-links a { color: #9ca3af; text-decoration: none; margin: 0 12px; font-size: 13px; }
     .mobile-nav { display: none; }
     @media (max-width: 768px) {
+      header {
+        justify-content: center;
+      }
       nav { display: none; }
       .mobile-nav { display: flex; justify-content: space-around; position: fixed; bottom: 0; left: 0; width: 100%; background: #111827; padding: 10px 0; border-top: 1px solid #333; z-index: 1000; }
       .mobile-nav a { text-decoration: none; color: white; font-size: 12px; }

@@ -413,6 +413,9 @@
     }
 
     @media (max-width: 768px) {
+      header {
+        justify-content: center;
+      }
       nav {
         display: none;
       }
@@ -1228,7 +1231,7 @@ async function loadSeasonPicks(uid) {
     if (docSnap.exists()) {
       const saved = docSnap.data();
       const selects = document.querySelectorAll("select");
-t      
+      
       selects.forEach((select) => {
         const title = select.parentElement.querySelector('h3').innerText;
         if (saved[title]) {
