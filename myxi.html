@@ -853,7 +853,7 @@ MOBILE
   <div class="name-section">
     <span>Team Name:</span>
     <input type="text" id="teamNameInput" placeholder="Enter Team Name">
-    <button onclick="saveTeam()" style="width: auto; padding: 8px 16px;">Save</button>
+    <button id="saveTeamBtn" onclick="saveTeam()" style="width: auto; padding: 8px 16px;">Save</button>
   </div>
   
   <div class="points-summary">
@@ -866,8 +866,6 @@ MOBILE
     </div>
   </div>
 </div>
-
-<h1 id="teamNameDisplay">Your Team</h1>
 
 <div class="main-layout">
 
@@ -901,7 +899,7 @@ MOBILE
 <div class="row">
 <div class="player">
 <div class="shirt"><div class="shirt-name"></div></div>
-<select data-pos="GK" onchange="updateShirt(this)"><option>Select</option></select>
+<select data-pos="GK" onchange="updateShirt(this)"><option value="Select">Select</option></select>
 </div>
 
 </div>
@@ -1195,6 +1193,13 @@ const changeFormation = function() {
   updatePitchRow(rows[1], 'DEF', parts[0]);
   updatePitchRow(rows[2], 'MID', parts[1]);
   updatePitchRow(rows[3], 'FWD', parts[2]);
+
+  // Reset GK
+  const gkSelect = document.querySelector('select[data-pos="GK"]');
+  if (gkSelect) {
+    gkSelect.value = "Select";
+    updateShirt(gkSelect);
+  }
   
   populatePlayers();
   refreshDropdowns();
@@ -1252,7 +1257,7 @@ const populatePlayers = function() {
   selects.forEach(s => {
     const pos = s.dataset.pos;
     const currentVal = s.value;
-    s.innerHTML = '<option>Select</option>';
+    s.innerHTML = '<option value="Select">Select</option>';
     if (pos && playersByPos[pos]) {
       playersByPos[pos].forEach(p => {
         let opt = document.createElement('option');
@@ -1351,8 +1356,11 @@ const loadUserData = async function(uid) {
   const teamDocSnap = await getDoc(teamDocRef);
   if (teamDocSnap.exists()) {
     const teamData = teamDocSnap.data();
-    document.getElementById('teamNameDisplay').innerText = teamData.teamName || "Your Team XI";
     document.getElementById('teamNameInput').value = teamData.teamName || "";
+    
+    if (teamData.teamName) {
+      document.getElementById('saveTeamBtn').style.display = 'none';
+    }
     
     if (teamData.formation) {
       document.getElementById('formationSelect').value = teamData.formation;
@@ -1376,8 +1384,8 @@ const loadUserData = async function(uid) {
   const weeklyDocSnap = await getDoc(weeklyDocRef);
   if (weeklyDocSnap.exists()) {
     const weeklyData = weeklyDocSnap.data();
-    if (weeklyData.first) firstScorer.value = weeklyData.first;
-    if (weeklyData.minute) goalMinute.value = weeklyData.minute;
+    if (weeklyData.first) document.getElementById('firstScorer').value = weeklyData.first;
+    if (weeklyData.minute) document.getElementById('goalMinute').value = weeklyData.minute;
   }
 
   // Load Bet Builder
@@ -1426,7 +1434,7 @@ const saveTeam = async function() {
       formation: formation,
       teamName: teamName
     });
-    document.getElementById('teamNameDisplay').innerText = teamName;
+    document.getElementById('saveTeamBtn').style.display = 'none';
     alert("Team XI Saved!");
   } catch (error) {
     console.error("Error saving team: ", error);
@@ -1488,10 +1496,9 @@ const clearTeam = async function() {
     });
     try {
       const teamDocRef = doc(db, "users", currentUser.uid, "myxi", "team");
-      await setDoc(teamDocRef, { players: [], formation: "4-4-2", teamName: "" }); // Clear data in Firestore
-      document.getElementById('teamNameDisplay').innerText = "Your Team";
+      await setDoc(teamDocRef, { players: [], formation: "4-4-2", teamName: "" }); 
       document.getElementById('teamNameInput').value = "";
-      document.querySelector('.team-name-ribbon').style.display = 'flex';
+      document.getElementById('saveTeamBtn').style.display = 'inline-block';
       document.getElementById('formationSelect').value = "4-4-2";
       changeFormation(); // Reset formation
       alert("Team cleared successfully!");
