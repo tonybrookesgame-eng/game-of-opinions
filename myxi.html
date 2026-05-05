@@ -899,7 +899,7 @@ MOBILE
 <div class="row">
 <div class="player">
 <div class="shirt"><div class="shirt-name"></div></div>
-<select data-pos="GK" onchange="updateShirt(this)"><option value="Select">Select</option></select>
+<select data-pos="GK" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select>
 </div>
 
 </div>
@@ -908,13 +908,13 @@ MOBILE
 
 <div class="row">
 
-<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
 
-<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
 
-<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
 
-<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="DEF" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
 
 </div>
 
@@ -922,13 +922,13 @@ MOBILE
 
 <div class="row">
 
-<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
 
-<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
 
-<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
 
-<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="MID" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
 
 </div>
 
@@ -936,9 +936,9 @@ MOBILE
 
 <div class="row">
 
-<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="FWD" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="FWD" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
 
-<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="FWD" onchange="updateShirt(this)"><option>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="FWD" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
 
 </div>
 
@@ -1219,7 +1219,7 @@ const updatePitchRow = function(row, pos, count) {
     const subAdvanced = document.createElement('div');
     subAdvanced.className = 'pitch-sub-row';
     
-    const playerHTML = `<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="${pos}" onchange="window.updateShirt(this)"><option>Select</option></select></div>`;
+    const playerHTML = `<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div>`;
     
     for(let i=0; i<4; i++) subBase.innerHTML += playerHTML;
     subAdvanced.innerHTML += playerHTML;
@@ -1229,7 +1229,7 @@ const updatePitchRow = function(row, pos, count) {
     row.appendChild(subAdvanced);
   } else {
     for(let i=0; i<count; i++) {
-      row.innerHTML += `<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="${pos}" onchange="window.updateShirt(this)"><option>Select</option></select></div>`;
+      row.innerHTML += `<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div>`;
     }
   }
 }
@@ -1256,8 +1256,8 @@ const populatePlayers = function() {
   const selects = document.querySelectorAll('.pitch .player select');
   selects.forEach(s => {
     const pos = s.dataset.pos;
-    const currentVal = s.value;
-    s.innerHTML = '<option value="Select">Select</option>';
+    const currentVal = s.value || "Select";
+    s.innerHTML = '<option value="Select" selected>Select</option>';
     if (pos && playersByPos[pos]) {
       playersByPos[pos].forEach(p => {
         let opt = document.createElement('option');
@@ -1349,11 +1349,12 @@ onAuthStateChanged(auth, (user) => {
 const loadUserData = async function(uid) {
   populateWeeklyOptions();
   loadCurrentBet();
-  populatePlayers(); // Populate all dropdowns initially
 
   // Load Team Data
   const teamDocRef = doc(db, "users", uid, "myxi", "team");
   const teamDocSnap = await getDoc(teamDocRef);
+  
+  // Default setup
   if (teamDocSnap.exists()) {
     const teamData = teamDocSnap.data();
     document.getElementById('teamNameInput').value = teamData.teamName || "";
@@ -1377,6 +1378,9 @@ const loadUserData = async function(uid) {
         }
       });
     }
+  } else {
+    // If no user data exists, initialize the default 4-4-2 pitch
+    changeFormation();
   }
 
   // Load Weekly Picks
@@ -1489,11 +1493,6 @@ const clearTeam = async function() {
     return;
   }
   if (confirm("Are you sure you want to clear your entire team?")) {
-    const selects = document.querySelectorAll('.pitch select');
-    selects.forEach(select => {
-      select.value = "Select";
-      updateShirt(select);
-    });
     try {
       const teamDocRef = doc(db, "users", currentUser.uid, "myxi", "team");
       await setDoc(teamDocRef, { players: [], formation: "4-4-2", teamName: "" }); 
@@ -1512,8 +1511,7 @@ window.clearTeam = clearTeam;
 
 populateWeeklyOptions();
 loadCurrentBet();
-populatePlayers(); 
-refreshDropdowns();
+changeFormation(); // This ensures 4-4-2 is the default rendered state
 </script>
 </body>
 </html>
