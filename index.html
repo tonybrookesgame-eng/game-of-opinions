@@ -1055,22 +1055,15 @@ nav a:hover {
 
 }
 
-@media (max-width: 720px) {
+@media (max-width: 768px) {
 
   header { /* Mobile header */
-    background: #000 !important;
-    flex-direction: row;
-    flex-wrap: wrap;
     justify-content: center;
-    align-items: center;
-    gap: 15px;
-    padding: 15px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-
   }
 
   #login-section { /* Manager's Office on mobile */
-    flex-direction: column !important; /* Keep existing mobile layout for office */
+    flex-direction: column !important;
     height: auto !important;
     min-height: auto !important;
     aspect-ratio: 16 / 9;
@@ -1083,42 +1076,25 @@ nav a:hover {
   }
   
   .news-ticker { /* Mobile ticker position */
-    top: 79px; /* Adjusted to be below the fixed header */
+    top: 72px; 
   }
-  body { padding-top: 107px; } /* Account for fixed header (79px) + ticker (28px) */
+  body { padding-top: 100px; } 
 
-  nav { /* Mobile nav */
-    
-    flex-wrap: wrap;
+  nav { display: none; }
 
-    justify-content: center;
-
-    gap: 6px;
-
-    width: 100%;
-
-    padding: 0 6px;
-
+  .mobile-nav { 
+    display: flex; 
+    justify-content: space-around; 
+    position: fixed; 
+    bottom: 0; 
+    left: 0; 
+    width: 100%; 
+    background: #111827; 
+    padding: 10px 0; 
+    border-top: 1px solid #333; 
+    z-index: 1000; 
   }
-
-  nav a {
-
-    font-size: 12px;
-
-    padding: 3px 5px;
-
-    line-height: 1.2;
-
-  }
-
-  .login-link {
-    font-size: 12px !important; /* Smaller on mobile */
-  }
-
-  .signup-btn {
-    padding: 6px 14px !important; /* Smaller on mobile */
-    font-size: 12px;
-  }
+  .mobile-nav a { text-decoration: none; color: white; font-size: 12px; text-align: center; }
 
   .hero {
    padding: 40px 15px 20px;
@@ -1587,6 +1563,14 @@ nav a:hover {
   </div>
 </div>
 </section>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav">
+  <a href="index.html">🏠<br>Home</a>
+  <a href="myxi.html">⚽<br>Team</a>
+  <a href="season.html">🏆<br>Picks</a>
+  <a href="league.html">📊<br>League</a>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
