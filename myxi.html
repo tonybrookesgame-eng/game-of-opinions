@@ -572,6 +572,22 @@ ROWS + PLAYERS
   border-color: rgba(255,255,255,0.16); /* Consistent with season.html .card */
 }
 
+/* DIFFERENTIAL PULSE */
+.rarity-tag {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #c7ff38;
+  color: #041102;
+  font-size: 9px;
+  font-weight: 900;
+  padding: 2px 6px;
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(199, 255, 56, 0.5);
+  display: none;
+  z-index: 10;
+}
+
 .shirt{
 
 
@@ -906,7 +922,7 @@ MOBILE
 <!-- GK -->
 
 <div class="row">
-<div class="player">
+<div class="player" style="position:relative;"><div class="rarity-tag">DIFF</div>
 <div class="shirt"><div class="shirt-name"></div></div>
 <select data-pos="GK" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select>
 </div>
@@ -1175,15 +1191,22 @@ const colors = {
 const updateShirt = function(select) {
   const shirt = select.parentElement.querySelector('.shirt');
   const nameLabel = shirt.querySelector('.shirt-name');
+  const rarityTag = select.parentElement.querySelector('.rarity-tag');
   const val = select.value;
   
   if (val === "Select") {
     shirt.style.background = "linear-gradient(#2563eb, #1d4ed8)";
     nameLabel.innerText = "";
     nameLabel.style.display = "none";
+    if(rarityTag) rarityTag.style.display = "none";
     return;
   }
   
+  // Simulate Rarity Check (Premium Logic)
+  // In production, this would check against a global ownership percentage
+  const isDifferential = Math.random() > 0.7; 
+  if(rarityTag) rarityTag.style.display = isDifferential ? "block" : "none";
+
   nameLabel.style.display = "block";
   const team = playerToClub[val] || val;
   nameLabel.innerText = clubAbbr[team] || team.substring(0,3).toUpperCase();

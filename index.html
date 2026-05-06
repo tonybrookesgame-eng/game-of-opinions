@@ -100,6 +100,36 @@ header {
 
 }
 
+/* =========================
+   PREMIUM NEWS TICKER
+========================= */
+.news-ticker {
+  position: fixed;
+  top: 72px; /* Just below header */
+  left: 0;
+  width: 100%;
+  background: rgba(199, 255, 56, 0.95);
+  color: #041102;
+  height: 28px;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+.ticker-content {
+  display: inline-block;
+  white-space: nowrap;
+  animation: ticker 30s linear infinite;
+}
+@keyframes ticker {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
 .logo {
 
   font-size: 22px;
@@ -1310,6 +1340,13 @@ nav a:hover {
   <a href="javascript:void(0)" class="user-only" onclick="handleLogout()">Log Out</a>
 </nav>
 </header>
+
+<!-- PREMIUM TICKER -->
+<div class="news-ticker">
+  <div class="ticker-content">
+    ⚠️ SCOUT ALERT: Haaland ownership reaches 94% • DIFFERENTIAL OF THE WEEK: Mbeumo (Brentford) • 42,000 Managers predicted 'YES' on the Match Predictor • Gameweek 1 Deadline Approaching...
+  </div>
+</div>
 
 <!-- UNIFIED AUTH OVERLAY -->
 <div id="auth-overlay" class="auth-overlay">
