@@ -556,8 +556,8 @@ ROWS + PLAYERS
 }
 
 .player{
-
   width: 85px;
+  position: relative;
   text-align: center;
   background: rgba(255,255,255,0.04); /* Consistent with season.html .card */
   border: 1px solid rgba(255,255,255,0.08); /* Consistent with season.html .card */
@@ -572,6 +572,7 @@ ROWS + PLAYERS
   border-color: rgba(255,255,255,0.16); /* Consistent with season.html .card */
 }
 
+
 /* DIFFERENTIAL PULSE */
 .rarity-tag {
   position: absolute;
@@ -583,9 +584,14 @@ ROWS + PLAYERS
   font-weight: 900;
   padding: 2px 6px;
   border-radius: 4px;
-  box-shadow: 0 0 10px rgba(199, 255, 56, 0.5);
+  box-shadow: 0 0 15px rgba(199, 255, 56, 0.6);
   display: none;
   z-index: 10;
+  animation: pulse-glow 2s infinite alternate;
+}
+@keyframes pulse-glow {
+  from { box-shadow: 0 0 5px rgba(199, 255, 56, 0.4); transform: scale(1); }
+  to { box-shadow: 0 0 20px rgba(199, 255, 56, 0.8); transform: scale(1.1); }
 }
 
 .shirt{
@@ -889,6 +895,10 @@ MOBILE
       <label style="color: #c7ff38;">Total Points</label>
       <span id="pts-total" style="color: #c7ff38; font-weight: 900;">0</span>
     </div>
+    <div class="point-item" style="border-left: 1px solid rgba(255,255,255,0.1); padding-left: 15px;">
+      <label>Maverick Score</label>
+      <span id="maverick-score" style="color: #38bdf8;">0%</span>
+    </div>
   </div>
 </div>
 
@@ -932,38 +942,28 @@ MOBILE
 <!-- DEF -->
 
 <div class="row">
-
-<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-
-<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-
-<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-
-<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
 
 </div>
 
 <!-- MID -->
 
 <div class="row">
-
-<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-
-<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-
-<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-
-<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
 
 </div>
 
 <!-- FWD -->
 
 <div class="row">
-
-<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="FWD" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-
-<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="FWD" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div></div><select data-pos="FWD" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div></div><select data-pos="FWD" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
 
 </div>
 
@@ -1198,14 +1198,17 @@ const updateShirt = function(select) {
     shirt.style.background = "linear-gradient(#2563eb, #1d4ed8)";
     nameLabel.innerText = "";
     nameLabel.style.display = "none";
-    if(rarityTag) rarityTag.style.display = "none";
+    if(rarityTag) { rarityTag.style.display = "none"; updateMaverickMeter(); }
     return;
   }
   
   // Simulate Rarity Check (Premium Logic)
   // In production, this would check against a global ownership percentage
   const isDifferential = Math.random() > 0.7; 
-  if(rarityTag) rarityTag.style.display = isDifferential ? "block" : "none";
+  if(rarityTag) {
+    rarityTag.style.display = isDifferential ? "block" : "none";
+    updateMaverickMeter();
+  }
 
   nameLabel.style.display = "block";
   const team = playerToClub[val] || val;
@@ -1251,7 +1254,7 @@ const updatePitchRow = function(row, pos, count) {
     const subAdvanced = document.createElement('div');
     subAdvanced.className = 'pitch-sub-row';
     
-    const playerHTML = `<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div>`;
+    const playerHTML = `<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div></div><select data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div>`;
     
     for(let i=0; i<4; i++) subBase.innerHTML += playerHTML;
     subAdvanced.innerHTML += playerHTML;
@@ -1261,7 +1264,7 @@ const updatePitchRow = function(row, pos, count) {
     row.appendChild(subAdvanced);
   } else {
     for(let i=0; i<count; i++) {
-      row.innerHTML += `<div class="player"><div class="shirt"><div class="shirt-name"></div></div><select data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div>`;
+      row.innerHTML += `<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div></div><select data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div>`;
     }
   }
 }
@@ -1307,6 +1310,20 @@ const populatePlayers = function() {
   });
 }
 window.populatePlayers = populatePlayers;
+
+const updateMaverickMeter = function() {
+  const tags = document.querySelectorAll('.rarity-tag');
+  let activeCount = 0;
+  tags.forEach(t => { if(t.style.display === 'block') activeCount++; });
+  
+  const percentage = Math.round((activeCount / 11) * 100);
+  const scoreEl = document.getElementById('maverick-score');
+  scoreEl.innerText = percentage + "%";
+  scoreEl.style.color = percentage > 50 ? "#c7ff38" : "#38bdf8";
+  
+  // Stadium Aura Effect
+  document.body.style.setProperty('--stadium-glow', percentage > 50 ? 'rgba(199, 255, 56, 0.15)' : 'rgba(120, 255, 120, 0.08)');
+}
 
 const populateWeeklyOptions = function() {
   const clubSelect = document.getElementById('firstScorer');

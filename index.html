@@ -1058,8 +1058,6 @@ nav a:hover {
 @media (max-width: 720px) {
 
   header { /* Mobile header */
-
-    position: relative;
     background: #000 !important;
     flex-direction: row;
     flex-wrap: wrap;
@@ -1072,7 +1070,7 @@ nav a:hover {
   }
 
   #login-section { /* Manager's Office on mobile */
-    flex-direction: column !important;
+    flex-direction: column !important; /* Keep existing mobile layout for office */
     height: auto !important;
     min-height: auto !important;
     aspect-ratio: 16 / 9;
@@ -1083,6 +1081,11 @@ nav a:hover {
     background-position: center !important;
     background-size: contain !important;
   }
+  
+  .news-ticker { /* Mobile ticker position */
+    top: 79px; /* Adjusted to be below the fixed header */
+  }
+  body { padding-top: 107px; } /* Account for fixed header (79px) + ticker (28px) */
 
   nav { /* Mobile nav */
     
@@ -1344,7 +1347,7 @@ nav a:hover {
 <!-- PREMIUM TICKER -->
 <div class="news-ticker">
   <div class="ticker-content">
-    ⚠️ SCOUT ALERT: Haaland ownership reaches 94% • DIFFERENTIAL OF THE WEEK: Mbeumo (Brentford) • 42,000 Managers predicted 'YES' on the Match Predictor • Gameweek 1 Deadline Approaching...
+    ⚠️ SCOUT ALERT: Haaland ownership reaches 94% • DIFFERENTIAL OF THE WEEK: Mbeumo (Brentford) • ⚡ TRENDING: A new 'Maverick' manager has entered the Top 100 • 42,000 Managers predicted 'YES' on the Match Predictor • Gameweek 1 Deadline Approaching...
   </div>
 </div>
 
