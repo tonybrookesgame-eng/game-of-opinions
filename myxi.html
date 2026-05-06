@@ -1442,7 +1442,7 @@ const saveTeam = async function() {
     return;
   }
 
-  const selects = document.querySelectorAll('.pitch select');
+  const selects = document.querySelectorAll('.pitch .player select');
   const teamPlayers = Array.from(selects).map(s => s.value);
   const formation = document.getElementById('formationSelect').value;
   const teamName = document.getElementById('teamNameInput').value.trim();
@@ -1549,11 +1549,4 @@ populateWeeklyOptions();
 loadCurrentBet();
 changeFormation(); // This ensures 4-4-2 is the default rendered state
 </script>
-</body>
-</html>
-populateWeeklyOptions();
-loadCurrentBet();
-changeFormation(); // This ensures 4-4-2 is the default rendered state
-</script>
-</body>
 </html>
