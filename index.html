@@ -123,7 +123,7 @@ header {
 .ticker-content {
   display: inline-block;
   white-space: nowrap;
-  animation: ticker 30s linear infinite;
+  animation: ticker 15s linear infinite;
 }
 @keyframes ticker {
   0% { transform: translateX(100%); }
@@ -1058,6 +1058,8 @@ nav a:hover {
 @media (max-width: 768px) {
 
   header { /* Mobile header */
+    display: flex;
+    background: #000 !important;
     justify-content: center;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
@@ -1079,22 +1081,6 @@ nav a:hover {
     top: 72px; 
   }
   body { padding-top: 100px; } 
-
-  nav { display: none; }
-
-  .mobile-nav { 
-    display: flex; 
-    justify-content: space-around; 
-    position: fixed; 
-    bottom: 0; 
-    left: 0; 
-    width: 100%; 
-    background: #111827; 
-    padding: 10px 0; 
-    border-top: 1px solid #333; 
-    z-index: 1000; 
-  }
-  .mobile-nav a { text-decoration: none; color: white; font-size: 12px; text-align: center; }
 
   .hero {
    padding: 40px 15px 20px;
@@ -1559,15 +1545,7 @@ nav a:hover {
 
     <p>
       Compete against your friends in private leagues or test your football acumen against others across the globe. Weekly points decide everything.
-    </p>
-  </div>
-</div>
-</section>
-
-<!-- MOBILE NAV -->
-<div class="mobile-nav">
-  <a href="index.html">🏠<br>Home</a>
-  <a href="myxi.html">⚽<br>Team</a>
+    tVilhref="myxi.html">⚽<br>Team</a>
   <a href="season.html">🏆<br>Picks</a>
   <a href="league.html">📊<br>League</a>
 </div>
