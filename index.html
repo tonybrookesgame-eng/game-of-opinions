@@ -123,11 +123,13 @@ header {
 .ticker-content {
   display: inline-block;
   white-space: nowrap;
-  animation: ticker 15s linear infinite;
+  animation: ticker 30s linear infinite;
+  display: flex;
+  width: max-content;
 }
 @keyframes ticker {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 .logo {
@@ -1061,6 +1063,9 @@ nav a:hover {
     display: flex;
     background: #000 !important;
     justify-content: center;
+    flex-direction: column;
+    padding: 15px 10px;
+    height: auto;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
@@ -1078,9 +1083,21 @@ nav a:hover {
   }
   
   .news-ticker { /* Mobile ticker position */
-    top: 72px; 
+    top: 82px; 
   }
-  body { padding-top: 100px; } 
+  body { padding-top: 110px; } 
+
+  nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  nav a {
+    margin: 0;
+    font-size: 14px;
+  }
 
   .hero {
    padding: 40px 15px 20px;
@@ -1309,7 +1326,8 @@ nav a:hover {
 <!-- PREMIUM TICKER -->
 <div class="news-ticker">
   <div class="ticker-content">
-    ⚠️ SCOUT ALERT: Haaland ownership reaches 94% • DIFFERENTIAL OF THE WEEK: Mbeumo (Brentford) • ⚡ TRENDING: A new 'Maverick' manager has entered the Top 100 • 42,000 Managers predicted 'YES' on the Match Predictor • Gameweek 1 Deadline Approaching...
+    <span>⚠️ SCOUT ALERT: Haaland ownership reaches 94% • DIFFERENTIAL OF THE WEEK: Mbeumo (Brentford) • ⚡ TRENDING: A new 'Maverick' manager has entered the Top 100 • 42,000 Managers predicted 'YES' on the Match Predictor • Gameweek 1 Deadline Approaching... &nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span>⚠️ SCOUT ALERT: Haaland ownership reaches 94% • DIFFERENTIAL OF THE WEEK: Mbeumo (Brentford) • ⚡ TRENDING: A new 'Maverick' manager has entered the Top 100 • 42,000 Managers predicted 'YES' on the Match Predictor • Gameweek 1 Deadline Approaching... &nbsp;&nbsp;&nbsp;&nbsp;</span>
   </div>
 </div>
 
@@ -1545,10 +1563,10 @@ nav a:hover {
 
     <p>
       Compete against your friends in private leagues or test your football acumen against others across the globe. Weekly points decide everything.
-    tVilhref="myxi.html">⚽<br>Team</a>
-  <a href="season.html">🏆<br>Picks</a>
-  <a href="league.html">📊<br>League</a>
+    </p>
+  </div>
 </div>
+</section>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
