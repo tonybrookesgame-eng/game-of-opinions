@@ -125,15 +125,23 @@
     });
 
     // SECURITY: Only allow your specific email to see this or run it
-    const ADMIN_EMAIL = "tonybrookes.game@gmail.com"; // TODO: Replace with your actual Firebase email
+    const ADMIN_EMAIL = "tonybrookes.game@gmail.com"; 
 
     onAuthStateChanged(auth, (user) => {
-      if (user && user.email === ADMIN_EMAIL) {
-        document.getElementById('admin-content').style.display = 'block';
-        loadHistory();
-        loadCurrentSettings();
+      if (user) {
+        console.log("Logged in as:", user.email);
+        if (user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+          document.getElementById('admin-content').style.display = 'block';
+          loadHistory();
+          loadCurrentSettings();
+        } else {
+          alert("Access Denied. You are logged in as: " + user.email + "\nThis email does not match the admin record.");
+          window.location.href = "index.html";
+        }
       } else {
-        alert("Access Denied. You are not authorized to view this page.");
+        // If the user is definitely not logged in
+        console.log("No active session found. Redirecting...");
+        alert("Please log in on the home page first.");
         window.location.href = "index.html";
       }
     });

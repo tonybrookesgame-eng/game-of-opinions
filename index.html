@@ -110,13 +110,14 @@ header {
   width: 100%;
   background: rgba(199, 255, 56, 0.95);
   color: #041102;
-  height: 28px;
+  height: 32px;
   z-index: 999;
   display: flex;
   align-items: center;
   overflow: hidden;
   font-size: 11px;
   font-weight: 800;
+  line-height: 32px;
   text-transform: uppercase;
   border-bottom: 1px solid rgba(0,0,0,0.1);
 }
@@ -1092,6 +1093,10 @@ nav a:hover {
     top: 92px;
   }
 
+  .ticker-content {
+    animation-duration: 60s; /* Slower speed for mobile to improve readability on narrow screens */
+  }
+
   body {
     top: 72px; 
     padding-top: 120px;
@@ -1100,13 +1105,23 @@ nav a:hover {
   nav {
     display: flex;
     justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
+    flex-wrap: nowrap;
+    gap: 8px;
     margin-top: 10px;
+    width: 100%;
   }
+
+  nav div.user-only {
+    font-size: 9px !important;
+    padding: 3px 6px !important;
+  }
+
+  .nav-sep { display: none; }
+
   nav a {
     margin: 0;
     font-size: 14px;
+    font-size: 11px;
   }
 
   .hero {
@@ -1482,9 +1497,6 @@ nav a:hover {
       </div>
     </div>
   </div>
-</div>
-
-</div>
 </section>
 
 <!-- FEATURES -->
@@ -1576,6 +1588,7 @@ nav a:hover {
       Compete against your friends in private leagues or test your football acumen against others across the globe. Weekly points decide everything.
     </p>
   </div>
+</div>
 </section>
 
 <script type="module">
