@@ -127,6 +127,7 @@ header {
   display: flex;
   width: max-content;
   animation: ticker 15s linear infinite;
+  animation: ticker 30s linear infinite;
 }
 @keyframes ticker {
   0% { transform: translateX(0); }
@@ -1074,9 +1075,9 @@ nav a:hover {
 
 @media (max-width: 768px) {
 
-  header { /* Mobile header */
+  header {
     display: flex;
-    background: #000 !important;
+    background: rgba(0,0,0,0.9) !important;
     justify-content: center;
     flex-direction: column;
     align-items: center;
@@ -1097,13 +1098,15 @@ nav a:hover {
     background-position: center !important;
     background-size: contain !important;
   }
-  
-  .news-ticker { /* Mobile ticker position */
-    top: 82px; 
-    top: 72px; 
+
+  .news-ticker {
+    top: 92px;
   }
-  body { padding-top: 110px; } 
-  body { padding-top: 100px; } 
+
+  body {
+    top: 72px; 
+    padding-top: 120px;
+  } 
 
   nav {
     display: flex;
@@ -1317,43 +1320,30 @@ nav a:hover {
   }
 
 }
-
+}
 </style>
 
 </head>
 
 <body>
 
-<!-- HEADER --></a>
-  <span class="nav-sep user-only">&bull;spn
-s</a>
-  <span class="nav-ep user-only">&bull;spn
-<header>ue</a>
-  <span class="nav-sep sr-only">&bull;spn
-<div class="logo">les</a>
-  <span cass="nav-sp guet-only">&bull;spn
-  GAME <span>OF OPINIONS</span>n</a>
-  <span class="av-sep guest-only">&bull;spn
 <!-- HEADER -->
-
 <header>
-<div class="logo">
-  GAME <span>OF OPINIONS</span>
-</div>
-<nav>
-  <a href="myxi.html" class="user-only">Your Team</a>
-  <span class="nav-sep user-only">&bull;</span>
-  <a href="season.html" class="user-only">Season Picks</a>
-  <span class="nav-sep user-only">&bull;</span>
-  <a href="league.html" class="user-only">League</a>
-  <span class="nav-sep user-only">&bull;</span>
-  <a href="rules.html" class="guest-only">Rules</a>
-  <span class="nav-sep guest-only">&bull;</span>
-  <a href="javascript:void(0)" class="login-link guest-only" onclick="openLogin()">Log In</a>
-  <span class="nav-sep guest-only">&bull;</span>
-  <a href="signup.html" class="signup-btn guest-only">Sign Up</a>
-  <a href="javascript:void(0)" class="user-only" onclick="handleLogout()">Log Out</a>
-</nav>
+  <div class="logo">GAME <span>OF OPINIONS</span></div>
+  <nav>
+    <a href="myxi.html" class="user-only">Your Team</a>
+    <span class="nav-sep user-only">&bull;</span>
+    <a href="season.html" class="user-only">Season Picks</a>
+    <span class="nav-sep user-only">&bull;</span>
+    <a href="league.html" class="user-only">League</a>
+    <span class="nav-sep user-only">&bull;</span>
+    <a href="rules.html" class="guest-only">Rules</a>
+    <span class="nav-sep guest-only">&bull;</span>
+    <a href="javascript:void(0)" class="login-link guest-only" onclick="openLogin()">Log In</a>
+    <span class="nav-sep guest-only">&bull;</span>
+    <a href="signup.html" class="signup-btn guest-only">Sign Up</a>
+    <a href="javascript:void(0)" class="user-only" onclick="handleLogout()">Log Out</a>
+  </nav>
 </header>
 
 <!-- PREMIUM TICKER -->
@@ -1580,17 +1570,13 @@ s</a>
   <div class="card">
 
     <div class="card-icon">📅</div>
-
     <h3>No Weekly Stress</h3>
-
     <p>
-      For the players who struggle with the constant weekly admin. Game of Opinions lets you keep your form going with long-term picks so missing a week doesn't lead to a drop off.
+      Play at your own pace. Updates are automatic based on real-world results.
     </p>
-
   </div>
 
   <div class="card">
-
     <div class="card-icon">👥</div>
 
     <h3>Global Competition</h3>
@@ -1599,10 +1585,6 @@ s</a>
       Compete against your friends in private leagues or test your football acumen against others across the globe. Weekly points decide everything.
     </p>
   </div>
-    tVilhref="myxi.html">⚽<br>Team</a>
-  <a href="season.html">🏆<br>Picks</a>
-  <a href="league.html">📊<br>League</a>
-</div>
 </section>
 
 <script type="module">
