@@ -126,10 +126,13 @@ header {
   animation: ticker 30s linear infinite;
   display: flex;
   width: max-content;
+  animation: ticker 15s linear infinite;
 }
 @keyframes ticker {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
 }
 
 .logo {
@@ -1076,6 +1079,7 @@ nav a:hover {
     background: #000 !important;
     justify-content: center;
     flex-direction: column;
+    align-items: center;
     padding: 15px 10px;
     height: auto;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -1096,8 +1100,10 @@ nav a:hover {
   
   .news-ticker { /* Mobile ticker position */
     top: 82px; 
+    top: 72px; 
   }
   body { padding-top: 110px; } 
+  body { padding-top: 100px; } 
 
   nav {
     display: flex;
@@ -1328,6 +1334,11 @@ s</a>
   <span cass="nav-sp guet-only">&bull;spn
   GAME <span>OF OPINIONS</span>n</a>
   <span class="av-sep guest-only">&bull;spn
+<!-- HEADER -->
+
+<header>
+<div class="logo">
+  GAME <span>OF OPINIONS</span>
 </div>
 <nav>
   <a href="myxi.html" class="user-only">Your Team</a>
@@ -1350,6 +1361,7 @@ s</a>
   <div class="ticker-content">
     <span>⚠️ SCOUT ALERT: Haaland ownership reaches 94% • DIFFERENTIAL OF THE WEEK: Mbeumo (Brentford) • ⚡ TRENDING: A new 'Maverick' manager has entered the Top 100 • 42,000 Managers predicted 'YES' on the Match Predictor • Gameweek 1 Deadline Approaching... &nbsp;&nbsp;&nbsp;&nbsp;</span>
     <span>⚠️ SCOUT ALERT: Haaland ownership reaches 94% • DIFFERENTIAL OF THE WEEK: Mbeumo (Brentford) • ⚡ TRENDING: A new 'Maverick' manager has entered the Top 100 • 42,000 Managers predicted 'YES' on the Match Predictor • Gameweek 1 Deadline Approaching... &nbsp;&nbsp;&nbsp;&nbsp;</span>
+    ⚠️ SCOUT ALERT: Haaland ownership reaches 94% • DIFFERENTIAL OF THE WEEK: Mbeumo (Brentford) • ⚡ TRENDING: A new 'Maverick' manager has entered the Top 100 • 42,000 Managers predicted 'YES' on the Match Predictor • Gameweek 1 Deadline Approaching...
   </div>
 </div>
 
@@ -1587,6 +1599,9 @@ s</a>
       Compete against your friends in private leagues or test your football acumen against others across the globe. Weekly points decide everything.
     </p>
   </div>
+    tVilhref="myxi.html">⚽<br>Team</a>
+  <a href="season.html">🏆<br>Picks</a>
+  <a href="league.html">📊<br>League</a>
 </div>
 </section>
 
