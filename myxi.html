@@ -5,11 +5,9 @@
 <head>
 
 <meta charset="UTF-8" />
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
 <title>Your Team - Game of Opinions</title>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 
 /* =========================
@@ -726,6 +724,11 @@ button:hover {
   background: #f87171 !important;
   color: white !important;
 }
+.btn-share {
+  background: #38bdf8 !important; /* Sky blue for social sharing */
+  color: #000 !important;
+  margin-top: 10px;
+}
 
 .mobile-nav {
   /* Hide by default on desktop to prevent "weird text" */
@@ -868,10 +871,6 @@ MOBILE
     <a href="index.html">Home</a>
     <a href="myxi.html" class="user-only">Your Team</a>
     <a href="season.html" class="user-only">Season Picks</a>
-    <a href="league.html" class="user-only">League</a>
-    <a href="rules.html" class="guest-only">Rules</a>
-    <a href="javascript:void(0)" class="guest-only" onclick="location.href='index.html?login=true'">Log In</a>
-    <a href="signup.html" class="guest-only">Sign Up</a>
     <a href="javascript:void(0)" class="user-only" onclick="handleLogout()">Log Out</a>
 
   </nav>
@@ -879,6 +878,11 @@ MOBILE
 </header>
 
 <div class="container">
+
+<div id="countdown-timer-container" style="display: none; background: rgba(199,255,56,0.1); border: 1px solid #c7ff38; border-radius: 12px; padding: 15px 20px; text-align: center; margin-bottom: 20px; font-weight: bold; font-size: 16px; color: #c7ff38;">
+  NEXT DEADLINE: <span id="countdown-timer">Loading...</span>
+</div>
+
 
 <div class="team-name-ribbon">
   <div class="name-section">
@@ -1404,6 +1408,7 @@ onAuthStateChanged(auth, (user) => {
 window.handleLogout = () => {
   signOut(auth).then(() => {
     window.location.href = "index.html";
+    window.location.reload(); // Ensure reloads for full logout state
   });
 };
 const loadUserData = async function(uid) {
@@ -1473,10 +1478,12 @@ const loadUserData = async function(uid) {
   }
 
   refreshDropdowns(); // Ensure dropdowns reflect loaded selections
+  startCountdownAndCheckLock(); // Start the countdown and apply lock if past deadline
 }
 window.loadUserData = loadUserData;
 
 const saveTeam = async function() {
+  if (isLocked) { alert("Gameweek is locked!"); return; }
   if (!currentUser) {
     alert("Please log in to save your team.");
     return;
@@ -1522,6 +1529,7 @@ const saveTeam = async function() {
 window.saveTeam = saveTeam;
 
 const saveWeekly = async function() {
+  if (isLocked) { alert("Gameweek is locked!"); return; }
   if (!currentUser) {
     alert("Please log in to save your weekly picks.");
     return;
@@ -1542,6 +1550,7 @@ const saveWeekly = async function() {
 window.saveWeekly = saveWeekly;
 
 const saveBetBuilder = async function() {
+  if (isLocked) { alert("Gameweek is locked!"); return; }
   if (!currentUser) {
     alert("Please log in to save your bet prediction.");
     return;
@@ -1562,6 +1571,7 @@ const saveBetBuilder = async function() {
 window.saveBetBuilder = saveBetBuilder;
 
 const clearTeam = async function() {
+  if (isLocked) { alert("Gameweek is locked!"); return; }
   if (!currentUser) {
     alert("Please log in to clear your team.");
     return;
@@ -1587,6 +1597,6 @@ window.clearTeam = clearTeam;
 
 populateWeeklyOptions();
 loadCurrentBet();
-changeFormation(); // This ensures 4-4-2 is the default rendered state
+changeFormation();
 </script>
 </html>

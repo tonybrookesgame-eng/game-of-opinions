@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Process Points</title>
+  <style>
+    body { font-family: sans-serif; background: #020611; color: white; padding: 40px; }
+    .admin-card { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; border: 1px solid #c7ff38; }
+    input { padding: 8px; border-radius: 4px; border: none; width: 60px; }
+    .player-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #333; }
+    button { background: #c7ff38; color: #000; padding: 15px 30px; border: none; border-radius: 999px; font-weight: 800; cursor: pointer; margin-top: 20px; }
+    #admin-content { display: none; } /* Hide by default */
+    .admin-section { margin-top: 30px; padding-top: 20px; border-top: 1px solid #333; }
+    .admin-section select, .admin-section input { padding: 8px; border-radius: 4px; border: none; background: #fff; color: #000; }
+  </style>
+</head>
+<body>
+
+  <div id="admin-content" class="admin-card">
+    <h1>Gameweek Admin</h1>
+
+    <div class="admin-section" style="background: rgba(199,255,56,0.05); border: 1px solid #c7ff38; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+      <p style="margin-top: 0; font-weight: bold; color: #c7ff38;">Gameweek Settings</p>
+      <div style="margin-bottom: 15px;">
+        <label>Site Status:</label>
+        <select id="status-select" style="margin-left: 10px; width: 150px;">
+          <option value="open">OPEN (Allow Edits)</option>
+          <option value="locked">LOCKED (Read Only)</option>
+        </select>
+      </div>
+      <label>Next Deadline:</label>
+      <input type="datetime-local" id="deadline-input" style="width: 220px; background: #fff; color: #000; margin: 0 10px;">
+      <button onclick="setDeadline()" style="margin-top: 0; padding: 8px 20px; width: auto;">Set Deadline</button>
+    </div>
+
+    <div class="admin-section" style="border-top: none; margin-top: 0; padding-top: 0;">
+      <p>1. Gameweek Number</p>
+      <input type="number" id="gameweek-num" placeholder="e.g. 1" style="width: 100px; background: #fff; color: #000;">
+    </div>
+
+    <div class="admin-section">
+      <p>2. Enter points scored by each player this week.</p>
+      <div id="player-inputs">
+        <!-- We will populate this via JS -->
+      </div>
+    </div>
+    
+
+    <div class="admin-section">
+      <p>3. What was the result of the Scout's Bet Builder?</p>
+      <select id="bet-result" style="padding: 8px; border-radius: 4px; width: 200px;">
+        <option value="none">Did not happen / Ignore</option>
+        <option value="landed">Bet Landed (Success)</option>
+        <option value="failed">Bet Failed (Loss)</option>
+      </select>
+    </div>
+
+    <div class="admin-section">
+      <p>4. Weekly Picks Results</p>
+      <div style="display: flex; gap: 20px; align-items: center;">
+        <div>
+          <label>Winning Club:</label><br>
+          <select id="winning-club"><option value="none">Select Club</option></select>
+        </div>
+        <div>
+          <label>Winning Minute:</label><br>
+          <input type="text" id="winning-minute" placeholder="e.g. 12 or Other" style="width: 120px;">
+        </div>
+      </div>
+    </div>
+
+    <p>5. Once everything is set, run the calculation for all managers.</p>
+    <button onclick="processGameweek()">Process & Update Leaderboard</button>
+
+    <div class="admin-section">
+      <p>6. Reset Weekly Points for a new Gameweek</p>
+      <button onclick="resetWeeklyPoints()" style="background: #f87171;">Reset Weekly Points to 0</button>
+    </div>
+
+    <div class="admin-section">
+      <h2>Processing History</h2>
+      <div id="history-list">
+        <p style="color: #9ca3af;">Loading history...</p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, updateDoc, increment, setDoc, getDoc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBS3Fpobk342TpJw73mMgYOyUrWb-jBtfM",
+      authDomain: "game-of-opinions-97b14.firebaseapp.com",
+      projectId: "game-of-opinions-97b14",
+      storageBucket: "game-of-opinions-97b14.firebasestorage.app",
+      appId: "1:863518863234:web:3a2c2378a2a358e0b2299b"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // Sync this list with the names used in your myxi.html playersByPos object
+    const playersList = ["Haaland", "Salah", "Watkins", "Palmer", "Saka", "Odegaard", "Son", "Isak", "Bowen", "Mainoo", "Foden", "Havertz", "Mbeumo", "Gordon", "Alexander-Arnold", "Saliba", "Gvardiol"];
+    
+    const plClubs = ["Arsenal", "Aston Villa", "Bournemouth", "Brentford", "Brighton", "Chelsea", "Crystal Palace", "Everton", "Fulham", "Ipswich", "Leicester", "Liverpool", "Man City", "Man Utd", "Newcastle", "Nott'm Forest", "Southampton", "Spurs", "West Ham", "Wolves"];
+
+    const inputContainer = document.getElementById('player-inputs');
+    const clubDropdown = document.getElementById('winning-club');
+
+    plClubs.forEach(c => {
+      clubDropdown.innerHTML += `<option value="${c}">${c}</option>`;
+    });
+
+    // Create inputs for every player
+    playersList.forEach(p => {
+      inputContainer.innerHTML += `
+        <div class="player-row">
+          <span>${p}</span>
+          <input type="number" id="pts-${p}" value="0">
+        </div>
+      `;
+    });
+
+    // SECURITY: Only allow your specific email to see this or run it
+    const ADMIN_EMAIL = "tonybrookes.game@gmail.com"; // TODO: Replace with your actual Firebase email
+
+    onAuthStateChanged(auth, (user) => {
+      if (user && user.email === ADMIN_EMAIL) {
+        document.getElementById('admin-content').style.display = 'block';
+        loadHistory();
+        loadCurrentSettings();
+      } else {
+        alert("Access Denied. You are not authorized to view this page.");
+        window.location.href = "index.html";
+      }
+    });
+
+    async function loadCurrentSettings() {
+      const snap = await getDoc(doc(db, "settings", "gameweek"));
+      if (snap.exists()) {
+        const data = snap.data();
+        document.getElementById('deadline-input').value = data.deadline || "";
+        document.getElementById('status-select').value = data.status || "open";
+      }
+    }
+
+    window.setDeadline = async function() {
+      const deadline = document.getElementById('deadline-input').value;
+      const status = document.getElementById('status-select').value;
+      if (!deadline) {
+        alert("Please select a date and time.");
+        return;
+      }
+      try {
+        await setDoc(doc(db, "settings", "gameweek"), { deadline: deadline, status: status }, { merge: true });
+        alert("Settings updated successfully!");
+      } catch (e) {
+        console.error(e);
+        alert("Error saving deadline.");
+      }
+    };
+
+    async function loadHistory() {
+      const historyList = document.getElementById('history-list');
+      try {
+        const q = query(collection(db, "gameweekHistory"), orderBy("processedAt", "desc"), limit(10));
+        const snap = await getDocs(q);
+        
+        if (snap.empty) {
+          historyList.innerHTML = "<p>No history found.</p>";
+          return;
+        }
+
+        historyList.innerHTML = "";
+        snap.forEach(doc => {
+          const data = doc.data();
+          const date = data.processedAt.toDate().toLocaleString();
+          historyList.innerHTML += `
+            <div style="padding: 10px; border-bottom: 1px solid #333; font-size: 13px;">
+              <strong>GW ${data.gw}</strong> — Processed: ${date}<br>
+              <span style="color: #c7ff38;">Bet: ${data.betResult} | Club: ${data.winClub} | Min: ${data.winMin}</span>
+            </div>
+          `;
+        });
+      } catch (e) {
+        console.error(e);
+        historyList.innerHTML = "<p>Error loading history.</p>";
+      }
+    }
+
+    window.processGameweek = async function() {
+      const gwNum = document.getElementById('gameweek-num').value;
+      if (!gwNum) {
+        alert("Please enter a Gameweek Number.");
+        return;
+      }
+
+      // Check if this GW was already processed to prevent double-counting
+      const historyRef = doc(db, "gameweekHistory", "GW" + gwNum);
+      const historySnap = await getDoc(historyRef);
+      if (historySnap.exists()) {
+        if (!confirm("This Gameweek has already been processed! Processing again will add points AGAIN. Are you sure?")) return;
+      }
+
+      if (!confirm(`This will update points for ALL users for Gameweek ${gwNum}. Proceed?`)) return;
+
+      // 1. Get the points you just typed in
+      const currentScores = {};
+      playersList.forEach(p => {
+        currentScores[p] = parseInt(document.getElementById(`pts-${p}`).value) || 0;
+      });
+      const betResult = document.getElementById('bet-result').value;
+      const winClub = document.getElementById('winning-club').value;
+      const winMin = document.getElementById('winning-minute').value.trim();
+
+      try {
+        // 2. Fetch every user's team from the leaderboard
+        const leaderboardSnap = await getDocs(collection(db, "leaderboard"));
+        
+        for (const userDoc of leaderboardSnap.docs) {
+          const userId = userDoc.id;
+          const userData = userDoc.data();
+          
+          // 3. Get their specific team of 11 players
+          // Note: In your current saveTeam, you save players to users/{uid}/myxi/team
+          const teamSnap = await getDocs(collection(db, `users/${userId}/myxi`));
+          const teamDoc = teamSnap.docs.find(d => d.id === 'team'); // contains player names
+          const betDoc = teamSnap.docs.find(d => d.id === 'betBuilder'); // contains 'yes' or 'no'
+          const picksDoc = teamSnap.docs.find(d => d.id === 'weeklyPicks'); // contains firstScorer/goalMinute
+
+          let userWeeklyTotal = 0;
+          let userBetScore = 0;
+          let userPicksScore = 0;
+          let userPlayerScore = 0;
+
+          if (teamDoc && teamDoc.exists()) {
+            const players = teamDoc.data().players; // Array of 11 player names
+
+            // 4. Match their players against your point list
+            players.forEach(pName => {
+              if (currentScores[pName]) {
+                userPlayerScore += currentScores[pName];
+              }
+            });
+          }
+
+          // 5. Calculate Weekly Picks Points
+          if (picksDoc && picksDoc.exists()) {
+            const picks = picksDoc.data();
+            if (winClub !== 'none' && picks.first === winClub) userPicksScore += 10;
+            if (winMin !== '' && picks.minute == winMin) userPicksScore += 40;
+          }
+
+          userWeeklyTotal = userPlayerScore + userPicksScore;
+
+          // 6. Calculate Bet Builder Points
+          if (betDoc && betDoc.exists() && betResult !== 'none') {
+            const choice = betDoc.data().choice; // 'yes' or 'no'
+            userBetScore = -5; // Fixed entry fee
+
+            if (betResult === 'landed') {
+              userBetScore += (choice === 'yes' ? 155 : -155);
+            } else if (betResult === 'failed') {
+              userBetScore += (choice === 'no' ? 30 : -30);
+            }
+            
+            userWeeklyTotal += userBetScore;
+          }
+
+          // 7. Update the leaderboard if they scored anything or played the bet
+          if (userWeeklyTotal !== 0 || userBetScore !== 0 || userPicksScore !== 0) {
+            const leaderRef = doc(db, "leaderboard", userId);
+            await updateDoc(leaderRef, {
+              weeklyPoints: userWeeklyTotal,
+              totalPoints: increment(userWeeklyTotal)
+            });
+            
+            // Update detailed stats
+            const statsRef = doc(db, `users/${userId}/stats/points`);
+            await updateDoc(statsRef, {
+              selectionPts: increment(userPlayerScore),
+              picksPts: increment(userPicksScore),
+              betPts: increment(userBetScore),
+              totalPts: increment(userWeeklyTotal)
+            });
+          }
+        }
+
+        // 8. Save to History
+        await setDoc(doc(db, "gameweekHistory", "GW" + gwNum), {
+          gw: gwNum,
+          processedAt: new Date(),
+          betResult: betResult,
+          winClub: winClub,
+          winMin: winMin,
+          playerScores: currentScores
+        });
+
+        alert("Scores updated successfully!");
+        loadHistory();
+      } catch (err) {
+        console.error(err);
+        alert("Error processing scores.");
+      }
+    }
+
+    window.resetWeeklyPoints = async function() {
+      if (!confirm("Are you sure you want to reset 'Weekly Points' to 0 for ALL users? This cannot be undone.")) {
+        return;
+      }
+
+      try {
+        const leaderboardSnap = await getDocs(collection(db, "leaderboard"));
+        const batch = db.batch(); // Use a batch write for efficiency
+
+        leaderboardSnap.docs.forEach(docSnapshot => {
+          const leaderRef = doc(db, "leaderboard", docSnapshot.id);
+          batch.update(leaderRef, { weeklyPoints: 0 });
+        });
+
+        await batch.commit();
+        alert("Weekly Points reset to 0 for all users!");
+      } catch (err) {
+        console.error("Error resetting weekly points:", err);
+        alert("Failed to reset weekly points. Please try again.");
+      }
+    };
+  </script>
+</body>
+</html>

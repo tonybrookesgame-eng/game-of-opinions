@@ -1320,6 +1320,9 @@ nav a:hover {
 <header>
   <div class="logo">GAME <span>OF OPINIONS</span></div>
   <nav>
+    <div class="user-only" style="font-size: 11px; color: #c7ff38; background: rgba(199,255,56,0.1); padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(199,255,56,0.3);">
+      NEXT DEADLINE: <span id="deadline-timer">SAT 12:30</span>
+    </div>
     <a href="myxi.html" class="user-only">Your Team</a>
     <span class="nav-sep user-only">&bull;</span>
     <a href="season.html" class="user-only">Season Picks</a>
@@ -1351,7 +1354,7 @@ nav a:hover {
     <p id="auth-subtitle" style="position: relative; z-index: 2; color: #fff; font-weight: 700; margin-bottom: 20px; font-size: 14px;">Enter your credentials and get to work.</p>
     <input id="auth-email" class="auth-input" type="email" placeholder="Email Address" style="position: relative; z-index: 2;">
     <input id="auth-password" class="auth-input" type="password" placeholder="Password" style="position: relative; z-index: 2;">
-    <button id="auth-submit-btn" class="auth-submit-btn" onclick="handleAuth()" style="position: relative; z-index: 2;">Enter Stadium</button>
+    <button id="auth-submit-btn" class="auth-submit-btn" onclick="handleAuth()" style="position: relative; z-index: 2;">Start Your Journey</button>
     <p id="auth-switch-text" style="position: relative; z-index: 2; font-size: 12px; color: #fff; margin-top: 20px;">
       Need an account? <a href="signup.html" style="color: #c7ff38; font-weight: bold;">Sign Up</a>
     </p>
@@ -1578,6 +1581,7 @@ nav a:hover {
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBS3Fpobk342TpJw73mMgYOyUrWb-jBtfM",
@@ -1588,8 +1592,25 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 const auth = getAuth(app);
 console.log("Firebase initialized successfully");
+
+// DEADLINE LOADER
+const loadDeadline = async () => {
+  const snap = await getDoc(doc(db, "settings", "gameweek"));
+  if (snap.exists()) {
+    const data = snap.data();
+    if (data.status === 'locked') {
+      document.getElementById('deadline-timer').innerText = "GW LOCKED";
+    } else if (data.deadline) {
+      const d = new Date(data.deadline);
+      const options = { weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false };
+      document.getElementById('deadline-timer').innerText = d.toLocaleString('en-GB', options).toUpperCase();
+    }
+  }
+};
+loadDeadline();
 
 // NAV VISIBILITY
 onAuthStateChanged(auth, (user) => {
@@ -1644,5 +1665,4 @@ window.handleAuth = async function() {
 
 </script>
 </body>
-</html>
 </html>

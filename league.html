@@ -188,6 +188,23 @@ h1 {
 
 }
 
+/* MINI LEAGUE UI */
+.league-actions {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+.league-btn {
+  background: rgba(199, 255, 56, 0.1);
+  border: 1px solid #c7ff38;
+  color: #c7ff38;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+}
+
 /* RANK */
 
 .rank {
@@ -334,11 +351,19 @@ footer {
   <h1>League Leaderboard</h1>
   <p class="subtitle">Global ranking of all opinion-based managers.</p>
 
-  <div style="margin-bottom: 30px;"></div>
+  <div class="league-actions user-only">
+    <button class="league-btn" onclick="createLeague()">+ Create Private League</button>
+    <button class="league-btn" onclick="joinLeague()">Join with Code</button>
+  </div>
+
+  <div id="active-league-banner" style="display:none; margin-bottom: 15px; color: #c7ff38; font-weight: bold;">
+    Viewing League: <span id="league-name-display">...</span> 
+    <button onclick="loadLeaderboard(auth.currentUser)" style="background:none; border:none; color:white; cursor:pointer; text-decoration:underline; margin-left:10px;">(Back to Global)</button>
+  </div>
 
   <div class="leaderboard">
     <div class="leader-header">
-      <div>#</div>
+      <div id="rank-col-label">#</div>
       <div>Team Name</div>
       <div style="text-align: right;">Points</div>
       <div style="text-align: right;">This Week</div>
@@ -351,7 +376,7 @@ footer {
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, query, orderBy, getDocs, doc, setDoc, updateDoc, arrayUnion, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
   const firebaseConfig = {
@@ -366,13 +391,28 @@ footer {
   const db = getFirestore(app);
   const auth = getAuth(app);
 
-  async function loadLeaderboard(currentUser) {
+  async function loadLeaderboard(currentUser, leagueFilter = null) {
     const leaderboardBody = document.getElementById('leaderboard-body');
+    const banner = document.getElementById('active-league-banner');
+    
     leaderboardBody.innerHTML = '<div style="padding: 20px; text-align: center;">Scouting the league...</div>';
 
     try {
-      // Query the leaderboard collection, sorted by points
-      const q = query(collection(db, "leaderboard"), orderBy("totalPoints", "desc"));
+      let q;
+      if (leagueFilter) {
+        banner.style.display = 'block';
+        document.getElementById('league-name-display').innerText = `${leagueFilter.name} (Code: ${leagueFilter.code})`;
+        // Filter global leaderboard to only show members of this league
+        q = query(
+          collection(db, "leaderboard"), 
+          where("userId", "in", leagueFilter.members),
+          orderBy("totalPoints", "desc")
+        );
+      } else {
+        banner.style.display = 'none';
+        q = query(collection(db, "leaderboard"), orderBy("totalPoints", "desc"));
+      }
+      
       const querySnapshot = await getDocs(q);
       
       leaderboardBody.innerHTML = '';
@@ -410,6 +450,45 @@ footer {
       leaderboardBody.innerHTML = '<div style="padding: 20px; text-align: center; color: #f87171;">Failed to load leaderboard.</div>';
     }
   }
+  window.loadLeaderboard = loadLeaderboard;
+
+  window.createLeague = async () => {
+    const name = prompt("Enter League Name:");
+    if (!name) return;
+    const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const leagueId = "L-" + code;
+    
+    await setDoc(doc(db, "leagues", leagueId), {
+      name: name,
+      code: code,
+      creator: auth.currentUser.uid,
+      members: [auth.currentUser.uid]
+    });
+    alert(`League Created! Share code: ${code}`);
+    location.reload();
+  };
+
+  window.joinLeague = async () => {
+    const code = prompt("Enter 6-digit Invite Code:").toUpperCase();
+    if (!code) return;
+    const leagueId = "L-" + code;
+    const leagueRef = doc(db, "leagues", leagueId);
+    const snap = await getDocs(query(collection(db, "leagues"), where("code", "==", code)));
+    
+    if (snap.empty) {
+      alert("League not found!");
+      return;
+    }
+
+    const leagueDoc = snap.docs[0];
+    await updateDoc(doc(db, "leagues", leagueDoc.id), {
+      members: arrayUnion(auth.currentUser.uid)
+    });
+    
+    const data = leagueDoc.data();
+    const updatedMembers = [...data.members, auth.currentUser.uid];
+    loadLeaderboard(auth.currentUser, { ...data, members: updatedMembers });
+  };
 
   onAuthStateChanged(auth, (user) => {
     const userLinks = document.querySelectorAll('.user-only');
