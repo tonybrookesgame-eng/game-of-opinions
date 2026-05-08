@@ -1532,6 +1532,11 @@ const saveWeekly = async function() {
     alert("Please log in to save your weekly picks.");
     return;
   }
+  if (firstScorer.value === "Select" || goalMinute.value === "Select") {
+    alert("Please make both selections for your Weekly Picks (Club to Score First and Goal Minute) before saving.");
+    return;
+  }
+
   const data = {
     first: firstScorer.value,
     minute: goalMinute.value
@@ -1592,6 +1597,11 @@ const clearTeam = async function() {
 window.clearTeam = clearTeam;
 
 populateWeeklyOptions();
+loadCurrentBet();
+changeFormation();
+</script>
+</body>
+</html>eWeeklyOptions();
 loadCurrentBet();
 changeFormation();
 </script>
