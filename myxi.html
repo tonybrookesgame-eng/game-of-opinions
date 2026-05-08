@@ -736,6 +736,34 @@ button:hover {
 }
 
 /* =========================
+   POSITION RULES MODAL
+========================= */
+.rules-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.rules-card {
+  background: #0f172a;
+  border: 1px solid #c7ff38;
+  border-radius: 24px;
+  max-width: 400px;
+  width: 100%;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+.rules-card h2 { color: #c7ff38; margin-top: 0; text-transform: uppercase; font-size: 20px; }
+.rules-card p { font-size: 14px; color: #cbd5e1; line-height: 1.6; margin-bottom: 20px; }
+.rules-card ul { text-align: left; color: #cbd5e1; font-size: 13px; margin-bottom: 25px; }
+
+/* =========================
 
 MOBILE
 
@@ -1032,6 +1060,16 @@ MOBILE
 
 </div>
 
+<!-- POSITION RULES MODAL -->
+<div id="posRulesModal" class="rules-modal" onclick="this.style.display='none'">
+  <div class="rules-card" onclick="event.stopPropagation()">
+    <h2 id="posRulesTitle">Position Rules</h2>
+    <p id="posRulesText"></p>
+    <ul id="posRulesList"></ul>
+    <button onclick="document.getElementById('posRulesModal').style.display='none'">Got it, Coach</button>
+  </div>
+</div>
+
 <!-- FOOTER -->
 <footer>
   <div class="footer-logo">GAME <span>OF OPINIONS</span></div>
@@ -1042,7 +1080,7 @@ MOBILE
     <a href="league.html">League</a>
   </div>
   <div class="copyright">
-    &copy; 2024 Game of Opinions. All rights reserved.
+    &copy; 2026 Game of Opinions. All rights reserved.
   </div>
 </footer>
 
@@ -1062,17 +1100,17 @@ import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/fi
 const clubAbbr = {
   "Arsenal": "ARS", "Aston Villa": "AVL", "Bournemouth": "BOU", "Brentford": "BRE",
   "Brighton": "BHA", "Chelsea": "CHE", "Crystal Palace": "CRY", "Everton": "EVE",
-  "Fulham": "FUL", "Ipswich": "IPS", "Leicester": "LEI", "Liverpool": "LIV",
+  "Fulham": "FUL", "Leeds": "LEE", "Burnley": "BUR", "Liverpool": "LIV",
   "Man City": "MCI", "Man Utd": "MUN", "Newcastle": "NEW", "Nott'm Forest": "NFO",
-  "Southampton": "SOU", "Spurs": "TOT", "West Ham": "WHU", "Wolves": "WOL"
+  "Sunderland": "SUN", "Spurs": "TOT", "West Ham": "WHU", "Wolves": "WOL"
 };
 
 const playersByPos = {
   GK: [
     "Arsenal", "Aston Villa", "Bournemouth", "Brentford", "Brighton", 
-    "Chelsea", "Crystal Palace", "Everton", "Fulham", "Ipswich", 
-    "Leicester", "Liverpool", "Man City", "Man Utd", "Newcastle", 
-    "Nott'm Forest", "Southampton", "Spurs", "West Ham", "Wolves"
+    "Chelsea", "Crystal Palace", "Everton", "Fulham", "Leeds", 
+    "Burnley", "Liverpool", "Man City", "Man Utd", "Newcastle", 
+    "Nott'm Forest", "Sunderland", "Spurs", "West Ham", "Wolves"
   ],
   DEF: [
     { name: "Saliba", club: "Arsenal" }, { name: "Gabriel", club: "Arsenal" }, { name: "White", club: "Arsenal" },
@@ -1084,16 +1122,16 @@ const playersByPos = {
     { name: "Guehi", club: "Crystal Palace" }, { name: "Lacroix", club: "Crystal Palace" }, { name: "Munoz", club: "Crystal Palace" },
     { name: "Branthwaite", club: "Everton" }, { name: "Tarkowski", club: "Everton" }, { name: "Mykolenko", club: "Everton" },
     { name: "Andersen", club: "Fulham" }, { name: "Robinson", club: "Fulham" }, { name: "Bassey", club: "Fulham" },
-    { name: "Greaves", club: "Ipswich" }, { name: "Davis", club: "Ipswich" }, { name: "O'Shea", club: "Ipswich" },
-    { name: "Faes", club: "Leicester" }, { name: "Justin", club: "Leicester" }, { name: "Okoli", club: "Leicester" },
+    { name: "Rodon", club: "Leeds" }, { name: "Ampadu", club: "Leeds" }, { name: "Struijk", club: "Leeds" },
+    { name: "Esteve", club: "Burnley" }, { name: "Al-Dakhil", club: "Burnley" }, { name: "Egan-Riley", club: "Burnley" },
     { name: "Van Dijk", club: "Liverpool" }, { name: "Alexander-Arnold", club: "Liverpool" }, { name: "Konate", club: "Liverpool" },
     { name: "Gvardiol", club: "Man City" }, { name: "Akanji", club: "Man City" }, { name: "Dias", club: "Man City" },
     { name: "Martinez", club: "Man Utd" }, { name: "De Ligt", club: "Man Utd" }, { name: "Dalot", club: "Man Utd" },
     { name: "Schar", club: "Newcastle" }, { name: "Botman", club: "Newcastle" }, { name: "Hall", club: "Newcastle" },
     { name: "Murillo", club: "Nott'm Forest" }, { name: "Milenkovic", club: "Nott'm Forest" }, { name: "Aina", club: "Nott'm Forest" },
-    { name: "Bednarek", club: "Southampton" }, { name: "Harwood-Bellis", club: "Southampton" }, { name: "Sugawara", club: "Southampton" },
+    { name: "O'Nien", club: "Sunderland" }, { name: "Hume", club: "Sunderland" }, { name: "Ballard", club: "Sunderland" },
     { name: "Romero", club: "Spurs" }, { name: "Van de Ven", club: "Spurs" }, { name: "Porro", club: "Spurs" },
-    { name: "Kilman", club: "West Ham" }, { name: "Todibo", club: "West Ham" }, { name: "Emerson", club: "West Ham" },
+    { name: "Mavropanos", club: "West Ham" }, { name: "Todibo", club: "West Ham" }, { name: "Disasi", club: "West Ham" },
     { name: "Ait-Nouri", club: "Wolves" }, { name: "Bueno", club: "Wolves" }, { name: "Toti", club: "Wolves" }
   ],
   MID: [
@@ -1106,16 +1144,16 @@ const playersByPos = {
     { name: "Eze", club: "Crystal Palace" }, { name: "Wharton", club: "Crystal Palace" }, { name: "Kamada", club: "Crystal Palace" },
     { name: "McNeil", club: "Everton" }, { name: "Doucoure", club: "Everton" }, { name: "Gueye", club: "Everton" },
     { name: "Smith Rowe", club: "Fulham" }, { name: "Pereira", club: "Fulham" }, { name: "Iwobi", club: "Fulham" },
-    { name: "Hutchinson", club: "Ipswich" }, { name: "Morsy", club: "Ipswich" }, { name: "Szmodics", club: "Ipswich" },
-    { name: "Winks", club: "Leicester" }, { name: "Ndidi", club: "Leicester" }, { name: "Buonanotte", club: "Leicester" },
+    { name: "James", club: "Leeds" }, { name: "Gruev", club: "Leeds" }, { name: "Ramadani", club: "Leeds" },
+    { name: "Brownhill", club: "Burnley" }, { name: "Koleosho", club: "Burnley" }, { name: "Cullen", club: "Burnley" },
     { name: "Mac Allister", club: "Liverpool" }, { name: "Szoboszlai", club: "Liverpool" }, { name: "Gravenberch", club: "Liverpool" },
     { name: "De Bruyne", club: "Man City" }, { name: "Rodri", club: "Man City" }, { name: "Foden", club: "Man City" },
     { name: "Bruno Fernandes", club: "Man Utd" }, { name: "Mainoo", club: "Man Utd" }, { name: "Ugarte", club: "Man Utd" },
     { name: "Guimaraes", club: "Newcastle" }, { name: "Gordon", club: "Newcastle" }, { name: "Joelinton", club: "Newcastle" },
     { name: "Gibbs-White", club: "Nott'm Forest" }, { name: "Hudson-Odoi", club: "Nott'm Forest" }, { name: "Anderson", club: "Nott'm Forest" },
-    { name: "Mateus Fernandes", club: "Southampton" }, { name: "Downes", club: "Southampton" }, { name: "Lallana", club: "Southampton" },
+    { name: "Bellingham", club: "Sunderland" }, { name: "Roberts", club: "Sunderland" }, { name: "Rigg", club: "Sunderland" },
     { name: "Maddison", club: "Spurs" }, { name: "Kulusevski", club: "Spurs" }, { name: "Bentancur", club: "Spurs" },
-    { name: "Bowen", club: "West Ham" }, { name: "Kudus", club: "West Ham" }, { name: "Paqueta", club: "West Ham" },
+    { name: "Bowen", club: "West Ham" }, { name: "Summerville", club: "West Ham" }, { name: "Soucek", club: "West Ham" },
     { name: "Lemina", club: "Wolves" }, { name: "Joao Gomes", club: "Wolves" }, { name: "Andre", club: "Wolves" }
   ],
   FWD: [
@@ -1128,16 +1166,16 @@ const playersByPos = {
     { name: "Mateta", club: "Crystal Palace" }, { name: "Nketiah", club: "Crystal Palace" }, { name: "Sarr", club: "Crystal Palace" },
     { name: "Calvert-Lewin", club: "Everton" }, { name: "Ndiaye", club: "Everton" }, { name: "Beto", club: "Everton" },
     { name: "Jimenez", club: "Fulham" }, { name: "Muniz", club: "Fulham" }, { name: "Nelson", club: "Fulham" },
-    { name: "Delap", club: "Ipswich" }, { name: "Hirst", club: "Ipswich" }, { name: "Clarke", club: "Ipswich" },
-    { name: "Vardy", club: "Leicester" }, { name: "Mavididi", club: "Leicester" }, { name: "Ayew", club: "Leicester" },
+    { name: "Gnonto", club: "Leeds" }, { name: "Piroe", club: "Leeds" }, { name: "Joseph", club: "Leeds" },
+    { name: "Foster", club: "Burnley" }, { name: "Amdouni", club: "Burnley" }, { name: "Tresor", club: "Burnley" },
     { name: "Salah", club: "Liverpool" }, { name: "Diaz", club: "Liverpool" }, { name: "Nunez", club: "Liverpool" },
     { name: "Haaland", club: "Man City" }, { name: "Savinho", club: "Man City" }, { name: "Doku", club: "Man City" },
     { name: "Hojlund", club: "Man Utd" }, { name: "Rashford", club: "Man Utd" }, { name: "Garnacho", club: "Man Utd" },
     { name: "Isak", club: "Newcastle" }, { name: "Barnes", club: "Newcastle" }, { name: "Wilson", club: "Newcastle" },
     { name: "Wood", club: "Nott'm Forest" }, { name: "Awoniyi", club: "Nott'm Forest" }, { name: "Elanga", club: "Nott'm Forest" },
-    { name: "Archer", club: "Southampton" }, { name: "Armstrong", club: "Southampton" }, { name: "Brereton Diaz", club: "Southampton" },
+    { name: "Cirkin", club: "Sunderland" }, { name: "Mayenda", club: "Sunderland" }, { name: "Mundle", club: "Sunderland" },
     { name: "Son", club: "Spurs" }, { name: "Solanke", club: "Spurs" }, { name: "Johnson", club: "Spurs" },
-    { name: "Antonio", club: "West Ham" }, { name: "Fullkrug", club: "West Ham" }, { name: "Summerville", club: "West Ham" },
+    { name: "Taty", club: "West Ham" }, { name: "Pablo", club: "West Ham" }, { name: "Wilson", club: "West Ham" },
     { name: "Cunha", club: "Wolves" }, { name: "Larsen", club: "Wolves" }, { name: "Guedes", club: "Wolves" }
   ]
 };
@@ -1193,11 +1231,24 @@ const colors = {
   "Wolves": "linear-gradient(#fdb913, #231f20)"
 };
 
+const posAlertsShown = { GK: false, DEF: false, MID: false, FWD: false };
+const posRules = {
+  GK: { title: "Goalkeeper Scoring", text: "Goalkeepers are scored at the Club level. You earn points for the position's overall performance.", points: ["Appearance: +1", "Clean Sheet: +5", "Penalty Save: +5", "Assist: +10", "Goal: +20", "Yellow Card: -2", "Red Card: -6"] },
+  DEF: { title: "Defender Scoring", text: "Defenders provide stability and huge rewards for defensive discipline and attacking contributions.", points: ["Appearance: +1", "Clean Sheet: +5", "Goal: +6", "Assist: +6", "Yellow Card: -1", "Red Card: -5"] },
+  MID: { title: "Midfielder Scoring", text: "Midfielders are the creative engine, rewarded for both goals and controlling the game.", points: ["Appearance: +1", "Goal: +5", "Assist: +5", "Clean Sheet: +2", "Yellow Card: -1", "Red Card: -5"] },
+  FWD: { title: "Forward Scoring", text: "Strikers carry the heaviest burden for goals. High risk, high reward.", points: ["Appearance: +1", "Goal: +4", "Assist: +5", "Yellow Card: -1", "Red Card: -5"] }
+};
+
 const updateShirt = function(select) {
   const shirt = select.parentElement.querySelector('.shirt');
   const nameLabel = shirt.querySelector('.shirt-name');
   const rarityTag = select.parentElement.querySelector('.rarity-tag');
   const val = select.value;
+  const pos = select.dataset.pos;
+
+  if (val !== "Select" && !posAlertsShown[pos]) {
+    showPosPopup(pos);
+  }
   
   if (val === "Select") {
     shirt.style.background = "linear-gradient(#2563eb, #1d4ed8)";
@@ -1222,6 +1273,21 @@ const updateShirt = function(select) {
   refreshDropdowns();
 }
 window.updateShirt = updateShirt;
+
+function showPosPopup(pos) {
+  const modal = document.getElementById('posRulesModal');
+  const title = document.getElementById('posRulesTitle');
+  const text = document.getElementById('posRulesText');
+  const list = document.getElementById('posRulesList');
+
+  const rules = posRules[pos];
+  title.innerText = rules.title;
+  text.innerText = rules.text;
+  list.innerHTML = rules.points.map(p => `<li>${p}</li>`).join('');
+  
+  modal.style.display = 'flex';
+  posAlertsShown[pos] = true;
+}
 
 const changeFormation = function() {
   const formation = document.getElementById('formationSelect').value;
