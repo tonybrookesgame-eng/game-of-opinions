@@ -885,11 +885,6 @@ MOBILE
 
 <div class="container">
 
-<div id="countdown-timer-container" style="display: none; background: rgba(199,255,56,0.1); border: 1px solid #c7ff38; border-radius: 12px; padding: 15px 20px; text-align: center; margin-bottom: 20px; font-weight: bold; font-size: 16px; color: #c7ff38;">
-  NEXT DEADLINE: <span id="countdown-timer">Loading...</span>
-</div>
-
-
 <div class="team-name-ribbon">
   <div class="name-section">
     <span>Team Name:</span>
@@ -1484,12 +1479,10 @@ const loadUserData = async function(uid) {
   }
 
   refreshDropdowns(); // Ensure dropdowns reflect loaded selections
-  startCountdownAndCheckLock(); // Start the countdown and apply lock if past deadline
 }
 window.loadUserData = loadUserData;
 
 const saveTeam = async function() {
-  if (isLocked) { alert("Gameweek is locked!"); return; }
   if (!currentUser) {
     alert("Please log in to save your team.");
     return;
@@ -1535,7 +1528,6 @@ const saveTeam = async function() {
 window.saveTeam = saveTeam;
 
 const saveWeekly = async function() {
-  if (isLocked) { alert("Gameweek is locked!"); return; }
   if (!currentUser) {
     alert("Please log in to save your weekly picks.");
     return;
@@ -1556,7 +1548,6 @@ const saveWeekly = async function() {
 window.saveWeekly = saveWeekly;
 
 const saveBetBuilder = async function() {
-  if (isLocked) { alert("Gameweek is locked!"); return; }
   if (!currentUser) {
     alert("Please log in to save your bet prediction.");
     return;
@@ -1577,7 +1568,6 @@ const saveBetBuilder = async function() {
 window.saveBetBuilder = saveBetBuilder;
 
 const clearTeam = async function() {
-  if (isLocked) { alert("Gameweek is locked!"); return; }
   if (!currentUser) {
     alert("Please log in to clear your team.");
     return;
