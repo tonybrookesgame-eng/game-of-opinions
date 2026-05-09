@@ -820,15 +820,44 @@ MOBILE
     text-align: center;
   }
 
+  .team-name-ribbon {
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    gap: 15px;
+  }
+
+  .name-section {
+    flex-direction: column;
+    width: 100%;
+    min-width: 0;
+    gap: 12px;
+    align-items: center;
+  }
+
   .team-name-ribbon input {
+    max-width: 100%;
+    width: 100%;
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
     opacity: 1 !important;
   }
 
-  .weekly-panel {
-    text-align: center;
-    margin-bottom: 20px;
+  .history-selector {
+    margin-left: 0 !important;
+  }
+
+  .points-summary {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .point-item {
+    border: none !important;
+    padding: 0 !important;
+    flex: 1 1 40%;
   }
 
   .formation-selector {
@@ -942,12 +971,30 @@ MOBILE
     flex-direction: column;
   }
 
-  .right-side {
+  .right-side, .bottom-panels {
     width: 100%;
   }
 
   .bottom-panels {
     grid-template-columns: 1fr;
+  }
+}
+
+@media(max-width:400px){
+  .player {
+    width: 62px;
+    padding: 6px 2px;
+  }
+  .pitch {
+    gap: 8px;
+    padding-top: 45px;
+  }
+  .shirt {
+    width: 32px;
+    height: 32px;
+  }
+  .point-item {
+    flex: 1 1 100%;
   }
 }
 
@@ -1173,7 +1220,7 @@ MOBILE
     <a href="league.html">League</a>
   </div>
   <div class="copyright">
-    &copy; 2026 Game of Opinions. All rights reserved.
+    &copy; 2024 Game of Opinions. All rights reserved.
   </div>
 </footer>
 
