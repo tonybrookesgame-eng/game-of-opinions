@@ -151,19 +151,14 @@ p {
 }
 
 .main-layout{
-
-  display:flex;
-
+  display: flex;
+  flex-direction: row;
   gap: 30px;
-
   align-items: flex-start;
-
 }
 
-.left-side{
-
+.left-side {
   flex: 1.8;
-
 }
 
 .right-side {
@@ -173,23 +168,51 @@ p {
   gap: 24px;
 }
 
-.weekly-panel, .bet-builder-panel{
+.bottom-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  width: 100%;
+  margin-top: 20px;
+}
 
+.weekly-panel, .bet-builder-panel, .fixtures-panel{
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 18px;
   padding: 24px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.14);
+  min-height: 400px; /* Increased size to accommodate more fixtures */
   backdrop-filter: blur(12px);
 }
-.weekly-panel button, .bet-builder-panel button.save-btn {
+.weekly-panel button, .bet-builder-panel button.save-btn, .fixtures-panel button {
   margin-top: 20px;
 }
 
-.weekly-panel h2, .bet-builder-panel h2 {
+.weekly-panel h2, .bet-builder-panel h2, .fixtures-panel h2 {
   margin: 0 0 14px; /* Consistent with season.html .summary-card h2 */
   font-size: 18px; /* Consistent with season.html .summary-card h2 */
   color: #f8fafc; /* Consistent with season.html .summary-card h2 */
+}
+
+.fixture-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 12px;
+}
+.fixture-team { width: 40%; color: #fff; }
+.fixture-time { color: #c7ff38; font-weight: 800; width: 20%; text-align: center; font-size: 11px; }
+.fixture-date-header {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin-top: 12px;
+  border-bottom: 1px solid rgba(199, 255, 56, 0.3);
+  padding-bottom: 4px;
+  font-weight: 800;
 }
 
 footer {
@@ -361,13 +384,16 @@ footer {
   border: 1px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(4px);
 }
-.formation-selector span {
+.formation-selector { /* Position on the pitch */
+  left: 15px;
+}
+.formation-selector span, .history-selector span {
   font-size: 11px;
   font-weight: 700;
   color: #9ca3af;
   text-transform: uppercase;
 }
-.formation-selector select {
+.formation-selector select, .history-selector select {
   width: auto;
   min-width: auto;
   padding: 2px 4px;
@@ -549,28 +575,27 @@ ROWS + PLAYERS
   display:flex;
   justify-content:center;
   gap:12px;
-  z-index:2;
-
+  z-index: 2;
 }
 
-.player{
+.player {
   width: 85px;
   position: relative;
   text-align: center;
-  background: rgba(255,255,255,0.04); /* Consistent with season.html .card */
-  border: 1px solid rgba(255,255,255,0.08); /* Consistent with season.html .card */
-  border-radius: 18px; /* Consistent with season.html .card */
-  padding: 10px; /* Kept for player card size */
-  box-shadow: 0 10px 30px rgba(0,0,0,0.14); /* Consistent with season.html .card */
-  backdrop-filter: blur(12px); /* Consistent with season.html .card */
-  transition: transform 0.2s ease; /* Consistent with season.html .card */
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.14);
+  backdrop-filter: blur(12px);
+  transition: transform 0.2s ease;
 }
+
 .player:hover {
-  transform: translateY(-3px); /* Consistent with season.html .card */
-  border-color: rgba(255,255,255,0.16); /* Consistent with season.html .card */
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.16);
 }
-
-
+/* DIFFERENTIAL PULSE */
 /* DIFFERENTIAL PULSE */
 .rarity-tag {
   position: absolute;
@@ -657,6 +682,22 @@ ROWS + PLAYERS
   text-transform: uppercase;
   pointer-events: none;
   display: none;
+}
+
+.shirt-pts {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #c7ff38;
+  color: #041102;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 900;
+  display: none;
+  text-decoration: none;
+  z-index: 5;
 }
 
 select {
@@ -793,9 +834,9 @@ MOBILE
   }
 
   .formation-selector {
-    left: 50%;
-    transform: translateX(-50%);
-    top: 10px;
+    left: 10px;
+    transform: none;
+    top: 15px;
     width: max-content;
   }
 
@@ -875,19 +916,21 @@ MOBILE
   }
 
   .mobile-nav a {
-    text-decoration: none;
     color: white;
     font-size: 12px;
-    text-align: center;
-    margin-left: 0;
   }
 
-  .main-layout{
-
-    flex-direction:column;
-
+  .main-layout {
+    flex-direction: column;
   }
 
+  .right-side {
+    width: 100%;
+  }
+
+  .bottom-panels {
+    grid-template-columns: 1fr;
+  }
 }
 
 </style>
@@ -905,6 +948,10 @@ MOBILE
     <a href="index.html">Home</a>
     <a href="myxi.html" class="user-only">Your Team</a>
     <a href="season.html" class="user-only">Season Picks</a>
+    <a href="league.html" class="user-only">League</a>
+    <a href="rules.html" class="guest-only">Rules</a>
+    <a href="javascript:void(0)" class="guest-only" onclick="location.href='index.html?login=true'">Log In</a>
+    <a href="signup.html" class="guest-only">Sign Up</a>
     <a href="javascript:void(0)" class="user-only" onclick="handleLogout()">Log Out</a>
 
   </nav>
@@ -917,6 +964,12 @@ MOBILE
   <div class="name-section">
     <span>Team Name:</span>
     <input type="text" id="teamNameInput" placeholder="Enter Team Name">
+    <div class="history-selector" style="position: static; margin-left: 10px; border: none; background: none; padding: 0;">
+      <span>History:</span>
+      <select id="gameweekHistorySelect" onchange="loadSelectedGameweekHistory()" style="width: auto; min-width: 120px; padding: 5px 8px; font-size: 13px;">
+        <option value="">Live</option>
+      </select>
+    </div>
     <button id="saveTeamBtn" onclick="saveTeam()" style="width: auto; padding: 8px 16px;">Save</button>
   </div>
   
@@ -937,7 +990,7 @@ MOBILE
 
 <div class="main-layout">
 
-<!-- LEFT -->
+<!-- LEFT SIDE - PITCH -->
 
 <div class="left-side">
 
@@ -965,39 +1018,39 @@ MOBILE
 <!-- GK -->
 
 <div class="row">
-<div class="player" style="position:relative;"><div class="rarity-tag">DIFF</div>
-<div class="shirt"><div class="shirt-name"></div></div>
-<select data-pos="GK" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select>
-</div>
-
+  <div class="player" style="position:relative;">
+    <div class="rarity-tag">DIFF</div>
+    <div class="shirt">
+      <div class="shirt-name"></div>
+      <a href="admin.html" class="shirt-pts"></a>
+    </div>
+    <select data-pos="GK" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select>
+  </div>
 </div>
 
 <!-- DEF -->
 
 <div class="row">
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
 </div>
 
 <!-- MID -->
-
 <div class="row">
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
 
 </div>
 
 <!-- FWD -->
 
 <div class="row">
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div></div><select data-pos="FWD" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div></div><select data-pos="FWD" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="FWD" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="FWD" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
 </div>
 
 </div>
@@ -1011,11 +1064,20 @@ MOBILE
   <button onclick="saveTeam()">Save Team</button>
 </div>
 
+</div> <!-- End left-side -->
+
+<!-- RIGHT SIDE PANELS (Fixtures only) -->
+<div class="right-side">
+  <div class="fixtures-panel">
+    <h2>Upcoming Fixtures</h2>
+    <div id="fixtures-list"></div>
+  </div>
 </div>
 
-<!-- RIGHT SIDE PANELS -->
-<div class="right-side">
+</div> <!-- End main-layout -->
 
+<!-- BOTTOM PANELS (Weekly Picks and Bet Builder) -->
+<div class="bottom-panels">
   <div class="weekly-panel">
     <h2>Weekly Picks</h2>
     <p style="font-size: 13px; color: #9ca3af; margin-bottom: 5px; display: flex; justify-content: space-between;">
@@ -1037,7 +1099,7 @@ MOBILE
   </div>
 
   <div class="bet-builder-panel">
-    <h2>Bet Builder</h2>
+    <h2>Scout's Bet Builder</h2>
     <div class="bet-match" id="betMatchDisplay">Loading match...</div>
     <ul class="bet-list" id="betPicksDisplay"></ul>
     <div class="bet-odds-box">
@@ -1051,13 +1113,8 @@ MOBILE
     <div class="bet-info" id="betInfo">
       Pick if the bet lands. Cost: 5 pts to play.
     </div>
-    <button class="save-btn" onclick="saveBetBuilder()">Save Bet Prediction</button>
+    <button class="save-btn" id="saveBetBuilderBtn" onclick="saveBetBuilder()">Save Bet Prediction</button>
   </div>
-
-</div>
-
-</div>
-
 </div>
 
 <!-- POSITION RULES MODAL -->
@@ -1067,6 +1124,15 @@ MOBILE
     <p id="posRulesText"></p>
     <ul id="posRulesList"></ul>
     <button onclick="document.getElementById('posRulesModal').style.display='none'">Got it, Coach</button>
+  </div>
+</div>
+
+<!-- Gameweek Locked Modal -->
+<div id="gameweekLockedModal" class="rules-modal">
+  <div class="rules-card">
+    <h2>Gameweek Closed</h2>
+    <p>Selections will re-open once points are processed.</p>
+    <button onclick="document.getElementById('gameweekLockedModal').style.display='none'">Got it</button>
   </div>
 </div>
 
@@ -1094,7 +1160,7 @@ MOBILE
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const clubAbbr = {
@@ -1117,14 +1183,14 @@ const playersByPos = {
     { name: "Konsa", club: "Aston Villa" }, { name: "Pau Torres", club: "Aston Villa" }, { name: "Maatsen", club: "Aston Villa" }, { name: "Cash", club: "Aston Villa" },
     { name: "Senesi", club: "Bournemouth" }, { name: "Truffert", club: "Bournemouth" }, { name: "Diakite", club: "Bournemouth" },
     { name: "Pinnock", club: "Brentford" }, { name: "Collins", club: "Brentford" }, { name: "Van den Berg", club: "Brentford" }, { name: "Kayode", club: "Brentford" },
-    { name: "Dunk", club: "Brighton" }, { name: "Van Hecke", club: "Brighton" }, { name: "Van Hecke", club: "Brighton" }, { name: "Kadioglu", club: "Brighton" },
+    { name: "Dunk", club: "Brighton" }, { name: "Van Hecke", club: "Brighton" }, { name: "Kadioglu", club: "Brighton" },
     { name: "Colwill", club: "Chelsea" }, { name: "Fofana", club: "Chelsea" }, { name: "James", club: "Chelsea" }, { name: "Cucurella", club: "Chelsea" }, { name: "Gusto", club: "Chelsea" },
     { name: "Richards", club: "Crystal Palace" }, { name: "Lacroix", club: "Crystal Palace" }, { name: "Munoz", club: "Crystal Palace" }, { name: "Mitchell", club: "Crystal Palace" },
     { name: "Branthwaite", club: "Everton" }, { name: "Tarkowski", club: "Everton" }, { name: "Mykolenko", club: "Everton" }, { name: "OBrien", club: "Everton" },
     { name: "Andersen", club: "Fulham" }, { name: "Robinson", club: "Fulham" }, { name: "Bassey", club: "Fulham" }, { name: "Diop", club: "Fulham" },
     { name: "Rodon", club: "Leeds" }, { name: "Ampadu", club: "Leeds" }, { name: "Struijk", club: "Leeds" },
     { name: "Esteve", club: "Burnley" }, { name: "Al-Dakhil", club: "Burnley" }, { name: "Egan-Riley", club: "Burnley" },
-    { name: "Van Dijk", club: "Liverpool" }, { name: "Kerkez", club: "Liverpool" }, { name: "Konate", club: "Liverpool" }, { name: "Robertson", club: "Liverpool" }, { name: "Gomez", club: "Liverpool" }, { name: "Frimpong", club: "Liverpool" },
+    { name: "Van Dijk", club: "Liverpool" }, { name: "Kerkez", club: "Bournemouth" }, { name: "Konate", club: "Liverpool" }, { name: "Robertson", club: "Liverpool" }, { name: "Gomez", club: "Liverpool" }, { name: "Frimpong", club: "Liverpool" },
     { name: "Gvardiol", club: "Man City" }, { name: "Khusanov", club: "Man City" }, { name: "Dias", club: "Man City" }, { name: "O'Reilly", club: "Man City" }, { name: "Guehi", club: "Man City" }, { name: "Ait-Nouri", club: "Man City" },
     { name: "Martinez", club: "Man Utd" }, { name: "De Ligt", club: "Man Utd" }, { name: "Dalot", club: "Man Utd" }, { name: "Yoro", club: "Man Utd" }, { name: "Shaw", club: "Man Utd" },
     { name: "Schar", club: "Newcastle" }, { name: "Botman", club: "Newcastle" }, { name: "Hall", club: "Newcastle" }, { name: "Burn", club: "Newcastle" }, { name: "Thiaw", club: "Newcastle" }, { name: "Livramento", club: "Newcastle" },
@@ -1172,11 +1238,11 @@ const playersByPos = {
     { name: "Haaland", club: "Man City" }, { name: "Marmoush", club: "Man City" },
     { name: "Hojlund", club: "Man Utd" }, { name: "Sesko", club: "Man Utd" }, { name: "Cunha", club: "Man Utd" },
     { name: "Wissa", club: "Newcastle" }, { name: "Woltemade", club: "Newcastle" }, { name: "Osula", club: "Newcastle" },
-    { name: "Wood", club: "Nott'm Forest" }, { name: "Awoniyi", club: "Nott'm Forest" }, { name: "Jesus", club: "Nott'm Forest" },
+    { name: "Wood", club: "Nott'm Forest" }, { name: "Awoniyi", club: "Nott'm Forest" },
     { name: "Isidor", club: "Sunderland" }, { name: "Mayenda", club: "Sunderland" }, { name: "Brobbey", club: "Sunderland" },
     { name: "Richarlison", club: "Spurs" }, { name: "Solanke", club: "Spurs" }, { name: "Tel", club: "Spurs" },
     { name: "Taty", club: "West Ham" }, { name: "Pablo", club: "West Ham" }, { name: "Wilson", club: "West Ham" },
-    { name: "Arokodare", club: "Wolves" }, { name: "Armstrong", club: "Wolves" },
+    { name: "Arokodare", club: "Wolves" },
   ]
 };
 
@@ -1230,7 +1296,6 @@ const colors = {
   "West Ham": "linear-gradient(#7a263a, #1bb1e7)",
   "Wolves": "linear-gradient(#fdb913, #231f20)"
 };
-
 const posAlertsShown = { GK: false, DEF: false, MID: false, FWD: false };
 const posRules = {
   GK: { title: "Goalkeeper Scoring", text: "Goalkeepers are scored at the Club level. You earn points for the position's overall performance.", points: ["Appearance: +1", "Clean Sheet: +5", "Penalty Save: +5", "Assist: +10", "Goal: +20", "Yellow Card: -2", "Red Card: -6"] },
@@ -1239,12 +1304,19 @@ const posRules = {
   FWD: { title: "Forward Scoring", text: "Strikers carry the heaviest burden for goals. High risk, high reward.", points: ["Appearance: +1", "Goal: +4", "Assist: +5", "Yellow Card: -1", "Red Card: -5"] }
 };
 
+window.currentDisplayedPlayerScores = {}; // Global variable for currently displayed player scores
 const updateShirt = function(select) {
   const shirt = select.parentElement.querySelector('.shirt');
   const nameLabel = shirt.querySelector('.shirt-name');
+  const ptsLabel = shirt.querySelector('.shirt-pts');
   const rarityTag = select.parentElement.querySelector('.rarity-tag');
   const val = select.value;
   const pos = select.dataset.pos;
+
+  if (window.currentDisplayedPlayerScores && window.currentDisplayedPlayerScores[val] !== undefined) {
+    ptsLabel.innerText = window.currentDisplayedPlayerScores[val] + " PTS";
+    ptsLabel.style.display = "block";
+  }
 
   if (val !== "Select" && !posAlertsShown[pos]) {
     showPosPopup(pos);
@@ -1254,6 +1326,8 @@ const updateShirt = function(select) {
     shirt.style.background = "linear-gradient(#2563eb, #1d4ed8)";
     nameLabel.innerText = "";
     nameLabel.style.display = "none";
+    ptsLabel.innerText = "";
+    ptsLabel.style.display = "none";
     if(rarityTag) { rarityTag.style.display = "none"; updateMaverickMeter(); }
     return;
   }
@@ -1270,9 +1344,51 @@ const updateShirt = function(select) {
   const team = playerToClub[val] || val;
   nameLabel.innerText = clubAbbr[team] || team.substring(0,3).toUpperCase();
   shirt.style.background = colors[team] || "linear-gradient(#2563eb, #1d4ed8)";
+
+  if (window.currentDisplayedPlayerScores && window.currentDisplayedPlayerScores[val] !== undefined) {
+    ptsLabel.innerText = window.currentDisplayedPlayerScores[val] + " PTS";
+    ptsLabel.style.display = "block";
+  }
+
   refreshDropdowns();
 }
 window.updateShirt = updateShirt;
+
+const loadFixtures = () => {
+  const list = document.getElementById('fixtures-list');
+  const fixtures = [
+    { date: "Saturday 24th Aug", games: [
+      { home: "Arsenal", away: "Aston Villa", time: "12:30" },
+      { home: "Man City", away: "Ipswich", time: "15:00" },
+      { home: "Spurs", away: "Everton", time: "15:00" },
+      { home: "Chelsea", away: "Fulham", time: "15:00" },
+      { home: "Brighton", away: "Newcastle", time: "17:30" }
+    ]},
+    { date: "Sunday 25th Aug", games: [
+      { home: "Wolves", away: "Chelsea", time: "14:00" },
+      { home: "Liverpool", away: "Brentford", time: "16:30" },
+      { home: "Man Utd", away: "Nott'm Forest", time: "16:30" }
+    ]},
+    { date: "Monday 26th Aug", games: [
+      { home: "Crystal Palace", away: "Burnley", time: "20:00" },
+      { home: "Leeds", away: "Sunderland", time: "20:00" }
+    ]}
+  ];
+
+  list.innerHTML = '';
+  fixtures.forEach(day => {
+    list.innerHTML += `<div class="fixture-date-header">${day.date}</div>`;
+    day.games.forEach(g => {
+      list.innerHTML += `
+        <div class="fixture-item">
+          <div class="fixture-team" style="text-align:right;">${g.home}</div>
+          <div class="fixture-time">${g.time}</div>
+          <div class="fixture-team" style="text-align:left;">${g.away}</div>
+        </div>
+      `;
+    });
+  });
+};
 
 function showPosPopup(pos) {
   const modal = document.getElementById('posRulesModal');
@@ -1325,7 +1441,7 @@ const updatePitchRow = function(row, pos, count) {
     const subAdvanced = document.createElement('div');
     subAdvanced.className = 'pitch-sub-row';
     
-    const playerHTML = `<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div></div><select data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div>`;
+    const playerHTML = `<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div>`;
     
     for(let i=0; i<4; i++) subBase.innerHTML += playerHTML;
     subAdvanced.innerHTML += playerHTML;
@@ -1335,7 +1451,7 @@ const updatePitchRow = function(row, pos, count) {
     row.appendChild(subAdvanced);
   } else {
     for(let i=0; i<count; i++) {
-      row.innerHTML += `<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div></div><select data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div>`;
+      row.innerHTML += `<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div>`;
     }
   }
 }
@@ -1368,11 +1484,13 @@ const populatePlayers = function() {
       playersByPos[pos].forEach(p => {
         let opt = document.createElement('option');
         if (typeof p === 'string') {
+          const abbr = clubAbbr[p] || p.substring(0, 3).toUpperCase();
           opt.value = p;
-          opt.innerHTML = p;
+          opt.innerHTML = `${p} (${abbr})`;
         } else {
+          const abbr = clubAbbr[p.club] || p.club.substring(0, 3).toUpperCase();
           opt.value = p.name;
-          opt.innerHTML = p.name;
+          opt.innerHTML = `${p.name} (${abbr})`;
         }
         s.appendChild(opt);
       });
@@ -1422,6 +1540,43 @@ const populateWeeklyOptions = function() {
 }
 window.populateWeeklyOptions = populateWeeklyOptions;
 
+// Gameweek History Logic
+let allGameweekHistory = []; // Global variable to store all gameweek history for dropdown
+
+const populateGameweekHistoryDropdown = async () => {
+  const historySelect = document.getElementById('gameweekHistorySelect');
+  historySelect.innerHTML = '<option value="">Live</option>'; // Reset
+
+  const q = query(collection(db, "gameweekHistory"), orderBy("gw", "desc")); // Order by GW number
+  const querySnapshot = await getDocs(q);
+  allGameweekHistory = []; // Clear previous data
+
+  querySnapshot.forEach((doc) => {
+    const data = doc.data();
+    allGameweekHistory.push(data);
+    const option = document.createElement('option');
+    option.value = data.gw;
+    option.innerText = `Gameweek ${data.gw}`;
+    historySelect.appendChild(option);
+  });
+};
+
+const loadSelectedGameweekHistory = () => {
+  const selectedGw = document.getElementById('gameweekHistorySelect').value;
+
+  if (!selectedGw) {
+      // If "Live" selected, the onSnapshot listener will handle updates
+      return;
+  }
+
+  const gwData = allGameweekHistory.find(gw => gw.gw == selectedGw); // Use == for type coercion
+  if (gwData) {
+    window.currentDisplayedPlayerScores = gwData.playerScores || {}; // Set global variable
+    document.querySelectorAll('.pitch select').forEach(s => updateShirt(s)); // Refresh shirts
+  }
+};
+window.loadSelectedGameweekHistory = loadSelectedGameweekHistory; // Make it global
+
 let currentUser = null;
 const setBetChoice = function(choice) {
   currentBetChoice = choice;
@@ -1450,6 +1605,33 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
+let gameweekStatus = 'open'; // Default to open
+
+// Listener for gameweek settings (status and deadline)
+const gameweekSettingsRef = doc(db, "settings", "gameweek");
+onSnapshot(gameweekSettingsRef, (docSnap) => {
+    if (docSnap.exists()) {
+        const settings = docSnap.data();
+        gameweekStatus = settings.status || 'open';
+        const isLocked = gameweekStatus === 'locked';
+
+        // Update deadline timer in header
+        if (settings.status === 'locked') {
+            document.querySelector('header .user-only #deadline-timer').innerText = "GW LOCKED";
+        } else if (settings.deadline) {
+            const d = new Date(settings.deadline);
+            const options = { weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false };
+            document.querySelector('header .user-only #deadline-timer').innerText = d.toLocaleString('en-GB', options).toUpperCase();
+        }
+
+        // Disable/Enable save buttons
+        document.getElementById('saveTeamBtn').disabled = isLocked;
+        document.getElementById('saveWeeklyBtn').disabled = isLocked;
+        document.getElementById('saveBetBuilderBtn').disabled = isLocked;
+        document.getElementById('gameweekLockedModal').style.display = isLocked ? 'flex' : 'none';
+    }
+});
+
 let authRedirectTimer;
 
 onAuthStateChanged(auth, (user) => {
@@ -1458,7 +1640,7 @@ onAuthStateChanged(auth, (user) => {
   if (user) {
     if (authRedirectTimer) clearTimeout(authRedirectTimer);
     currentUser = user;
-    loadUserData(user.uid);
+    loadUserData(user.uid); // This will call populateWeeklyOptions, loadCurrentBet, changeFormation
     userLinks.forEach(l => l.style.display = 'inline-block');
     guestLinks.forEach(l => l.style.display = 'none');
   } else {
@@ -1478,9 +1660,9 @@ window.handleLogout = () => {
     window.location.reload(); // Ensure reloads for full logout state
   });
 };
+
 const loadUserData = async function(uid) {
-  populateWeeklyOptions();
-  loadCurrentBet();
+  // populateWeeklyOptions and loadCurrentBet are now called by the onAuthStateChanged listener
 
   // Load Team Data
   const teamDocRef = doc(db, "users", uid, "myxi", "team");
@@ -1512,41 +1694,20 @@ const loadUserData = async function(uid) {
       });
     }
   } else {
-    // If no user data exists, initialize the default 4-4-2 pitch
-    changeFormation();
+    console.log("No saved team found for user.");
   }
+  populateGameweekHistoryDropdown(); // Populate history dropdown after user data is loaded
+};
 
-  // Load Weekly Picks
-  const weeklyDocRef = doc(db, "users", uid, "myxi", "weeklyPicks");
-  const weeklyDocSnap = await getDoc(weeklyDocRef);
-  if (weeklyDocSnap.exists()) {
-    const weeklyData = weeklyDocSnap.data();
-    if (weeklyData.first) document.getElementById('firstScorer').value = weeklyData.first;
-    if (weeklyData.minute) document.getElementById('goalMinute').value = weeklyData.minute;
+// REAL-TIME SCORE SYNC
+window.currentDisplayedPlayerScores = {}; // Use this for both latest and historical scores
+onSnapshot(query(collection(db, "gameweekHistory"), orderBy("processedAt", "desc"), limit(1)), (snapshot) => {
+  if (!snapshot.empty) {
+    window.currentDisplayedPlayerScores = snapshot.docs[0].data().playerScores || {};
+    // Refresh all shirts on the pitch to show new points
+    document.querySelectorAll('.pitch select').forEach(s => updateShirt(s));
   }
-
-  // Load Bet Builder
-  const betBuilderDocRef = doc(db, "users", uid, "myxi", "betBuilder");
-  const betBuilderDocSnap = await getDoc(betBuilderDocRef);
-  if (betBuilderDocSnap.exists()) {
-    const betBuilderData = betBuilderDocSnap.data();
-    if (betBuilderData.choice) setBetChoice(betBuilderData.choice);
-  }
-
-  // Load Points Data (This would be updated by your server/backend script)
-  const statsDocRef = doc(db, "users", uid, "stats", "points");
-  const statsDocSnap = await getDoc(statsDocRef);
-  if (statsDocSnap.exists()) {
-    const s = statsDocSnap.data();
-    document.getElementById('pts-selection').innerText = s.selectionPts || 0;
-    document.getElementById('pts-picks').innerText = s.picksPts || 0;
-    document.getElementById('pts-bet').innerText = s.betPts || 0;
-    document.getElementById('pts-total').innerText = s.totalPts || 0;
-  }
-
-  refreshDropdowns(); // Ensure dropdowns reflect loaded selections
-}
-window.loadUserData = loadUserData;
+});
 
 const saveTeam = async function() {
   if (!currentUser) {
@@ -1662,12 +1823,8 @@ const clearTeam = async function() {
 }
 window.clearTeam = clearTeam;
 
+loadFixtures();
 populateWeeklyOptions();
-loadCurrentBet();
-changeFormation();
-</script>
-</body>
-</html>eWeeklyOptions();
 loadCurrentBet();
 changeFormation();
 </script>

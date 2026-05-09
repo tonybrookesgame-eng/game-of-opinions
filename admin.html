@@ -126,6 +126,14 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
 
+    const clubAbbr = {
+      "Arsenal": "ARS", "Aston Villa": "AVL", "Bournemouth": "BOU", "Brentford": "BRE",
+      "Brighton": "BHA", "Chelsea": "CHE", "Crystal Palace": "CRY", "Everton": "EVE",
+      "Fulham": "FUL", "Leeds": "LEE", "Burnley": "BUR", "Liverpool": "LIV",
+      "Man City": "MCI", "Man Utd": "MUN", "Newcastle": "NEW", "Nott'm Forest": "NFO",
+      "Sunderland": "SUN", "Spurs": "TOT", "West Ham": "WHU", "Wolves": "WOL"
+    };
+
     // Detailed Point Rules from Spec
     const rules = {
       GK:  { app: 1, gl: 20, ast: 10, cs: 5, ps: 5, yc: -2, rc: -6 },
@@ -137,70 +145,70 @@
     // Players organized by position to apply correct logic
     const playersData = [
       // DEFENDERS
-      { name: "Saliba", pos: "DEF" }, { name: "Gabriel", pos: "DEF" }, { name: "White", pos: "DEF" }, { name: "Calafiori", pos: "DEF" },
-      { name: "Konsa", pos: "DEF" }, { name: "Pau Torres", pos: "DEF" }, { name: "Maatsen", pos: "DEF" }, { name: "Cash", pos: "DEF" },
-      { name: "Senesi", pos: "DEF" }, { name: "Truffert", pos: "DEF" }, { name: "Diakite", pos: "DEF" },
-      { name: "Pinnock", pos: "DEF" }, { name: "Collins", pos: "DEF" }, { name: "Van den Berg", pos: "DEF" }, { name: "Kayode", pos: "DEF" },
-      { name: "Dunk", pos: "DEF" }, { name: "Van Hecke", pos: "DEF" }, { name: "Kadioglu", pos: "DEF" },
-      { name: "Colwill", pos: "DEF" }, { name: "Fofana", pos: "DEF" }, { name: "James", pos: "DEF" }, { name: "Cucurella", pos: "DEF" }, { name: "Gusto", pos: "DEF" },
-      { name: "Richards", pos: "DEF" }, { name: "Lacroix", pos: "DEF" }, { name: "Munoz", pos: "DEF" }, { name: "Mitchell", pos: "DEF" },
-      { name: "Branthwaite", pos: "DEF" }, { name: "Tarkowski", pos: "DEF" }, { name: "Mykolenko", pos: "DEF" }, { name: "OBrien", pos: "DEF" },
-      { name: "Andersen", pos: "DEF" }, { name: "Robinson", pos: "DEF" }, { name: "Bassey", pos: "DEF" }, { name: "Diop", pos: "DEF" },
-      { name: "Rodon", pos: "DEF" }, { name: "Ampadu", pos: "DEF" }, { name: "Struijk", pos: "DEF" },
-      { name: "Esteve", pos: "DEF" }, { name: "Al-Dakhil", pos: "DEF" }, { name: "Egan-Riley", pos: "DEF" },
-      { name: "Van Dijk", pos: "DEF" }, { name: "Kerkez", pos: "DEF" }, { name: "Konate", pos: "DEF" }, { name: "Robertson", pos: "DEF" }, { name: "Gomez", pos: "DEF" }, { name: "Frimpong", pos: "DEF" },
-      { name: "Gvardiol", pos: "DEF" }, { name: "Khusanov", pos: "DEF" }, { name: "Dias", pos: "DEF" }, { name: "O'Reilly", pos: "DEF" }, { name: "Guehi", pos: "DEF" }, { name: "Ait-Nouri", pos: "DEF" },
-      { name: "Martinez", pos: "DEF" }, { name: "De Ligt", pos: "DEF" }, { name: "Dalot", pos: "DEF" }, { name: "Yoro", pos: "DEF" }, { name: "Shaw", pos: "DEF" },
-      { name: "Schar", pos: "DEF" }, { name: "Botman", pos: "DEF" }, { name: "Hall", pos: "DEF" }, { name: "Burn", pos: "DEF" }, { name: "Thiaw", pos: "DEF" }, { name: "Livramento", pos: "DEF" },
-      { name: "Murillo", pos: "DEF" }, { name: "Milenkovic", pos: "DEF" }, { name: "Aina", pos: "DEF" }, { name: "Williams", pos: "DEF" }, { name: "Morato", pos: "DEF" },
-      { name: "O'Nien", pos: "DEF" }, { name: "Hume", pos: "DEF" }, { name: "Ballard", pos: "DEF" }, { name: "Alderete", pos: "DEF" }, { name: "Mukiele", pos: "DEF" },
-      { name: "Romero", pos: "DEF" }, { name: "Van de Ven", pos: "DEF" }, { name: "Porro", pos: "DEF" }, { name: "Udogie", pos: "DEF" }, { name: "Spence", pos: "DEF" },
-      { name: "Mavropanos", pos: "DEF" }, { name: "Disasi", pos: "DEF" }, { name: "Todibo", pos: "DEF" }, { name: "Walker-Peters", pos: "DEF" }, { name: "Wan Bissaka", pos: "DEF" },
-      { name: "Hugo Bueno", pos: "DEF" }, { name: "Santi Bueno", pos: "DEF" }, { name: "Toti", pos: "DEF" },
+      { name: "Saliba", pos: "DEF", club: "Arsenal" }, { name: "Gabriel", pos: "DEF", club: "Arsenal" }, { name: "White", pos: "DEF", club: "Arsenal" }, { name: "Calafiori", pos: "DEF", club: "Arsenal" },
+      { name: "Konsa", pos: "DEF", club: "Aston Villa" }, { name: "Pau Torres", pos: "DEF", club: "Aston Villa" }, { name: "Maatsen", pos: "DEF", club: "Aston Villa" }, { name: "Cash", pos: "DEF", club: "Aston Villa" },
+      { name: "Senesi", pos: "DEF", club: "Bournemouth" }, { name: "Truffert", pos: "DEF", club: "Bournemouth" }, { name: "Diakite", pos: "DEF", club: "Bournemouth" },
+      { name: "Pinnock", pos: "DEF", club: "Brentford" }, { name: "Collins", pos: "DEF", club: "Brentford" }, { name: "Van den Berg", pos: "DEF", club: "Brentford" }, { name: "Kayode", pos: "DEF", club: "Brentford" },
+      { name: "Dunk", pos: "DEF", club: "Brighton" }, { name: "Van Hecke", pos: "DEF", club: "Brighton" }, { name: "Kadioglu", pos: "DEF", club: "Brighton" },
+      { name: "Colwill", pos: "DEF", club: "Chelsea" }, { name: "Fofana", pos: "DEF", club: "Chelsea" }, { name: "James", pos: "DEF", club: "Chelsea" }, { name: "Cucurella", pos: "DEF", club: "Chelsea" }, { name: "Gusto", pos: "DEF", club: "Chelsea" },
+      { name: "Richards", pos: "DEF", club: "Crystal Palace" }, { name: "Lacroix", pos: "DEF", club: "Crystal Palace" }, { name: "Munoz", pos: "DEF", club: "Crystal Palace" }, { name: "Mitchell", pos: "DEF", club: "Crystal Palace" },
+      { name: "Branthwaite", pos: "DEF", club: "Everton" }, { name: "Tarkowski", pos: "DEF", club: "Everton" }, { name: "Mykolenko", pos: "DEF", club: "Everton" }, { name: "OBrien", pos: "DEF", club: "Everton" },
+      { name: "Andersen", pos: "DEF", club: "Fulham" }, { name: "Robinson", pos: "DEF", club: "Fulham" }, { name: "Bassey", pos: "DEF", club: "Fulham" }, { name: "Diop", pos: "DEF", club: "Fulham" },
+      { name: "Rodon", pos: "DEF", club: "Leeds" }, { name: "Ampadu", pos: "DEF", club: "Leeds" }, { name: "Struijk", pos: "DEF", club: "Leeds" },
+      { name: "Esteve", pos: "DEF", club: "Burnley" }, { name: "Al-Dakhil", pos: "DEF", club: "Burnley" }, { name: "Egan-Riley", pos: "DEF", club: "Burnley" },
+      { name: "Van Dijk", pos: "DEF", club: "Liverpool" }, { name: "Kerkez", pos: "DEF", club: "Liverpool" }, { name: "Konate", pos: "DEF", club: "Liverpool" }, { name: "Robertson", pos: "DEF", club: "Liverpool" }, { name: "Gomez", pos: "DEF", club: "Liverpool" }, { name: "Frimpong", pos: "DEF", club: "Liverpool" },
+      { name: "Gvardiol", pos: "DEF", club: "Man City" }, { name: "Khusanov", pos: "DEF", club: "Man City" }, { name: "Dias", pos: "DEF", club: "Man City" }, { name: "O'Reilly", pos: "DEF", club: "Man City" }, { name: "Guehi", pos: "DEF", club: "Man City" }, { name: "Ait-Nouri", pos: "DEF", club: "Man City" },
+      { name: "Martinez", pos: "DEF", club: "Man Utd" }, { name: "De Ligt", pos: "DEF", club: "Man Utd" }, { name: "Dalot", pos: "DEF", club: "Man Utd" }, { name: "Yoro", pos: "DEF", club: "Man Utd" }, { name: "Shaw", pos: "DEF", club: "Man Utd" },
+      { name: "Schar", pos: "DEF", club: "Newcastle" }, { name: "Botman", pos: "DEF", club: "Newcastle" }, { name: "Hall", pos: "DEF", club: "Newcastle" }, { name: "Burn", pos: "DEF", club: "Newcastle" }, { name: "Thiaw", pos: "DEF", club: "Newcastle" }, { name: "Livramento", pos: "DEF", club: "Newcastle" },
+      { name: "Murillo", pos: "DEF", club: "Nott'm Forest" }, { name: "Milenkovic", pos: "DEF", club: "Nott'm Forest" }, { name: "Aina", pos: "DEF", club: "Nott'm Forest" }, { name: "Williams", pos: "DEF", club: "Nott'm Forest" }, { name: "Morato", pos: "DEF", club: "Nott'm Forest" },
+      { name: "O'Nien", pos: "DEF", club: "Sunderland" }, { name: "Hume", pos: "DEF", club: "Sunderland" }, { name: "Ballard", pos: "DEF", club: "Sunderland" }, { name: "Alderete", pos: "DEF", club: "Sunderland" }, { name: "Mukiele", pos: "DEF", club: "Sunderland" },
+      { name: "Romero", pos: "DEF", club: "Spurs" }, { name: "Van de Ven", pos: "DEF", club: "Spurs" }, { name: "Porro", pos: "DEF", club: "Spurs" }, { name: "Udogie", pos: "DEF", club: "Spurs" }, { name: "Spence", pos: "DEF", club: "Spurs" },
+      { name: "Mavropanos", pos: "DEF", club: "West Ham" }, { name: "Disasi", pos: "DEF", club: "West Ham" }, { name: "Todibo", pos: "DEF", club: "West Ham" }, { name: "Walker-Peters", pos: "DEF", club: "West Ham" }, { name: "Wan Bissaka", pos: "DEF", club: "West Ham" },
+      { name: "Hugo Bueno", pos: "DEF", club: "Wolves" }, { name: "Santi Bueno", pos: "DEF", club: "Wolves" }, { name: "Toti", pos: "DEF", club: "Wolves" },
 
       // MIDFIELDERS
-      { name: "Odegaard", pos: "MID" }, { name: "Rice", pos: "MID" }, { name: "Saka", pos: "MID" }, { name: "Eze", pos: "MID" }, { name: "Madueke", pos: "MID" }, { name: "Zubimendi", pos: "MID" },
-      { name: "Tielemans", pos: "MID" }, { name: "McGinn", pos: "MID" }, { name: "Rogers", pos: "MID" }, { name: "Sancho", pos: "MID" }, { name: "Onana", pos: "MID" },
-      { name: "Brooks", pos: "MID" }, { name: "Cook", pos: "MID" }, { name: "Tavernier", pos: "MID" }, { name: "Rayan", pos: "MID" }, { name: "Scott", pos: "MID" },
-      { name: "Ouattara", pos: "MID" }, { name: "Schade", pos: "MID" }, { name: "Damsgaard", pos: "MID" },
-      { name: "Mitoma", pos: "MID" }, { name: "Baleba", pos: "MID" }, { name: "Minteh", pos: "MID" },
-      { name: "Palmer", pos: "MID" }, { name: "Caicedo", pos: "MID" }, { name: "Fernandez", pos: "MID" }, { name: "Neto", pos: "MID" }, { name: "Lavia", pos: "MID" },
-      { name: "Sarr", pos: "MID" }, { name: "Wharton", pos: "MID" }, { name: "Kamada", pos: "MID" }, { name: "Pino", pos: "MID" },
-      { name: "McNeil", pos: "MID" }, { name: "Garner", pos: "MID" }, { name: "Gueye", pos: "MID" }, { name: "Ndiaye", pos: "MID" }, { name: "Dewsbury-Hall", pos: "MID" },
-      { name: "Smith Rowe", pos: "MID" }, { name: "Wilson", pos: "MID" }, { name: "Iwobi", pos: "MID" }, { name: "Bobb", pos: "MID" },
-      { name: "Okafor", pos: "MID" }, { name: "Tanaka", pos: "MID" }, { name: "Aaronson", pos: "MID" },
-      { name: "Mejbri", pos: "MID" }, { name: "Ward-Prowse", pos: "MID" }, { name: "Cullen", pos: "MID" },
-      { name: "Mac Allister", pos: "MID" }, { name: "Szoboszlai", pos: "MID" }, { name: "Gravenberch", pos: "MID" }, { name: "Wirtz", pos: "MID" }, { name: "Gakpo", pos: "MID" },
-      { name: "Cherki", pos: "MID" }, { name: "Rodri", pos: "MID" }, { name: "Foden", pos: "MID" }, { name: "Doku", pos: "MID" }, { name: "Semenyo", pos: "MID" }, { name: "Bernardo", pos: "MID" }, { name: "Savinho", pos: "MID" },
-      { name: "Bruno Fernandes", pos: "MID" }, { name: "Mainoo", pos: "MID" }, { name: "Mbuemo", pos: "MID" }, { name: "Casemiro", pos: "MID" },
-      { name: "Guimaraes", pos: "MID" }, { name: "Gordon", pos: "MID" }, { name: "Joelinton", pos: "MID" }, { name: "Barnes", pos: "MID" }, { name: "Tonali", pos: "MID" },
-      { name: "Gibbs-White", pos: "MID" }, { name: "Hudson-Odoi", pos: "MID" }, { name: "Anderson", pos: "MID" }, { name: "Ndoye", pos: "MID" },
-      { name: "Diarra", pos: "MID" }, { name: "Le Fee", pos: "MID" }, { name: "Rigg", pos: "MID" }, { name: "Xhaka", pos: "MID" },
-      { name: "Maddison", pos: "MID" }, { name: "Kulusevski", pos: "MID" }, { name: "Bentancur", pos: "MID" }, { name: "Gallagher", pos: "MID" }, { name: "Bergvall", pos: "MID" },
-      { name: "Bowen", pos: "MID" }, { name: "Summerville", pos: "MID" }, { name: "Soucek", pos: "MID" }, { name: "Fernandes", pos: "MID" },
-      { name: "Bellegarde", pos: "MID" }, { name: "Joao Gomes", pos: "MID" }, { name: "Andre", pos: "MID" }, { name: "Mane", pos: "MID" },
+      { name: "Odegaard", pos: "MID", club: "Arsenal" }, { name: "Rice", pos: "MID", club: "Arsenal" }, { name: "Saka", pos: "MID", club: "Arsenal" }, { name: "Eze", pos: "MID", club: "Arsenal" }, { name: "Madueke", pos: "MID", club: "Arsenal" }, { name: "Zubimendi", pos: "MID", club: "Arsenal" },
+      { name: "Tielemans", pos: "MID", club: "Aston Villa" }, { name: "McGinn", pos: "MID", club: "Aston Villa" }, { name: "Rogers", pos: "MID", club: "Aston Villa" }, { name: "Sancho", pos: "MID", club: "Aston Villa" }, { name: "Onana", pos: "MID", club: "Aston Villa" },
+      { name: "Brooks", pos: "MID", club: "Bournemouth" }, { name: "Cook", pos: "MID", club: "Bournemouth" }, { name: "Tavernier", pos: "MID", club: "Bournemouth" }, { name: "Rayan", pos: "MID", club: "Bournemouth" }, { name: "Scott", pos: "MID", club: "Bournemouth" },
+      { name: "Ouattara", pos: "MID", club: "Brentford" }, { name: "Schade", pos: "MID", club: "Brentford" }, { name: "Damsgaard", pos: "MID", club: "Brentford" },
+      { name: "Mitoma", pos: "MID", club: "Brighton" }, { name: "Baleba", pos: "MID", club: "Brighton" }, { name: "Minteh", pos: "MID", club: "Brighton" },
+      { name: "Palmer", pos: "MID", club: "Chelsea" }, { name: "Caicedo", pos: "MID", club: "Chelsea" }, { name: "Fernandez", pos: "MID", club: "Chelsea" }, { name: "Neto", pos: "MID", club: "Chelsea" }, { name: "Lavia", pos: "MID", club: "Chelsea" },
+      { name: "Sarr", pos: "MID", club: "Crystal Palace" }, { name: "Wharton", pos: "MID", club: "Crystal Palace" }, { name: "Kamada", pos: "MID", club: "Crystal Palace" }, { name: "Pino", pos: "MID", club: "Crystal Palace" },
+      { name: "McNeil", pos: "MID", club: "Everton" }, { name: "Garner", pos: "MID", club: "Everton" }, { name: "Gueye", pos: "MID", club: "Everton" }, { name: "Ndiaye", pos: "MID", club: "Everton" }, { name: "Dewsbury-Hall", pos: "MID", club: "Everton" },
+      { name: "Smith Rowe", pos: "MID", club: "Fulham" }, { name: "Wilson", pos: "MID", club: "Fulham" }, { name: "Iwobi", pos: "MID", club: "Fulham" }, { name: "Bobb", pos: "MID", club: "Fulham" },
+      { name: "Okafor", pos: "MID", club: "Leeds" }, { name: "Tanaka", pos: "MID", club: "Leeds" }, { name: "Aaronson", pos: "MID", club: "Leeds" },
+      { name: "Mejbri", pos: "MID", club: "Burnley" }, { name: "Ward-Prowse", pos: "MID", club: "Burnley" }, { name: "Cullen", pos: "MID", club: "Burnley" },
+      { name: "Mac Allister", pos: "MID", club: "Liverpool" }, { name: "Szoboszlai", pos: "MID", club: "Liverpool" }, { name: "Gravenberch", pos: "MID", club: "Liverpool" }, { name: "Wirtz", pos: "MID", club: "Liverpool" }, { name: "Gakpo", pos: "MID", club: "Liverpool" },
+      { name: "Cherki", pos: "MID", club: "Man City" }, { name: "Rodri", pos: "MID", club: "Man City" }, { name: "Foden", pos: "MID", club: "Man City" }, { name: "Doku", pos: "MID", club: "Man City" }, { name: "Semenyo", pos: "MID", club: "Man City" }, { name: "Bernardo", pos: "MID", club: "Man City" }, { name: "Savinho", pos: "MID", club: "Man City" },
+      { name: "Bruno Fernandes", pos: "MID", club: "Man Utd" }, { name: "Mainoo", pos: "MID", club: "Man Utd" }, { name: "Mbuemo", pos: "MID", club: "Man Utd" }, { name: "Casemiro", pos: "MID", club: "Man Utd" },
+      { name: "Guimaraes", pos: "MID", club: "Newcastle" }, { name: "Gordon", pos: "MID", club: "Newcastle" }, { name: "Joelinton", pos: "MID", club: "Newcastle" }, { name: "Barnes", pos: "MID", club: "Newcastle" }, { name: "Tonali", pos: "MID", club: "Newcastle" },
+      { name: "Gibbs-White", pos: "MID", club: "Nott'm Forest" }, { name: "Hudson-Odoi", pos: "MID", club: "Nott'm Forest" }, { name: "Anderson", pos: "MID", club: "Nott'm Forest" }, { name: "Ndoye", pos: "MID", club: "Nott'm Forest" },
+      { name: "Diarra", pos: "MID", club: "Sunderland" }, { name: "Le Fee", pos: "MID", club: "Sunderland" }, { name: "Rigg", pos: "MID", club: "Sunderland" }, { name: "Xhaka", pos: "MID", club: "Sunderland" },
+      { name: "Maddison", pos: "MID", club: "Spurs" }, { name: "Kulusevski", pos: "MID", club: "Spurs" }, { name: "Bentancur", pos: "MID", club: "Spurs" }, { name: "Gallagher", pos: "MID", club: "Spurs" }, { name: "Bergvall", pos: "MID", club: "Spurs" },
+      { name: "Bowen", pos: "MID", club: "West Ham" }, { name: "Summerville", pos: "MID", club: "West Ham" }, { name: "Soucek", pos: "MID", club: "West Ham" }, { name: "Fernandes", pos: "MID", club: "West Ham" },
+      { name: "Bellegarde", pos: "MID", club: "Wolves" }, { name: "Joao Gomes", pos: "MID", club: "Wolves" }, { name: "Andre", pos: "MID", club: "Wolves" }, { name: "Mane", pos: "MID", club: "Wolves" },
 
       // FORWARDS
-      { name: "Havertz", pos: "FWD" }, { name: "Jesus", pos: "FWD" }, { name: "Martinelli", pos: "FWD" }, { name: "Gyokeres", pos: "FWD" },
-      { name: "Watkins", pos: "FWD" }, { name: "Abraham", pos: "FWD" },
-      { name: "Evanilson", pos: "FWD" }, { name: "Junior Kroupi", pos: "FWD" }, { name: "Adli", pos: "FWD" },
-      { name: "Thiago", pos: "FWD" }, { name: "Furo", pos: "FWD" },
-      { name: "Welbeck", pos: "FWD" }, { name: "Kostoulas", pos: "FWD" },
-      { name: "Joao Pedro", pos: "FWD" }, { name: "Delap", pos: "FWD" }, { name: "Guiu", pos: "FWD" },
-      { name: "Mateta", pos: "FWD" }, { name: "Strand-Larsen", pos: "FWD" }, { name: "Johnson", pos: "FWD" },
-      { name: "Barry", pos: "FWD" }, { name: "Beto", pos: "FWD" }, { name: "George", pos: "FWD" },
-      { name: "Jimenez", pos: "FWD" }, { name: "Muniz", pos: "FWD" },
-      { name: "Calvert-Lewin", pos: "FWD" }, { name: "Piroe", pos: "FWD" }, { name: "Nmecha", pos: "FWD" },
-      { name: "Foster", pos: "FWD" }, { name: "Amdouni", pos: "FWD" }, { name: "Broja", pos: "FWD" },
-      { name: "Salah", pos: "FWD" }, { name: "Isak", pos: "FWD" }, { name: "Ekitike", pos: "FWD" },
-      { name: "Haaland", pos: "FWD" }, { name: "Marmoush", pos: "FWD" },
-      { name: "Hojlund", pos: "FWD" }, { name: "Sesko", pos: "FWD" }, { name: "Cunha", pos: "FWD" },
-      { name: "Wissa", pos: "FWD" }, { name: "Woltewade", pos: "FWD" }, { name: "Osula", pos: "FWD" },
-      { name: "Wood", pos: "FWD" }, { name: "Awoniyi", pos: "FWD" },
-      { name: "Isidor", pos: "FWD" }, { name: "Mayenda", pos: "FWD" }, { name: "Brobbey", pos: "FWD" },
-      { name: "Richarlison", pos: "FWD" }, { name: "Solanke", pos: "FWD" }, { name: "Tel", pos: "FWD" },
-      { name: "Taty", pos: "FWD" }, { name: "Pablo", pos: "FWD" }, { name: "Wilson", pos: "FWD" },
-      { name: "Arokodare", pos: "FWD" }, { name: "Armstrong", pos: "FWD" }
+      { name: "Havertz", pos: "FWD", club: "Arsenal" }, { name: "Jesus", pos: "FWD", club: "Arsenal" }, { name: "Martinelli", pos: "FWD", club: "Arsenal" }, { name: "Gyokeres", pos: "FWD", club: "Arsenal" },
+      { name: "Watkins", pos: "FWD", club: "Aston Villa" }, { name: "Abraham", pos: "FWD", club: "Aston Villa" },
+      { name: "Evanilson", pos: "FWD", club: "Bournemouth" }, { name: "Junior Kroupi", pos: "FWD", club: "Bournemouth" }, { name: "Adli", pos: "FWD", club: "Bournemouth" },
+      { name: "Thiago", pos: "FWD", club: "Brentford" }, { name: "Furo", pos: "FWD", club: "Brentford" },
+      { name: "Welbeck", pos: "FWD", club: "Brighton" }, { name: "Kostoulas", pos: "FWD", club: "Brighton" },
+      { name: "Joao Pedro", pos: "FWD", club: "Chelsea" }, { name: "Delap", pos: "FWD", club: "Chelsea" }, { name: "Guiu", pos: "FWD", club: "Chelsea" },
+      { name: "Mateta", pos: "FWD", club: "Crystal Palace" }, { name: "Strand-Larsen", pos: "FWD", club: "Crystal Palace" }, { name: "Johnson", pos: "FWD", club: "Crystal Palace" },
+      { name: "Barry", pos: "FWD", club: "Everton" }, { name: "Beto", pos: "FWD", club: "Everton" }, { name: "George", pos: "FWD", club: "Everton" },
+      { name: "Jimenez", pos: "FWD", club: "Fulham" }, { name: "Muniz", pos: "FWD", club: "Fulham" },
+      { name: "Calvert-Lewin", pos: "FWD", club: "Leeds" }, { name: "Piroe", pos: "FWD", club: "Leeds" }, { name: "Nmecha", pos: "FWD", club: "Leeds" },
+      { name: "Foster", pos: "FWD", club: "Burnley" }, { name: "Amdouni", pos: "FWD", club: "Burnley" }, { name: "Broja", pos: "FWD", club: "Burnley" },
+      { name: "Salah", pos: "FWD", club: "Liverpool" }, { name: "Isak", pos: "FWD", club: "Liverpool" }, { name: "Ekitike", pos: "FWD", club: "Liverpool" },
+      { name: "Haaland", pos: "FWD", club: "Man City" }, { name: "Marmoush", pos: "FWD", club: "Man City" },
+      { name: "Hojlund", pos: "FWD", club: "Man Utd" }, { name: "Sesko", pos: "FWD", club: "Man Utd" }, { name: "Cunha", pos: "FWD", club: "Man Utd" },
+      { name: "Wissa", pos: "FWD", club: "Newcastle" }, { name: "Woltemade", pos: "FWD", club: "Newcastle" }, { name: "Osula", pos: "FWD", club: "Newcastle" },
+      { name: "Wood", pos: "FWD", club: "Nott'm Forest" }, { name: "Awoniyi", pos: "FWD", club: "Nott'm Forest" },
+      { name: "Isidor", pos: "FWD", club: "Sunderland" }, { name: "Mayenda", pos: "FWD", club: "Sunderland" }, { name: "Brobbey", pos: "FWD", club: "Sunderland" },
+      { name: "Richarlison", pos: "FWD", club: "Spurs" }, { name: "Solanke", pos: "FWD", club: "Spurs" }, { name: "Tel", pos: "FWD", club: "Spurs" },
+      { name: "Taty", pos: "FWD", club: "West Ham" }, { name: "Pablo", pos: "FWD", club: "West Ham" }, { name: "Wilson", pos: "FWD", club: "West Ham" },
+      { name: "Arokodare", pos: "FWD", club: "Wolves" }, { name: "Armstrong", pos: "FWD", club: "Wolves" }
     ];
     
     const plClubs = ["Arsenal", "Aston Villa", "Bournemouth", "Brentford", "Brighton", "Chelsea", "Crystal Palace", "Everton", "Fulham", "Leeds", "Burnley", "Liverpool", "Man City", "Man Utd", "Newcastle", "Nott'm Forest", "Sunderland", "Spurs", "West Ham", "Wolves"];
@@ -211,14 +219,15 @@
     // Add Clubs as GK types
     plClubs.forEach(c => {
       clubDropdown.innerHTML += `<option value="${c}">${c}</option>`;
-      playersData.push({ name: c, pos: "GK" });
+      playersData.push({ name: c, pos: "GK", club: c });
     });
 
     // Create stat inputs for every player
     playersData.forEach(p => {
+      const abbr = clubAbbr[p.club] || p.club.substring(0,3).toUpperCase();
       inputContainer.innerHTML += `
         <div class="player-row">
-          <span title="${p.pos}">${p.name} <small>(${p.pos})</small></span>
+          <span title="${p.pos}">${p.name} <small>(${abbr})</small></span>
           <input type="checkbox" id="app-${p.name}">
           <input type="number" id="gl-${p.name}" value="0">
           <input type="number" id="ast-${p.name}" value="0">
@@ -399,10 +408,8 @@
             const pointsSmall = (stake * 5) + stake;       // e.g. 25 + 5 = 30
 
             if (betResult === 'landed') {
-              userBetScore = (choice === 'yes' ? 155 : -155); // Win (Odds x 5) + Stake or Lose (Odds x 5) + Stake
               userBetScore = (choice === 'yes' ? pointsBig : -pointsBig); 
             } else if (betResult === 'failed') {
-              userBetScore = (choice === 'no' ? 30 : -30);   // Win (Stake x 5) + Stake or Lose (Stake x 5) + Stake
               userBetScore = (choice === 'no' ? pointsSmall : -pointsSmall);
             }
             
