@@ -384,9 +384,6 @@ footer {
   border: 1px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(4px);
 }
-.formation-selector { /* Position on the pitch */
-  left: 15px;
-}
 .formation-selector span, .history-selector span {
   font-size: 11px;
   font-weight: 700;
@@ -575,27 +572,28 @@ ROWS + PLAYERS
   display:flex;
   justify-content:center;
   gap:12px;
-  z-index: 2;
+  z-index:2;
+
 }
 
-.player {
+.player{
   width: 85px;
   position: relative;
   text-align: center;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 18px;
-  padding: 10px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.14);
-  backdrop-filter: blur(12px);
-  transition: transform 0.2s ease;
+  background: rgba(255,255,255,0.04); /* Consistent with season.html .card */
+  border: 1px solid rgba(255,255,255,0.08); /* Consistent with season.html .card */
+  border-radius: 18px; /* Consistent with season.html .card */
+  padding: 10px; /* Kept for player card size */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.14); /* Consistent with season.html .card */
+  backdrop-filter: blur(12px); /* Consistent with season.html .card */
+  transition: transform 0.2s ease; /* Consistent with season.html .card */
+}
+.player:hover {
+  transform: translateY(-3px); /* Consistent with season.html .card */
+  border-color: rgba(255,255,255,0.16); /* Consistent with season.html .card */
 }
 
-.player:hover {
-  transform: translateY(-3px);
-  border-color: rgba(255, 255, 255, 0.16);
-}
-/* DIFFERENTIAL PULSE */
+
 /* DIFFERENTIAL PULSE */
 .rarity-tag {
   position: absolute;
@@ -902,6 +900,26 @@ MOBILE
     gap: 10px;
   }
 
+  .fixture-item {
+    flex-direction: column;
+    padding: 10px 0;
+    gap: 4px;
+  }
+
+  .fixture-team {
+    width: 100% !important;
+    text-align: center !important;
+    font-size: 13px;
+  }
+
+  .fixture-time {
+    width: 100%;
+    font-size: 10px;
+    background: rgba(199, 255, 56, 0.05);
+    padding: 2px 0;
+    border-radius: 4px;
+  }
+
   .mobile-nav {
     display: flex;
     justify-content: space-around;
@@ -1035,10 +1053,16 @@ MOBILE
 <div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
 <div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
 <div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+
 </div>
 
 <!-- MID -->
 <div class="row">
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
 <div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
 <div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
 <div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
@@ -1051,6 +1075,9 @@ MOBILE
 <div class="row">
 <div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="FWD" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
 <div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="FWD" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="FWD" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="FWD" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+
 </div>
 
 </div>
@@ -1201,7 +1228,7 @@ const playersByPos = {
     { name: "Hugo Bueno", club: "Wolves" }, { name: "Santi Bueno", club: "Wolves" }, { name: "Toti", club: "Wolves" }
   ],
   MID: [
-    { name: "Odegaard", club: "Arsenal" }, { name: "Rice", club: "Arsenal" }, { name: "Saka", club: "Arsenal" }, { name: "Eze", club: "Arsenal" }, { name: "Madueke", club: "Arsenal" }, { name: "Zubimendi", club: "Arsenal" },
+    { name: "Odegaard", club: "Arsenal" }, { name: "Rice", club: "Arsenal" }, { name: "Saka", club: "Arsenal" }, { name: "Eze", club: "Crystal Palace" }, { name: "Madueke", club: "Chelsea" }, { name: "Zubimendi", club: "Arsenal" },
     { name: "Tielemans", club: "Aston Villa" }, { name: "McGinn", club: "Aston Villa" }, { name: "Rogers", club: "Aston Villa" }, { name: "Sancho", club: "Aston Villa" }, { name: "Onana", club: "Aston Villa" },
     { name: "Brooks", club: "Bournemouth" }, { name: "Cook", club: "Bournemouth" }, { name: "Tavernier", club: "Bournemouth" }, { name: "Rayan", club: "Bournemouth" }, { name: "Scott", club: "Bournemouth" },
     { name: "Ouattara", club: "Brentford" }, { name: "Schade", club: "Brentford" }, { name: "Damsgaard", club: "Brentford" },
@@ -1238,11 +1265,11 @@ const playersByPos = {
     { name: "Haaland", club: "Man City" }, { name: "Marmoush", club: "Man City" },
     { name: "Hojlund", club: "Man Utd" }, { name: "Sesko", club: "Man Utd" }, { name: "Cunha", club: "Man Utd" },
     { name: "Wissa", club: "Newcastle" }, { name: "Woltemade", club: "Newcastle" }, { name: "Osula", club: "Newcastle" },
-    { name: "Wood", club: "Nott'm Forest" }, { name: "Awoniyi", club: "Nott'm Forest" },
+    { name: "Wood", club: "Nott'm Forest" }, { name: "Awoniyi", club: "Nott'm Forest" }, { name: "Jesus", club: "Arsenal" },
     { name: "Isidor", club: "Sunderland" }, { name: "Mayenda", club: "Sunderland" }, { name: "Brobbey", club: "Sunderland" },
     { name: "Richarlison", club: "Spurs" }, { name: "Solanke", club: "Spurs" }, { name: "Tel", club: "Spurs" },
     { name: "Taty", club: "West Ham" }, { name: "Pablo", club: "West Ham" }, { name: "Wilson", club: "West Ham" },
-    { name: "Arokodare", club: "Wolves" },
+    { name: "Arokodare", club: "Wolves" }, { name: "Armstrong", club: "Wolves" },
   ]
 };
 
