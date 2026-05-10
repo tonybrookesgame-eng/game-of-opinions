@@ -85,15 +85,15 @@ HEADER
 ========================= */
 
 header{
-
   display:flex;
-
   justify-content:space-between;
-
   padding:20px 40px;
+  background: rgba(0,0,0,0.72);
   backdrop-filter:blur(10px);
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .logo{
@@ -132,11 +132,8 @@ LAYOUT
 ========================= */
 
 .container{
-
-  max-width: 1080px;
-
+  max-width: 1200px;
   margin:auto;
-
   padding: 20px 40px 40px;
 }
 h1 {
@@ -153,16 +150,17 @@ p {
 .main-layout{
   display: flex;
   flex-direction: row;
-  gap: 30px;
+  gap: 40px;
   align-items: flex-start;
+  justify-content: center;
 }
 
 .left-side {
-  flex: 1.8;
+  flex: 0 1 800px;
 }
 
 .right-side {
-  flex: 1;
+  flex: 0 0 320px;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -173,7 +171,7 @@ p {
   grid-template-columns: 1fr 1fr;
   gap: 20px;
   width: 100%;
-  margin-top: 20px;
+  margin-top: 30px;
 }
 
 .weekly-panel, .bet-builder-panel, .fixtures-panel{
@@ -1123,6 +1121,41 @@ MOBILE
   <button onclick="saveTeam()">Save Team</button>
 </div>
 
+  <!-- BOTTOM PANELS (Weekly Picks and Bet Builder) -->
+  <div class="bottom-panels">
+    <div class="weekly-panel">
+      <h2>Weekly Picks</h2>
+      <p style="font-size: 13px; color: #9ca3af; margin-bottom: 5px; display: flex; justify-content: space-between;">
+        <span>Club to score first:</span>
+        <span style="color: #c7ff38; font-weight: bold;">10 pts</span>
+      </p>
+      <select id="firstScorer"><option>Select</option></select>
+      <p style="font-size: 13px; color: #9ca3af; margin: 10px 0 5px; display: flex; justify-content: space-between;">
+        <span>Minute of first goal:</span>
+        <span style="color: #c7ff38; font-weight: bold;">40 pts</span>
+      </p>
+      <select id="goalMinute"><option>Select</option></select>
+      <button onclick="saveWeekly()">Save Picks</button>
+      <p id="weeklyStatus"></p>
+    </div>
+
+    <div class="bet-builder-panel">
+      <h2>Scout's Bet Builder</h2>
+      <div class="bet-match" id="betMatchDisplay">Loading match...</div>
+      <ul class="bet-list" id="betPicksDisplay"></ul>
+      <div class="bet-odds-box">
+        <span class="odds-label">Est. Odds</span>
+        <span class="odds-value" id="betOddsDisplay">--</span>
+      </div>
+      <div class="bet-actions">
+        <button class="bet-choice" onclick="setBetChoice('yes')" id="btnYes">YES</button>
+        <button class="bet-choice" onclick="setBetChoice('no')" id="btnNo">NO</button>
+      </div>
+      <div class="bet-info" id="betInfo">Pick if the bet lands. Cost: 5 pts.</div>
+      <button class="save-btn" id="saveBetBuilderBtn" onclick="saveBetBuilder()">Save Bet Prediction</button>
+    </div>
+  </div>
+
 </div> <!-- End left-side -->
 
 <!-- RIGHT SIDE PANELS (Fixtures only) -->
@@ -1134,49 +1167,9 @@ MOBILE
 </div>
 
 </div> <!-- End main-layout -->
+</div> <!-- End container -->
 
-<!-- BOTTOM PANELS (Weekly Picks and Bet Builder) -->
-<div class="bottom-panels">
-  <div class="weekly-panel">
-    <h2>Weekly Picks</h2>
-    <p style="font-size: 13px; color: #9ca3af; margin-bottom: 5px; display: flex; justify-content: space-between;">
-      <span>Club to score first:</span>
-      <span style="color: #c7ff38; font-weight: bold;">10 pts</span>
-    </p>
-    <select id="firstScorer">
-      <option>Select</option>
-    </select>
-    <p style="font-size: 13px; color: #9ca3af; margin: 10px 0 5px; display: flex; justify-content: space-between;">
-      <span>Minute of first goal:</span>
-      <span style="color: #c7ff38; font-weight: bold;">40 pts</span>
-    </p>
-    <select id="goalMinute">
-      <option>Select</option>
-    </select>
-    <button onclick="saveWeekly()">Save Picks</button>
-    <p id="weeklyStatus"></p>
-  </div>
-
-  <div class="bet-builder-panel">
-    <h2>Scout's Bet Builder</h2>
-    <div class="bet-match" id="betMatchDisplay">Loading match...</div>
-    <ul class="bet-list" id="betPicksDisplay"></ul>
-    <div class="bet-odds-box">
-      <span class="odds-label">Est. Odds</span>
-      <span class="odds-value" id="betOddsDisplay">--</span>
-    </div>
-    <div class="bet-actions">
-      <button class="bet-choice" onclick="setBetChoice('yes')" id="btnYes" title="Sacrifice: 5 pts. Win 155 pts if bet lands, lose 30 pts if it fails.">YES</button>
-      <button class="bet-choice" onclick="setBetChoice('no')" id="btnNo" title="Sacrifice: 5 pts. Win 30 pts if bet fails, lose 155 pts if it lands.">NO</button>
-    </div>
-    <div class="bet-info" id="betInfo">
-      Pick if the bet lands. Cost: 5 pts to play.
-    </div>
-    <button class="save-btn" id="saveBetBuilderBtn" onclick="saveBetBuilder()">Save Bet Prediction</button>
-  </div>
-</div>
-
-<!-- POSITION RULES MODAL -->
+<!-- MODALS -->
 <div id="posRulesModal" class="rules-modal" onclick="this.style.display='none'">
   <div class="rules-card" onclick="event.stopPropagation()">
     <h2 id="posRulesTitle">Position Rules</h2>
@@ -1186,7 +1179,6 @@ MOBILE
   </div>
 </div>
 
-<!-- Gameweek Locked Modal -->
 <div id="gameweekLockedModal" class="rules-modal">
   <div class="rules-card">
     <h2>Gameweek Closed</h2>
@@ -1195,7 +1187,6 @@ MOBILE
   </div>
 </div>
 
-<!-- FOOTER -->
 <footer>
   <div class="footer-logo">GAME <span>OF OPINIONS</span></div>
   <div class="footer-links">
