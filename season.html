@@ -438,7 +438,7 @@
         z-index: 1000;
       }
       .mobile-nav a {
-        text-decoration: none;
+        text-decoration: none !important;
         color: white;
         font-size: 12px;
         text-align: center;
@@ -1228,6 +1228,7 @@ async function loadSeasonPicks(uid) {
     const seasonDocRef = doc(db, "users", uid, "predictions", "season");
     const docSnap = await getDoc(seasonDocRef);
     
+
     if (docSnap.exists()) {
       const saved = docSnap.data();
       const selects = document.querySelectorAll("select");

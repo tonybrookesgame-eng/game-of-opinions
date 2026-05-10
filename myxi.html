@@ -899,29 +899,29 @@ MOBILE
   }
 
   .stadium-shell {
-    width: 98%; /* Wider on mobile */
-    max-width: 450px;
-    margin: 0 auto; 
-    padding: 2px;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 1px;
     border-radius: 15px;
   }
 
   .pitch-frame {
-    padding: 2px;
+    padding: 1px;
   }
 
   .pitch {
-    padding: 2px 2px 30px; /* Snaps GK to top, reduces bottom dead space */
-    gap: 6px; /* Tighter vertical spacing to push players up */
+    padding: 2px 2px 20px; /* Snap GK to top, reduce bottom padding */
+    gap: 4px; /* Move players closer vertically */
   }
 
   .row {
-    gap: 3px;
+    gap: 2px;
     flex-wrap: nowrap; /* Keep formation intact */
   }
 
   .player {
-    width: 62px; /* Balanced for 5-man rows */
+    width: 64px; /* Maximize size for width */
     padding: 4px 2px;
     background: rgba(15, 23, 42, 0.9);
     border: 1px solid rgba(199, 255, 56, 0.2);
@@ -944,8 +944,8 @@ MOBILE
   }
 
   .pitch .player select {
-    font-size: 9px;
-    padding: 5px 2px;
+    font-size: 8px;
+    padding: 3px 1px;
   }
 
   .weekly-panel p {
