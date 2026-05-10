@@ -85,10 +85,11 @@ HEADER
 ========================= */
 
 header{
-
+  position: relative;
   display:flex;
 
-  justify-content:space-between;
+  justify-content: flex-end;
+  align-items: center;
 
   padding:20px 40px;
   backdrop-filter:blur(10px);
@@ -97,7 +98,10 @@ header{
 }
 
 .logo{
-
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
   font-size:22px;
 
   font-weight:800;
@@ -216,6 +220,7 @@ p {
 }
 
 footer {
+  display: block;
   margin-top: 60px;
   padding: 40px 20px;
   background: rgba(0, 0, 0, 0.4);
@@ -1246,7 +1251,7 @@ MOBILE
     <a href="league.html">League</a>
   </div>
   <div class="copyright">
-    &copy; 2024 Game of Opinions. All rights reserved.
+    &copy; 2026 Game of Opinions. All rights reserved.
   </div>
 </footer>
 
@@ -1290,7 +1295,7 @@ const playersByPos = {
     { name: "Andersen", club: "Fulham" }, { name: "Robinson", club: "Fulham" }, { name: "Bassey", club: "Fulham" }, { name: "Diop", club: "Fulham" },
     { name: "Rodon", club: "Leeds" }, { name: "Ampadu", club: "Leeds" }, { name: "Struijk", club: "Leeds" },
     { name: "Esteve", club: "Burnley" }, { name: "Al-Dakhil", club: "Burnley" }, { name: "Egan-Riley", club: "Burnley" },
-    { name: "Van Dijk", club: "Liverpool" }, { name: "Kerkez", club: "Bournemouth" }, { name: "Konate", club: "Liverpool" }, { name: "Robertson", club: "Liverpool" }, { name: "Gomez", club: "Liverpool" }, { name: "Frimpong", club: "Liverpool" },
+    { name: "Van Dijk", club: "Liverpool" }, { name: "Kerkez", club: "Liverpool" }, { name: "Konate", club: "Liverpool" }, { name: "Robertson", club: "Liverpool" }, { name: "Gomez", club: "Liverpool" }, { name: "Frimpong", club: "Liverpool" },
     { name: "Gvardiol", club: "Man City" }, { name: "Khusanov", club: "Man City" }, { name: "Dias", club: "Man City" }, { name: "O'Reilly", club: "Man City" }, { name: "Guehi", club: "Man City" }, { name: "Ait-Nouri", club: "Man City" },
     { name: "Martinez", club: "Man Utd" }, { name: "De Ligt", club: "Man Utd" }, { name: "Dalot", club: "Man Utd" }, { name: "Yoro", club: "Man Utd" }, { name: "Shaw", club: "Man Utd" },
     { name: "Schar", club: "Newcastle" }, { name: "Botman", club: "Newcastle" }, { name: "Hall", club: "Newcastle" }, { name: "Burn", club: "Newcastle" }, { name: "Thiaw", club: "Newcastle" }, { name: "Livramento", club: "Newcastle" },
@@ -1338,7 +1343,7 @@ const playersByPos = {
     { name: "Haaland", club: "Man City" }, { name: "Marmoush", club: "Man City" },
     { name: "Hojlund", club: "Man Utd" }, { name: "Sesko", club: "Man Utd" }, { name: "Cunha", club: "Man Utd" },
     { name: "Wissa", club: "Newcastle" }, { name: "Woltemade", club: "Newcastle" }, { name: "Osula", club: "Newcastle" },
-    { name: "Wood", club: "Nott'm Forest" }, { name: "Awoniyi", club: "Nott'm Forest" }, { name: "Jesus", club: "Arsenal" },
+    { name: "Wood", club: "Nott'm Forest" }, { name: "Awoniyi", club: "Nott'm Forest" }, { name: "Jesus", club: "Nott'm Forest" },
     { name: "Isidor", club: "Sunderland" }, { name: "Mayenda", club: "Sunderland" }, { name: "Brobbey", club: "Sunderland" },
     { name: "Richarlison", club: "Spurs" }, { name: "Solanke", club: "Spurs" }, { name: "Tel", club: "Spurs" },
     { name: "Taty", club: "West Ham" }, { name: "Pablo", club: "West Ham" }, { name: "Wilson", club: "West Ham" },

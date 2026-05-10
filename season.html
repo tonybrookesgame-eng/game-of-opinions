@@ -57,10 +57,11 @@
 
 
     header {
-
+      position: relative;
       display: flex;
 
-      justify-content: space-between;
+      justify-content: flex-end;
+      align-items: center;
 
       padding: 20px 40px;
 
@@ -70,6 +71,10 @@
     }
 
     .logo {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
       font-size: 22px;
       font-weight: 800;
     }
@@ -901,7 +906,7 @@
     <a href="league.html">League</a>
   </div>
   <div class="copyright">
-    &copy; 2024 Game of Opinions. All rights reserved.
+    &copy; 2026 Game of Opinions. All rights reserved.
   </div>
 </footer>
 

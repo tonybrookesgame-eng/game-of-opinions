@@ -86,8 +86,7 @@ header {
   z-index: 1000;
 
   display: flex;
-
-  justify-content: space-between;
+  justify-content: flex-end;
 
   align-items: center;
 
@@ -133,6 +132,10 @@ header {
 }
 
 .logo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
 
   font-size: 22px;
 
@@ -1074,6 +1077,11 @@ nav a:hover {
     padding: 15px 10px;
     height: auto;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .logo {
+    position: static;
+    transform: none;
   }
 
   #login-section { /* Manager's Office on mobile */
