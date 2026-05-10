@@ -85,10 +85,9 @@ HEADER
 ========================= */
 
 header{
-  position: relative;
   display:flex;
 
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
 
   padding:20px 40px;
@@ -98,10 +97,6 @@ header{
 }
 
 .logo{
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  white-space: nowrap;
   font-size:22px;
 
   font-weight:800;
@@ -819,6 +814,9 @@ MOBILE
 
 @media(max-width:768px){ /* Consistent with season.html and league.html */
 
+  header {
+    justify-content: center;
+  }
 
   nav {
     display: none;
