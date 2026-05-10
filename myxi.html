@@ -866,6 +866,8 @@ MOBILE
   }
 
   .formation-selector {
+    position: absolute;
+    top: 10px;
     left: 10px;
     transform: none;
     top: 15px;
@@ -876,19 +878,29 @@ MOBILE
     margin-bottom: 10px;
     justify-content: center;
     background: rgba(0,0,0,0.3);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 6px 10px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 8px;
+    z-index: 50;
   }
 
   .container {
     padding: 20px 8px 100px;
+    padding: 20px 4px 100px;
   }
 
   .stadium-shell {
     padding: 8px;
+    padding: 4px;
     border-radius: 20px;
   }
 
   .pitch-frame {
     padding: 5px;
+    padding: 2px;
   }
 
   .pitch {
@@ -896,6 +908,8 @@ MOBILE
     gap: 12px;
     padding: 20px 5px;
     gap: 15px;
+    padding: 15px 4px 20px;
+    gap: 18px;
   }
 
   .row {
@@ -995,6 +1009,11 @@ MOBILE
     width: 100%;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 15px;
+  }
+
+  .weekly-panel, .bet-builder-panel, .fixtures-panel {
+    min-height: auto; /* Removes the big gap under Save button */
+    padding: 20px;
   }
 }
 
