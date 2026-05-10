@@ -85,16 +85,15 @@ HEADER
 ========================= */
 
 header{
+
   display:flex;
+
   justify-content:space-between;
-  align-items: center;
+
   padding:20px 40px;
-  background: rgba(0,0,0,0.72);
   backdrop-filter:blur(10px);
-  border-bottom: 1px solid rgba(255,255,255,0.12);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+
 }
 
 .logo{
@@ -133,8 +132,11 @@ LAYOUT
 ========================= */
 
 .container{
-  max-width: 1200px;
+
+  max-width: 1080px;
+
   margin:auto;
+
   padding: 20px 40px 40px;
 }
 h1 {
@@ -151,17 +153,16 @@ p {
 .main-layout{
   display: flex;
   flex-direction: row;
-  gap: 40px;
+  gap: 30px;
   align-items: flex-start;
-  justify-content: center;
 }
 
 .left-side {
-  flex: 0 1 800px;
+  flex: 1.8;
 }
 
 .right-side {
-  flex: 0 0 320px;
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -172,7 +173,7 @@ p {
   grid-template-columns: 1fr 1fr;
   gap: 20px;
   width: 100%;
-  margin-top: 30px;
+  margin-top: 20px;
 }
 
 .weekly-panel, .bet-builder-panel, .fixtures-panel{
@@ -322,7 +323,8 @@ footer {
   justify-content: space-between;
   gap: 20px;
   background: rgba(255, 255, 255, 0.04);
-  padding: 20px;
+  padding: 20px 25px;
+  padding: 15px 20px;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   margin-bottom: 20px;
@@ -331,7 +333,6 @@ footer {
 .name-section {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
   gap: 12px;
   flex: 1;
   min-width: 300px;
@@ -340,14 +341,13 @@ footer {
   display: flex;
   gap: 20px;
   background: rgba(0,0,0,0.3);
-  padding: 10px 15px;
+  padding: 10px 20px;
+  padding: 12px;
   border-radius: 10px;
   border: 1px solid rgba(199, 255, 56, 0.2);
-  flex-wrap: wrap;
 }
 .point-item {
   text-align: center;
-  min-width: 60px;
 }
 .team-name-ribbon span {
   font-weight: 800;
@@ -818,44 +818,51 @@ MOBILE
   }
 
   footer { padding-bottom: 100px; }
+  h1 {
+    text-align: center;
+  }
+
   .right-side { display: none; }
 
   .team-name-ribbon {
-    flex-direction: column;
-    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
     padding: 15px;
-    gap: 20px;
+    gap: 12px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
   }
 
   .name-section {
     width: 100%;
-    flex-direction: column;
     justify-content: center;
+    flex-direction: column;
+    align-items: stretch;
     min-width: 0;
-    gap: 15px;
-  }
-
-  .team-name-ribbon input {
-    max-width: 100%;
-    width: 100%;
-    text-align: center;
-  }
-
-  .history-selector {
-    margin-left: 0 !important;
+    gap: 10px;
   }
 
   .points-summary {
     width: 100%;
-    justify-content: center;
-    gap: 10px;
+    justify-content: space-around;
+    padding: 10px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
   }
 
   .point-item {
-    flex: 1 1 40%;
+    flex: 1;
     border: none !important;
     padding: 0 !important;
-    margin-bottom: 5px;
+    border-left: none !important;
+    padding-left: 0 !important;
+  }
+  
+  .point-item:nth-child(even) {
+    border-left: 1px solid rgba(255,255,255,0.1) !important;
+    padding-left: 10px !important;
   }
 
   .formation-selector {
@@ -863,43 +870,57 @@ MOBILE
     transform: none;
     top: 15px;
     width: max-content;
+    position: relative;
+    top: 0;
+    left: 0;
+    margin-bottom: 10px;
+    justify-content: center;
+    background: rgba(0,0,0,0.3);
   }
 
   .container {
-    padding: 15px 5px 100px;
-    overflow-x: hidden;
+    padding: 20px 8px 100px;
   }
 
   .stadium-shell {
-    padding: 5px;
+    padding: 8px;
     border-radius: 20px;
-    width: 100%;
   }
 
   .pitch-frame {
-    padding: 2px;
+    padding: 5px;
   }
 
   .pitch {
-    padding: 50px 2px 20px;
-    gap: 10px;
+    padding: 60px 5px 20px;
+    gap: 12px;
+    padding: 20px 5px;
+    gap: 15px;
   }
 
   .row {
+    gap: 5px;
     gap: 4px;
+    flex-wrap: nowrap; /* Keep formation intact */
   }
 
   .player {
-    width: 68px;
+    width: 72px;
+    padding: 8px 4px;
+    width: 68px; /* Slightly smaller to fit 4-5 players */
     padding: 6px 2px;
+    text-align: center;
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(199, 255, 56, 0.3);
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
   }
+
   .player select {
     background: #0f172a;
+    background: rgba(11, 16, 32, 1);
     border-radius: 6px;
     color: #c7ff38;
+    font-size: 10px;
   }
 
   .shirt {
@@ -964,8 +985,6 @@ MOBILE
   .mobile-nav a {
     color: white;
     font-size: 12px;
-    text-decoration: none;
-    text-align: center;
   }
 
   .main-layout {
@@ -1004,7 +1023,7 @@ MOBILE
 <body>
 
 <header>
-
+<div class="header-inner"></div>
   <div class="logo">GAME <span>OF OPINIONS</span></div>
 
   <nav>
@@ -1019,7 +1038,7 @@ MOBILE
     <a href="javascript:void(0)" class="user-only" onclick="handleLogout()">Log Out</a>
 
   </nav>
-
+</div>
 </header>
 
 <div class="container">
@@ -1044,10 +1063,6 @@ MOBILE
     <div class="point-item" style="border-left: 1px solid rgba(255,255,255,0.1); padding-left: 15px;">
       <label style="color: #c7ff38;">Total Points</label>
       <span id="pts-total" style="color: #c7ff38; font-weight: 900;">0</span>
-    </div>
-    <div class="point-item" style="border-left: 1px solid rgba(255,255,255,0.1); padding-left: 15px;">
-      <label>Maverick Score</label>
-      <span id="maverick-score" style="color: #38bdf8;">0%</span>
     </div>
   </div>
 </div>
@@ -1083,7 +1098,6 @@ MOBILE
 
 <div class="row">
   <div class="player" style="position:relative;">
-    <div class="rarity-tag">DIFF</div>
     <div class="shirt">
       <div class="shirt-name"></div>
       <a href="admin.html" class="shirt-pts"></a>
@@ -1095,34 +1109,34 @@ MOBILE
 <!-- DEF -->
 
 <div class="row">
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
 
 </div>
 
 <!-- MID -->
 <div class="row">
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
 
 </div>
 
 <!-- FWD -->
 
 <div class="row">
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="FWD" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="FWD" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="FWD" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="FWD" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="FWD" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="FWD" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="FWD" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
+<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="FWD" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
 
 </div>
 
@@ -1137,41 +1151,6 @@ MOBILE
   <button onclick="saveTeam()">Save Team</button>
 </div>
 
-  <!-- BOTTOM PANELS (Weekly Picks and Bet Builder) -->
-  <div class="bottom-panels">
-    <div class="weekly-panel">
-      <h2>Weekly Picks</h2>
-      <p style="font-size: 13px; color: #9ca3af; margin-bottom: 5px; display: flex; justify-content: space-between;">
-        <span>Club to score first:</span>
-        <span style="color: #c7ff38; font-weight: bold;">10 pts</span>
-      </p>
-      <select id="firstScorer"><option>Select</option></select>
-      <p style="font-size: 13px; color: #9ca3af; margin: 10px 0 5px; display: flex; justify-content: space-between;">
-        <span>Minute of first goal:</span>
-        <span style="color: #c7ff38; font-weight: bold;">40 pts</span>
-      </p>
-      <select id="goalMinute"><option>Select</option></select>
-      <button onclick="saveWeekly()">Save Picks</button>
-      <p id="weeklyStatus"></p>
-    </div>
-
-    <div class="bet-builder-panel">
-      <h2>Scout's Bet Builder</h2>
-      <div class="bet-match" id="betMatchDisplay">Loading match...</div>
-      <ul class="bet-list" id="betPicksDisplay"></ul>
-      <div class="bet-odds-box">
-        <span class="odds-label">Est. Odds</span>
-        <span class="odds-value" id="betOddsDisplay">--</span>
-      </div>
-      <div class="bet-actions">
-        <button class="bet-choice" onclick="setBetChoice('yes')" id="btnYes">YES</button>
-        <button class="bet-choice" onclick="setBetChoice('no')" id="btnNo">NO</button>
-      </div>
-      <div class="bet-info" id="betInfo">Pick if the bet lands. Cost: 5 pts.</div>
-      <button class="save-btn" id="saveBetBuilderBtn" onclick="saveBetBuilder()">Save Bet Prediction</button>
-    </div>
-  </div>
-
 </div> <!-- End left-side -->
 
 <!-- RIGHT SIDE PANELS (Fixtures only) -->
@@ -1183,9 +1162,49 @@ MOBILE
 </div>
 
 </div> <!-- End main-layout -->
-</div> <!-- End container -->
 
-<!-- MODALS -->
+<!-- BOTTOM PANELS (Weekly Picks and Bet Builder) -->
+<div class="bottom-panels">
+  <div class="weekly-panel">
+    <h2>Weekly Picks</h2>
+    <p style="font-size: 13px; color: #9ca3af; margin-bottom: 5px; display: flex; justify-content: space-between;">
+      <span>Club to score first:</span>
+      <span style="color: #c7ff38; font-weight: bold;">10 pts</span>
+    </p>
+    <select id="firstScorer">
+      <option>Select</option>
+    </select>
+    <p style="font-size: 13px; color: #9ca3af; margin: 10px 0 5px; display: flex; justify-content: space-between;">
+      <span>Minute of first goal:</span>
+      <span style="color: #c7ff38; font-weight: bold;">40 pts</span>
+    </p>
+    <select id="goalMinute">
+      <option>Select</option>
+    </select>
+    <button onclick="saveWeekly()">Save Picks</button>
+    <p id="weeklyStatus"></p>
+  </div>
+
+  <div class="bet-builder-panel">
+    <h2>Scout's Bet Builder</h2>
+    <div class="bet-match" id="betMatchDisplay">Loading match...</div>
+    <ul class="bet-list" id="betPicksDisplay"></ul>
+    <div class="bet-odds-box">
+      <span class="odds-label">Est. Odds</span>
+      <span class="odds-value" id="betOddsDisplay">--</span>
+    </div>
+    <div class="bet-actions">
+      <button class="bet-choice" onclick="setBetChoice('yes')" id="btnYes" title="Sacrifice: 5 pts. Win 155 pts if bet lands, lose 30 pts if it fails.">YES</button>
+      <button class="bet-choice" onclick="setBetChoice('no')" id="btnNo" title="Sacrifice: 5 pts. Win 30 pts if bet fails, lose 155 pts if it lands.">NO</button>
+    </div>
+    <div class="bet-info" id="betInfo">
+      Pick if the bet lands. Cost: 5 pts to play.
+    </div>
+    <button class="save-btn" id="saveBetBuilderBtn" onclick="saveBetBuilder()">Save Bet Prediction</button>
+  </div>
+</div>
+
+<!-- POSITION RULES MODAL -->
 <div id="posRulesModal" class="rules-modal" onclick="this.style.display='none'">
   <div class="rules-card" onclick="event.stopPropagation()">
     <h2 id="posRulesTitle">Position Rules</h2>
@@ -1195,6 +1214,7 @@ MOBILE
   </div>
 </div>
 
+<!-- Gameweek Locked Modal -->
 <div id="gameweekLockedModal" class="rules-modal">
   <div class="rules-card">
     <h2>Gameweek Closed</h2>
@@ -1203,6 +1223,7 @@ MOBILE
   </div>
 </div>
 
+<!-- FOOTER -->
 <footer>
   <div class="footer-logo">GAME <span>OF OPINIONS</span></div>
   <div class="footer-links">
@@ -1212,7 +1233,7 @@ MOBILE
     <a href="league.html">League</a>
   </div>
   <div class="copyright">
-    &copy; 2026 Game of Opinions. All rights reserved.
+    &copy; 2024 Game of Opinions. All rights reserved.
   </div>
 </footer>
 
@@ -1222,7 +1243,6 @@ MOBILE
   <a href="myxi.html">⚽<br>Team</a>
   <a href="season.html">🏆<br>Picks</a>
   <a href="league.html">📊<br>League</a>
-  <a href="rules.html">📜<br>Rules</a>
 </div>
 
 <script type="module">
@@ -1376,7 +1396,6 @@ const updateShirt = function(select) {
   const shirt = select.parentElement.querySelector('.shirt');
   const nameLabel = shirt.querySelector('.shirt-name');
   const ptsLabel = shirt.querySelector('.shirt-pts');
-  const rarityTag = select.parentElement.querySelector('.rarity-tag');
   const val = select.value;
   const pos = select.dataset.pos;
 
@@ -1395,16 +1414,7 @@ const updateShirt = function(select) {
     nameLabel.style.display = "none";
     ptsLabel.innerText = "";
     ptsLabel.style.display = "none";
-    if(rarityTag) { rarityTag.style.display = "none"; updateMaverickMeter(); }
     return;
-  }
-  
-  // Simulate Rarity Check (Premium Logic)
-  // In production, this would check against a global ownership percentage
-  const isDifferential = Math.random() > 0.7; 
-  if(rarityTag) {
-    rarityTag.style.display = isDifferential ? "block" : "none";
-    updateMaverickMeter();
   }
 
   nameLabel.style.display = "block";
@@ -1508,7 +1518,7 @@ const updatePitchRow = function(row, pos, count) {
     const subAdvanced = document.createElement('div');
     subAdvanced.className = 'pitch-sub-row';
     
-    const playerHTML = `<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div>`;
+    const playerHTML = `<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div>`;
     
     for(let i=0; i<4; i++) subBase.innerHTML += playerHTML;
     subAdvanced.innerHTML += playerHTML;
@@ -1518,7 +1528,7 @@ const updatePitchRow = function(row, pos, count) {
     row.appendChild(subAdvanced);
   } else {
     for(let i=0; i<count; i++) {
-      row.innerHTML += `<div class="player"><div class="rarity-tag">DIFF</div><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div>`;
+      row.innerHTML += `<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div>`;
     }
   }
 }
@@ -1566,20 +1576,6 @@ const populatePlayers = function() {
   });
 }
 window.populatePlayers = populatePlayers;
-
-const updateMaverickMeter = function() {
-  const tags = document.querySelectorAll('.rarity-tag');
-  let activeCount = 0;
-  tags.forEach(t => { if(t.style.display === 'block') activeCount++; });
-  
-  const percentage = Math.round((activeCount / 11) * 100);
-  const scoreEl = document.getElementById('maverick-score');
-  scoreEl.innerText = percentage + "%";
-  scoreEl.style.color = percentage > 50 ? "#c7ff38" : "#38bdf8";
-  
-  // Stadium Aura Effect
-  document.body.style.setProperty('--stadium-glow', percentage > 50 ? 'rgba(199, 255, 56, 0.15)' : 'rgba(120, 255, 120, 0.08)');
-}
 
 const populateWeeklyOptions = function() {
   const clubSelect = document.getElementById('firstScorer');
