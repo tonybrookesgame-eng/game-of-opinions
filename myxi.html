@@ -214,6 +214,40 @@ p {
   font-weight: 800;
 }
 
+footer {
+  display: block;
+  margin-top: 60px;
+  padding: 40px 20px;
+  background: rgba(0, 0, 0, 0.4);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+.footer-logo {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 15px;
+}
+.footer-logo span {
+  color: #c7ff38;
+}
+.footer-links {
+  margin-bottom: 15px;
+}
+.footer-links a {
+  color: #9ca3af;
+  text-decoration: none;
+  margin: 0 12px;
+  font-size: 13px;
+}
+.footer-links a:hover {
+  color: #c7ff38;
+}
+.copyright {
+  color: #4b5563;
+  font-size: 11px;
+}
+
 /* BET BUILDER STYLES */
 .bet-match {
   background: rgba(184, 255, 30, 0.1);
@@ -288,13 +322,17 @@ p {
   align-items: center;
   justify-content: space-between;
   gap: 20px;
+  justify-content: space-between; /* Keeps Name/History left and Points right on desktop */
+  gap: 15px;
   background: rgba(255, 255, 255, 0.04);
   padding: 20px 25px;
   padding: 15px 20px;
+  padding: 12px 20px;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   margin-bottom: 20px;
   flex-wrap: wrap;
+  backdrop-filter: blur(10px);
 }
 .name-section {
   display: flex;
@@ -302,13 +340,18 @@ p {
   gap: 12px;
   flex: 1;
   min-width: 300px;
+  gap: 10px;
+  flex-wrap: nowrap; /* Forces one line on desktop */
 }
+
 .points-summary {
   display: flex;
   gap: 20px;
+  gap: 15px;
   background: rgba(0,0,0,0.3);
   padding: 10px 20px;
   padding: 12px;
+  padding: 8px 15px;
   border-radius: 10px;
   border: 1px solid rgba(199, 255, 56, 0.2);
 }
@@ -331,11 +374,39 @@ p {
   flex: 1;
   max-width: 250px;
   padding: 8px 12px;
+  width: 180px;
+  padding: 6px 12px;
   border-radius: 8px;
   border: 1px solid rgba(255,255,255,0.2);
   background: rgba(0,0,0,0.3);
   color: white;
   font-size: 14px;
+  height: 36px;
+}
+
+.history-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.history-selector select {
+  width: auto;
+  min-width: 100px;
+  padding: 5px 8px;
+  font-size: 13px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: white;
+  height: 36px;
+}
+
+#saveTeamBtn {
+  width: auto;
+  padding: 0 16px;
+  height: 36px;
+  font-size: 13px;
+  margin-top: 0;
 }
 
 .formation-selector {
@@ -787,6 +858,8 @@ MOBILE
   nav {
     display: none;
   }
+
+  footer { padding-bottom: 100px; }
   h1 {
     text-align: center;
   }
@@ -801,16 +874,28 @@ MOBILE
     flex-direction: column;
     align-items: stretch;
     gap: 15px;
+    gap: 10px;
+    padding: 15px;
   }
 
   .name-section {
     width: 100%;
     flex-direction: row;
+    display: grid;
+    grid-template-columns: 1fr; /* Stack groups for neatness */
+    gap: 10px;
+  }
+  
+  /* Row helper for Mobile */
+  .mobile-row {
+    display: flex;
     align-items: center;
     justify-content: flex-start;
     flex-wrap: wrap;
     min-width: 0;
     gap: 8px;
+    justify-content: space-between;
+    gap: 10px;
   }
 
   .team-name-ribbon span {
@@ -819,8 +904,7 @@ MOBILE
     font-size: 13px;
   }
 
-  .team-name-ribbon input {
-    color: white !important;
+  .team-name-ribbon input, .history-selector select {
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
     opacity: 1 !important;
@@ -828,6 +912,8 @@ MOBILE
     flex: 1;
     min-width: 120px;
     padding: 6px 10px;
+    flex: 1; /* Stretch to fill space */
+    text-align: right; /* Aligns data to the right like desktop */
   }
 
   .history-selector select {
@@ -1049,15 +1135,19 @@ MOBILE
 
 <div class="team-name-ribbon">
   <div class="name-section">
-    <span>Team Name:</span>
-    <input type="text" id="teamNameInput" placeholder="Enter Team Name">
-    <div class="history-selector" style="position: static; margin-left: 10px; border: none; background: none; padding: 0;">
-      <span>History:</span>
-      <select id="gameweekHistorySelect" onchange="loadSelectedGameweekHistory()" style="width: auto; min-width: 120px; padding: 5px 8px; font-size: 13px;">
-        <option value="">Live</option>
-      </select>
+    <div class="mobile-row">
+      <span>Team Name:</span>
+      <input type="text" id="teamNameInput" placeholder="Enter Team Name">
     </div>
-    <button id="saveTeamBtn" onclick="saveTeam()" style="width: auto; padding: 8px 16px;">Save</button>
+    <div class="mobile-row">
+      <div class="history-selector">
+        <span>History:</span>
+        <select id="gameweekHistorySelect" onchange="loadSelectedGameweekHistory()">
+          <option value="">Live</option>
+        </select>
+      </div>
+      <button id="saveTeamBtn" onclick="saveTeam()">Save</button>
+    </div>
   </div>
   
   <div class="points-summary">
@@ -1230,6 +1320,19 @@ MOBILE
 </div>
 
 <!-- FOOTER -->
+<footer>
+  <div class="footer-logo">GAME <span>OF OPINIONS</span></div>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="myxi.html">Your Team</a>
+    <a href="season.html">Season Picks</a>
+    <a href="league.html">League</a>
+  </div>
+  <div class="copyright">
+    &copy; 2026 Game of Opinions. All rights reserved.
+  </div>
+</footer>
+
 <!-- MOBILE NAV -->
 <div class="mobile-nav">
   <a href="index.html">🏠<br>Home</a>
