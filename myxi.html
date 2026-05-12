@@ -364,14 +364,6 @@ p {
   height: 36px;
 }
 
-#saveTeamBtn {
-  width: auto;
-  padding: 0 16px;
-  height: 36px;
-  font-size: 13px;
-  margin-top: 0;
-}
-
 .formation-selector {
   position: absolute;
   top: 15px;
@@ -859,18 +851,6 @@ MOBILE
   .mobile-row:last-child {
     justify-content: space-between;
   }
-
-  #saveTeamBtn {
-    width: auto;
-    min-width: 60px;
-    padding: 0 12px;
-    height: 44px;
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 10px rgba(199, 255, 56, 0.2);
-  }
-
   .team-name-ribbon span {
     color: #c7ff38 !important;
     font-size: 13px;
@@ -1133,7 +1113,6 @@ MOBILE
           <option value="">Live</option>
         </select>
       </div>
-      <button id="saveTeamBtn" onclick="saveTeam()">Save</button>
       <div class="points-summary">
         <div class="point-item"><label>Sel</label><span id="pts-selection">0</span></div>
         <div class="point-item"><label>Picks</label><span id="pts-picks">0</span></div>
@@ -1720,7 +1699,6 @@ onSnapshot(gameweekSettingsRef, (docSnap) => {
         }
 
         // Disable/Enable save buttons
-        document.getElementById('saveTeamBtn').disabled = isLocked;
         document.getElementById('saveTeamBottomBtn').disabled = isLocked;
         document.getElementById('clearTeamBtn').disabled = isLocked;
         document.getElementById('saveWeeklyBtn').disabled = isLocked;
@@ -1771,7 +1749,6 @@ const loadUserData = async function(uid) {
     document.getElementById('teamNameInput').value = teamData.teamName || "";
     
     if (teamData.teamName) {
-      document.getElementById('saveTeamBtn').style.display = 'none';
       document.getElementById('teamNameInput').disabled = true;
     }
     
@@ -1846,7 +1823,6 @@ const saveTeam = async function() {
       weeklyPoints: weeklyPts
     }, { merge: true });
     document.getElementById('teamNameInput').disabled = true;
-    document.getElementById('saveTeamBtn').style.display = 'none';
     alert("Team XI Saved!");
   } catch (error) {
     console.error("Error saving team: ", error);
