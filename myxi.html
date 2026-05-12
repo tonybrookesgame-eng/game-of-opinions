@@ -1285,16 +1285,6 @@ MOBILE
   </div>
 </div>
 
-<!-- POSITION RULES MODAL -->
-<div id="posRulesModal" class="rules-modal" onclick="this.style.display='none'">
-  <div class="rules-card" onclick="event.stopPropagation()">
-    <h2 id="posRulesTitle">Position Rules</h2>
-    <p id="posRulesText"></p>
-    <ul id="posRulesList"></ul>
-    <button onclick="document.getElementById('posRulesModal').style.display='none'">Got it, Coach</button>
-  </div>
-</div>
-
 <!-- Gameweek Locked Modal -->
 <div id="gameweekLockedModal" class="rules-modal">
   <div class="rules-card">
@@ -1451,14 +1441,6 @@ const colors = {
   "West Ham": "linear-gradient(#7a263a, #1bb1e7)",
   "Wolves": "linear-gradient(#fdb913, #231f20)"
 };
-const posAlertsShown = { GK: false, DEF: false, MID: false, FWD: false };
-const posRules = {
-  GK: { title: "Goalkeeper Scoring", text: "Goalkeepers are scored at the Club level. You earn points for the position's overall performance.", points: ["Appearance: +1", "Clean Sheet: +5", "Penalty Save: +5", "Assist: +10", "Goal: +20", "Yellow Card: -2", "Red Card: -6"] },
-  DEF: { title: "Defender Scoring", text: "Defenders provide stability and huge rewards for defensive discipline and attacking contributions.", points: ["Appearance: +1", "Clean Sheet: +5", "Goal: +6", "Assist: +6", "Yellow Card: -1", "Red Card: -5"] },
-  MID: { title: "Midfielder Scoring", text: "Midfielders are the creative engine, rewarded for both goals and controlling the game.", points: ["Appearance: +1", "Goal: +5", "Assist: +5", "Clean Sheet: +2", "Yellow Card: -1", "Red Card: -5"] },
-  FWD: { title: "Forward Scoring", text: "Strikers carry the heaviest burden for goals. High risk, high reward.", points: ["Appearance: +1", "Goal: +4", "Assist: +5", "Yellow Card: -1", "Red Card: -5"] }
-};
-
 window.currentDisplayedPlayerScores = {}; // Global variable for currently displayed player scores
 const updateShirt = function(select) {
   const shirt = select.parentElement.querySelector('.shirt');
@@ -1471,11 +1453,6 @@ const updateShirt = function(select) {
     ptsLabel.innerText = window.currentDisplayedPlayerScores[val] + " PTS";
     ptsLabel.style.display = "block";
   }
-
-  if (val !== "Select" && !posAlertsShown[pos]) {
-    showPosPopup(pos);
-  }
-  
   if (val === "Select") {
     shirt.style.background = "linear-gradient(#2563eb, #1d4ed8)";
     nameLabel.innerText = "";
@@ -1534,21 +1511,6 @@ const loadFixtures = () => {
     });
   });
 };
-
-function showPosPopup(pos) {
-  const modal = document.getElementById('posRulesModal');
-  const title = document.getElementById('posRulesTitle');
-  const text = document.getElementById('posRulesText');
-  const list = document.getElementById('posRulesList');
-
-  const rules = posRules[pos];
-  title.innerText = rules.title;
-  text.innerText = rules.text;
-  list.innerHTML = rules.points.map(p => `<li>${p}</li>`).join('');
-  
-  modal.style.display = 'flex';
-  posAlertsShown[pos] = true;
-}
 
 const changeFormation = function() {
   const formation = document.getElementById('formationSelect').value;
