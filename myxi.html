@@ -1472,7 +1472,7 @@ const updateShirt = function(select) {
     ptsLabel.style.display = "block";
   }
 
-  if (val !== "Select" && !posAlertsShown[pos]) {
+  if (val !== "Select" && !posAlertsShown[pos] && suppressPopup !== true) {
     showPosPopup(pos);
   }
   
