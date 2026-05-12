@@ -1231,6 +1231,8 @@ MOBILE
 <div class="pitch-actions">
   <button onclick="clearTeam()" class="btn-clear">Clear Team</button>
   <button onclick="saveTeam()">Save Team</button>
+  <button id="clearTeamBtn" onclick="clearTeam()" class="btn-clear">Clear Team</button>
+  <button id="saveTeamBottomBtn" onclick="saveTeam()">Save Team</button>
 </div>
 
 </div> <!-- End left-side -->
@@ -1719,6 +1721,8 @@ onSnapshot(gameweekSettingsRef, (docSnap) => {
 
         // Disable/Enable save buttons
         document.getElementById('saveTeamBtn').disabled = isLocked;
+        document.getElementById('saveTeamBottomBtn').disabled = isLocked;
+        document.getElementById('clearTeamBtn').disabled = isLocked;
         document.getElementById('saveWeeklyBtn').disabled = isLocked;
         document.getElementById('saveBetBuilderBtn').disabled = isLocked;
         document.getElementById('gameweekLockedModal').style.display = isLocked ? 'flex' : 'none';
