@@ -1293,8 +1293,8 @@ MOBILE
 <!-- Gameweek Locked Modal -->
 <div id="gameweekLockedModal" class="rules-modal">
   <div class="rules-card">
-    <h2>Gameweek Closed</h2>
-    <p>Selections will re-open once points are processed.</p>
+    <h2>Gameweek Locked</h2>
+    <p>Gameweek is now locked. We will open selections for the next set of fixtures soon.</p>
     <button onclick="document.getElementById('gameweekLockedModal').style.display='none'">Got it</button>
   </div>
 </div>
@@ -1750,10 +1750,17 @@ onSnapshot(gameweekSettingsRef, (docSnap) => {
             document.querySelector('header .user-only #deadline-timer').innerText = d.toLocaleString('en-GB', options).toUpperCase();
         }
 
-        // Disable/Enable save buttons
-        document.getElementById('saveTeamBtn').disabled = isLocked;
-        document.getElementById('saveWeeklyBtn').disabled = isLocked;
-        document.getElementById('saveBetBuilderBtn').disabled = isLocked;
+        // Disable/Enable all selection elements
+        const elementsToToggle = document.querySelectorAll(
+          '#teamNameInput, #formationSelect, .pitch select, .weekly-panel select, .weekly-panel button, .bet-builder-panel button, .pitch-actions button, #saveTeamBtn'
+        );
+        elementsToToggle.forEach(el => {
+          el.disabled = isLocked;
+          if (el.tagName === 'BUTTON' || el.classList.contains('bet-choice')) {
+            el.style.opacity = isLocked ? '0.5' : '1';
+            el.style.pointerEvents = isLocked ? 'none' : 'auto';
+          }
+        });
         document.getElementById('gameweekLockedModal').style.display = isLocked ? 'flex' : 'none';
     }
 });
