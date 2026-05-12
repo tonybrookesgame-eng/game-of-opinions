@@ -1842,11 +1842,11 @@ onSnapshot(query(collection(db, "gameweekHistory"), orderBy("processedAt", "desc
 
 const saveTeam = async function() {
   if (!currentUser) {
-    alert("Please log in to save your team.");
+    alert("Gameweek Currently Locked. We will re-open soon.");
     return;
   }
   if (gameweekStatus === 'locked') {
-    alert("Please log in to save your team.");
+    alert("Gameweek Currently Locked. We will re-open soon.");
     return;
   }
 
@@ -1891,11 +1891,11 @@ window.saveTeam = saveTeam;
 
 const saveWeekly = async function() {
   if (!currentUser) {
-    alert("Please log in to save your weekly picks.");
+    alert("");
     return;
   }
   if (gameweekStatus === 'locked') {
-    alert("Please log in to save your weekly picks.");
+    alert("Gameweek Currently Locked. We will re-open soon.");
     return;
   }
   if (firstScorer.value === "Select" || goalMinute.value === "Select") {
