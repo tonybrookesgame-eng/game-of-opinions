@@ -833,10 +833,11 @@ MOBILE
   .right-side { display: none; }
 
   .team-name-ribbon {
-    flex-direction: column;
+    display: flex;
+    flex-direction: column; /* Main container still stacks rows */
     align-items: stretch;
-    padding: 24px;
-    gap: 20px;
+    padding: 15px;
+    gap: 12px;
     border-radius: 18px; /* Consistent with other panels */
     box-shadow: 0 10px 30px rgba(0,0,0,0.14);
   }
@@ -852,19 +853,28 @@ MOBILE
   /* Row helper for Mobile */
   .mobile-row {
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
+    flex-direction: row; /* Force items onto same line */
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    width: 100%;
+  }
+
+  /* Specific layout for History and Points row */
+  .name-section .mobile-row:last-child {
+    justify-content: space-between;
+    margin-top: 4px;
+    gap: 15px;
   }
 
   #saveTeamBtn {
-    width: 100%;
+    width: auto;
+    padding: 0 15px;
     height: 44px;
     font-size: 14px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 10px rgba(199, 255, 56, 0.2);
-    margin-top: 4px;
   }
 
   .team-name-ribbon span {
@@ -873,11 +883,10 @@ MOBILE
   }
 
   .team-name-ribbon input {
-    width: 100%;
-    max-width: none;
+    flex: 1;
+    min-width: 0;
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
-    opacity: 1 !important;
     font-size: 13px;
     padding: 6px 10px;
     text-align: left;
@@ -885,55 +894,56 @@ MOBILE
 
   .history-selector {
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
   }
 
   .history-selector select {
-    width: 100%;
+    width: auto;
+    min-width: 80px;
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
-    opacity: 1 !important;
     font-size: 13px;
+    padding: 4px 6px;
   }
 
   .points-summary {
-    width: 100%;
+    width: auto;
     display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 16px;
-    background: rgba(0, 0, 0, 0.25);
-    margin-top: 10px;
+    flex-direction: row;
+    gap: 10px;
+    padding: 0;
+    background: none;
+    margin-top: 0;
+    border: none;
   }
 
   .point-item {
-    display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    border: none !important;
-    padding: 0 !important;
+    gap: 2px;
   }
   
   .point-item:nth-child(even) {
     border-left: none !important;
-    padding-left: 0 !important;
   }
 
   .point-item:last-child {
-    margin-top: 4px;
-    padding-top: 12px !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    margin-top: 0;
+    padding-top: 0 !important;
+    border: none !important;
+    border-left: 1px solid rgba(255,255,255,0.15) !important;
+    padding-left: 10px !important;
   }
 
   .point-item label {
-    margin-bottom: 0;
-    font-size: 12px;
+    font-size: 8px;
+    opacity: 0.7;
   }
 
   .point-item span {
-    font-size: 15px;
+    font-size: 12px;
   }
 
   .formation-selector {
@@ -952,9 +962,7 @@ MOBILE
   }
 
   .container {
-    padding: 20px 8px 100px;
-    padding: 20px 4px 100px;
-    padding: 20px 15px 100px; /* Increased horizontal padding for better centering */
+    padding: 20px 10px 100px;
   }
 
   .stadium-shell {
@@ -1058,6 +1066,14 @@ MOBILE
 
   .main-layout {
     flex-direction: column;
+    align-items: center;
+  }
+
+  .left-side {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .bottom-panels {
@@ -1131,6 +1147,15 @@ MOBILE
         </select>
       </div>
       <button id="saveTeamBtn" onclick="saveTeam()">Save</button>
+      <div class="points-summary">
+        <div class="point-item"><label>Selection</label><span id="pts-selection">0</span></div>
+        <div class="point-item"><label>Picks</label><span id="pts-picks">0</span></div>
+        <div class="point-item"><label>Bet</label><span id="pts-bet">0</span></div>
+        <div class="point-item" style="border-left: 1px solid rgba(255,255,255,0.1); padding-left: 15px;">
+          <label style="color: #c7ff38;">Total Points</label>
+          <span id="pts-total" style="color: #c7ff38; font-weight: 900;">0</span>
+        </div>
+      </div>
     </div>
   </div>
   
