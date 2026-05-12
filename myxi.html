@@ -1565,7 +1565,7 @@ const changeFormation = function() {
   const gkSelect = document.querySelector('select[data-pos="GK"]');
   if (gkSelect) {
     gkSelect.value = "Select";
-    updateShirt(gkSelect);
+    updateShirt(gkSelect, true);
   }
   
   populatePlayers();
@@ -1703,7 +1703,7 @@ const loadSelectedGameweekHistory = () => {
   const gwData = allGameweekHistory.find(gw => gw.gw == selectedGw); // Use == for type coercion
   if (gwData) {
     window.currentDisplayedPlayerScores = gwData.playerScores || {}; // Set global variable
-    document.querySelectorAll('.pitch select').forEach(s => updateShirt(s)); // Refresh shirts
+    document.querySelectorAll('.pitch select').forEach(s => updateShirt(s, true)); // Refresh shirts
   }
 };
 window.loadSelectedGameweekHistory = loadSelectedGameweekHistory; // Make it global
@@ -1822,7 +1822,7 @@ const loadUserData = async function(uid) {
       selects.forEach((s, i) => {
         if (teamData.players[i] && teamData.players[i] !== "Select") {
           s.value = teamData.players[i];
-          updateShirt(s);
+          updateShirt(s, true);
         }
       });
     }
@@ -1838,7 +1838,7 @@ onSnapshot(query(collection(db, "gameweekHistory"), orderBy("processedAt", "desc
   if (!snapshot.empty) {
     window.currentDisplayedPlayerScores = snapshot.docs[0].data().playerScores || {};
     // Refresh all shirts on the pitch to show new points
-    document.querySelectorAll('.pitch select').forEach(s => updateShirt(s));
+    document.querySelectorAll('.pitch select').forEach(s => updateShirt(s, true));
   }
 });
 
