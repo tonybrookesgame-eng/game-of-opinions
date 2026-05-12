@@ -1231,6 +1231,8 @@ MOBILE
 <div class="pitch-actions">
   <button onclick="clearTeam()" class="btn-clear">Clear Team</button>
   <button onclick="saveTeam()">Save Team</button>
+  <button id="clearTeamBtn" onclick="clearTeam()" class="btn-clear">Clear Team</button>
+  <button id="saveTeamBottomBtn" onclick="saveTeam()">Save Team</button>
 </div>
 
 </div> <!-- End left-side -->
@@ -1757,6 +1759,8 @@ onSnapshot(gameweekSettingsRef, (docSnap) => {
 
         // Disable/Enable save buttons
         document.getElementById('saveTeamBtn').disabled = isLocked;
+        document.getElementById('saveTeamBottomBtn').disabled = isLocked;
+        document.getElementById('clearTeamBtn').disabled = isLocked;
         document.getElementById('saveWeeklyBtn').disabled = isLocked;
         document.getElementById('saveBetBuilderBtn').disabled = isLocked;
         document.getElementById('gameweekLockedModal').style.display = isLocked ? 'flex' : 'none';
@@ -1843,6 +1847,7 @@ onSnapshot(query(collection(db, "gameweekHistory"), orderBy("processedAt", "desc
 const saveTeam = async function() {
   if (!currentUser) {
     alert("Gameweek Currently Locked. We will re-open soon.");
+    alert("Please log in to save your team.");
     return;
   }
   if (gameweekStatus === 'locked') {
@@ -1892,9 +1897,10 @@ window.saveTeam = saveTeam;
 const saveWeekly = async function() {
   if (!currentUser) {
     alert("");
+    alert("Please log in to save your weekly picks.");
     return;
   }
-  if (gameweekStatus === 'locked') {
+  if (gameweekStatus === 'locked' ) {
     alert("Gameweek Currently Locked. We will re-open soon.");
     return;
   }
@@ -1925,6 +1931,7 @@ const saveBetBuilder = async function() {
   }
   if (gameweekStatus === 'locked') {
     alert("Please log in to save your bet prediction.");
+    alert("Gameweek Currently Locked. We will re-open soon.");
     return;
   }
   if(!currentBetChoice) {
@@ -1945,6 +1952,10 @@ window.saveBetBuilder = saveBetBuilder;
 const clearTeam = async function() {
   if (!currentUser) {
     alert("Please log in to clear your team.");
+    return;
+  }
+  if (gameweekStatus === 'locked') {
+    alert("Gameweek Currently Locked. We will re-open soon.");
     return;
   }
   if (confirm("Are you sure you want to clear your 11 players? Your team name and league progress will be saved.")) {
