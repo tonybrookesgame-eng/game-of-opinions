@@ -305,6 +305,10 @@ p {
   flex-wrap: nowrap; /* Forces one line on desktop */
 }
 
+.mobile-row {
+  display: contents; /* Flattens the mobile rows into a single line for desktop */
+}
+
 .points-summary {
   display: flex;
   gap: 15px;
@@ -312,6 +316,7 @@ p {
   padding: 8px 15px;
   border-radius: 10px;
   border: 1px solid rgba(199, 255, 56, 0.2);
+  margin-left: auto; /* Pushes the points totals to the far right on desktop */
 }
 .point-item {
   text-align: center;
@@ -843,7 +848,7 @@ MOBILE
   
   /* Row helper for Mobile */
   .mobile-row {
-    display: flex;
+    display: flex; /* Restores flex behavior for stacking on mobile */
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
@@ -907,6 +912,7 @@ MOBILE
     margin-top: 0;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
+    margin-left: 0; /* Resets the desktop push-to-right behavior for mobile rows */
   }
 
   .point-item {
@@ -1251,13 +1257,12 @@ MOBILE
       <option>Select</option>
     </select>
     <p style="font-size: 13px; color: #9ca3af; margin: 10px 0 5px; display: flex; justify-content: space-between;">
-      <span>Minute of first goal:</span>
       <span style="color: #c7ff38; font-weight: bold;">40 pts</span>
     </p>
     <select id="goalMinute">
       <option>Select</option>
     </select>
-    <button onclick="saveWeekly()">Save Picks</button>
+    <button id="saveWeeklyBtn" onclick="saveWeekly()">Save Picks</button>
     <p id="weeklyStatus"></p>
   </div>
 
@@ -1293,8 +1298,8 @@ MOBILE
 <!-- Gameweek Locked Modal -->
 <div id="gameweekLockedModal" class="rules-modal">
   <div class="rules-card">
-    <h2>Gameweek Locked</h2>
-    <p>Gameweek is now locked. We will open selections for the next set of fixtures soon.</p>
+    <h2>Gameweek Closed</h2>
+    <p>Selections will re-open once points are processed.</p>
     <button onclick="document.getElementById('gameweekLockedModal').style.display='none'">Got it</button>
   </div>
 </div>
@@ -1750,17 +1755,10 @@ onSnapshot(gameweekSettingsRef, (docSnap) => {
             document.querySelector('header .user-only #deadline-timer').innerText = d.toLocaleString('en-GB', options).toUpperCase();
         }
 
-        // Disable/Enable all selection elements
-        const elementsToToggle = document.querySelectorAll(
-          '#teamNameInput, #formationSelect, .pitch select, .weekly-panel select, .weekly-panel button, .bet-builder-panel button, .pitch-actions button, #saveTeamBtn'
-        );
-        elementsToToggle.forEach(el => {
-          el.disabled = isLocked;
-          if (el.tagName === 'BUTTON' || el.classList.contains('bet-choice')) {
-            el.style.opacity = isLocked ? '0.5' : '1';
-            el.style.pointerEvents = isLocked ? 'none' : 'auto';
-          }
-        });
+        // Disable/Enable save buttons
+        document.getElementById('saveTeamBtn').disabled = isLocked;
+        document.getElementById('saveWeeklyBtn').disabled = isLocked;
+        document.getElementById('saveBetBuilderBtn').disabled = isLocked;
         document.getElementById('gameweekLockedModal').style.display = isLocked ? 'flex' : 'none';
     }
 });
@@ -1847,6 +1845,10 @@ const saveTeam = async function() {
     alert("Please log in to save your team.");
     return;
   }
+  if (gameweekStatus === 'locked') {
+    alert("Please log in to save your team.");
+    return;
+  }
 
   const selects = document.querySelectorAll('.pitch .player select');
   const teamPlayers = Array.from(selects).map(s => s.value);
@@ -1892,6 +1894,10 @@ const saveWeekly = async function() {
     alert("Please log in to save your weekly picks.");
     return;
   }
+  if (gameweekStatus === 'locked') {
+    alert("Please log in to save your weekly picks.");
+    return;
+  }
   if (firstScorer.value === "Select" || goalMinute.value === "Select") {
     alert("Please make both selections for your Weekly Picks (Club to Score First and Goal Minute) before saving.");
     return;
@@ -1914,6 +1920,10 @@ window.saveWeekly = saveWeekly;
 
 const saveBetBuilder = async function() {
   if (!currentUser) {
+    alert("Please log in to save your bet prediction.");
+    return;
+  }
+  if (gameweekStatus === 'locked') {
     alert("Please log in to save your bet prediction.");
     return;
   }
