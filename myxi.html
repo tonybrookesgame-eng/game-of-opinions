@@ -85,7 +85,8 @@ HEADER
 ========================= */
 
 header{
-  display: flex;
+  display:flex;
+
   justify-content: space-between;
   align-items: center;
 
@@ -1099,6 +1100,7 @@ MOBILE
 <body>
 
 <header>
+<div class="header-inner"></div>
   <div class="logo">GAME <span>OF OPINIONS</span></div>
 
   <nav>
@@ -1113,6 +1115,7 @@ MOBILE
     <a href="javascript:void(0)" class="user-only" onclick="handleLogout()">Log Out</a>
 
   </nav>
+</div>
 </header>
 
 <div class="container">
@@ -1226,8 +1229,8 @@ MOBILE
 </div>
 
 <div class="pitch-actions">
-  <button id="clearTeamBtn" onclick="clearTeam()" class="btn-clear">Clear Team</button>
-  <button id="saveTeamBottomBtn" onclick="saveTeam()">Save Team</button>
+  <button onclick="clearTeam()" class="btn-clear">Clear Team</button>
+  <button onclick="saveTeam()">Save Team</button>
 </div>
 
 </div> <!-- End left-side -->
@@ -1458,7 +1461,6 @@ const posRules = {
 
 window.currentDisplayedPlayerScores = {}; // Global variable for currently displayed player scores
 const updateShirt = function(select) {
-const updateShirt = function(select, suppressPopup = false) {
   const shirt = select.parentElement.querySelector('.shirt');
   const nameLabel = shirt.querySelector('.shirt-name');
   const ptsLabel = shirt.querySelector('.shirt-pts');
@@ -1470,7 +1472,7 @@ const updateShirt = function(select, suppressPopup = false) {
     ptsLabel.style.display = "block";
   }
 
-  if (val !== "Select" && !posAlertsShown[pos] && suppressPopup !== true) {
+  if (val !== "Select" && !posAlertsShown[pos]) {
     showPosPopup(pos);
   }
   
@@ -1563,7 +1565,7 @@ const changeFormation = function() {
   const gkSelect = document.querySelector('select[data-pos="GK"]');
   if (gkSelect) {
     gkSelect.value = "Select";
-    updateShirt(gkSelect, true);
+    updateShirt(gkSelect);
   }
   
   populatePlayers();
@@ -1701,7 +1703,7 @@ const loadSelectedGameweekHistory = () => {
   const gwData = allGameweekHistory.find(gw => gw.gw == selectedGw); // Use == for type coercion
   if (gwData) {
     window.currentDisplayedPlayerScores = gwData.playerScores || {}; // Set global variable
-    document.querySelectorAll('.pitch select').forEach(s => updateShirt(s, true)); // Refresh shirts
+    document.querySelectorAll('.pitch select').forEach(s => updateShirt(s)); // Refresh shirts
   }
 };
 window.loadSelectedGameweekHistory = loadSelectedGameweekHistory; // Make it global
@@ -1755,8 +1757,6 @@ onSnapshot(gameweekSettingsRef, (docSnap) => {
 
         // Disable/Enable save buttons
         document.getElementById('saveTeamBtn').disabled = isLocked;
-        document.getElementById('saveTeamBottomBtn').disabled = isLocked;
-        document.getElementById('clearTeamBtn').disabled = isLocked;
         document.getElementById('saveWeeklyBtn').disabled = isLocked;
         document.getElementById('saveBetBuilderBtn').disabled = isLocked;
         document.getElementById('gameweekLockedModal').style.display = isLocked ? 'flex' : 'none';
@@ -1794,22 +1794,6 @@ window.handleLogout = () => {
 
 const loadUserData = async function(uid) {
   // populateWeeklyOptions and loadCurrentBet are now called by the onAuthStateChanged listener
-  try {
-    // 1. Load Points for Ribbon
-    // 1. Load Points
-    const statsRef = doc(db, "users", uid, "stats", "points");
-    const statsSnap = await getDoc(statsRef);
-    if (statsSnap.exists()) {
-      const s = statsSnap.data();
-      document.getElementById('pts-selection').innerText = s.selectionPts || 0;
-      document.getElementById('pts-picks').innerText = s.picksPts || 0;
-      document.getElementById('pts-bet').innerText = s.betPts || 0;
-      document.getElementById('pts-total').innerText = s.totalPts || 0;
-      if (document.getElementById('pts-selection')) document.getElementById('pts-selection').innerText = s.selectionPts || 0;
-      if (document.getElementById('pts-picks')) document.getElementById('pts-picks').innerText = s.picksPts || 0;
-      if (document.getElementById('pts-bet')) document.getElementById('pts-bet').innerText = s.betPts || 0;
-      if (document.getElementById('pts-total')) document.getElementById('pts-total').innerText = s.totalPts || 0;
-    }
 
   // Load Team Data
   const teamDocRef = doc(db, "users", uid, "myxi", "team");
@@ -1823,26 +1807,11 @@ const loadUserData = async function(uid) {
     if (teamData.teamName) {
       document.getElementById('saveTeamBtn').style.display = 'none';
       document.getElementById('teamNameInput').disabled = true;
-    // 2. Load Weekly Picks
-    const weeklyRef = doc(db, "users", uid, "myxi", "weeklyPicks");
-    const weeklySnap = await getDoc(weeklyRef);
-    if (weeklySnap.exists()) {
-      const w = weeklySnap.data();
-      document.getElementById('firstScorer').value = w.first || "Select";
-      document.getElementById('goalMinute').value = w.minute || "Select";
-      if (document.getElementById('firstScorer')) document.getElementById('firstScorer').value = w.first || "Select";
-      if (document.getElementById('goalMinute')) document.getElementById('goalMinute').value = w.minute || "Select";
     }
     
     if (teamData.formation) {
       document.getElementById('formationSelect').value = teamData.formation;
       changeFormation(); // This will re-render rows and populate players
-
-    // 3. Load Bet Builder
-    const betRef = doc(db, "users", uid, "myxi", "betBuilder");
-    const betSnap = await getDoc(betRef);
-    if (betSnap.exists()) {
-      setBetChoice(betSnap.data().choice);
     }
 
     if (teamData.players) {
@@ -1851,45 +1820,14 @@ const loadUserData = async function(uid) {
       selects.forEach((s, i) => {
         if (teamData.players[i] && teamData.players[i] !== "Select") {
           s.value = teamData.players[i];
-          updateShirt(s, true);
+          updateShirt(s);
         }
       });
-    // 4. Load Team Data
-    const teamDocRef = doc(db, "users", uid, "myxi", "team");
-    const teamDocSnap = await getDoc(teamDocRef);
-    
-    if (teamDocSnap.exists()) {
-      const teamData = teamDocSnap.data();
-      document.getElementById('teamNameInput').value = teamData.teamName || "";
-      
-      if (teamData.teamName) {
-        document.getElementById('teamNameInput').value = teamData.teamName;
-        document.getElementById('saveTeamBtn').style.display = 'none';
-        document.getElementById('teamNameInput').disabled = true;
-      }
-      
-      if (teamData.formation) {
-        document.getElementById('formationSelect').value = teamData.formation;
-        // Formation change wipes the pitch, so we do it before loading players
-        changeFormation(); 
-      }
-
-      // Important: Re-query selects AFTER formation change
-      if (teamData.players && teamData.players.length > 0) {
-        const selects = document.querySelectorAll('.pitch .player select');
-        selects.forEach((s, i) => {
-          if (teamData.players[i] && teamData.players[i] !== "Select") {
-            s.value = teamData.players[i];
-            updateShirt(s, true);
-          }
-        });
-      }
     }
-  } catch (err) {
-    console.error("Error loading user data:", err);
+  } else {
+    console.log("No saved team found for user.");
   }
-
-  populateGameweekHistoryDropdown(); 
+  populateGameweekHistoryDropdown(); // Populate history dropdown after user data is loaded
 };
 
 // REAL-TIME SCORE SYNC
@@ -1898,13 +1836,13 @@ onSnapshot(query(collection(db, "gameweekHistory"), orderBy("processedAt", "desc
   if (!snapshot.empty) {
     window.currentDisplayedPlayerScores = snapshot.docs[0].data().playerScores || {};
     // Refresh all shirts on the pitch to show new points
-    document.querySelectorAll('.pitch select').forEach(s => updateShirt(s, true));
+    document.querySelectorAll('.pitch select').forEach(s => updateShirt(s));
   }
 });
 
 const saveTeam = async function() {
   if (!currentUser) {
-    alert("Please log in to save your team.");
+    alert("Gameweek Currently Locked. We will re-open soon.");
     return;
   }
   if (gameweekStatus === 'locked') {
@@ -1953,10 +1891,10 @@ window.saveTeam = saveTeam;
 
 const saveWeekly = async function() {
   if (!currentUser) {
-    alert("Please log in to save your weekly picks.");
+    alert("");
     return;
   }
-  if (gameweekStatus === 'locked' ) {
+  if (gameweekStatus === 'locked') {
     alert("Gameweek Currently Locked. We will re-open soon.");
     return;
   }
@@ -1986,7 +1924,7 @@ const saveBetBuilder = async function() {
     return;
   }
   if (gameweekStatus === 'locked') {
-    alert("Gameweek Currently Locked. We will re-open soon.");
+    alert("Please log in to save your bet prediction.");
     return;
   }
   if(!currentBetChoice) {
@@ -2007,10 +1945,6 @@ window.saveBetBuilder = saveBetBuilder;
 const clearTeam = async function() {
   if (!currentUser) {
     alert("Please log in to clear your team.");
-    return;
-  }
-  if (gameweekStatus === 'locked') {
-    alert("Gameweek Currently Locked. We will re-open soon.");
     return;
   }
   if (confirm("Are you sure you want to clear your 11 players? Your team name and league progress will be saved.")) {
