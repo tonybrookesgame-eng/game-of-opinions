@@ -1794,6 +1794,17 @@ window.handleLogout = () => {
 
 const loadUserData = async function(uid) {
   // populateWeeklyOptions and loadCurrentBet are now called by the onAuthStateChanged listener
+  try {
+    // 1. Load Points for Ribbon
+    const statsRef = doc(db, "users", uid, "stats", "points");
+    const statsSnap = await getDoc(statsRef);
+    if (statsSnap.exists()) {
+      const s = statsSnap.data();
+      document.getElementById('pts-selection').innerText = s.selectionPts || 0;
+      document.getElementById('pts-picks').innerText = s.picksPts || 0;
+      document.getElementById('pts-bet').innerText = s.betPts || 0;
+      document.getElementById('pts-total').innerText = s.totalPts || 0;
+    }
 
   // Load Team Data
   const teamDocRef = doc(db, "users", uid, "myxi", "team");
@@ -1807,11 +1818,24 @@ const loadUserData = async function(uid) {
     if (teamData.teamName) {
       document.getElementById('saveTeamBtn').style.display = 'none';
       document.getElementById('teamNameInput').disabled = true;
+    // 2. Load Weekly Picks
+    const weeklyRef = doc(db, "users", uid, "myxi", "weeklyPicks");
+    const weeklySnap = await getDoc(weeklyRef);
+    if (weeklySnap.exists()) {
+      const w = weeklySnap.data();
+      document.getElementById('firstScorer').value = w.first || "Select";
+      document.getElementById('goalMinute').value = w.minute || "Select";
     }
     
     if (teamData.formation) {
       document.getElementById('formationSelect').value = teamData.formation;
       changeFormation(); // This will re-render rows and populate players
+
+    // 3. Load Bet Builder
+    const betRef = doc(db, "users", uid, "myxi", "betBuilder");
+    const betSnap = await getDoc(betRef);
+    if (betSnap.exists()) {
+      setBetChoice(betSnap.data().choice);
     }
 
     if (teamData.players) {
@@ -1823,10 +1847,42 @@ const loadUserData = async function(uid) {
           updateShirt(s, true);
         }
       });
+    // 4. Load Team Data
+    const teamDocRef = doc(db, "users", uid, "myxi", "team");
+    const teamDocSnap = await getDoc(teamDocRef);
+    
+    if (teamDocSnap.exists()) {
+      const teamData = teamDocSnap.data();
+      document.getElementById('teamNameInput').value = teamData.teamName || "";
+      
+      if (teamData.teamName) {
+        document.getElementById('saveTeamBtn').style.display = 'none';
+        document.getElementById('teamNameInput').disabled = true;
+      }
+      
+      if (teamData.formation) {
+        document.getElementById('formationSelect').value = teamData.formation;
+        // Formation change wipes the pitch, so we do it before loading players
+        changeFormation(); 
+      }
+
+      // Important: Re-query selects AFTER formation change
+      if (teamData.players && teamData.players.length > 0) {
+        const selects = document.querySelectorAll('.pitch .player select');
+        selects.forEach((s, i) => {
+          if (teamData.players[i] && teamData.players[i] !== "Select") {
+            s.value = teamData.players[i];
+            updateShirt(s, true);
+          }
+        });
+      }
     }
   } else {
     console.log("No saved team found for user.");
+  } catch (err) {
+    console.error("Error loading user data:", err);
   }
+
   populateGameweekHistoryDropdown(); // Populate history dropdown after user data is loaded
 };
 
