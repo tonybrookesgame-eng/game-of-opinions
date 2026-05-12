@@ -833,57 +833,65 @@ MOBILE
   .right-side { display: none; }
 
   .team-name-ribbon {
-    flex-wrap: wrap;
-    justify-content: center;
-    padding: 15px;
-    gap: 12px;
     flex-direction: column;
     align-items: stretch;
-    gap: 15px;
-    gap: 10px;
-    padding: 15px;
+    padding: 24px;
+    gap: 20px;
+    border-radius: 18px; /* Consistent with other panels */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.14);
   }
 
   .name-section {
     width: 100%;
-    flex-direction: row;
-    display: grid;
-    grid-template-columns: 1fr; /* Stack groups for neatness */
-    gap: 10px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
   
   /* Row helper for Mobile */
   .mobile-row {
     display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    min-width: 0;
+    flex-direction: column;
+    align-items: stretch;
     gap: 8px;
-    justify-content: space-between;
-    gap: 10px;
+  }
+
+  #saveTeamBtn {
+    width: 100%;
+    height: 44px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 10px rgba(199, 255, 56, 0.2);
+    margin-top: 4px;
   }
 
   .team-name-ribbon span {
-    color: white !important;
     color: #c7ff38 !important;
     font-size: 13px;
   }
 
-  .team-name-ribbon input, .history-selector select {
+  .team-name-ribbon input {
+    width: 100%;
+    max-width: none;
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
     opacity: 1 !important;
     font-size: 13px;
-    flex: 1;
-    min-width: 120px;
     padding: 6px 10px;
-    flex: 1; /* Stretch to fill space */
-    text-align: right; /* Aligns data to the right like desktop */
+    text-align: left;
+  }
+
+  .history-selector {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
   }
 
   .history-selector select {
-    color: white !important;
+    width: 100%;
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
     opacity: 1 !important;
@@ -892,48 +900,53 @@ MOBILE
 
   .points-summary {
     width: 100%;
-    justify-content: space-around;
-    padding: 10px;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.25);
+    margin-top: 10px;
   }
 
   .point-item {
-    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     border: none !important;
     padding: 0 !important;
-    border-left: none !important;
-    padding-left: 0 !important;
   }
   
   .point-item:nth-child(even) {
-    border-left: 1px solid rgba(255,255,255,0.1) !important;
-    padding-left: 10px !important;
+    border-left: none !important;
+    padding-left: 0 !important;
+  }
+
+  .point-item:last-child {
+    margin-top: 4px;
+    padding-top: 12px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .point-item label {
+    margin-bottom: 0;
+    font-size: 12px;
+  }
+
+  .point-item span {
+    font-size: 15px;
   }
 
   .formation-selector {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    transform: none;
-    top: 15px;
-    width: max-content;
-    position: relative;
-    top: 0;
-    left: 0;
-    margin-bottom: 10px;
-    justify-content: center;
-    background: rgba(0,0,0,0.3);
-    position: absolute; /* Changed back to absolute to overlap the grass, not push rows down */
     top: 8px;
     left: 8px;
+    width: auto;
     flex-direction: column;
     align-items: flex-start;
     gap: 2px;
-    padding: 6px 10px;
     padding: 4px 8px;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 8px;
     z-index: 50;
   }
@@ -941,6 +954,7 @@ MOBILE
   .container {
     padding: 20px 8px 100px;
     padding: 20px 4px 100px;
+    padding: 20px 15px 100px; /* Increased horizontal padding for better centering */
   }
 
   .stadium-shell {
@@ -993,10 +1007,14 @@ MOBILE
     padding: 3px 1px;
   }
 
-  .weekly-panel p {
-    justify-content: center !important;
-    gap: 10px;
+  .weekly-panel p { /* Revert to desktop flex behavior for labels and points */
+    /* Removed conflicting justify-content and gap */
   }
+  .weekly-panel select {
+    width: 100%; /* Ensure select elements take full width */
+  }
+
+
 
   .fixture-item {
     flex-direction: column;
