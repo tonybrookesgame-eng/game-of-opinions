@@ -85,8 +85,7 @@ HEADER
 ========================= */
 
 header{
-  display:flex;
-
+  display: flex;
   justify-content: space-between;
   align-items: center;
 
@@ -1886,13 +1885,11 @@ const loadUserData = async function(uid) {
         });
       }
     }
-  } else {
-    console.log("No saved team found for user.");
   } catch (err) {
     console.error("Error loading user data:", err);
   }
 
-  populateGameweekHistoryDropdown(); // Populate history dropdown after user data is loaded
+  populateGameweekHistoryDropdown(); 
 };
 
 // REAL-TIME SCORE SYNC
