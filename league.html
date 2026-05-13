@@ -12,145 +12,123 @@
 
 <style>
 
-/* =========================
-
-   GLOBAL
-
-========================= */
+/* ========================= GLOBAL ========================= */
 
 body {
+
   margin: 0;
+
   font-family: 'Segoe UI', Arial, sans-serif;
+
   color: white;
+
   background:
+
     radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 25%),
+
     linear-gradient(180deg,#020611 0%,#071320 40%,#071a29 100%);
-  min-height: 100vh;
+
 }
 
-/* stadium glow layers */
+/* glow */
+
 body::before{
+
   content:"";
+
   position:fixed;
+
   inset:0;
+
   background:
-    radial-gradient(circle at center, rgba(120,255,120,0.08), transparent 40%),
-    repeating-radial-gradient(circle at 50% -20%, rgba(255,255,255,0.03) 0px, transparent 80px, transparent 120px);
+
+    radial-gradient(circle at center, rgba(120,255,120,0.08), transparent 40%);
+
   pointer-events:none;
-  z-index: -1;
-}
-body::after{
-  content:"";
-  position:fixed;
-  inset:0;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
-  background-size:80px 80px;
-  opacity:0.2;
-  pointer-events:none;
-  z-index: -1;
+
+  z-index:-1;
+
 }
 
-.user-only, .guest-only {
-  display: none;
-}
+.user-only,.guest-only{display:none}
 
-/* =========================
+/* ========================= HEADER ========================= */
 
-   HEADER
-
-========================= */
 header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 40px;
-  background: rgba(0,0,0,0.72);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  padding:20px 40px;
+
+  background:rgba(0,0,0,0.72);
+
+  backdrop-filter:blur(10px);
+
 }
 
-.logo {
-  font-size: 22px;
-  font-weight: 800;
-}
-.logo span {
-  color: #c7ff38;
-}
+.logo {font-size:22px;font-weight:800;}
 
+.logo span {color:#c7ff38;}
 
+nav {display:flex;gap:20px;}
 
 nav a {
-  color: rgba(255,255,255,0.85);
-  text-decoration: none;
-  font-size: 16px;
-  transition: 0.2s ease;
-  white-space: nowrap;
-}
-nav a:hover {
-  color: white;
+
+  color:rgba(255,255,255,0.85);
+
+  text-decoration:none;
+
 }
 
-nav {
-  display: flex;
-  gap: 20px;
-}
+nav a:hover {color:white}
 
-/* =========================
-   CONTAINER
-========================= */
+/* ========================= CONTAINER ========================= */
 
 .container {
-  max-width: 1080px;
-  margin: auto;
-  padding: 20px 40px 100px;
-}
 
-h1 {
-  margin-bottom: 8px;
-  font-size: 36px;
-}
+  max-width:1080px;
 
-.subtitle {
+  margin:auto;
 
-  color: #9ca3af;
-
-  margin-bottom: 25px;
+  padding:20px 40px 100px;
 
 }
 
-/* =========================
-   LEADERBOARD
-========================= */
+h1 {font-size:34px;margin-bottom:8px;}
+
+.subtitle {color:#9ca3af;margin-bottom:25px;}
+
+/* ========================= LEADERBOARD ========================= */
+
 .leaderboard {
-  background: rgba(255,255,255,0.04);
-  border-radius: 20px;
-  overflow: hidden;
 
-  border: 1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.04);
 
-  backdrop-filter: blur(10px);
+  border-radius:20px;
+
+  overflow:hidden;
+
+  border:1px solid rgba(255,255,255,0.08);
 
 }
 
-/* HEADER ROW */
+/* HEADER */
 
 .leader-header {
 
-  display: grid;
+  display:grid;
 
-  grid-template-columns: 60px 1fr 100px 90px;
+  grid-template-columns:60px 1fr 100px 90px;
 
-  padding: 14px 20px;
+  padding:14px 20px;
 
-  font-size: 12px;
+  font-size:12px;
 
-  text-transform: uppercase;
-
-  color: #9ca3af;
-
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  color:#9ca3af;
 
 }
 
@@ -158,328 +136,424 @@ h1 {
 
 .leader-row {
 
-  display: grid;
+  display:grid;
 
-  grid-template-columns: 60px 1fr 100px 90px;
+  grid-template-columns:60px 1fr 100px 90px;
 
-  align-items: center;
+  align-items:center;
 
-  padding: 16px 20px;
+  padding:16px 20px;
 
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  border-top:1px solid rgba(255,255,255,0.05);
 
-  transition: 0.2s;
+  transition:0.2s;
+
+  animation:fadeIn 0.4s ease;
+
+}
+
+@keyframes fadeIn {
+
+  from {opacity:0; transform:translateY(10px);}
+
+  to {opacity:1; transform:translateY(0);}
 
 }
 
 .leader-row:hover {
 
-  background: rgba(255,255,255,0.06);
+  background:rgba(255,255,255,0.06);
 
 }
 
-/* HIGHLIGHT USER */
+/* TOP 3 MEDALS */
+
+.rank.gold {color:#FFD700;}
+
+.rank.silver {color:#C0C0C0;}
+
+.rank.bronze {color:#cd7f32;}
+
+/* USER HIGHLIGHT */
 
 .you {
 
-  background: rgba(167,255,63,0.12);
+  background:rgba(167,255,63,0.12);
 
-  border-left: 4px solid #a7ff3f;
+  border-left:4px solid #a7ff3f;
 
-}
-
-/* MINI LEAGUE UI */
-.league-actions {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 30px;
-}
-.league-btn {
-  background: rgba(199, 255, 56, 0.1);
-  border: 1px solid #c7ff38;
-  color: #c7ff38;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 14px;
-}
-
-/* RANK */
-
-.rank {
-
-  font-weight: bold;
-
-  color: #c7ff38;
+  animation:pulse 2s infinite;
 
 }
 
-/* NAME */
+@keyframes pulse {
+
+  0%{box-shadow:0 0 0 rgba(167,255,63,0);}
+
+  50%{box-shadow:0 0 10px rgba(167,255,63,0.4);}
+
+  100%{box-shadow:0 0 0 rgba(167,255,63,0);}
+
+}
+
+/* TEAM CELL */
 
 .team {
 
-  font-weight: 600;
+  display:flex;
+
+  align-items:center;
+
+  gap:10px;
+
+  font-weight:600;
+
+}
+
+/* AVATAR */
+
+.avatar {
+
+  width:32px;
+
+  height:32px;
+
+  border-radius:50%;
+
+  background:#1f2937;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  font-size:13px;
+
+  font-weight:bold;
+
+  color:#c7ff38;
 
 }
 
 /* POINTS */
 
-.points {
-
-  text-align: right;
-
-  font-weight: bold;
-
-}
+.points {text-align:right;font-weight:bold;}
 
 /* WEEKLY */
 
 .week {
 
-  text-align: right;
+  text-align:right;
 
-  font-size: 13px;
+  font-size:13px;
+
+  font-weight:600;
 
 }
 
 /* MOVEMENT */
 
-.up {
+.up {color:#4ade80;}
 
-  color: #4ade80;
+.down {color:#f87171;}
+
+.same {color:#9ca3af;}
+
+/* ========================= BUTTONS ========================= */
+
+.league-actions {
+
+  display:flex;
+
+  gap:15px;
+
+  margin-bottom:30px;
 
 }
 
-.down {
+.league-btn {
 
-  color: #f87171;
+  background:rgba(199,255,56,0.1);
+
+  border:1px solid #c7ff38;
+
+  color:#c7ff38;
+
+  padding:10px 20px;
+
+  border-radius:8px;
+
+  cursor:pointer;
+
+  font-weight:bold;
 
 }
 
-.same {
+/* ========================= MOBILE ========================= */
 
-  color: #9ca3af;
-
-}
-
-/* =========================
-   MOBILE NAV
-========================= */
 .mobile-nav {
-  display: none;
-  justify-content: space-around;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background: #111827;
-  padding: 10px 0;
-  border-top: 1px solid #333;
-  z-index: 1000;
+
+  display:none;
+
+  position:fixed;
+
+  bottom:0;
+
+  width:100%;
+
+  background:#111827;
+
+  justify-content:space-around;
+
+  padding:10px 0;
+
 }
 
-@media (max-width: 768px) {
-  header {
-    justify-content: center;
-  }
-  nav { display: none; }
-  .mobile-nav { display: flex; }
-  .mobile-nav a { text-decoration: none !important; color: white; font-size: 12px; text-align: center; }
-  .leader-header, .leader-row {
-    grid-template-columns: 40px 1fr 80px 70px;
-  }
+@media (max-width:768px){
+
+  nav{display:none}
+
+  .mobile-nav{display:flex}
+
 }
 
 </style>
+
 </head>
 
 <body>
 
 <header>
+
   <div class="logo">GAME <span>OF OPINIONS</span></div>
+
   <nav>
+
     <a href="index.html">Home</a>
+
     <a href="myxi.html" class="user-only">Your Team</a>
+
     <a href="season.html" class="user-only">Season Picks</a>
+
     <a href="league.html" class="user-only">League</a>
-    <a href="rules.html" class="guest-only">Rules</a>
-    <a href="javascript:void(0)" class="guest-only" onclick="location.href='index.html?login=true'">Log In</a>
+
     <a href="signup.html" class="guest-only">Sign Up</a>
-    <a href="javascript:void(0)" class="user-only" onclick="handleLogout()">Log Out</a>
+
+    <a href="#" class="user-only" onclick="handleLogout()">Log Out</a>
+
   </nav>
+
 </header>
 
 <div class="container">
+
   <h1>League Leaderboard</h1>
-  <p class="subtitle">Global ranking of all opinion-based managers.</p>
+
+  <p class="subtitle">Climb. Dominate. Prove your opinions.</p>
 
   <div class="league-actions user-only">
-    <button class="league-btn" onclick="createLeague()">+ Create Private League</button>
-    <button class="league-btn" onclick="joinLeague()">Join with Code</button>
-  </div>
 
-  <div id="active-league-banner" style="display:none; margin-bottom: 15px; color: #c7ff38; font-weight: bold;">
-    Viewing League: <span id="league-name-display">...</span> 
-    <button onclick="loadLeaderboard(auth.currentUser)" style="background:none; border:none; color:white; cursor:pointer; text-decoration:underline; margin-left:10px;">(Back to Global)</button>
+    <button class="league-btn" onclick="createLeague()">+ Create League</button>
+
+    <button class="league-btn" onclick="joinLeague()">Join League</button>
+
   </div>
 
   <div class="leaderboard">
+
     <div class="leader-header">
-      <div id="rank-col-label">#</div>
-      <div>Team Name</div>
-      <div style="text-align: right;">Points</div>
-      <div style="text-align: right;">This Week</div>
+
+      <div>#</div>
+
+      <div>Team</div>
+
+      <div style="text-align:right;">Points</div>
+
+      <div style="text-align:right;">Week</div>
+
     </div>
-    <div id="leaderboard-body">
-      <!-- Dynamic rows will load here -->
-    </div>
+
+    <div id="leaderboard-body"></div>
+
   </div>
+
 </div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, query, orderBy, getDocs, doc, setDoc, updateDoc, arrayUnion, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBS3Fpobk342TpJw73mMgYOyUrWb-jBtfM",
-    authDomain: "game-of-opinions-97b14.firebaseapp.com",
-    projectId: "game-of-opinions-97b14",
-    storageBucket: "game-of-opinions-97b14.firebasestorage.app",
-    appId: "1:863518863234:web:3a2c2378a2a358e0b2299b"
-  };
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const auth = getAuth(app);
+import { getFirestore, collection, query, orderBy, getDocs, doc, setDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  async function loadLeaderboard(currentUser, leagueFilter = null) {
-    const leaderboardBody = document.getElementById('leaderboard-body');
-    const banner = document.getElementById('active-league-banner');
-    
-    leaderboardBody.innerHTML = '<div style="padding: 20px; text-align: center;">Scouting the league...</div>';
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-    try {
-      let q;
-      if (leagueFilter) {
-        banner.style.display = 'block';
-        document.getElementById('league-name-display').innerText = `${leagueFilter.name} (Code: ${leagueFilter.code})`;
-        // Filter global leaderboard to only show members of this league
-        q = query(
-          collection(db, "leaderboard"), 
-          where("userId", "in", leagueFilter.members),
-          orderBy("totalPoints", "desc")
-        );
-      } else {
-        banner.style.display = 'none';
-        q = query(collection(db, "leaderboard"), orderBy("totalPoints", "desc"));
-      }
-      
-      const querySnapshot = await getDocs(q);
-      
-      leaderboardBody.innerHTML = '';
-      let rank = 1;
+const firebaseConfig = {
 
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        const isYou = currentUser && doc.id === currentUser.uid;
-        
-        const row = document.createElement('div');
-        row.className = `leader-row ${isYou ? 'you' : ''}`;
-        
-        // Calculate movement icons/classes if you have weeklyPoints or previousRank
-        const weeklyChange = data.weeklyPoints || 0;
-        const changeClass = weeklyChange > 0 ? 'up' : (weeklyChange < 0 ? 'down' : 'same');
-        const changeIcon = weeklyChange > 0 ? '⬆️' : (weeklyChange < 0 ? '⬇️' : '—');
+  apiKey: "AIzaSyBS3Fpobk342TpJw73mMgYOyUrWb-jBtfM",
 
-        row.innerHTML = `
-          <div class="rank">${rank}</div>
-          <div class="team">${data.teamName || 'Anonymous Manager'} ${isYou ? '(You)' : ''}</div>
-          <div class="points">${data.totalPoints || 0}</div>
-          <div class="week ${changeClass}">${weeklyChange > 0 ? '+' : ''}${weeklyChange} ${changeIcon}</div>
-        `;
-        
-        leaderboardBody.appendChild(row);
-        rank++;
-      });
+  authDomain: "game-of-opinions-97b14.firebaseapp.com",
 
-      if (rank === 1) {
-        leaderboardBody.innerHTML = '<div style="padding: 20px; text-align: center;">No managers in the stadium yet.</div>';
-      }
+  projectId: "game-of-opinions-97b14",
 
-    } catch (error) {
-      console.error("Error loading leaderboard:", error);
-      leaderboardBody.innerHTML = '<div style="padding: 20px; text-align: center; color: #f87171;">Failed to load leaderboard.</div>';
-    }
-  }
-  window.loadLeaderboard = loadLeaderboard;
+  appId: "1:863518863234:web:3a2c2378a2a358e0b2299b"
 
-  window.createLeague = async () => {
-    const name = prompt("Enter League Name:");
-    if (!name) return;
-    const code = Math.random().toString(36).substring(2, 8).toUpperCase();
-    const leagueId = "L-" + code;
-    
-    await setDoc(doc(db, "leagues", leagueId), {
-      name: name,
-      code: code,
-      creator: auth.currentUser.uid,
-      members: [auth.currentUser.uid]
-    });
-    alert(`League Created! Share code: ${code}`);
-    location.reload();
-  };
+};
 
-  window.joinLeague = async () => {
-    const code = prompt("Enter 6-digit Invite Code:").toUpperCase();
-    if (!code) return;
-    const leagueId = "L-" + code;
-    const leagueRef = doc(db, "leagues", leagueId);
-    const snap = await getDocs(query(collection(db, "leagues"), where("code", "==", code)));
-    
-    if (snap.empty) {
-      alert("League not found!");
-      return;
-    }
+const app = initializeApp(firebaseConfig);
 
-    const leagueDoc = snap.docs[0];
-    await updateDoc(doc(db, "leagues", leagueDoc.id), {
-      members: arrayUnion(auth.currentUser.uid)
-    });
-    
-    const data = leagueDoc.data();
-    const updatedMembers = [...data.members, auth.currentUser.uid];
-    loadLeaderboard(auth.currentUser, { ...data, members: updatedMembers });
-  };
+const db = getFirestore(app);
 
-  onAuthStateChanged(auth, (user) => {
-    const userLinks = document.querySelectorAll('.user-only');
-    const guestLinks = document.querySelectorAll('.guest-only');
-    if (user) {
-      userLinks.forEach(l => l.style.display = 'inline-block');
-      guestLinks.forEach(l => l.style.display = 'none');
-    } else {
-      userLinks.forEach(l => l.style.display = 'none');
-      guestLinks.forEach(l => l.style.display = 'inline-block');
-    }
-    loadLeaderboard(user);
+const auth = getAuth(app);
+
+/* LOAD LEADERBOARD */
+
+async function loadLeaderboard(user){
+
+  const body = document.getElementById("leaderboard-body");
+
+  body.innerHTML = "Loading...";
+
+  const q = query(collection(db,"leaderboard"), orderBy("totalPoints","desc"));
+
+  const snap = await getDocs(q);
+
+  body.innerHTML="";
+
+  let rank=1;
+
+  snap.forEach(docSnap=>{
+
+    const data = docSnap.data();
+
+    const isYou = user && docSnap.id === user.uid;
+
+    let medalClass="";
+
+    let medalIcon=rank;
+
+    if(rank===1){medalClass="gold"; medalIcon="🥇";}
+
+    if(rank===2){medalClass="silver"; medalIcon="🥈";}
+
+    if(rank===3){medalClass="bronze"; medalIcon="🥉";}
+
+    const weekly = data.weeklyPoints || 0;
+
+    const changeClass = weekly>0 ? "up" : weekly<0 ? "down" : "same";
+
+    const arrow = weekly>0 ? "⬆️" : weekly<0 ? "⬇️" : "—";
+
+    const initials = (data.teamName || "A")
+
+      .split(" ")
+
+      .map(w=>w[0])
+
+      .join("")
+
+      .substring(0,2)
+
+      .toUpperCase();
+
+    const row=document.createElement("div");
+
+    row.className= 'leader-row ${isYou ?"you":""}';
+
+    row.innerHTML=`
+
+      <div class="rank ${medalClass}">${medalIcon}</div>
+
+      <div class="team">
+
+        <div class="avatar">${initials}</div>
+
+        ${data.teamName || "Anonymous"} ${isYou?"(You)":""}
+
+      </div>
+
+      <div class="points">${data.totalPoints || 0}</div>
+
+      <div class="week ${changeClass}">
+
+        ${weekly>0?"+":""}${weekly} ${arrow}
+
+      </div>
+
+    `;
+
+    body.appendChild(row);
+
+    rank++;
+
   });
 
-  window.handleLogout = () => {
-    signOut(auth).then(() => {
-      window.location.href = "index.html";
-    });
-  };
+}
+
+window.createLeague = async ()=>{
+
+  const name=prompt("League name:");
+
+  if(!name) return;
+
+  const code=Math.random().toString(36).substring(2,8).toUpperCase();
+
+  await setDoc(doc(db,"leagues","L-"+code),{
+
+    name,code,
+
+    creator:auth.currentUser.uid,
+
+    members:[auth.currentUser.uid]
+
+  });
+
+  alert("Code: "+code);
+
+};
+
+window.joinLeague = async ()=>{
+
+  const code=prompt("Enter code:");
+
+  if(!code) return;
+
+  await updateDoc(doc(db,"leagues","L-"+code),{
+
+    members:arrayUnion(auth.currentUser.uid)
+
+  });
+
+  alert("Joined!");
+
+};
+
+onAuthStateChanged(auth,(user)=>{
+
+  document.querySelectorAll(".user-only").forEach(el=>el.style.display=user?"inline-block":"none");
+
+  document.querySelectorAll(".guest-only").forEach(el=>el.style.display=user?"none":"inline-block");
+
+  loadLeaderboard(user);
+
+});
+
+window.handleLogout=()=>signOut(auth);
+
 </script>
 
-
 <div class="mobile-nav">
+
   <a href="index.html">🏠<br>Home</a>
+
   <a href="myxi.html">⚽<br>Team</a>
+
   <a href="season.html">🏆<br>Picks</a>
+
   <a href="league.html">📊<br>League</a>
+
 </div>
 
 </body>
+
 </html>
