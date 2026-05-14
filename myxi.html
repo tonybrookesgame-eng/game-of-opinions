@@ -1306,7 +1306,7 @@ const playersByPos = {
     { name: "Senesi", club: "Bournemouth" }, { name: "Truffert", club: "Bournemouth" }, { name: "Diakite", club: "Bournemouth" },
     { name: "Pinnock", club: "Brentford" }, { name: "Collins", club: "Brentford" }, { name: "Van den Berg", club: "Brentford" }, { name: "Kayode", club: "Brentford" }, { name: "Ajer", club: "Brentford" },
     { name: "Dunk", club: "Brighton" }, { name: "Van Hecke", club: "Brighton" }, { name: "Kadioglu", club: "Brighton" }, { name: "De Cuyper", club: "Brighton" }, { name: "Veltman", club: "Brighton" },
-    { name: "Colwill", club: "Chelsea" }, { name: "Fofana", club: "Chelsea" }, { name: "James", club: "Chelsea" }, { name: "Cucurella", club: "Chelsea" }, { name: "Gusto", club: "Chelsea" }, { name: "Tosin", club: "Brighton" }, { name: "Chalobah", club: "Brighton" },
+    { name: "Colwill", club: "Chelsea" }, { name: "Fofana", club: "Chelsea" }, { name: "James", club: "Chelsea" }, { name: "Cucurella", club: "Chelsea" }, { name: "Gusto", club: "Chelsea" }, { name: "Tosin", club: "Chelsea" }, { name: "Chalobah", club: "Chelsea" },
     { name: "Richards", club: "Crystal Palace" }, { name: "Lacroix", club: "Crystal Palace" }, { name: "Munoz", club: "Crystal Palace" }, { name: "Mitchell", club: "Crystal Palace" },
     { name: "Branthwaite", club: "Everton" }, { name: "Tarkowski", club: "Everton" }, { name: "Mykolenko", club: "Everton" }, { name: "OBrien", club: "Everton" }, { name: "Keane", club: "Everton" },
     { name: "Andersen", club: "Fulham" }, { name: "Robinson", club: "Fulham" }, { name: "Bassey", club: "Fulham" }, { name: "Diop", club: "Fulham" }, { name: "Castagne", club: "Fulham" },
@@ -1373,9 +1373,9 @@ let currentBetChoice = null;
 // Bet Builder Data - Add new weeks at the end of this array
 const weeklyBets = [
   {
-    match: "Sunderland vs Man Utd",
-    picks: ["Man Utd to win", "Over 3.5 Goals", "Over 11 Corners", "Shaw to be carded"],
-    odds: "28/1"
+    match: "Newcastle vs West Ham",
+    picks: ["Newcastle to win", "Over 2.5 Goals", "Over 12 Corners", "Soucek to be carded", "Joelinton to be carded"],
+    odds: "40/1"
   }
 ];
 
@@ -1456,21 +1456,21 @@ window.updateShirt = updateShirt;
 const loadFixtures = () => {
   const list = document.getElementById('fixtures-list');
   const fixtures = [
-    { date: "Saturday 24th Aug", games: [
-      { home: "Arsenal", away: "Aston Villa", time: "12:30" },
-      { home: "Man City", away: "Ipswich", time: "15:00" },
-      { home: "Spurs", away: "Everton", time: "15:00" },
-      { home: "Chelsea", away: "Fulham", time: "15:00" },
-      { home: "Brighton", away: "Newcastle", time: "17:30" }
+    { date: "Sunday 17th May", games: [
+      { home: "Man Utd", away: "Nottingham Forest", time: "12:30" },
+      { home: "Brentford", away: "Crystal Palace", time: "15:00" },
+      { home: "Everton", away: "Sunderland", time: "15:00" },
+      { home: "Leeds", away: "Brighton", time: "15:00" },
+      { home: "Wolves", away: "Fulham", time: "15:00" },
+      { home: "Newcastle", away: "West Ham", time: "17:30" }
+
     ]},
-    { date: "Sunday 25th Aug", games: [
-      { home: "Wolves", away: "Chelsea", time: "14:00" },
-      { home: "Liverpool", away: "Brentford", time: "16:30" },
-      { home: "Man Utd", away: "Nott'm Forest", time: "16:30" }
+    { date: "Monday 18th May", games: [
+      { home: "Arsenal", away: "Burnley", time: "20:00" }
     ]},
-    { date: "Monday 26th Aug", games: [
-      { home: "Crystal Palace", away: "Burnley", time: "20:00" },
-      { home: "Leeds", away: "Sunderland", time: "20:00" }
+    { date: "Tuesday 19th May", games: [
+      { home: "Bournemouth", away: "Man City", time: "19:30" },
+      { home: "Chelsea", away: "Tottenham", time: "20:00" }
     ]}
   ];
 
