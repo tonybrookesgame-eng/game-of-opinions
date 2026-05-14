@@ -1032,6 +1032,7 @@ MOBILE
     color: white;
     font-size: 12px;
     text-align: center;
+    margin-left: 0; /* Reset margin for mobile nav links */
   }
 
   .main-layout {
@@ -1300,7 +1301,7 @@ const playersByPos = {
     "Nott'm Forest", "Sunderland", "Spurs", "West Ham", "Wolves"
   ],
   DEF: [
-    { name: "Saliba", club: "Arsenal" }, { name: "Gabriel", club: "Arsenal" }, { name: "White", club: "Arsenal" }, { name: "Calafiori", club: "Arsenal" }, { name: "Hincapie", club: "Arsenal" }, { name: "Timber", club: "Arsenal" },  { name: "Mosquera", club: "Arsenal" },
+    { name: "Saliba", club: "Arsenal" }, { name: "Gabriel", club: "Arsenal" }, { name: "White", club: "Arsenal" }, { name: "Calafiori", club: "Arsenal" }, { name: "Hincapie", club: "Arsenal" }, { name: "Timber", club: "Arsenal" },  { name: "C Mosquera", club: "Arsenal" },
     { name: "Konsa", club: "Aston Villa" }, { name: "Pau Torres", club: "Aston Villa" }, { name: "Maatsen", club: "Aston Villa" }, { name: "Cash", club: "Aston Villa" }, { name: "Lindelof", club: "Aston Villa" }, { name: "Digne", club: "Aston Villa" }, { name: "Mings", club: "Aston Villa" },
     { name: "Senesi", club: "Bournemouth" }, { name: "Truffert", club: "Bournemouth" }, { name: "Diakite", club: "Bournemouth" },
     { name: "Pinnock", club: "Brentford" }, { name: "Collins", club: "Brentford" }, { name: "Van den Berg", club: "Brentford" }, { name: "Kayode", club: "Brentford" }, { name: "Ajer", club: "Brentford" },
@@ -1319,10 +1320,10 @@ const playersByPos = {
     { name: "O'Nien", club: "Sunderland" }, { name: "Hume", club: "Sunderland" }, { name: "Ballard", club: "Sunderland" }, { name: "Alderete", club: "Sunderland" }, { name: "Mukiele", club: "Sunderland" }, { name: "Geertruida", club: "Sunderland" }, { name: "Mandava", club: "Sunderland" },
     { name: "Romero", club: "Spurs" }, { name: "Van de Ven", club: "Spurs" }, { name: "Porro", club: "Spurs" }, { name: "Udogie", club: "Spurs" }, { name: "Spence", club: "Spurs" }, { name: "Danso", club: "Spurs" },
     { name: "Mavropanos", club: "West Ham" }, { name: "Disasi", club: "West Ham" }, { name: "Todibo", club: "West Ham" }, { name: "Walker-Peters", club: "West Ham" }, { name: "Wan Bissaka", club: "West Ham" }, { name: "Scarles", club: "West Ham" },
-    { name: "Hugo Bueno", club: "Wolves" }, { name: "Santi Bueno", club: "Wolves" }, { name: "Toti", club: "Wolves" }, { name: "Krejci", club: "Wolves" }, { name: "Mosquera", club: "Wolves" }, { name: "Doherty", club: "Wolves" }
+    { name: "Hugo Bueno", club: "Wolves" }, { name: "Santi Bueno", club: "Wolves" }, { name: "Toti", club: "Wolves" }, { name: "Krejci", club: "Wolves" }, { name: "Y Mosquera", club: "Wolves" }, { name: "Doherty", club: "Wolves" }
   ],
   MID: [
-    { name: "Odegaard", club: "Arsenal" }, { name: "Rice", club: "Arsenal" }, { name: "Saka", club: "Arsenal" }, { name: "Eze", club: "Crystal Palace" }, { name: "Madueke", club: "Chelsea" }, { name: "Zubimendi", club: "Arsenal" }, { name: "Merino", club: "Arsenal" }, { name: "Norgaard", club: "Arsenal" }, { name: "Dowman", club: "Arsenal" },
+    { name: "Odegaard", club: "Arsenal" }, { name: "Rice", club: "Arsenal" }, { name: "Saka", club: "Arsenal" }, { name: "Eze", club: "Arsenal" }, { name: "Madueke", club: "Arsenal" }, { name: "Zubimendi", club: "Arsenal" }, { name: "Merino", club: "Arsenal" }, { name: "Norgaard", club: "Arsenal" }, { name: "Dowman", club: "Arsenal" },
     { name: "Tielemans", club: "Aston Villa" }, { name: "McGinn", club: "Aston Villa" }, { name: "Rogers", club: "Aston Villa" }, { name: "Sancho", club: "Aston Villa" }, { name: "Onana", club: "Aston Villa" }, { name: "Douglas Luiz", club: "Aston Villa" }, { name: "Buendia", club: "Aston Villa" }, { name: "Bailey", club: "Aston Villa" },
     { name: "Brooks", club: "Bournemouth" }, { name: "Cook", club: "Bournemouth" }, { name: "Tavernier", club: "Bournemouth" }, { name: "Rayan", club: "Bournemouth" }, { name: "Scott", club: "Bournemouth" }, { name: "Doak", club: "Bournemouth" }, { name: "Christie", club: "Bournemouth" }, { name: "Adams", club: "Bournemouth" },
     { name: "Ouattara", club: "Brentford" }, { name: "Schade", club: "Brentford" }, { name: "Damsgaard", club: "Brentford" }, { name: "Jensen", club: "Brentford" }, { name: "Yarmoliuk", club: "Brentford" }, { name: "Henderson", club: "Brentford" }, { name: "Janelt", club: "Brentford" },
@@ -1344,7 +1345,7 @@ const playersByPos = {
     { name: "Bellegarde", club: "Wolves" }, { name: "Joao Gomes", club: "Wolves" }, { name: "Andre", club: "Wolves" }, { name: "Mane", club: "Wolves" }
   ],
   FWD: [
-    { name: "Havertz", club: "Arsenal" }, { name: "Jesus", club: "Arsenal" }, { name: "Martinelli", club: "Arsenal" }, { name: "Gyokeres", club: "Arsenal" },
+    { name: "Havertz", club: "Arsenal" }, { name: "G Jesus", club: "Arsenal" }, { name: "Martinelli", club: "Arsenal" }, { name: "Gyokeres", club: "Arsenal" },
     { name: "Watkins", club: "Aston Villa" }, { name: "Abraham", club: "Aston Villa" },
     { name: "Evanilson", club: "Bournemouth" }, { name: "Junior Kroupi", club: "Bournemouth" }, { name: "Adli", club: "Bournemouth" },
     { name: "Thiago", club: "Brentford" }, { name: "Furo", club: "Brentford" },
@@ -1359,7 +1360,7 @@ const playersByPos = {
     { name: "Haaland", club: "Man City" }, { name: "Marmoush", club: "Man City" },
     { name: "Hojlund", club: "Man Utd" }, { name: "Sesko", club: "Man Utd" }, { name: "Cunha", club: "Man Utd" },
     { name: "Wissa", club: "Newcastle" }, { name: "Woltemade", club: "Newcastle" }, { name: "Osula", club: "Newcastle" },
-    { name: "Wood", club: "Nott'm Forest" }, { name: "Awoniyi", club: "Nott'm Forest" }, { name: "Jesus", club: "Nott'm Forest" },
+    { name: "Wood", club: "Nott'm Forest" }, { name: "Awoniyi", club: "Nott'm Forest" }, { name: "I Jesus", club: "Nott'm Forest" },
     { name: "Isidor", club: "Sunderland" }, { name: "Mayenda", club: "Sunderland" }, { name: "Brobbey", club: "Sunderland" },
     { name: "Richarlison", club: "Spurs" }, { name: "Solanke", club: "Spurs" }, { name: "Tel", club: "Spurs" },
     { name: "Taty", club: "West Ham" }, { name: "Pablo", club: "West Ham" }, { name: "Wilson", club: "West Ham" },

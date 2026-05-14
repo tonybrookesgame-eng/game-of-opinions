@@ -30,24 +30,29 @@ body {
 
 }
 
-/* glow */
-
-body::before{
-
-  content:"";
-
-  position:fixed;
-
-  inset:0;
-
+/* stadium glow layers */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
   background:
+    radial-gradient(circle at center, rgba(120,255,120,0.08), transparent 40%),
+    repeating-radial-gradient(circle at 50% -20%, rgba(255,255,255,0.03) 0px, transparent 80px, transparent 120px);
+  pointer-events: none;
+  z-index: -1;
+}
 
-    radial-gradient(circle at center, rgba(120,255,120,0.08), transparent 40%);
-
-  pointer-events:none;
-
-  z-index:-1;
-
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size: 80px 80px;
+  opacity: 0.2;
+  pointer-events: none;
+  z-index: -1;
 }
 
 .user-only,.guest-only{display:none}
@@ -55,36 +60,30 @@ body::before{
 /* ========================= HEADER ========================= */
 
 header {
-
   display:flex;
-
   justify-content:space-between;
-
   align-items:center;
-
   padding:20px 40px;
-
-  background:rgba(0,0,0,0.72);
-
-  backdrop-filter:blur(10px);
-
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px);
 }
 
 .logo {font-size:22px;font-weight:800;}
 
 .logo span {color:#c7ff38;}
 
-nav {display:flex;gap:20px;}
+nav {display:flex;}
 
 nav a {
-
-  color:rgba(255,255,255,0.85);
-
+  margin-left: 20px;
+  color: white;
   text-decoration:none;
-
+  font-size: 16px;
 }
 
-nav a:hover {color:white}
+nav a:hover {
+  opacity: 0.8;
+}
 
 /* ========================= CONTAINER ========================= */
 
@@ -293,29 +292,30 @@ h1 {font-size:34px;margin-bottom:8px;}
 /* ========================= MOBILE ========================= */
 
 .mobile-nav {
-
-  display:none;
-
-  position:fixed;
-
-  bottom:0;
-
-  width:100%;
-
-  background:#111827;
-
-  justify-content:space-around;
-
-  padding:10px 0;
-
+  display: none;
 }
 
 @media (max-width:768px){
-
-  nav{display:none}
-
-  .mobile-nav{display:flex}
-
+  nav { display: none; }
+  .mobile-nav {
+    display: flex;
+    justify-content: space-around;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #111827;
+    padding: 10px 0;
+    border-top: 1px solid #333;
+    z-index: 1000;
+  }
+  .mobile-nav a {
+    text-decoration: none !important;
+    color: white;
+    font-size: 12px;
+    text-align: center;
+    margin-left: 0;
+  }
 }
 
 </style>
@@ -325,25 +325,17 @@ h1 {font-size:34px;margin-bottom:8px;}
 <body>
 
 <header>
-
   <div class="logo">GAME <span>OF OPINIONS</span></div>
-
   <nav>
-
     <a href="index.html">Home</a>
-
     <a href="myxi.html" class="user-only">Your Team</a>
-
     <a href="season.html" class="user-only">Season Picks</a>
-
     <a href="league.html" class="user-only">League</a>
-
+    <a href="rules.html" class="guest-only">Rules</a>
+    <a href="javascript:void(0)" class="guest-only" onclick="location.href='index.html?login=true'">Log In</a>
     <a href="signup.html" class="guest-only">Sign Up</a>
-
-    <a href="#" class="user-only" onclick="handleLogout()">Log Out</a>
-
+    <a href="javascript:void(0)" class="user-only" onclick="handleLogout()">Log Out</a>
   </nav>
-
 </header>
 
 <div class="container">
@@ -529,29 +521,33 @@ window.joinLeague = async ()=>{
 };
 
 onAuthStateChanged(auth,(user)=>{
-
-  document.querySelectorAll(".user-only").forEach(el=>el.style.display=user?"inline-block":"none");
-
-  document.querySelectorAll(".guest-only").forEach(el=>el.style.display=user?"none":"inline-block");
-
+  const userLinks = document.querySelectorAll('.user-only');
+  const guestLinks = document.querySelectorAll('.guest-only');
+  if (user) {
+    userLinks.forEach(l => l.style.display = 'inline-block');
+    guestLinks.forEach(l => l.style.display = 'none');
+  } else {
+    userLinks.forEach(l => l.style.display = 'none');
+    guestLinks.forEach(l => l.style.display = 'inline-block');
+  }
   loadLeaderboard(user);
-
 });
 
-window.handleLogout=()=>signOut(auth);
+window.handleLogout = () => {
+  signOut(auth).then(() => {
+    window.location.href = "index.html";
+  });
+};
 
 </script>
 
+<!-- FOOTER -->
+<!-- MOBILE NAV -->
 <div class="mobile-nav">
-
   <a href="index.html">🏠<br>Home</a>
-
   <a href="myxi.html">⚽<br>Team</a>
-
   <a href="season.html">🏆<br>Picks</a>
-
   <a href="league.html">📊<br>League</a>
-
 </div>
 
 </body>
