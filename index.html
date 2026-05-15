@@ -1086,76 +1086,29 @@ nav a:hover {
   }
 
   .news-ticker {
-    top: 52px;
+    top: 85px; /* Adjusted for taller header */
     box-shadow: 0 4px 15px rgba(0,0,0,0.5); /* Adds a layer of depth over content */
     backdrop-filter: blur(5px); /* Softens the content passing under the ticker */
   }
-  .ticker-content {
-    animation-duration: 60s; /* Slower speed for mobile to improve readability on narrow screens */
-  }
-  
-  nav {
-    display: none !important; /* Keep mobile header clean as requested */
-    justify-content: center;
-    gap: 15px;
-    margin-top: 10px;
-  }
-  
+
   header {
-    flex-direction: row !important;
-    justify-content: space-between !important;
-    padding: 15px 20px !important;
-    height: 52px;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 15px 10px !important;
+    height: auto !important;
   }
 
-  .hero {
-   padding: 40px 15px 20px;
-
-    min-height: auto;
+  nav {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 15px !important;
+    margin-top: 10px !important;
+    width: 100% !important;
   }
 
-  .hero-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-  }
-
-  .hero-copy h1 { order: 1; margin-bottom: 12px; }
-  .hero-copy p { order: 2; margin-bottom: 15px; }
-  .hero-visual { 
-    order: 3;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 120px;
-    margin-top: 60px;
-  }
-  @keyframes mobileGlow {
-    from { box-shadow: 0 0 10px rgba(199, 255, 56, 0.1); }
-    to { box-shadow: 0 0 25px rgba(199, 255, 56, 0.3); }
-  }
-  .hero-visual::before {
-    content: "";
-    position: absolute;
-    width: 100vw;
-    height: 100%;
-    background: radial-gradient(circle at center, rgba(199, 255, 56, 0.08) 0%, transparent 70%);
-    z-index: -1;
-  }
-  .phone-left, .phone-right { transform: none !important; }
-  .hero-buttons { display: none !important; } /* Hide desktop hero buttons on mobile */
-  .phone-btn { display: block; } /* Show app-style button on mobile */
-
-  .hero::before {
-    height: 780px; /* Increased to cover text and phone, stopping above button */
-    bottom: auto; /* Prevent conflict with inset: 0 */
-    background:
-      linear-gradient(rgba(0,0,0,0.40), rgba(0,0,0,0.80)),
-      url("https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=1600&auto=format&fit=crop");
-    background-size: cover;
-    background-position: center 95%; /* Focus on the ball and boot */
-    mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
+  body {
+    padding-top: 115px; 
   }
 
   .hero-copy h1 {
@@ -1246,19 +1199,7 @@ nav a:hover {
 }
 
 @media (max-width: 768px) {
-  .mobile-nav {
-    display: flex;
-    justify-content: space-around;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: rgba(17, 24, 39, 0.75);
-    backdrop-filter: blur(10px);
-    padding: 10px 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    z-index: 1000;
-  }
+  .mobile-nav { display: none !important; }
   .mobile-nav a {
     text-decoration: none !important;
     color: white;
@@ -1305,9 +1246,6 @@ nav a:hover {
     <span>Gameweek Approaching: Deadline Sunday 17th May 11:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
   </div>
 </div>
-
-<!-- MOBILE NAV -->
-<div class="mobile-nav" id="mobile-nav-links"></div>
 
 <!-- UNIFIED AUTH OVERLAY -->
 <div id="auth-overlay" class="auth-overlay">
@@ -1582,26 +1520,13 @@ loadDeadline();
 onAuthStateChanged(auth, (user) => {
   const userLinks = document.querySelectorAll('.user-only');
   const guestLinks = document.querySelectorAll('.guest-only');
-  const mobNav = document.getElementById('mobile-nav-links');
 
   if (user) {
     userLinks.forEach(link => { link.style.display = 'inline-block'; });
     guestLinks.forEach(link => { link.style.display = 'none'; });
-    mobNav.innerHTML = `
-      <a href="index.html">🏠<br>Home</a>
-      <a href="myxi.html">⚽<br>Team</a>
-      <a href="season.html">🏆<br>Picks</a>
-      <a href="league.html">📊<br>League</a>
-    `;
   } else {
     userLinks.forEach(link => { link.style.display = 'none'; });
     guestLinks.forEach(link => { link.style.display = 'inline-block'; });
-    mobNav.innerHTML = `
-      <a href="index.html">🏠<br>Home</a>
-      <a href="rules.html">📜<br>Rules</a>
-      <a href="javascript:void(0)" onclick="openLogin()">🔑<br>Login</a>
-      <a href="signup.html">✨<br>Signup</a>
-    `;
   }
 });
 
