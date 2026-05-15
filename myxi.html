@@ -820,29 +820,18 @@ MOBILE
 @media(max-width:768px){ /* Consistent with season.html and league.html */
 
   header {
-    flex-direction: row !important;
-    justify-content: space-between !important;
+    justify-content: center !important;
     padding: 15px 20px !important; /* Consistent padding */
     height: 52px; /* Fixed height for logo + padding */
   }
 
-  nav { /* Hide the entire header navigation on mobile */
-    display: flex !important; /* Show nav container */
-    align-items: center; /* Align items vertically */
-    gap: 15px; /* Spacing between items */
-  }
-  nav a, nav .nav-sep, nav .signup-btn, nav .login-link, nav a[href="index.html"] {
-    display: none !important; /* Hide all links except user-only (deadline) */
-  }
-  nav .user-only {
-    display: inline-block !important; /* Show user-only links (deadline) */
+  nav {
+    display: none !important;
   }
 
   h1 {
     text-align: center;
   }
-
-  .right-side { display: none; }
 
   .team-name-ribbon {
     display: flex;
@@ -1071,14 +1060,12 @@ MOBILE
     flex-direction: column;
     align-items: center;
   }
-  .left-side {
+  .right-side {
+    display: flex;
     width: 100%;
   }
-
-  .bottom-panels {
+  .left-side {
     width: 100%;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 15px;
   }
 
   .weekly-panel, .bet-builder-panel, .fixtures-panel {
@@ -1292,7 +1279,14 @@ MOBILE
     </div>
     <button class="save-btn" id="saveBetBuilderBtn" onclick="saveBetBuilder()">Save Bet Prediction</button>
   </div>
+
+  <div class="fixtures-panel">
+    <h3>Upcoming Fixtures</h3>
+    <div id="fixtures-list"></div>
+  </div>
 </div>
+
+</div> <!-- End main-layout -->
 
 <!-- Gameweek Locked Modal -->
 <div id="gameweekLockedModal" class="rules-modal">
