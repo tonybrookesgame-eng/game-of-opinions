@@ -113,6 +113,25 @@ nav a:hover {
 
 }
 
+/* ========================= SEARCH BAR ========================= */
+.search-bar-container {
+  margin-bottom: 20px;
+}
+#managerSearch {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(0,0,0,0.3);
+  color: white;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+#managerSearch:focus {
+  border-color: #c7ff38;
+}
+
 h1 {font-size:34px;margin-bottom:8px;}
 
 .subtitle {color:#9ca3af;margin-bottom:25px;}
@@ -318,9 +337,33 @@ h1 {font-size:34px;margin-bottom:8px;}
     flex-direction: column;
     padding: 15px 10px;
   }
-  nav { /* Hide the entire header navigation on mobile */
+  nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+    width: 100%;
+  }
+  nav a {
+    font-size: 11px;
+    margin: 0 !important;
+  }
+  nav a[href="index.html"], nav a[href="myxi.html"], nav a[href="season.html"], nav a[href="league.html"] {
     display: none;
   }
+  .leaderboard {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .leader-header, .leader-row {
+    grid-template-columns: 45px 1fr 80px 70px;
+    min-width: 400px; /* Forces alignment by providing a minimum horizontal canvas */
+    padding: 12px 10px;
+  }
+  .team { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .avatar { width: 28px; height: 28px; font-size: 11px; }
+  .points, .week { font-size: 12px; }
   .mobile-nav {
     display: flex;
     justify-content: space-around;
@@ -373,6 +416,10 @@ h1 {font-size:34px;margin-bottom:8px;}
   <h1>League Leaderboard</h1>
 
   <p class="subtitle">Climb. Dominate. Prove your opinions.</p>
+
+  <div class="search-bar-container">
+    <input type="text" id="managerSearch" placeholder="Search manager..." onkeyup="filterLeaderboard()">
+  </div>
 
   <div class="league-actions user-only">
 
@@ -428,6 +475,8 @@ const db = getFirestore(app);
 
 const auth = getAuth(app);
 
+let allLeaderboardData = []; // Global variable to store all leaderboard data
+
 /* LOAD LEADERBOARD */
 
 async function loadLeaderboard(user){
@@ -439,6 +488,10 @@ async function loadLeaderboard(user){
   const q = query(collection(db,"leaderboard"), orderBy("totalPoints","desc"));
 
   const snap = await getDocs(q);
+  
+  allLeaderboardData = snap.docs; // Store all data for filtering
+  filterLeaderboard(user); // Call filter function to display initially
+}
 
   body.innerHTML="";
 
@@ -511,6 +564,55 @@ async function loadLeaderboard(user){
   });
 
 }
+
+function filterLeaderboard(user = auth.currentUser) {
+  const body = document.getElementById("leaderboard-body");
+  body.innerHTML = "";
+  const searchTerm = document.getElementById('managerSearch').value.toLowerCase();
+
+  let rank = 1;
+  allLeaderboardData.forEach(docSnap => {
+    const data = docSnap.data();
+    const teamName = data.teamName || "Anonymous";
+
+    if (teamName.toLowerCase().includes(searchTerm)) {
+      const isYou = user && docSnap.id === user.uid;
+      let medalClass = "";
+      let medalIcon = rank;
+      if (rank === 1) { medalClass = "gold"; medalIcon = "🥇"; }
+      if (rank === 2) { medalClass = "silver"; medalIcon = "🥈"; }
+      if (rank === 3) { medalClass = "bronze"; medalIcon = "🥉"; }
+
+      const weekly = data.weeklyPoints || 0;
+      const changeClass = weekly > 0 ? "up" : weekly < 0 ? "down" : "same";
+      const arrow = weekly > 0 ? "⬆️" : weekly < 0 ? "⬇️" : "—";
+
+      const initials = (teamName)
+        .split(" ")
+        .map(w => w[0])
+        .join("")
+        .substring(0, 2)
+        .toUpperCase();
+
+      const row = document.createElement("div");
+      row.className = `leader-row ${isYou ? "you" : ""}`;
+      row.innerHTML = `
+        <div class="rank ${medalClass}">${medalIcon}</div>
+        <div class="team">
+          <div class="avatar">${initials}</div>
+          ${teamName} ${isYou ? "(You)" : ""}
+        </div>
+        <div class="points">${data.totalPoints || 0}</div>
+        <div class="week ${changeClass}">
+          ${weekly > 0 ? "+" : ""}${weekly} ${arrow}
+        </div>
+      `;
+      body.appendChild(row);
+      rank++;
+    }
+  });
+}
+window.filterLeaderboard = filterLeaderboard; // Make it globally accessible for onkeyup
 
 window.createLeague = async ()=>{
 
