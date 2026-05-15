@@ -391,24 +391,9 @@
         flex-direction: column;
         padding: 15px 10px;
         height: auto;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       }
       nav {
-        display: flex;
-        justify-content: center;
-        flex-wrap: nowrap;
-        gap: 8px;
-        margin-top: 10px;
-        width: 100%;
-      }
-      nav a, nav .nav-sep {
         display: none;
-      }
-      /* Ensure deadline timer remains visible */
-      nav .user-only:not(a) { 
-        display: inline-block !important; 
-        font-size: 9px !important;
-        padding: 3px 6px !important;
       }
       .container {
         padding-bottom: 100px;
@@ -421,9 +406,10 @@
         bottom: 0;
         left: 0;
         width: 100%;
-        background: #111827;
+        background: rgba(17, 24, 39, 0.75);
+        backdrop-filter: blur(10px);
         padding: 10px 0;
-        border-top: 1px solid #333;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
         z-index: 1000;
       }
       .mobile-nav a {

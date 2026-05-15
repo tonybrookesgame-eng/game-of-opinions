@@ -1065,7 +1065,6 @@ nav a:hover {
     align-items: center;
     padding: 15px 10px;
     height: auto;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .logo {
@@ -1087,7 +1086,9 @@ nav a:hover {
   }
 
   .news-ticker {
-    top: 85px;
+    top: 52px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5); /* Adds a layer of depth over content */
+    backdrop-filter: blur(5px); /* Softens the content passing under the ticker */
   }
 
   .ticker-content {
@@ -1095,29 +1096,11 @@ nav a:hover {
   }
 
   body {
-    padding-top: 110px;
+    padding-top: 84px; /* Perfectly flush with 52px header + 32px ticker */
   } 
 
   nav {
-    display: flex;
-    justify-content: center;
-    flex-wrap: nowrap;
-    gap: 12px;
-    margin-top: 10px;
-    width: 100%;
-  }
-
-  nav a {
     display: none;
-  }
-  nav .nav-sep {
-    display: none;
-  }
-  /* Ensure deadline timer remains visible */
-  nav .user-only:not(a) { /* Targets the div.user-only for deadline */
-    display: inline-block !important; /* Override potential display:none from parent nav */
-    font-size: 9px !important;
-    padding: 3px 6px !important;
   }
 
   .hero {
@@ -1259,68 +1242,6 @@ nav a:hover {
 
 }
 
-@media (max-width: 520px) {
-
-  header {
-
-    padding: 10px 8px;
-
-  }
-
-  nav {
-
-    gap: 5px;
-
-  }
-
-  nav a {
-
-    font-size: 12px;
-
-  }
-
-  .hero-copy h1 {
-
-    font-size: 36px;
-
-  }
-
-  .hero-copy p {
-
-    font-size: 16px;
-
-  }
-
-  .hero-buttons {
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    gap: 10px;
-
-    width: 100%;
-
-    padding: 0 6px;
-
-  }
-
-  .hero-buttons a {
-
-    width: 100%;
-
-    max-width: 240px;
-
-    margin: 0 auto;
-
-    padding: 10px 16px;
-
-  }
-
-}
-
 /* MOBILE NAV CONSISTENCY */
 .mobile-nav {
   display: none;
@@ -1334,10 +1255,9 @@ nav a:hover {
     bottom: 0;
     left: 0;
     width: 100%;
-    background: #111827;
+    background: rer: blur(10px);
     padding: 10px 0;
-    border-top: 1px solid #333;
-    z-index: 1000;
+    border-top: 1px
   }
   .mobile-nav a {
     text-decoration: none !important;
