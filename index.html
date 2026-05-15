@@ -1114,22 +1114,17 @@ nav a:hover {
     width: 100%;
   }
 
-  nav div.user-only {
+  nav a {
+    display: none;
+  }
+  nav .nav-sep {
+    display: none;
+  }
+  /* Ensure deadline timer remains visible */
+  nav .user-only:not(a) { /* Targets the div.user-only for deadline */
+    display: inline-block !important; /* Override potential display:none from parent nav */
     font-size: 9px !important;
     padding: 3px 6px !important;
-  }
-
-  .nav-sep { display: none; }
-
-  nav a {
-    margin: 0;
-    font-size: 11px;
-  }
-
-  nav a[href="myxi.html"], 
-  nav a[href="season.html"], 
-  nav a[href="league.html"] {
-    display: none;
   }
 
   .hero {
