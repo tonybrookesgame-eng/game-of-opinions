@@ -108,6 +108,7 @@ header{
   letter-spacing: -0.5px;
   text-transform: uppercase;
   line-height: 1;
+  display: inline-block;
 }
 
 .logo span {
@@ -144,7 +145,7 @@ LAYOUT
 
   margin:auto;
 
-  padding: 110px 40px 40px;
+  padding: 90px 40px 40px;
 }
 h1 {
   margin-bottom: 8px;
@@ -823,6 +824,19 @@ MOBILE
   }
 
   nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+    width: 100%;
+  }
+  nav a {
+    font-size: 11px;
+    margin: 0 !important;
+    text-decoration: none;
+  }
+  nav a[href="index.html"], nav a[href="myxi.html"], nav a[href="season.html"], nav a[href="league.html"] {
     display: none;
   }
 
@@ -872,6 +886,7 @@ MOBILE
     min-width: 0;
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
+    opacity: 1 !important;
     font-size: 13px;
     padding: 6px 10px;
     text-align: left;
@@ -947,7 +962,7 @@ MOBILE
   }
 
   .container {
-    padding: 120px 15px 100px;
+    padding: 80px 15px 100px;
   }
 
   .stadium-shell {

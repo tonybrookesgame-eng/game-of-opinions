@@ -137,6 +137,7 @@ header {
   letter-spacing: -0.5px;
   text-transform: uppercase;
   line-height: 1;
+  display: inline-block;
 }
 
 .logo span {
@@ -1108,7 +1109,7 @@ nav a:hover {
     display: flex;
     justify-content: center;
     flex-wrap: nowrap;
-    gap: 8px;
+    gap: 12px;
     margin-top: 10px;
     width: 100%;
   }
@@ -1122,8 +1123,13 @@ nav a:hover {
 
   nav a {
     margin: 0;
-    font-size: 14px;
     font-size: 11px;
+  }
+
+  nav a[href="myxi.html"], 
+  nav a[href="season.html"], 
+  nav a[href="league.html"] {
+    display: none;
   }
 
   .hero {
@@ -1327,6 +1333,38 @@ nav a:hover {
 
 }
 
+/* MOBILE NAV CONSISTENCY */
+.mobile-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-nav {
+    display: flex;
+    justify-content: space-around;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #111827;
+    padding: 10px 0;
+    border-top: 1px solid #333;
+    z-index: 1000;
+  }
+  .mobile-nav a {
+    text-decoration: none !important;
+    color: white;
+    font-size: 12px;
+    text-align: center;
+    transition: all 0.2s ease;
+  }
+  .mobile-nav a:hover {
+    color: #c7ff38;
+    transform: translateY(-3px);
+    text-shadow: 0 0 15px rgba(199, 255, 56, 0.6);
+  }
+}
+
 </style>
 
 </head>
@@ -1363,6 +1401,14 @@ nav a:hover {
     <span>Gameweek Approaching: Deadline Sunday 17th May 11:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
     <span>Gameweek Approaching: Deadline Sunday 17th May 11:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
   </div>
+</div>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav">
+  <a href="index.html">🏠<br>Home</a>
+  <a href="myxi.html">⚽<br>Team</a>
+  <a href="season.html">🏆<br>Picks</a>
+  <a href="league.html">📊<br>League</a>
 </div>
 
 <!-- UNIFIED AUTH OVERLAY -->

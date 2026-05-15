@@ -77,6 +77,7 @@
       letter-spacing: -0.5px;
       text-transform: uppercase;
       line-height: 1;
+      display: inline-block;
     }
 
     .logo span {
@@ -107,7 +108,7 @@
 
     .container {
 
-      padding: 110px 40px 40px;
+      padding: 90px 40px 40px;
 
       max-width: 1080px;
 
@@ -391,6 +392,19 @@
         height: auto;
       }
       nav {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        margin-top: 10px;
+        width: 100%;
+      }
+      nav a {
+        font-size: 11px;
+        margin: 0 !important;
+        text-decoration: none;
+      }
+      nav a[href="index.html"], nav a[href="myxi.html"], nav a[href="season.html"], nav a[href="league.html"] {
         display: none;
       }
       .container {
