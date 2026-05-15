@@ -95,11 +95,43 @@ header{
   justify-content: space-between;
   align-items: center;
 
-  padding: 20px 40px;
+  padding: 15px 30px;
   background: rgba(0,0,0,0.72);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255,255,255,0.12);
 
+}
+
+/* =========================
+   PREMIUM NEWS TICKER
+========================= */
+.news-ticker {
+  position: fixed;
+  top: 65px; 
+  left: 0;
+  width: 100%;
+  background: rgba(199, 255, 56, 0.95);
+  color: #041102;
+  height: 32px;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 32px;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+.ticker-content {
+  display: flex;
+  white-space: nowrap;
+  width: max-content;
+  animation: ticker 45s linear infinite;
+}
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 .logo {
@@ -127,6 +159,12 @@ nav a{
   font-size: 16px;
 }
 
+.nav-sep {
+  color: rgba(255,255,255,0.3);
+  font-size: 14px;
+  pointer-events: none;
+}
+
 nav a:hover{
 
   opacity: 0.8;
@@ -145,7 +183,7 @@ LAYOUT
 
   margin:auto;
 
-  padding: 90px 40px 40px;
+  padding: 110px 40px 40px;
 }
 h1 {
   margin-bottom: 8px;
@@ -202,7 +240,7 @@ p {
   margin-top: 20px;
 }
 
-.weekly-panel h2, .bet-builder-panel h2, .fixtures-panel h2 {
+.weekly-panel h3, .bet-builder-panel h3, .fixtures-panel h3 {
   margin: 0 0 14px; /* Consistent with season.html .summary-card h2 */
   font-size: 18px; /* Consistent with season.html .summary-card h2 */
   color: #f8fafc; /* Consistent with season.html .summary-card h2 */
@@ -1107,20 +1145,36 @@ MOBILE
 
 <header>
   <div class="logo">GAME <span>OF OPINIONS</span></div>
-
   <nav>
-
+    <div class="user-only" style="font-size: 11px; color: #c7ff38; background: rgba(199,255,56,0.1); padding: 4px 6px; border-radius: 4px; border: 1px solid rgba(199,255,56,0.3);">
+      NEXT DEADLINE: <span id="deadline-timer">SUN 11:00</span>
+    </div>
     <a href="index.html">Home</a>
+    <span class="nav-sep">&bull;</span>
     <a href="myxi.html" class="user-only">Your Team</a>
+    <span class="nav-sep user-only">&bull;</span>
     <a href="season.html" class="user-only">Season Picks</a>
+    <span class="nav-sep user-only">&bull;</span>
     <a href="league.html" class="user-only">League</a>
+    <span class="nav-sep user-only">&bull;</span>
     <a href="rules.html" class="guest-only">Rules</a>
+    <span class="nav-sep guest-only">&bull;</span>
     <a href="javascript:void(0)" class="guest-only" onclick="location.href='index.html?login=true'">Log In</a>
+    <span class="nav-sep guest-only">&bull;</span>
     <a href="signup.html" class="guest-only">Sign Up</a>
     <a href="javascript:void(0)" class="user-only" onclick="handleLogout()">Log Out</a>
-
   </nav>
 </header>
+
+<!-- PREMIUM TICKER -->
+<div class="news-ticker">
+  <div class="ticker-content">
+    <span>Gameweek Approaching: Deadline Sunday 17th May 11:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span>Gameweek Approaching: Deadline Sunday 17th May 11:00  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span>Gameweek Approaching: Deadline Sunday 17th May 11:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span>Gameweek Approaching: Deadline Sunday 17th May 11:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+  </div>
+</div>
 
 <div class="container">
 
@@ -1241,7 +1295,7 @@ MOBILE
 <!-- RIGHT SIDE PANELS (Fixtures only) -->
 <div class="right-side">
   <div class="fixtures-panel">
-    <h2>Upcoming Fixtures</h2>
+    <h3>Upcoming Fixtures</h3>
     <div id="fixtures-list"></div>
   </div>
 </div>
@@ -1251,7 +1305,7 @@ MOBILE
 <!-- BOTTOM PANELS (Weekly Picks and Bet Builder) -->
 <div class="bottom-panels">
   <div class="weekly-panel">
-    <h2>Weekly Picks</h2>
+    <h3>Weekly Picks</h3>
     <p style="font-size: 13px; color: #9ca3af; margin-bottom: 5px; display: flex; justify-content: space-between;">
       <span>Club to score first:</span>
       <span style="color: #c7ff38; font-weight: bold;">10 pts</span>
@@ -1270,7 +1324,7 @@ MOBILE
   </div>
 
   <div class="bet-builder-panel">
-    <h2>Scout's Bet Builder</h2>
+    <h3>Scout's Bet Builder</h3>
     <div class="bet-match" id="betMatchDisplay">Loading match...</div>
     <ul class="bet-list" id="betPicksDisplay"></ul>
     <div class="bet-odds-box">

@@ -68,10 +68,42 @@ header {
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:20px 40px;
+  padding: 15px 30px;
   background: rgba(0,0,0,0.72);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+
+/* =========================
+   PREMIUM NEWS TICKER
+========================= */
+.news-ticker {
+  position: fixed;
+  top: 65px; 
+  left: 0;
+  width: 100%;
+  background: rgba(199, 255, 56, 0.95);
+  color: #041102;
+  height: 32px;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 32px;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+.ticker-content {
+  display: flex;
+  white-space: nowrap;
+  width: max-content;
+  animation: ticker 45s linear infinite;
+}
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 .logo {
@@ -97,6 +129,12 @@ nav a {
   font-size: 16px;
 }
 
+.nav-sep {
+  color: rgba(255,255,255,0.3);
+  font-size: 14px;
+  pointer-events: none;
+}
+
 nav a:hover {
   opacity: 0.8;
 }
@@ -109,7 +147,7 @@ nav a:hover {
 
   margin:auto;
 
-  padding:90px 40px 100px;
+  padding: 110px 40px 100px;
 
 }
 
@@ -138,9 +176,9 @@ h1 {font-size:34px;margin-bottom:8px;}
 
   display:grid;
 
-  grid-template-columns:60px 1fr 100px 90px;
+  grid-template-columns: 60px 1fr 120px 100px;
 
-  padding:14px 20px;
+  padding: 16px 20px;
 
   font-size:12px;
 
@@ -154,7 +192,7 @@ h1 {font-size:34px;margin-bottom:8px;}
 
   display:grid;
 
-  grid-template-columns:60px 1fr 100px 90px;
+  grid-template-columns: 60px 1fr 120px 100px;
 
   align-items:center;
 
@@ -320,9 +358,27 @@ h1 {font-size:34px;margin-bottom:8px;}
     flex-direction: column;
     padding: 15px 10px;
     height: auto;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
-  nav { /* Hide the entire header navigation on mobile to avoid duplicates */
+  .news-ticker {
+    top: 85px;
+  }
+  nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 8px;
+    margin-top: 10px;
+    width: 100%;
+  }
+  nav a, nav .nav-sep {
     display: none;
+  }
+  /* Ensure deadline timer remains visible */
+  nav .user-only:not(a) { 
+    display: inline-block !important; 
+    font-size: 9px !important;
+    padding: 3px 6px !important;
   }
 
   /* LEADERBOARD MOBILE OPTIMIZATION */
@@ -390,16 +446,35 @@ h1 {font-size:34px;margin-bottom:8px;}
 <header>
   <div class="logo">GAME <span>OF OPINIONS</span></div>
   <nav>
+    <div class="user-only" style="font-size: 11px; color: #c7ff38; background: rgba(199,255,56,0.1); padding: 4px 6px; border-radius: 4px; border: 1px solid rgba(199,255,56,0.3);">
+      NEXT DEADLINE: <span id="deadline-timer">SUN 11:00</span>
+    </div>
     <a href="index.html">Home</a>
+    <span class="nav-sep">&bull;</span>
     <a href="myxi.html" class="user-only">Your Team</a>
+    <span class="nav-sep user-only">&bull;</span>
     <a href="season.html" class="user-only">Season Picks</a>
+    <span class="nav-sep user-only">&bull;</span>
     <a href="league.html" class="user-only">League</a>
+    <span class="nav-sep user-only">&bull;</span>
     <a href="rules.html" class="guest-only">Rules</a>
+    <span class="nav-sep guest-only">&bull;</span>
     <a href="javascript:void(0)" class="guest-only" onclick="location.href='index.html?login=true'">Log In</a>
+    <span class="nav-sep guest-only">&bull;</span>
     <a href="signup.html" class="guest-only">Sign Up</a>
     <a href="javascript:void(0)" class="user-only" onclick="handleLogout()">Log Out</a>
   </nav>
 </header>
+
+<!-- PREMIUM TICKER -->
+<div class="news-ticker">
+  <div class="ticker-content">
+    <span>Gameweek Approaching: Deadline Sunday 17th May 11:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span>Gameweek Approaching: Deadline Sunday 17th May 11:00  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span>Gameweek Approaching: Deadline Sunday 17th May 11:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span>Gameweek Approaching: Deadline Sunday 17th May 11:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+  </div>
+</div>
 
 <div class="container">
 
@@ -439,7 +514,7 @@ h1 {font-size:34px;margin-bottom:8px;}
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
-import { getFirestore, collection, query, orderBy, getDocs, doc, setDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, query, orderBy, getDocs, doc, setDoc, updateDoc, arrayUnion, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
@@ -460,6 +535,23 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const auth = getAuth(app);
+
+// DEADLINE LOADER
+const loadDeadline = async () => {
+  onSnapshot(doc(db, "settings", "gameweek"), (docSnap) => {
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      if (data.status === 'locked') {
+        document.getElementById('deadline-timer').innerText = "GW LOCKED";
+      } else if (data.deadline) {
+        const d = new Date(data.deadline);
+        const options = { weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false };
+        document.getElementById('deadline-timer').innerText = d.toLocaleString('en-GB', options).toUpperCase();
+      }
+    }
+  });
+};
+loadDeadline();
 
 /* LOAD LEADERBOARD */
 
