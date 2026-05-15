@@ -90,7 +90,7 @@ header {
 
   align-items: center;
 
-  padding: 15px 30px;
+  padding: 20px 40px;
 
   background: rgba(0,0,0,0.72);
   backdrop-filter: blur(10px);
@@ -104,7 +104,7 @@ header {
 ========================= */
 .news-ticker {
   position: fixed;
-  top: 52px; /* Adjusted for reduced header padding */
+  top: 65px; /* Adjusted for reduced header padding */
   left: 0;
   width: 100%;
   background: rgba(199, 255, 56, 0.95);
@@ -1058,12 +1058,13 @@ nav a:hover {
 @media (max-width: 768px) {
 
   header {
-    display: flex !important;
-    background: #000 !important;
-    justify-content: center !important;
-    padding: 15px 20px !important;
-    height: 52px !important;
-    flex-direction: row !important;
+    display: flex;
+    background: rgba(0,0,0,0.9) !important;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 10px;
+    height: auto;
   }
 
   .logo {
@@ -1085,17 +1086,87 @@ nav a:hover {
   }
 
   .news-ticker {
-    top: 52px; /* Adjusted for consistent header height */
+    top: 52px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.5); /* Adds a layer of depth over content */
     backdrop-filter: blur(5px); /* Softens the content passing under the ticker */
   }
 
-  nav {
-    display: none !important;
+  .ticker-content {
+    animation-duration: 60s; /* Slower speed for mobile to improve readability on narrow screens */
   }
 
   body {
-    padding-top: 115px; 
+    padding-top: 84px; /* Perfectly flush with 52px header + 32px ticker */
+  } 
+
+  nav {
+    display: none;
+  }
+
+  .hero {
+   padding: 40px 15px 20px;
+
+    min-height: auto;
+  }
+
+  .hero-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .hero-copy {
+    display: contents; /* Allows reordering children with the visual block */
+  }
+
+  .hero-copy h1 { order: 1; margin-bottom: 12px; }
+  .hero-copy p { order: 2; margin-bottom: 15px; }
+  .hero-visual { 
+    order: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 120px; /* Tightened gap to move sections up */
+    margin-top: 60px;
+  }
+  .phone-label {
+    width: 280px;
+    top: -85px;
+    border-color: #c7ff38;
+    box-shadow: 0 0 20px rgba(199, 255, 56, 0.2);
+    animation: mobileGlow 3s infinite alternate;
+  }
+  .phone-left {
+    max-width: 230px !important;
+    height: auto !important;
+  }
+
+  @keyframes mobileGlow {
+    from { box-shadow: 0 0 10px rgba(199, 255, 56, 0.1); }
+    to { box-shadow: 0 0 25px rgba(199, 255, 56, 0.3); }
+  }
+  .hero-visual::before {
+    content: "";
+    position: absolute;
+    width: 100vw;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(199, 255, 56, 0.08) 0%, transparent 70%);
+    z-index: -1;
+  }
+  .phone-left, .phone-right { transform: none !important; }
+  .hero-buttons { display: none !important; } /* Hide desktop hero buttons on mobile */
+  .phone-btn { display: block; } /* Show app-style button on mobile */
+
+  .hero::before {
+    height: 780px; /* Increased to cover text and phone, stopping above button */
+    bottom: auto; /* Prevent conflict with inset: 0 */
+    background:
+      linear-gradient(rgba(0,0,0,0.40), rgba(0,0,0,0.80)),
+      url("https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=1600&auto=format&fit=crop");
+    background-size: cover;
+    background-position: center 95%; /* Focus on the ball and boot */
+    mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
   }
 
   .hero-copy h1 {
@@ -1117,7 +1188,29 @@ nav a:hover {
   }
 
   .hero-buttons {
-    display: none !important;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    width: 100%;
+
+    padding: 0 10px;
+
+  }
+
+  .hero-buttons a {
+
+    width: 100%;
+
+    max-width: 260px;
+
+    margin: 0 auto;
+
+    text-align: center;
+
+    padding: 12px 20px;
+
   }
 
   .section {
@@ -1140,15 +1233,13 @@ nav a:hover {
     max-width: none !important;
   }
 
-}
+  .phone-screen {
 
-/* Fix Office Overlap */
-@media (max-width: 768px) {
-  .office-section {
-    margin-top: 0 !important;
-    padding: 40px 20px !important;
+    min-height: 420px;
+
     min-height: auto !important;
   }
+
 }
 
 /* MOBILE NAV CONSISTENCY */
@@ -1157,7 +1248,17 @@ nav a:hover {
 }
 
 @media (max-width: 768px) {
-  .mobile-nav { display: none !important; }
+  .mobile-nav {
+    display: flex;
+    justify-content: space-around;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rer: blur(10px);
+    padding: 10px 0;
+    border-top: 1px
+  }
   .mobile-nav a {
     text-decoration: none !important;
     color: white;
@@ -1205,6 +1306,14 @@ nav a:hover {
   </div>
 </div>
 
+<!-- MOBILE NAV -->
+<div class="mobile-nav">
+  <a href="index.html">🏠<br>Home</a>
+  <a href="myxi.html">⚽<br>Team</a>
+  <a href="season.html">🏆<br>Picks</a>
+  <a href="league.html">📊<br>League</a>
+</div>
+
 <!-- UNIFIED AUTH OVERLAY -->
 <div id="auth-overlay" class="auth-overlay">
   <div class="whiteboard-login">
@@ -1232,14 +1341,9 @@ nav a:hover {
   <div class="hero-grid">
     <div class="hero-copy">
       <h1>
-        Your football opinions.
-        <strong>Finally worth something.</strong>
-      </h1>
-      <p>The only management game where your knowledge isn't limited by a budget. One player per club. Pure tactics.</p>
-      <div class="hero-buttons">
-        <a href="signup.html" class="primary-btn">Start Your Journey</a>
-        <a href="#how-it-works" class="secondary-btn">How it Works</a>
-      </div>
+      Your football opinions.
+      <strong>Finally worth something.</strong>
+    </h1>
     </div>
     <div class="hero-visual">
       <div class="phone phone-left">
@@ -1443,7 +1547,7 @@ nav a:hover {
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBS3Fpobk342TpJw73mMgYOyUrWb-jBtfM",
@@ -1456,21 +1560,21 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+console.log("Firebase initialized successfully");
 
 // DEADLINE LOADER
 const loadDeadline = async () => {
-  onSnapshot(doc(db, "settings", "gameweek"), (docSnap) => {
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      const timer = document.getElementById('deadline-timer');
-      if (data.status === 'locked') {
-        timer.innerText = "LOCKED";
-      } else if (data.deadline) {
-        const d = new Date(data.deadline);
-        timer.innerText = d.toLocaleString('en-GB', { weekday: 'short', hour: '2-digit', minute: '2-digit' }).toUpperCase();
-      }
+  const snap = await getDoc(doc(db, "settings", "gameweek"));
+  if (snap.exists()) {
+    const data = snap.data();
+    if (data.status === 'locked') {
+      document.getElementById('deadline-timer').innerText = "GW LOCKED";
+    } else if (data.deadline) {
+      const d = new Date(data.deadline);
+      const options = { weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false };
+      document.getElementById('deadline-timer').innerText = d.toLocaleString('en-GB', options).toUpperCase();
     }
-  });
+  }
 };
 loadDeadline();
 
@@ -1478,7 +1582,6 @@ loadDeadline();
 onAuthStateChanged(auth, (user) => {
   const userLinks = document.querySelectorAll('.user-only');
   const guestLinks = document.querySelectorAll('.guest-only');
-
   if (user) {
     userLinks.forEach(link => { link.style.display = 'inline-block'; });
     guestLinks.forEach(link => { link.style.display = 'none'; });
