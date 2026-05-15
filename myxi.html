@@ -85,14 +85,20 @@ HEADER
 ========================= */
 
 header{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
   display:flex;
 
   justify-content: space-between;
   align-items: center;
 
-  padding:20px 40px;
-  backdrop-filter:blur(10px);
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding: 20px 40px;
+  background: rgba(0,0,0,0.72);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,0.12);
 
 }
 
@@ -109,13 +115,16 @@ header{
 
 }
 
-nav a{
+nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
 
-  margin-left: 20px;
+nav a{
   color: white;
   text-decoration:none;
   font-size: 16px;
-
 }
 
 nav a:hover{
@@ -136,7 +145,7 @@ LAYOUT
 
   margin:auto;
 
-  padding: 20px 40px 40px;
+  padding: 110px 40px 40px;
 }
 h1 {
   margin-bottom: 8px;
@@ -735,7 +744,7 @@ button{
 
 button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(199,255,56,0.25);
+  box-shadow: 0 0 20px rgba(199, 255, 56, 0.6);
 }
 
 #weeklyStatus{
@@ -807,7 +816,11 @@ MOBILE
 @media(max-width:768px){ /* Consistent with season.html and league.html */
 
   header {
+    background: rgba(0,0,0,0.9) !important;
     justify-content: center;
+    flex-direction: column;
+    padding: 15px 10px;
+    height: auto;
   }
 
   nav {
@@ -1033,6 +1046,12 @@ MOBILE
     font-size: 12px;
     text-align: center;
     margin-left: 0; /* Reset margin for mobile nav links */
+    transition: all 0.2s ease;
+  }
+  .mobile-nav a:hover {
+    color: #c7ff38;
+    transform: translateY(-3px);
+    text-shadow: 0 0 15px rgba(199, 255, 56, 0.6);
   }
 
   .main-layout {

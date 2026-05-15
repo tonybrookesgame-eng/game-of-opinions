@@ -60,22 +60,31 @@ body::after {
 /* ========================= HEADER ========================= */
 
 header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
   display:flex;
   justify-content:space-between;
   align-items:center;
   padding:20px 40px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  background: rgba(0,0,0,0.72);
   backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,0.12);
 }
 
 .logo {font-size:22px;font-weight:800;}
 
 .logo span {color:#c7ff38;}
 
-nav {display:flex;}
+nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
 
 nav a {
-  margin-left: 20px;
   color: white;
   text-decoration:none;
   font-size: 16px;
@@ -93,7 +102,7 @@ nav a:hover {
 
   margin:auto;
 
-  padding:20px 40px 100px;
+  padding:110px 40px 100px;
 
 }
 
@@ -169,7 +178,7 @@ h1 {font-size:34px;margin-bottom:8px;}
 
 .rank.gold {color:#FFD700;}
 
-.rank.silver {color:#C0C0C0;}
+.rank.silver {color:#e2e8f0;}
 
 .rank.bronze {color:#cd7f32;}
 
@@ -177,9 +186,9 @@ h1 {font-size:34px;margin-bottom:8px;}
 
 .you {
 
-  background:rgba(167,255,63,0.12);
+  background:rgba(199,255,56,0.12);
 
-  border-left:4px solid #a7ff3f;
+  border-left:4px solid #c7ff38;
 
   animation:pulse 2s infinite;
 
@@ -187,11 +196,11 @@ h1 {font-size:34px;margin-bottom:8px;}
 
 @keyframes pulse {
 
-  0%{box-shadow:0 0 0 rgba(167,255,63,0);}
+  0%{box-shadow:0 0 0 rgba(199,255,56,0);}
 
-  50%{box-shadow:0 0 10px rgba(167,255,63,0.4);}
+  50%{box-shadow:0 0 10px rgba(199,255,56,0.4);}
 
-  100%{box-shadow:0 0 0 rgba(167,255,63,0);}
+  100%{box-shadow:0 0 0 rgba(199,255,56,0);}
 
 }
 
@@ -295,7 +304,13 @@ h1 {font-size:34px;margin-bottom:8px;}
   display: none;
 }
 
-@media (max-width:768px){
+@media (max-width: 768px) {
+  header {
+    background: rgba(0,0,0,0.9) !important;
+    justify-content: center;
+    flex-direction: column;
+    padding: 15px 10px;
+  }
   nav { display: none; }
   .mobile-nav {
     display: flex;
@@ -315,6 +330,12 @@ h1 {font-size:34px;margin-bottom:8px;}
     font-size: 12px;
     text-align: center;
     margin-left: 0;
+    transition: all 0.2s ease;
+  }
+  .mobile-nav a:hover {
+    color: #c7ff38;
+    transform: translateY(-3px);
+    text-shadow: 0 0 15px rgba(199, 255, 56, 0.6);
   }
 }
 
