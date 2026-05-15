@@ -193,6 +193,11 @@ p {
   min-height: 400px; /* Increased size to accommodate more fixtures */
   backdrop-filter: blur(12px);
 }
+.panel-saved {
+  border-color: #c7ff38 !important;
+  box-shadow: 0 0 20px rgba(199, 255, 56, 0.3) !important;
+  transition: all 0.3s ease;
+}
 .weekly-panel button, .bet-builder-panel button.save-btn, .fixtures-panel button {
   margin-top: 20px;
 }
@@ -1251,13 +1256,13 @@ MOBILE
       <span>Club to score first:</span>
       <span style="color: #c7ff38; font-weight: bold;">10 pts</span>
     </p>
-    <select id="firstScorer">
+    <select id="firstScorer" onchange="this.parentElement.classList.remove('panel-saved')">
       <option>Select</option>
     </select>
     <p style="font-size: 13px; color: #9ca3af; margin: 10px 0 5px; display: flex; justify-content: space-between;">
       <span style="color: #c7ff38; font-weight: bold;">40 pts</span>
     </p>
-    <select id="goalMinute">
+    <select id="goalMinute" onchange="this.parentElement.classList.remove('panel-saved')">
       <option>Select</option>
     </select>
     <button id="saveWeeklyBtn" onclick="saveWeekly()">Save Picks</button>
@@ -1675,6 +1680,7 @@ window.loadSelectedGameweekHistory = loadSelectedGameweekHistory; // Make it glo
 let currentUser = null;
 const setBetChoice = function(choice) {
   currentBetChoice = choice;
+  document.querySelector('.bet-builder-panel').classList.remove('panel-saved');
   document.getElementById('btnYes').classList.remove('selected');
   document.getElementById('btnNo').classList.remove('selected');
   
@@ -1883,6 +1889,7 @@ const saveWeekly = async function() {
   const fs = document.getElementById('firstScorer');
   const gm = document.getElementById('goalMinute');
   const status = document.getElementById('weeklyStatus');
+  const panel = document.querySelector('.weekly-panel');
 
   if (fs.value === "Select" || gm.value === "Select") {
     alert("Please make both selections for your Weekly Picks (Club to Score First and Goal Minute) before saving.");
@@ -1897,9 +1904,11 @@ const saveWeekly = async function() {
     const weeklyDocRef = doc(db, "users", currentUser.uid, "myxi", "weeklyPicks");
     await setDoc(weeklyDocRef, data);
     status.innerText = "Saved!";
+    panel.classList.add('panel-saved');
   } catch (error) {
     console.error("Error saving weekly picks: ", error);
     status.innerText = "Save Failed!";
+    panel.classList.remove('panel-saved');
   }
 }
 window.saveWeekly = saveWeekly;
@@ -1920,9 +1929,11 @@ const saveBetBuilder = async function() {
   try {
     const betBuilderDocRef = doc(db, "users", currentUser.uid, "myxi", "betBuilder");
     await setDoc(betBuilderDocRef, { choice: currentBetChoice });
+    document.querySelector('.bet-builder-panel').classList.add('panel-saved');
     alert("Bet Builder Prediction Saved!");
   } catch (error) {
     console.error("Error saving bet builder: ", error);
+    document.querySelector('.bet-builder-panel').classList.remove('panel-saved');
     alert("Failed to save bet prediction. Please try again.");
   }
 }
