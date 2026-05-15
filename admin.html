@@ -389,7 +389,7 @@
           }
 
           // 5. Calculate Weekly Picks Points
-          if (picksDoc && picksDoc.exists()) {
+          if (picksDoc) {
             const picks = picksDoc.data();
             if (winClub !== 'none' && picks.first === winClub) userPicksScore += 10;
             if (winMin !== '' && picks.minute == winMin) userPicksScore += 40;
@@ -398,7 +398,7 @@
           userWeeklyTotal = userPlayerScore + userPicksScore;
 
           // 6. Calculate Bet Builder Points
-          if (betDoc && betDoc.exists() && betResult !== 'none') {
+          if (betDoc && betResult !== 'none') {
             const choice = betDoc.data().choice; // 'yes' or 'no'
             const oddsVal = parseInt(document.getElementById('bet-odds').value) || 30;
             const stake = 5;
@@ -420,19 +420,19 @@
           // Only update if there's a change to prevent unnecessary writes
           if (userWeeklyTotal !== 0 || userBetScore !== 0 || userPicksScore !== 0 || userPlayerScore !== 0) {
             const leaderRef = doc(db, "leaderboard", userId);
-            await updateDoc(leaderRef, {
+            await setDoc(leaderRef, {
               weeklyPoints: userWeeklyTotal,
               totalPoints: increment(userWeeklyTotal)
-            });
+            }, { merge: true });
             
             // Update detailed stats
             const statsRef = doc(db, `users/${userId}/stats/points`);
-            await updateDoc(statsRef, {
+            await setDoc(statsRef, {
               selectionPts: increment(userPlayerScore),
               picksPts: increment(userPicksScore),
               betPts: increment(userBetScore),
               totalPts: increment(userWeeklyTotal)
-            });
+            }, { merge: true });
           }
         }
 

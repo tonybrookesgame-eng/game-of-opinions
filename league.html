@@ -113,6 +113,7 @@ nav a:hover {
 
 }
 
+
 h1 {font-size:34px;margin-bottom:8px;}
 
 .subtitle {color:#9ca3af;margin-bottom:25px;}
@@ -323,6 +324,36 @@ h1 {font-size:34px;margin-bottom:8px;}
   nav { /* Hide the entire header navigation on mobile to avoid duplicates */
     display: none;
   }
+
+  /* LEADERBOARD MOBILE OPTIMIZATION */
+  .leaderboard {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .leader-header, .leader-row {
+    grid-template-columns: 50px 200px 80px 80px; /* Fixed widths for perfect vertical alignment */
+    min-width: 410px; /* Forces the table to be wider than the phone to enable swiping */
+    padding: 12px 10px;
+  }
+  /* Sticky Columns Logic */
+  .leader-header div:nth-child(1), .leader-row .rank {
+    position: sticky;
+    left: 0;
+    z-index: 5;
+    background: #07101a; /* Solid background to cover scrolling content */
+  }
+  .leader-header div:nth-child(2), .leader-row .team {
+    position: sticky;
+    left: 50px; /* Offset by the width of the rank column */
+    z-index: 5;
+    background: #07101a;
+    border-right: 1px solid rgba(255,255,255,0.05);
+  }
+  /* Ensure user highlight persists over sticky background */
+  .leader-row.you .rank, .leader-row.you .team {
+    background: #122114 !important;
+  }
+
   .mobile-nav {
     display: flex;
     justify-content: space-around;
