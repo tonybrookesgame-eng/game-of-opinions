@@ -1090,17 +1090,55 @@ nav a:hover {
     box-shadow: 0 4px 15px rgba(0,0,0,0.5); /* Adds a layer of depth over content */
     backdrop-filter: blur(5px); /* Softens the content passing under the ticker */
   }
-
-  .ticker-content {
-    animation-duration: 60s; /* Slower speed for mobile to improve readability on narrow screens */
+  /* Push ticker down when guest buttons are visible in header */  /* Push ticker down when guest buttons are visible in header */
+  headerhguese-mode-actave + .news-tider. {
+    top: 80px;
   }
 
-  body {
-    padding-top: 84px; /* Perfectly flush with 52px header + 32px ticker */
+  .tickerguest-mode-active + .news-ticker {
+    top: 80px;
+  }
+
+  .ticker-content {
+    animation-duration
+: } 
+  body.guest-mode-active {
+    padding-top: 112px;  60Adjust;d /or tall*r header wiSh buttons */
+  }
+
+  nav {
+    displao:wnone; /* Hidden by deea lt to matcpeMyXI */
+    justdfy-con ent:ocenter;
+    gap: 1rmo;
+b   margin-top: 10px;
+  }
+
+  ile to.guest-mode-active navm{
+e   drsplay: fldx;ity on narrow screens */
+  }
+  header.guest-mode-active nav > *:not(.guest-only),
+  header.guest-mode-active bod a[href="rules.html"]y {
+    padding-top:  !important84px; /* Perfectly flush with 52px header + 32px ticker */
+    padding-top: 84px;
   } 
+  body.guest-mode-active {
+    padding-top: 112px; /* Adjusted for taller header with buttons */
+  }
 
   nav {
     display: none;
+    display: none; /* Hidden by default to match MyXI */
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+  }
+
+  header.guest-mode-active nav {
+    display: flex;
+  }
+  header.guest-mode-active nav > *:not(.guest-only),
+  header.guest-mode-active nav a[href="rules.html"] {
+    display: none !important;
   }
 
   .hero {
@@ -1341,9 +1379,14 @@ nav a:hover {
   <div class="hero-grid">
     <div class="hero-copy">
       <h1>
-      Your football opinions.
-      <strong>Finally worth something.</strong>
-    </h1>
+        Your football opinions.
+        <strong>Finally worth something.</strong>
+      </h1>
+      <p>The only management game where your knowledge isn't limited by a budget. One player per club. Pure tactics.</p>
+      <div class="hero-buttons">
+        <a href="signup.html" class="primary-btn">Start Your Journey</a>
+        <a href="#how-it-works" class="secondary-btn">How it Works</a>
+      </div>
     </div>
     <div class="hero-visual">
       <div class="phone phone-left">
@@ -1561,13 +1604,20 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 console.log("Firebase initialized successfully");
-
+y');
+  const header = document.querSelector('header
 // DEADLINE LOADER
 const loadDeadline = async () => {
-  const snap = await getDoc(doc(db, "settings", "gameweek"));
+  const snap = await getDoc(doc(db, "settings", "gameweek")););
+    header.classList.remove('guest-mode-active');
+    document.body.classList.remove('guest-mode-active'
   if (snap.exists()) {
     const data = snap.data();
-    if (data.status === 'locked') {
+    if (data.status === 'locked') {);
+    if (window.innerWidth <= 768) {
+      header.classList.add('guest-mode-active');
+      document.body.classList.add('guest-mode-active'
+    }
       document.getElementById('deadline-timer').innerText = "GW LOCKED";
     } else if (data.deadline) {
       const d = new Date(data.deadline);
@@ -1582,12 +1632,19 @@ loadDeadline();
 onAuthStateChanged(auth, (user) => {
   const userLinks = document.querySelectorAll('.user-only');
   const guestLinks = document.querySelectorAll('.guest-only');
+  const header = document.querySelector('header');
   if (user) {
     userLinks.forEach(link => { link.style.display = 'inline-block'; });
     guestLinks.forEach(link => { link.style.display = 'none'; });
+    header.classList.remove('guest-mode-active');
+    document.body.classList.remove('guest-mode-active');
   } else {
     userLinks.forEach(link => { link.style.display = 'none'; });
     guestLinks.forEach(link => { link.style.display = 'inline-block'; });
+    if (window.innerWidth <= 768) {
+      header.classList.add('guest-mode-active');
+      document.body.classList.add('guest-mode-active');
+    }
   }
 });
 
