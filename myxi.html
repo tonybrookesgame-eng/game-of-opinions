@@ -1479,7 +1479,6 @@ const loadFixtures = () => {
   const fixtures = [
 
     {date: "Friday 15th May", games: [
-      { home: "Liverpool", away: "Aston Villa", time: "20:00" }
     ]},
 
     { date: "Sunday 17th May", games: [
@@ -1759,7 +1758,25 @@ window.handleLogout = () => {
 };
 
 const loadUserData = async function(uid) {
-  // populateWeeklyOptions and loadCurrentBet are now called by the onAuthStateChanged listener
+  // Ensure UI options and latest bet info are loaded before restoring user picks
+  populateWeeklyOptions();
+  loadCurrentBet();
+
+  // Load Weekly Picks (First Scorer & Minute)
+  const picksDocRef = doc(db, "users", uid, "myxi", "weeklyPicks");
+  const picksSnap = await getDoc(picksDocRef);
+  if (picksSnap.exists()) {
+    const p = picksSnap.data();
+    document.getElementById('firstScorer').value = p.first || "Select";
+    document.getElementById('goalMinute').value = p.minute || "Select";
+  }
+
+  // Load Bet Builder Choice
+  const betDocRef = doc(db, "users", uid, "myxi", "betBuilder");
+  const betSnap = await getDoc(betDocRef);
+  if (betSnap.exists()) {
+    setBetChoice(betSnap.data().choice);
+  }
 
   // Load Team Data
   const teamDocRef = doc(db, "users", uid, "myxi", "team");
@@ -1862,22 +1879,27 @@ const saveWeekly = async function() {
     alert("Gameweek Currently Locked. We will re-open soon.");
     return;
   }
-  if (firstScorer.value === "Select" || goalMinute.value === "Select") {
+
+  const fs = document.getElementById('firstScorer');
+  const gm = document.getElementById('goalMinute');
+  const status = document.getElementById('weeklyStatus');
+
+  if (fs.value === "Select" || gm.value === "Select") {
     alert("Please make both selections for your Weekly Picks (Club to Score First and Goal Minute) before saving.");
     return;
   }
 
   const data = {
-    first: firstScorer.value,
-    minute: goalMinute.value
+    first: fs.value,
+    minute: gm.value
   };
   try {
     const weeklyDocRef = doc(db, "users", currentUser.uid, "myxi", "weeklyPicks");
     await setDoc(weeklyDocRef, data);
-    weeklyStatus.innerText="Saved!";
+    status.innerText = "Saved!";
   } catch (error) {
     console.error("Error saving weekly picks: ", error);
-    weeklyStatus.innerText="Save Failed!";
+    status.innerText = "Save Failed!";
   }
 }
 window.saveWeekly = saveWeekly;
