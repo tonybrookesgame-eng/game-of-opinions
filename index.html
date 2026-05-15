@@ -1090,55 +1090,22 @@ nav a:hover {
     box-shadow: 0 4px 15px rgba(0,0,0,0.5); /* Adds a layer of depth over content */
     backdrop-filter: blur(5px); /* Softens the content passing under the ticker */
   }
-  /* Push ticker down when guest buttons are visible in header */  /* Push ticker down when guest buttons are visible in header */
-  headerhguese-mode-actave + .news-tider. {
-    top: 80px;
-  }
-
-  .tickerguest-mode-active + .news-ticker {
-    top: 80px;
-  }
-
   .ticker-content {
-    animation-duration
-: } 
-  body.guest-mode-active {
-    padding-top: 112px;  60Adjust;d /or tall*r header wiSh buttons */
+    animation-duration: 60s; /* Slower speed for mobile to improve readability on narrow screens */
   }
-
+  
   nav {
-    displao:wnone; /* Hidden by deea lt to matcpeMyXI */
-    justdfy-con ent:ocenter;
-    gap: 1rmo;
-b   margin-top: 10px;
-  }
-
-  ile to.guest-mode-active navm{
-e   drsplay: fldx;ity on narrow screens */
-  }
-  header.guest-mode-active nav > *:not(.guest-only),
-  header.guest-mode-active bod a[href="rules.html"]y {
-    padding-top:  !important84px; /* Perfectly flush with 52px header + 32px ticker */
-    padding-top: 84px;
-  } 
-  body.guest-mode-active {
-    padding-top: 112px; /* Adjusted for taller header with buttons */
-  }
-
-  nav {
-    display: none;
-    display: none; /* Hidden by default to match MyXI */
+    display: none !important; /* Keep mobile header clean as requested */
     justify-content: center;
     gap: 15px;
     margin-top: 10px;
   }
-
-  header.guest-mode-active nav {
-    display: flex;
-  }
-  header.guest-mode-active nav > *:not(.guest-only),
-  header.guest-mode-active nav a[href="rules.html"] {
-    display: none !important;
+  
+  header {
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    padding: 15px 20px !important;
+    height: 52px;
   }
 
   .hero {
@@ -1153,10 +1120,6 @@ e   drsplay: fldx;ity on narrow screens */
     gap: 30px;
   }
 
-  .hero-copy {
-    display: contents; /* Allows reordering children with the visual block */
-  }
-
   .hero-copy h1 { order: 1; margin-bottom: 12px; }
   .hero-copy p { order: 2; margin-bottom: 15px; }
   .hero-visual { 
@@ -1164,21 +1127,9 @@ e   drsplay: fldx;ity on narrow screens */
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 120px; /* Tightened gap to move sections up */
+    gap: 120px;
     margin-top: 60px;
   }
-  .phone-label {
-    width: 280px;
-    top: -85px;
-    border-color: #c7ff38;
-    box-shadow: 0 0 20px rgba(199, 255, 56, 0.2);
-    animation: mobileGlow 3s infinite alternate;
-  }
-  .phone-left {
-    max-width: 230px !important;
-    height: auto !important;
-  }
-
   @keyframes mobileGlow {
     from { box-shadow: 0 0 10px rgba(199, 255, 56, 0.1); }
     to { box-shadow: 0 0 25px rgba(199, 255, 56, 0.3); }
@@ -1280,6 +1231,15 @@ e   drsplay: fldx;ity on narrow screens */
 
 }
 
+/* Fix Office Overlap */
+@media (max-width: 768px) {
+  .office-section {
+    margin-top: 0 !important;
+    padding: 40px 20px !important;
+    min-height: auto !important;
+  }
+}
+
 /* MOBILE NAV CONSISTENCY */
 .mobile-nav {
   display: none;
@@ -1293,9 +1253,11 @@ e   drsplay: fldx;ity on narrow screens */
     bottom: 0;
     left: 0;
     width: 100%;
-    background: rer: blur(10px);
+    background: rgba(17, 24, 39, 0.75);
+    backdrop-filter: blur(10px);
     padding: 10px 0;
-    border-top: 1px
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1000;
   }
   .mobile-nav a {
     text-decoration: none !important;
@@ -1345,12 +1307,7 @@ e   drsplay: fldx;ity on narrow screens */
 </div>
 
 <!-- MOBILE NAV -->
-<div class="mobile-nav">
-  <a href="index.html">🏠<br>Home</a>
-  <a href="myxi.html">⚽<br>Team</a>
-  <a href="season.html">🏆<br>Picks</a>
-  <a href="league.html">📊<br>League</a>
-</div>
+<div class="mobile-nav" id="mobile-nav-links"></div>
 
 <!-- UNIFIED AUTH OVERLAY -->
 <div id="auth-overlay" class="auth-overlay">
@@ -1603,28 +1560,21 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
-console.log("Firebase initialized successfully");
-y');
-  const header = document.querSelector('header
+
 // DEADLINE LOADER
 const loadDeadline = async () => {
-  const snap = await getDoc(doc(db, "settings", "gameweek")););
-    header.classList.remove('guest-mode-active');
-    document.body.classList.remove('guest-mode-active'
-  if (snap.exists()) {
-    const data = snap.data();
-    if (data.status === 'locked') {);
-    if (window.innerWidth <= 768) {
-      header.classList.add('guest-mode-active');
-      document.body.classList.add('guest-mode-active'
+  onSnapshot(doc(db, "settings", "gameweek"), (docSnap) => {
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      const timer = document.getElementById('deadline-timer');
+      if (data.status === 'locked') {
+        timer.innerText = "LOCKED";
+      } else if (data.deadline) {
+        const d = new Date(data.deadline);
+        timer.innerText = d.toLocaleString('en-GB', { weekday: 'short', hour: '2-digit', minute: '2-digit' }).toUpperCase();
+      }
     }
-      document.getElementById('deadline-timer').innerText = "GW LOCKED";
-    } else if (data.deadline) {
-      const d = new Date(data.deadline);
-      const options = { weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false };
-      document.getElementById('deadline-timer').innerText = d.toLocaleString('en-GB', options).toUpperCase();
-    }
-  }
+  });
 };
 loadDeadline();
 
@@ -1632,19 +1582,26 @@ loadDeadline();
 onAuthStateChanged(auth, (user) => {
   const userLinks = document.querySelectorAll('.user-only');
   const guestLinks = document.querySelectorAll('.guest-only');
-  const header = document.querySelector('header');
+  const mobNav = document.getElementById('mobile-nav-links');
+
   if (user) {
     userLinks.forEach(link => { link.style.display = 'inline-block'; });
     guestLinks.forEach(link => { link.style.display = 'none'; });
-    header.classList.remove('guest-mode-active');
-    document.body.classList.remove('guest-mode-active');
+    mobNav.innerHTML = `
+      <a href="index.html">🏠<br>Home</a>
+      <a href="myxi.html">⚽<br>Team</a>
+      <a href="season.html">🏆<br>Picks</a>
+      <a href="league.html">📊<br>League</a>
+    `;
   } else {
     userLinks.forEach(link => { link.style.display = 'none'; });
     guestLinks.forEach(link => { link.style.display = 'inline-block'; });
-    if (window.innerWidth <= 768) {
-      header.classList.add('guest-mode-active');
-      document.body.classList.add('guest-mode-active');
-    }
+    mobNav.innerHTML = `
+      <a href="index.html">🏠<br>Home</a>
+      <a href="rules.html">📜<br>Rules</a>
+      <a href="javascript:void(0)" onclick="openLogin()">🔑<br>Login</a>
+      <a href="signup.html">✨<br>Signup</a>
+    `;
   }
 });
 

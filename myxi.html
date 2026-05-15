@@ -99,7 +99,7 @@ header{
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255,255,255,0.12);
 
-}
+}e
 
 .logo {
   font-size: 22px;
@@ -820,12 +820,9 @@ MOBILE
 @media(max-width:768px){ /* Consistent with season.html and league.html */
 
   header {
-    background: rgba(0,0,0,0.9) !important;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    padding: 15px 10px;
-    height: auto;
+      flex-direction: row !important;
+      justify-content: space-between !important;
+      padding: 10px 20px !important;
   }
 
   nav { /* Hide the entire header navigation on mobile */
