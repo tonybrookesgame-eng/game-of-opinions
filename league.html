@@ -74,38 +74,6 @@ header {
   border-bottom: 1px solid rgba(255,255,255,0.12);
 }
 
-/* =========================
-   PREMIUM NEWS TICKER
-========================= */
-.news-ticker {
-  position: fixed;
-  top: 65px; 
-  left: 0;
-  width: 100%;
-  background: rgba(199, 255, 56, 0.95);
-  color: #041102;
-  height: 32px;
-  z-index: 999;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  font-size: 11px;
-  font-weight: 800;
-  line-height: 32px;
-  text-transform: uppercase;
-  border-bottom: 1px solid rgba(0,0,0,0.1);
-}
-.ticker-content {
-  display: flex;
-  white-space: nowrap;
-  width: max-content;
-  animation: ticker 45s linear infinite;
-}
-@keyframes ticker {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
 .logo {
   font-size: 22px;
   font-weight: 800;
@@ -120,19 +88,13 @@ header {
 nav {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 32px;
 }
 
 nav a {
   color: white;
   text-decoration:none;
   font-size: 16px;
-}
-
-.nav-sep {
-  color: rgba(255,255,255,0.3);
-  font-size: 14px;
-  pointer-events: none;
 }
 
 nav a:hover {
@@ -147,7 +109,7 @@ nav a:hover {
 
   margin:auto;
 
-  padding: 110px 40px 100px;
+  padding: 90px 40px 100px;
 
 }
 
@@ -360,9 +322,6 @@ h1 {font-size:34px;margin-bottom:8px;}
     height: auto;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
-  .news-ticker {
-    top: 85px;
-  }
   nav {
     display: flex;
     justify-content: center;
@@ -450,31 +409,15 @@ h1 {font-size:34px;margin-bottom:8px;}
       NEXT DEADLINE: <span id="deadline-timer">SUN 11:00</span>
     </div>
     <a href="index.html">Home</a>
-    <span class="nav-sep">&bull;</span>
     <a href="myxi.html" class="user-only">Your Team</a>
-    <span class="nav-sep user-only">&bull;</span>
     <a href="season.html" class="user-only">Season Picks</a>
-    <span class="nav-sep user-only">&bull;</span>
     <a href="league.html" class="user-only">League</a>
-    <span class="nav-sep user-only">&bull;</span>
     <a href="rules.html" class="guest-only">Rules</a>
-    <span class="nav-sep guest-only">&bull;</span>
     <a href="javascript:void(0)" class="guest-only" onclick="location.href='index.html?login=true'">Log In</a>
-    <span class="nav-sep guest-only">&bull;</span>
     <a href="signup.html" class="guest-only">Sign Up</a>
     <a href="javascript:void(0)" class="user-only" onclick="handleLogout()">Log Out</a>
   </nav>
 </header>
-
-<!-- PREMIUM TICKER -->
-<div class="news-ticker">
-  <div class="ticker-content">
-    <span>Gameweek Approaching: Deadline Sunday 17th May 11:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    <span>Gameweek Approaching: Deadline Sunday 17th May 11:00  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    <span>Gameweek Approaching: Deadline Sunday 17th May 11:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    <span>Gameweek Approaching: Deadline Sunday 17th May 11:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-  </div>
-</div>
 
 <div class="container">
 
