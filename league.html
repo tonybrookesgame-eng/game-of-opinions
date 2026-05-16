@@ -394,9 +394,6 @@ h1 {font-size:34px;margin-bottom:8px;}
 <header>
   <div class="logo">GAME <span>OF OPINIONS</span></div>
   <nav>
-    <div class="user-only" style="font-size: 11px; color: #c7ff38; background: rgba(199,255,56,0.1); padding: 4px 6px; border-radius: 4px; border: 1px solid rgba(199,255,56,0.3);">
-      NEXT DEADLINE: <span id="deadline-timer">SUN 11:00</span>
-    </div>
     <a href="index.html">Home</a>
     <a href="myxi.html" class="user-only">Your Team</a>
     <a href="season.html" class="user-only">Season Picks</a>
@@ -467,23 +464,6 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const auth = getAuth(app);
-
-// DEADLINE LOADER
-const loadDeadline = async () => {
-  onSnapshot(doc(db, "settings", "gameweek"), (docSnap) => {
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      if (data.status === 'locked') {
-        document.getElementById('deadline-timer').innerText = "GW LOCKED";
-      } else if (data.deadline) {
-        const d = new Date(data.deadline);
-        const options = { weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false };
-        document.getElementById('deadline-timer').innerText = d.toLocaleString('en-GB', options).toUpperCase();
-      }
-    }
-  });
-};
-loadDeadline();
 
 /* LOAD LEADERBOARD */
 
