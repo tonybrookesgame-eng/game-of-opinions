@@ -104,8 +104,7 @@ header {
 ========================= */
 .news-ticker {
   position: fixed;
-  top: 72px; /* Just below header */
-  left: 0;
+  top: 52px; /* Just below header */
   width: 100%;
   background: rgba(199, 255, 56, 0.95);
   color: #041102;
@@ -1086,38 +1085,32 @@ nav a:hover {
     background-size: contain !important;
   }
 
-  .news-ticker {
-    top: 92px;
+  body {
+  body 
+  bopaddi5g-dy  {84
+    padding-top: 84px; 
+    padding-top: 84px;
+  }-ke
+5-kediv.user-only {
+    font-5ize:8px !i!importamt;
+}
+
+
+ ortant;
+    padding: 2px 5px !importa!t;
   }
 
-  .ticker-content {
-    animation-duration: 60s; /* Slower speed for mobile to improve readability on narrow screens */
+ mportant;
   }
 
   body {
     top: 72px; 
     padding-top: 120px;
-  } 
-
-  nav {
-    display: flex;
-    justify-content: center;
-    flex-wrap: nowrap;
-    gap: 8px;
-    margin-top: 10px;
-    width: 100%;
-  }
-
-  nav div.user-only {
-    font-size: 9px !important;
-    padding: 3px 6px !important;
-  }
-
-  .nav-sep { display: none; }
-
+  } flexwl nav div.user-only {
+    font-size: 8px !important;
+    padding: 2px 5px np nav a {
   nav a {
     margin: 0;
-    font-size: 14px;
     font-size: 11px;
   }
 
@@ -1333,7 +1326,7 @@ nav a:hover {
   <div class="logo">GAME <span>OF OPINIONS</span></div>
   <nav>
     <div class="user-only" style="font-size: 11px; color: #c7ff38; background: rgba(199,255,56,0.1); padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(199,255,56,0.3);">
-      NEXT DEADLINE: <span id="deadline-timer">SUN 11:00</span>
+      DEADLINE: <span id="deadline-timer">SUN 11:00</span>
     </div>
     <a href="myxi.html" class="user-only">Your Team</a>
     <a href="season.html" class="user-only">Season Picks</a>
@@ -1370,21 +1363,15 @@ nav a:hover {
     <button onclick="closeAuth()" style="position: relative; z-index: 2; margin-top: 15px; background: transparent; border: none; color: #fff; cursor: pointer; font-size: 12px; text-decoration: underline;">Cancel</button>
   </div>
 </div>
-<!-- The 'signup.html' page would need to be created to handle user registration as a separate, full-page experience. -->
 
 <!-- MANAGER'S OFFICE VISUAL -->
 <section class="office-section" id="login-section">
 </section>
 
-<!-- HERO SECTION -->
-
 <section class="hero">
   <div class="hero-grid">
     <div class="hero-copy">
-      <h1>
-      Your football opinions.
-      <strong>Finally worth something.</strong>
-    </h1>
+      <h1>Your football opinions. <strong>Finally worth something.</strong></h1>
     </div>
     <div class="hero-visual">
       <div class="phone phone-left">
@@ -1586,90 +1573,84 @@ nav a:hover {
 </section>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBS3Fpobk342TpJw73mMgYOyUrWb-jBtfM",
-  authDomain: "game-of-opinions-97b14.firebaseapp.com",
-  projectId: "game-of-opinions-97b14",
-  storageBucket: "game-of-opinions-97b14.firebasestorage.app",
-  appId: "1:863518863234:web:3a2c2378a2a358e0b2299b"
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyBS3Fpobk342TpJw73mMgYOyUrWb-jBtfM",
+    authDomain: "game-of-opinions-97b14.firebaseapp.com",
+    projectId: "game-of-opinions-97b14",
+    storageBucket: "game-of-opinions-97b14.firebasestorage.app",
+    appId: "1:863518863234:web:3a2c2378a2a358e0b2299b"
+  };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
-console.log("Firebase initialized successfully");
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
 
-// DEADLINE LOADER
-const loadDeadline = async () => {
-  const snap = await getDoc(doc(db, "settings", "gameweek"));
-  if (snap.exists()) {
-    const data = snap.data();
-    if (data.status === 'locked') {
-      document.getElementById('deadline-timer').innerText = "GW LOCKED";
-    } else if (data.deadline) {
-      const d = new Date(data.deadline);
-      const options = { weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false };
-      document.getElementById('deadline-timer').innerText = d.toLocaleString('en-GB', options).toUpperCase();
+  // DEADLINE LOADER
+  const loadDeadline = async () => {
+    onSnapshot(doc(db, "settings", "gameweek"), (snap) => {
+      if (snap.exists()) {
+        const data = snap.data();
+        if (data.status === 'locked') {
+          document.getElementById('deadline-timer').innerText = "GW LOCKED";
+        } else if (data.deadline) {
+          const d = new Date(data.deadline);
+          const options = { weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false };
+          document.getElementById('deadline-timer').innerText = d.toLocaleString('en-GB', options).toUpperCase();
+        }
+      }
+    });
+  };
+  loadDeadline();
+
+  // NAV VISIBILITY
+  onAuthStateChanged(auth, (user) => {
+    const userLinks = document.querySelectorAll('.user-only');
+    const guestLinks = document.querySelectorAll('.guest-only');
+    if (user) {
+      userLinks.forEach(link => { link.style.display = 'inline-block'; });
+      guestLinks.forEach(link => { link.style.display = 'none'; });
+    } else {
+      userLinks.forEach(link => { link.style.display = 'none'; });
+      guestLinks.forEach(link => { link.style.display = 'inline-block'; });
     }
-  }
-};
-loadDeadline();
-
-// NAV VISIBILITY
-onAuthStateChanged(auth, (user) => {
-  const userLinks = document.querySelectorAll('.user-only');
-  const guestLinks = document.querySelectorAll('.guest-only');
-  if (user) {
-    userLinks.forEach(link => { link.style.display = 'inline-block'; });
-    guestLinks.forEach(link => { link.style.display = 'none'; });
-  } else {
-    userLinks.forEach(link => { link.style.display = 'none'; });
-    guestLinks.forEach(link => { link.style.display = 'inline-block'; });
-  }
-});
-
-window.handleLogout = () => {
-  signOut(auth).then(() => {
-    window.location.reload();
   });
-};
 
-// Check for login redirect from other pages
-if (window.location.search.includes('login=true')) {
-  window.openLogin();
-}
+  window.handleLogout = () => {
+    signOut(auth).then(() => { window.location.reload(); });
+  };
 
-// AUTH SCREEN CONTROLS
-window.openLogin = () => {
-  document.getElementById('auth-overlay').style.display = 'flex';
-};
+  window.openLogin = () => { document.getElementById('auth-overlay').style.display = 'flex'; };
+  window.closeAuth = () => { document.getElementById('auth-overlay').style.display = 'none'; };
 
-window.closeAuth = () => {
-  document.getElementById('auth-overlay').style.display = 'none';
-};
+  if (window.location.search.includes('login=true')) { window.openLogin(); }
 
-// UNIFIED AUTH HANDLER
-window.handleAuth = async function() {
-  // This handler is now exclusively for login.
-  const email = document.getElementById("auth-email").value;
-  const password = document.getElementById("auth-password").value;
-
-  if (!email || !password) {
-    alert("Please enter your email and password.");
-    return;
-  }
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-    window.location.href = "myxi.html";
-  } catch (error) {
-    alert(error.message);
-  }
-};
-
+  window.handleAuth = async function() {
+    const email = document.getElementById("auth-email").value;
+    const password = document.getElementById("auth-password").value;
+    if (!email || !password) {
+      alert("Please enter your email and password.");
+      return;
+    }
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      window.location.href = "myxi.html";
+    } catch (error) {
+      alert(error.message);
+    }
+  };
 </script>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav">
+  <a href="index.html">🏠<br>Home</a>
+  <a href="myxi.html">⚽<br>Team</a>
+  <a href="season.html">🏆<br>Picks</a>
+  <a href="league.html">📊<br>League</a>
+</div>
+
 </body>
 </html>
