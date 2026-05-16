@@ -465,42 +465,7 @@
     }
 
 
-    /* =========================
-       AI SCOUT STYLES
-    ========================= */
-    .ai-scout-container {
-      position: fixed;
-      bottom: 100px;
-      right: 30px;
-      z-index: 1500;
-      cursor: pointer;
-      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    .ai-scout-container:hover {
-      transform: scale(1.1) rotate(-5deg);
-    }
-    .ai-scout-container:hover .speech-bubble {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .speech-bubble {
-      position: absolute;
-      bottom: 100%;
-      right: 0;
-      background: #c7ff38;
-      color: #041102;
-      padding: 8px 12px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 800;
-      white-space: nowrap;
-      margin-bottom: 10px;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: 0.3s;
-      pointer-events: none;
-    }
-    .ai-modal {
+git    .ai-modal {
       position: fixed;
       inset: 0;
       background: rgba(0,0,0,0.85);
@@ -531,10 +496,6 @@
     .stat-val { color: #c7ff38; font-weight: bold; }
 
     @media (max-width: 768px) {
-      .ai-scout-container {
-        bottom: 80px;
-        right: 15px;
-      }
     }
 
     /* =========================
