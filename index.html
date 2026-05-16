@@ -104,7 +104,7 @@ header {
 ========================= */
 .news-ticker {
   position: fixed;
-  top: 65px; /* Adjusted for reduced header padding */
+  top: 72px; /* Just below header */
   left: 0;
   width: 100%;
   background: rgba(199, 255, 56, 0.95);
@@ -133,15 +133,15 @@ header {
 
 .logo {
   font-size: 22px;
+
   font-weight: 800;
-  letter-spacing: -0.5px;
-  text-transform: uppercase;
-  line-height: 1;
-  display: inline-block;
+
 }
 
 .logo span {
+
   color: #c7ff38;
+
 }
 
 /* =========================
@@ -156,7 +156,7 @@ nav {
 
   align-items: center;
 
-  gap: 32px;
+  gap: 24px;
 
 }
 
@@ -177,6 +177,12 @@ nav a:hover {
 
   color: white;
 
+}
+
+.nav-sep {
+  color: rgba(255,255,255,0.3);
+  font-size: 14px;
+  pointer-events: none;
 }
 
 .signup-btn {
@@ -1058,12 +1064,14 @@ nav a:hover {
 @media (max-width: 768px) {
 
   header {
-    display: flex !important;
-    background: #000 !important;
-    justify-content: center !important;
-    padding: 15px 20px !important;
-    height: 52px !important;
-    flex-direction: row !important;
+    display: flex;
+    background: rgba(0,0,0,0.9) !important;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 10px;
+    height: auto;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .logo {
@@ -1085,9 +1093,7 @@ nav a:hover {
   }
 
   .news-ticker {
-    top: 52px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5); /* Adds a layer of depth over content */
-    backdrop-filter: blur(5px); /* Softens the content passing under the ticker */
+    top: 92px;
   }
 
   .ticker-content {
@@ -1095,8 +1101,31 @@ nav a:hover {
   }
 
   body {
-    padding-top: 84px; /* Perfectly flush with 52px header + 32px ticker */
+    top: 72px; 
+    padding-top: 120px;
   } 
+
+  nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 8px;
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  nav div.user-only {
+    font-size: 9px !important;
+    padding: 3px 6px !important;
+  }
+
+  .nav-sep { display: none; }
+
+  nav a {
+    margin: 0;
+    font-size: 14px;
+    font-size: 11px;
+  }
 
   .hero {
    padding: 40px 15px 20px;
@@ -1237,36 +1266,66 @@ nav a:hover {
 
 }
 
-/* MOBILE NAV CONSISTENCY */
-.mobile-nav {
-  display: none;
-}
+@media (max-width: 520px) {
 
-@media (max-width: 768px) {
-  .mobile-nav {
-    display: flex;
-    justify-content: space-around;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: #000;
-    padding: 10px 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    z-index: 1000;
+  header {
+
+    padding: 10px 8px;
+
   }
-  .mobile-nav a {
-    text-decoration: none !important;
-    color: white;
+
+  nav {
+
+    gap: 5px;
+
+  }
+
+  nav a {
+
     font-size: 12px;
-    text-align: center;
-    transition: all 0.2s ease;
+
   }
-  .mobile-nav a:hover {
-    color: #c7ff38;
-    transform: translateY(-3px);
-    text-shadow: 0 0 15px rgba(199, 255, 56, 0.6);
+
+  .hero-copy h1 {
+
+    font-size: 36px;
+
   }
+
+  .hero-copy p {
+
+    font-size: 16px;
+
+  }
+
+  .hero-buttons {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 10px;
+
+    width: 100%;
+
+    padding: 0 6px;
+
+  }
+
+  .hero-buttons a {
+
+    width: 100%;
+
+    max-width: 240px;
+
+    margin: 0 auto;
+
+    padding: 10px 16px;
+
+  }
+
 }
 
 </style>
@@ -1279,14 +1338,19 @@ nav a:hover {
 <header>
   <div class="logo">GAME <span>OF OPINIONS</span></div>
   <nav>
-    <div class="user-only" style="font-size: 11px; color: #c7ff38; background: rgba(199,255,56,0.1); padding: 4px 6px; border-radius: 4px; border: 1px solid rgba(199,255,56,0.3);">
+    <div class="user-only" style="font-size: 11px; color: #c7ff38; background: rgba(199,255,56,0.1); padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(199,255,56,0.3);">
       NEXT DEADLINE: <span id="deadline-timer">SUN 11:00</span>
     </div>
     <a href="myxi.html" class="user-only">Your Team</a>
+    <span class="nav-sep user-only">&bull;</span>
     <a href="season.html" class="user-only">Season Picks</a>
+    <span class="nav-sep user-only">&bull;</span>
     <a href="league.html" class="user-only">League</a>
+    <span class="nav-sep user-only">&bull;</span>
     <a href="rules.html" class="guest-only">Rules</a>
+    <span class="nav-sep guest-only">&bull;</span>
     <a href="javascript:void(0)" class="login-link guest-only" onclick="openLogin()">Log In</a>
+    <span class="nav-sep guest-only">&bull;</span>
     <a href="signup.html" class="signup-btn guest-only">Sign Up</a>
     <a href="javascript:void(0)" class="user-only" onclick="handleLogout()">Log Out</a>
   </nav>
@@ -1300,14 +1364,6 @@ nav a:hover {
     <span>Gameweek Approaching: Deadline Sunday 17th May 11:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
     <span>Gameweek Approaching: Deadline Sunday 17th May 11:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
   </div>
-</div>
-
-<!-- MOBILE NAV -->
-<div class="mobile-nav">
-  <a href="index.html">🏠<br>Home</a>
-  <a href="myxi.html">⚽<br>Team</a>
-  <a href="season.html">🏆<br>Picks</a>
-  <a href="league.html">📊<br>League</a>
 </div>
 
 <!-- UNIFIED AUTH OVERLAY -->
@@ -1544,7 +1600,6 @@ nav a:hover {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getFirestore, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBS3Fpobk342TpJw73mMgYOyUrWb-jBtfM",
