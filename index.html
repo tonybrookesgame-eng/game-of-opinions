@@ -103,7 +103,9 @@ header {
    PREMIUM NEWS TICKER
 ========================= */
 .news-ticker {
-  position: relative;
+  position: fixed;
+  top: 72px; /* Just below header */
+  left: 0;
   width: 100%;
   background: rgba(199, 255, 56, 0.95);
   color: #041102;
@@ -117,25 +119,6 @@ header {
   line-height: 32px;
   text-transform: uppercase;
   border-bottom: 1px solid rgba(0,0,0,0.1);
-}
-.breaking-news-ticker {
-  background: linear-gradient(90deg, #ff4d4d 0%, #ff8c00 50%, #ff4d4d 100%); /* Red/Orange gradient */
-  background-size: 200% 100%;
-  animation: breakingNewsPulse 1.5s infinite ease-in-out;
-  color: white;
-  border-bottom: 1px solid rgba(255,255,255,0.3);
-}
-
-@keyframes breakingNewsPulse {
-  0% {
-    background-position: 0% 50%;
-    box-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
-  }
-  50% {
-    background-position: 100% 50%;
-    box-shadow: 0 0 20px rgba(255, 140, 0, 0.7);
-  }
-  100% { background-position: 0% 50%; }
 }
 .ticker-content {
   display: flex;
@@ -194,12 +177,6 @@ nav a:hover {
 
   color: white;
 
-}
-
-.nav-sep {
-  color: rgba(255,255,255,0.3);
-  font-size: 14px;
-  pointer-events: none;
 }
 
 .signup-btn {
@@ -261,7 +238,7 @@ nav a:hover {
 
 /* MANAGER'S OFFICE STYLES */
 .office-section {
-  margin-top: 90px;
+  margin-top: 70px;
   position: relative;
   z-index: 10;
   display: flex;
@@ -721,7 +698,7 @@ nav a:hover {
 }
 
 .hero-copy h1 {
-  font-size: 30px;
+  font-size: 28px;
   line-height: 1.2;
   max-width: 650px;
   color: #c7ff38;
@@ -1081,12 +1058,6 @@ nav a:hover {
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  .header-inner {
-    flex-direction: column;
-    padding: 10px;
-    width: 100%;
-  }
-
   .logo {
     position: static;
     transform: none;
@@ -1106,7 +1077,7 @@ nav a:hover {
   }
 
   .news-ticker {
-    top: 0;
+    top: 92px;
   }
 
   .ticker-content {
@@ -1338,37 +1309,30 @@ nav a:hover {
 
 <!-- HEADER -->
 <header>
-  <div class="header-inner">
-    <div class="logo">GAME <span>OF OPINIONS</span></div>
-    <nav>
-      <div class="user-only" style="font-size: 11px; color: #c7ff38; background: rgba(199,255,56,0.1); padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(199,255,56,0.3);">
-        NEXT DEADLINE: <span id="deadline-timer">SUN 11:00</span>
-      </div>
-      <a href="myxi.html" class="user-only">Your Team</a>
-      <span class="nav-sep user-only">&bull;</span>
-      <a href="season.html" class="user-only">Season Picks</a>
-      <span class="nav-sep user-only">&bull;</span>
-      <a href="league.html" class="user-only">League</a>
-      <span class="nav-sep user-only">&bull;</span>
-      <a href="rules.html" class="guest-only">Rules</a>
-      <span class="nav-sep guest-only">&bull;</span>
-      <a href="javascript:void(0)" class="login-link guest-only" onclick="openLogin()">Log In</a>
-      <span class="nav-sep guest-only">&bull;</span>
-      <a href="signup.html" class="signup-btn guest-only">Sign Up</a>
-      <a href="javascript:void(0)" class="user-only" onclick="handleLogout()">Log Out</a>
-    </nav>
-  </div>
-
-  <!-- PREMIUM TICKER -->
-  <div class="news-ticker" id="news-ticker">
-    <div class="ticker-content">
-      <span>Gameweek Approaching: Deadline Sunday 17th May 11:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-      <span>Gameweek Approaching: Deadline Sunday 17th May 11:00  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-      <span>Gameweek Approaching: Deadline Sunday 17th May 11:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-      <span>Gameweek Approaching: Deadline Sunday 17th May 11:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+  <div class="logo">GAME <span>OF OPINIONS</span></div>
+  <nav>
+    <div class="user-only" style="font-size: 11px; color: #c7ff38; background: rgba(199,255,56,0.1); padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(199,255,56,0.3);">
+      NEXT DEADLINE: <span id="deadline-timer">SUN 11:00</span>
     </div>
-  </div>
+    <a href="myxi.html" class="user-only">Your Team</a>
+    <a href="season.html" class="user-only">Season Picks</a>
+    <a href="league.html" class="user-only">League</a>
+    <a href="rules.html" class="guest-only">Rules</a>
+    <a href="javascript:void(0)" class="login-link guest-only" onclick="openLogin()">Log In</a>
+    <a href="signup.html" class="signup-btn guest-only">Sign Up</a>
+    <a href="javascript:void(0)" class="user-only" onclick="handleLogout()">Log Out</a>
+  </nav>
 </header>
+
+<!-- PREMIUM TICKER -->
+<div class="news-ticker">
+  <div class="ticker-content">
+    <span>Gameweek Approaching: Deadline Sunday 17th May 11:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span>Gameweek Approaching: Deadline Sunday 17th May 11:00  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span>Gameweek Approaching: Deadline Sunday 17th May 11:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span>Gameweek Approaching: Deadline Sunday 17th May 11:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+  </div>
+</div>
 
 <!-- UNIFIED AUTH OVERLAY -->
 <div id="auth-overlay" class="auth-overlay">
@@ -1601,7 +1565,7 @@ nav a:hover {
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBS3Fpobk342TpJw73mMgYOyUrWb-jBtfM",
@@ -1617,46 +1581,18 @@ const auth = getAuth(app);
 console.log("Firebase initialized successfully");
 
 // DEADLINE LOADER
-const loadDeadline = () => {
-  onSnapshot(doc(db, "settings", "gameweek"), (docSnap) => {
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      let tickerStr = "";
-      const newsTickerElement = document.getElementById('news-ticker');
-      
-      if (data.status === 'locked') {
-        document.getElementById('deadline-timer').innerText = "GW LOCKED";
-        tickerStr = "Gameweek Currently Locked - Selections will re-open soon";
-      } else if (data.deadline) {
-        const d = new Date(data.deadline);
-        // Update small header timer
-        const options = { weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false };
-        document.getElementById('deadline-timer').innerText = d.toLocaleString('en-GB', options).toUpperCase();
-        
-        // Construct longer ticker string
-        const fullDate = d.toLocaleString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
-        tickerStr = `Gameweek Approaching: Deadline ${fullDate}`;
-
-        // Check for breaking news (less than 1 hour away)
-        const now = new Date().getTime();
-        const deadlineTime = d.getTime();
-        const timeRemaining = deadlineTime - now;
-
-        if (timeRemaining > 0 && timeRemaining < 3600000) { // Less than 1 hour
-          newsTickerElement.classList.add('breaking-news-ticker');
-        } else {
-          newsTickerElement.classList.remove('breaking-news-ticker');
-        }
-      }
-
-      if (tickerStr) {
-        const spans = document.querySelectorAll('.ticker-content span');
-        spans.forEach(span => {
-          span.innerHTML = `${tickerStr} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`;
-        });
-      }
+const loadDeadline = async () => {
+  const snap = await getDoc(doc(db, "settings", "gameweek"));
+  if (snap.exists()) {
+    const data = snap.data();
+    if (data.status === 'locked') {
+      document.getElementById('deadline-timer').innerText = "GW LOCKED";
+    } else if (data.deadline) {
+      const d = new Date(data.deadline);
+      const options = { weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false };
+      document.getElementById('deadline-timer').innerText = d.toLocaleString('en-GB', options).toUpperCase();
     }
-  });
+  }
 };
 loadDeadline();
 

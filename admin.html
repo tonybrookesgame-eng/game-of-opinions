@@ -38,6 +38,10 @@
       <input type="datetime-local" id="deadline-input" style="width: 220px; background: #fff; color: #000; margin: 0 10px;">
       <button onclick="setDeadline()" style="margin-top: 0; padding: 8px 20px; width: auto;">Set Deadline</button>
     </div>
+    <div class="admin-section" style="background: rgba(59, 130, 246, 0.05); border: 1px solid #3b82f6; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+      <label>Selections Re-open At:</label>
+      <input type="datetime-local" id="reopen-input" style="width: 220px; background: #fff; color: #000; margin: 0 10px;">
+    </div>
 
     <div class="admin-section" style="border-top: none; margin-top: 0; padding-top: 0;">
       <p>1. Gameweek Number</p>
@@ -268,19 +272,25 @@
       if (snap.exists()) {
         const data = snap.data();
         document.getElementById('deadline-input').value = data.deadline || "";
+        document.getElementById('reopen-input').value = data.reopenTime || "";
         document.getElementById('status-select').value = data.status || "open";
       }
     }
 
     window.setDeadline = async function() {
       const deadline = document.getElementById('deadline-input').value;
+      const reopenTime = document.getElementById('reopen-input').value;
       const status = document.getElementById('status-select').value;
       if (!deadline) {
         alert("Please select a date and time.");
         return;
       }
       try {
-        await setDoc(doc(db, "settings", "gameweek"), { deadline: deadline, status: status }, { merge: true });
+        await setDoc(doc(db, "settings", "gameweek"), { 
+          deadline: deadline, 
+          reopenTime: reopenTime,
+          status: status 
+        }, { merge: true });
         alert("Settings updated successfully!");
       } catch (e) {
         console.error(e);
@@ -416,22 +426,27 @@
             userWeeklyTotal += userBetScore;
           }
 
-          // 7. Update the leaderboard if they scored anything or played the bet
-          // Only update if there's a change to prevent unnecessary writes
-          if (userWeeklyTotal !== 0 || userBetScore !== 0 || userPicksScore !== 0 || userPlayerScore !== 0) {
+          const deltaTotal = userWeeklyTotal - prevWeekly;
+          const deltaSel = userPlayerScore - prevSel;
+          const deltaPicks = userPicksScore - prevPicks;
+          const deltaBet = userBetScore - prevBet;
+
+          if (deltaTotal !== 0) {
             const leaderRef = doc(db, "leaderboard", userId);
             await setDoc(leaderRef, {
               weeklyPoints: userWeeklyTotal,
-              totalPoints: increment(userWeeklyTotal)
+              weeklySelection: userPlayerScore,
+              weeklyPicks: userPicksScore,
+              weeklyBet: userBetScore,
+              totalPoints: increment(deltaTotal)
             }, { merge: true });
             
-            // Update detailed stats
             const statsRef = doc(db, `users/${userId}/stats/points`);
             await setDoc(statsRef, {
-              selectionPts: increment(userPlayerScore),
-              picksPts: increment(userPicksScore),
-              betPts: increment(userBetScore),
-              totalPts: increment(userWeeklyTotal)
+              selectionPts: increment(deltaSel),
+              picksPts: increment(deltaPicks),
+              betPts: increment(deltaBet),
+              totalPts: increment(deltaTotal)
             }, { merge: true });
           }
         }
@@ -465,7 +480,12 @@
 
         leaderboardSnap.docs.forEach(docSnapshot => {
           const leaderRef = doc(db, "leaderboard", docSnapshot.id);
-          batch.update(leaderRef, { weeklyPoints: 0 });
+          batch.update(leaderRef, { 
+            weeklyPoints: 0,
+            weeklySelection: 0,
+            weeklyPicks: 0,
+            weeklyBet: 0
+          });
         });
 
         await batch.commit();

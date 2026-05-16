@@ -1368,15 +1368,6 @@ MOBILE
   </div>
 </div>
 
-<!-- Gameweek Locked Modal -->
-<div id="gameweekLockedModal" class="rules-modal">
-  <div class="rules-card">
-    <h2>Gameweek Closed</h2>
-    <p>Selections will re-open once points are processed.</p>
-    <button onclick="document.getElementById('gameweekLockedModal').style.display='none'">Got it</button>
-  </div>
-</div>
-
 <!-- Scoring Rules Modal -->
 <div id="scoringRulesModal" class="rules-modal">
   <div class="rules-card">
@@ -1859,8 +1850,16 @@ const gameweekSettingsRef = doc(db, "settings", "gameweek");
 onSnapshot(gameweekSettingsRef, (docSnap) => {
     if (docSnap.exists()) {
         const settings = docSnap.data();
+        const now = new Date();
+        const reopenDate = settings.reopenTime ? new Date(settings.reopenTime) : null;
+        
         gameweekStatus = settings.status || 'open';
-        const isLocked = gameweekStatus === 'locked';
+        let isLocked = (gameweekStatus === 'locked');
+
+        // Dynamic reopen check: If past the specified time, treat as open
+        if (isLocked && reopenDate && now >= reopenDate) {
+            isLocked = false;
+        }
 
         // Update deadline timer in header
         if (settings.status === 'locked') {
@@ -1876,7 +1875,6 @@ onSnapshot(gameweekSettingsRef, (docSnap) => {
         document.getElementById('clearTeamBtn').disabled = isLocked;
         document.getElementById('saveWeeklyBtn').disabled = isLocked;
         document.getElementById('saveBetBuilderBtn').disabled = isLocked;
-        document.getElementById('gameweekLockedModal').style.display = isLocked ? 'flex' : 'none';
     }
 });
 
