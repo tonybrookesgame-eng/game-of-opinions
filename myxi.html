@@ -429,6 +429,31 @@ p {
   background: rgba(0, 0, 0, 0.8);
   box-shadow: 0 0 10px rgba(199, 255, 56, 0.2);
 }
+.fixtures-btn-trigger {
+  position: absolute;
+  top: 55px;
+  right: 15px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #c7ff38;
+  backdrop-filter: blur(4px);
+  color: #c7ff38;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  width: auto;
+  transition: 0.2s;
+}
+.fixtures-btn-trigger:hover {
+  background: rgba(0, 0, 0, 0.8);
+  box-shadow: 0 0 10px rgba(199, 255, 56, 0.2);
+}
 
 .scoring-grid {
   display: grid;
@@ -998,6 +1023,15 @@ MOBILE
     border: 1px solid #c7ff38;
   }
 
+  .fixtures-btn-trigger {
+    top: 38px;
+    right: 8px;
+    padding: 4px 8px;
+    font-size: 9px;
+    background: rgba(0, 0, 0, 0.75);
+    border: 1px solid #c7ff38;
+  }
+
   .container {
     padding: 80px 15px 100px;
   }
@@ -1219,6 +1253,7 @@ MOBILE
   </select>
 </div>
 <button class="rules-btn-trigger" onclick="openScoringRules()">How Players Score</button>
+<button class="fixtures-btn-trigger" onclick="openFixturesModal()">Upcoming Fixtures</button>
 
 <div class="center-circle"></div>
 
@@ -1389,6 +1424,15 @@ MOBILE
       </div>
     </div>
     <button onclick="document.getElementById('scoringRulesModal').style.display='none'" style="margin-top: 15px; padding: 10px;">Close</button>
+  </div>
+</div>
+
+<!-- Fixtures Modal -->
+<div id="fixturesModal" class="rules-modal">
+  <div class="rules-card">
+    <h2 style="font-size: 16px; margin-bottom: 10px;">Upcoming Fixtures</h2>
+    <div id="modal-fixtures-list"></div>
+    <button onclick="document.getElementById('fixturesModal').style.display='none'" style="margin-top: 15px; padding: 10px;">Close</button>
   </div>
 </div>
 
@@ -1576,6 +1620,7 @@ window.updateShirt = updateShirt;
 
 const loadFixtures = () => {
   const list = document.getElementById('fixtures-list');
+  const modalList = document.getElementById('modal-fixtures-list');
   const fixtures = [
 
     {date: "Friday 15th May", games: [
@@ -1601,16 +1646,21 @@ const loadFixtures = () => {
   ];
 
   list.innerHTML = '';
+  if (modalList) modalList.innerHTML = '';
   fixtures.forEach(day => {
-    list.innerHTML += `<div class="fixture-date-header">${day.date}</div>`;
+    const dateHeader = `<div class="fixture-date-header">${day.date}</div>`;
+    list.innerHTML += dateHeader;
+    if (modalList) modalList.innerHTML += dateHeader;
     day.games.forEach(g => {
-      list.innerHTML += `
+      const gameHtml = `
         <div class="fixture-item">
           <div class="fixture-team" style="text-align:right;">${g.home}</div>
           <div class="fixture-time">${g.time}</div>
           <div class="fixture-team" style="text-align:left;">${g.away}</div>
         </div>
       `;
+      list.innerHTML += gameHtml;
+      if (modalList) modalList.innerHTML += gameHtml;
     });
   });
 };
@@ -2065,6 +2115,10 @@ window.clearTeam = clearTeam;
 
 window.openScoringRules = () => {
   document.getElementById('scoringRulesModal').style.display = 'flex';
+};
+
+window.openFixturesModal = () => {
+  document.getElementById('fixturesModal').style.display = 'flex';
 };
 
 
