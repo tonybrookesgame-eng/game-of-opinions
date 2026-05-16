@@ -375,6 +375,12 @@
           const userId = userDoc.id;
           const userData = userDoc.data();
           
+          // TRACK DELTAS TO PREVENT DOUBLE-COUNTING
+          const prevWeekly = userData.weeklyPoints || 0;
+          const prevSel = userData.weeklySelection || 0;
+          const prevPicks = userData.weeklyPicks || 0;
+          const prevBet = userData.weeklyBet || 0;
+
           // 3. Get their specific team of 11 players
           // Note: In your current saveTeam, you save players to users/{uid}/myxi/team
           const teamSnap = await getDocs(collection(db, `users/${userId}/myxi`));
