@@ -349,19 +349,9 @@ nav a:hover {
 
   align-items: center;
 
-  padding: 80px 60px;
+  padding: 40px 60px;
 
   overflow: hidden;
-
-  background:
-    radial-gradient(circle at top, rgba(255,255,255,0.14), transparent 25%),
-    radial-gradient(circle at 20% 20%, rgba(199,255,56,0.10), transparent 18%),
-    radial-gradient(circle at 80% 25%, rgba(255,255,255,0.08), transparent 16%),
-    linear-gradient(rgba(0,0,0,0.60), rgba(0,0,0,0.78)),
-    url("https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=1600&auto=format&fit=crop");
-
-  background-size: cover;
-  background-position: center;
 }
 
 /* =========================
@@ -698,7 +688,7 @@ nav a:hover {
 .hero-copy {
   width: 100%; /* Take full width */
   max-width: 650px; /* Limit width for readability */
-  margin-bottom: 30px; /* Space before phones */
+  margin-bottom: 15px; /* Reduced space before phones */
 }
 
 /* =========================
@@ -710,7 +700,7 @@ nav a:hover {
 .hero-top-links {
   font-size: 18px;
   color: rgba(255,255,255,0.7);
-  margin-bottom: 20px;
+  margin-bottom: 10px; /* Reduced margin */
 }
 
 .hero-copy h1 {
@@ -1128,7 +1118,7 @@ nav a:hover {
   }
 
   .hero {
-   padding: 40px 15px 20px;
+   padding: 20px 15px 20px; /* Reduced top padding for mobile */
 
     min-height: auto;
   }
@@ -1178,20 +1168,8 @@ nav a:hover {
     z-index: -1;
   }
   .phone-left, .phone-right { transform: none !important; }
-  .hero-buttons { display: none !important; } /* Hide desktop hero buttons on mobile */
-  .phone-btn { display: block; } /* Show app-style button on mobile */
-
-  .hero::before {
-    height: 780px; /* Increased to cover text and phone, stopping above button */
-    bottom: auto; /* Prevent conflict with inset: 0 */
-    background:
-      linear-gradient(rgba(0,0,0,0.40), rgba(0,0,0,0.80)),
-      url("https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=1600&auto=format&fit=crop");
-    background-size: cover;
-    background-position: center 95%; /* Focus on the ball and boot */
-    mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
-  }
+  .hero-buttons { display: none !important; } /* Hide desktop hero buttons on mobile */ /* Keep this line */
+  .phone-btn { display: block; } /* Show app-style button on mobile */ /* Keep this line */
 
   .hero-copy h1 {
 
@@ -1199,6 +1177,7 @@ nav a:hover {
 
     line-height: 1.05;
 
+    margin-bottom: 8px; /* Reduced margin for mobile */
   }
 
   .hero-copy p {
@@ -1207,7 +1186,7 @@ nav a:hover {
 
     max-width: 100%;
 
-    line-height: 1.6;
+    line-height: 1.6; /* Keep this line */
 
   }
 
@@ -1392,10 +1371,8 @@ nav a:hover {
 <section class="hero">
   <div class="hero-grid">
     <div class="hero-copy">
-      <h1>
-      Your football opinions.
-      <strong>Finally worth something.</strong>
-    </h1>
+      <h1>Your Football Opinions.<br>
+      <strong>Finally Worth Something.</strong></h1>
     </div>
     <div class="hero-visual">
       <div class="phone phone-left">
