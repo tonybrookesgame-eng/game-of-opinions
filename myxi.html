@@ -820,19 +820,23 @@ MOBILE
 @media(max-width:768px){ /* Consistent with season.html and league.html */
 
   header {
-    justify-content: center !important;
-    padding: 15px 20px !important; /* Consistent padding */
-    height: 52px !important; /* Fixed height for logo + padding */
-    background: #000 !important;
+    background: rgba(0,0,0,0.9) !important;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 15px 10px;
+    height: auto;
   }
 
-  nav {
-    display: none !important;
+  nav { /* Hide the entire header navigation on mobile */
+    display: none;
   }
 
   h1 {
     text-align: center;
   }
+
+  .right-side { display: none; }
 
   .team-name-ribbon {
     display: flex;
@@ -1060,12 +1064,14 @@ MOBILE
     flex-direction: column;
     align-items: center;
   }
-  .right-side {
-    display: flex;
-    width: 100%;
-  }
   .left-side {
     width: 100%;
+  }
+
+  .bottom-panels {
+    width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
   }
 
   .weekly-panel, .bet-builder-panel, .fixtures-panel {
@@ -1279,14 +1285,7 @@ MOBILE
     </div>
     <button class="save-btn" id="saveBetBuilderBtn" onclick="saveBetBuilder()">Save Bet Prediction</button>
   </div>
-
-  <div class="fixtures-panel">
-    <h3>Upcoming Fixtures</h3>
-    <div id="fixtures-list"></div>
-  </div>
 </div>
-
-</div> <!-- End main-layout -->
 
 <!-- Gameweek Locked Modal -->
 <div id="gameweekLockedModal" class="rules-modal">
@@ -1308,7 +1307,7 @@ MOBILE
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, orderBy, limit, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const clubAbbr = {

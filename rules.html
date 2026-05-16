@@ -49,7 +49,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 15px 30px;
+      padding: 20px 40px;
       background: rgba(0,0,0,0.72);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid rgba(255,255,255,0.12);
@@ -112,13 +112,16 @@
     .mobile-nav { display: none; }
     @media (max-width: 768px) {
       header {
-        justify-content: center !important;
-        padding: 15px 20px !important;
-        height: 52px !important;
-        background: #000 !important;
+        display: flex;
+        background: rgba(0,0,0,0.9) !important;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        padding: 15px 10px;
+        height: auto;
       }
       nav { /* Hide the entire header navigation on mobile */
-        display: none !important;
+        display: none;
       }
       .mobile-nav {
         display: flex;
