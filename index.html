@@ -1623,3 +1623,39 @@ window.handleAuth = async function() {
 </script>
 </body>
 </html>
+
+// Check for login redirect from other pages
+if (window.location.search.includes('login=true')) {
+  window.openLogin();
+}
+
+// AUTH SCREEN CONTROLS
+window.openLogin = () => {
+  document.getElementById('auth-overlay').style.display = 'flex';
+};
+
+window.closeAuth = () => {
+  document.getElementById('auth-overlay').style.display = 'none';
+};
+
+// UNIFIED AUTH HANDLER
+window.handleAuth = async function() {
+  // This handler is now exclusively for login.
+  const email = document.getElementById("auth-email").value;
+  const password = document.getElementById("auth-password").value;
+
+  if (!email || !password) {
+    alert("Please enter your email and password.");
+    return;
+  }
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    window.location.href = "myxi.html";
+  } catch (error) {
+    alert(error.message);
+  }
+};
+
+</script>
+</body>
+</html>
