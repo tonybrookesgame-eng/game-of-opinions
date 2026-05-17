@@ -109,6 +109,71 @@
       margin-right: 5px;
     }
 
+    .rules-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .rules-table th, .rules-table td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .rules-table th {
+      background: rgba(199, 255, 56, 0.1);
+      color: #c7ff38;
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+    .rules-table tr:last-child td { border-bottom: none; }
+    .rules-table .win { color: #4ade80; font-weight: bold; }
+    .rules-table .loss { color: #f87171; font-weight: bold; }
+
+    /* CALCULATOR STYLES */
+    .calc-container {
+      margin-top: 30px;
+      background: rgba(199, 255, 56, 0.05);
+      border: 1px solid rgba(199, 255, 56, 0.2);
+      padding: 25px;
+      border-radius: 16px;
+    }
+    .calc-input-group {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .calc-input-group input {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid #c7ff38;
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      width: 80px;
+      font-weight: 800;
+      font-size: 18px;
+      outline: none;
+    }
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .calc-card {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px;
+      border-radius: 12px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .calc-card label { display: block; font-size: 10px; color: #9ca3af; text-transform: uppercase; margin-bottom: 5px; font-weight: 700; }
+    .calc-card span { font-size: 22px; font-weight: 800; }
+
     .mobile-nav { display: none; }
     @media (max-width: 768px) {
       header {
@@ -195,10 +260,66 @@
   <h3>The Bet Builder (Risk & Reward)</h3>
   <p>This is where leagues are won or lost. Every week, a "Scout's Bet" is presented. You must decide if it will land (YES) or fail (NO).</p>
   <ul>
-    <li><strong>The Sacrifice:</strong> It costs <strong>5 Points</strong> to enter a prediction.</li>
-    <li><strong>YES:</strong> High Reward / High Risk. If the bet lands, you win massive points. If it fails, you lose points.</li>
-    <li><strong>NO:</strong> Stability / Low Risk. If the bet fails, you win small points. If it lands, you lose massive points.</li>
+    <li><strong>The Sacrifice:</strong> It costs <span class="point-tag">5 PTS</span> to play.</li>
+    <li><strong>YES Selection:</strong> You win your <strong>Stake × Odds</strong> if it lands (e.g. 30/1 = <span class="point-tag">150 PTS</span>). If it fails, you lose <span class="point-tag">30 PTS</span>.</li>
+    <li><strong>NO Selection:</strong> You win <span class="point-tag">30 PTS</span> if the bet fails. If the bet lands, you lose the potential profit of the odds (e.g. 30/1 = <span class="point-tag">-150 PTS</span>).</li>
+    <li><em>Note: The 30-point value is calculated as (Stake × 5) + Stake.</em></li>
   </ul>
+
+  <div style="overflow-x: auto;">
+    <table class="rules-table">
+      <thead>
+        <tr>
+          <th>Odds</th>
+          <th>YES Win</th>
+          <th>YES Loss</th>
+          <th>NO Win</th>
+          <th>NO Loss</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>10/1</td>
+          <td class="win">+50</td>
+          <td class="loss">-30</td>
+          <td class="win">+30</td>
+          <td class="loss">-50</td>
+        </tr>
+        <tr>
+          <td>25/1</td>
+          <td class="win">+125</td>
+          <td class="loss">-30</td>
+          <td class="win">+30</td>
+          <td class="loss">-125</td>
+        </tr>
+        <tr>
+          <td>40/1</td>
+          <td class="win">+200</td>
+          <td class="loss">-30</td>
+          <td class="win">+30</td>
+          <td class="loss">-200</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="calc-container">
+    <h3 style="margin-top:0; color:#c7ff38;">Points Calculator</h3>
+    <p style="font-size: 14px; margin-bottom: 20px;">Test your own odds scenarios (Based on 5 PT Sacrifice)</p>
+    
+    <div class="calc-input-group">
+      <label style="font-weight:800;">ODDS:</label>
+      <input type="number" id="oddsInput" value="30" oninput="runCalc()">
+      <span style="font-weight:800; color:#c7ff38;">/ 1</span>
+    </div>
+
+    <div class="calc-grid">
+      <div class="calc-card"><label>YES Lands</label><span id="res-yes-win" class="win">+150</span></div>
+      <div class="calc-card"><label>YES Fails</label><span id="res-yes-loss" class="loss">-30</span></div>
+      <div class="calc-card"><label>NO Fails</label><span id="res-no-win" class="win">+30</span></div>
+      <div class="calc-card"><label>NO Lands</label><span id="res-no-loss" class="loss">-150</span></div>
+    </div>
+  </div>
 
   <h2>3. Season Predictions</h2>
   <p>Long-term vision pays off. These picks are locked at the start of the season (or when you join) and provide a huge point injection at the end of the campaign.</p>
@@ -244,6 +365,25 @@
       <li><span class="point-tag">-1 PT</span> Yellow Card | <span class="point-tag">-5 PTS</span> Red Card</li>
     </ul>
   </div>
+
+  <h2>8. League Standings & Tie-breakers</h2>
+  <p>The Global Leaderboard is updated after every Gameweek is processed. If two or more managers finish the season on identical points, the tie is broken by:</p>
+  <ul>
+    <li><strong>1. Highest GW Score:</strong> The manager with the highest single-week points total.</li>
+    <li><strong>2. Minute Mastery:</strong> Most correct "Goal Minute" predictions throughout the season.</li>
+    <li><strong>3. The Legend Status:</strong> The Top 3 managers are awarded the <span class="point-tag">🥇</span>, <span class="point-tag">🥈</span>, and <span class="point-tag">🥉</span> medals.</li>
+  </ul>
+
+  <h2>9. Postponed & Abandoned Matches</h2>
+  <p>Football is unpredictable. Our policy on match changes is as follows:</p>
+  <ul>
+    <li><strong>Postponements:</strong> If a match is moved outside of the current Gameweek window, players from those clubs will score <span class="point-tag">0 PTS</span>.</li>
+    <li><strong>Abandoned Matches:</strong> If a match is abandoned after kickoff, only the points earned up until the whistle blew will be counted.</li>
+    <li><strong>Rescheduled Matches:</strong> Points are only awarded for the Gameweek in which the match actually takes place.</li>
+  </ul>
+
+  <h2>10. Fair Play</h2>
+  <p>The Manager's Office is a place of integrity. Any attempt to exploit system bugs or create multiple accounts to "farm" predictions will result in a permanent ban from the league.</p>
 
 
   <h2>5. AI Scout Integration</h2>

@@ -278,6 +278,7 @@
         document.getElementById('deadline-input').value = data.deadline || "";
         document.getElementById('reopen-input').value = data.reopenTime || "";
         document.getElementById('status-select').value = data.status || "open";
+        if (data.odds) document.getElementById('bet-odds').value = data.odds;
       }
     }
 
@@ -285,6 +286,7 @@
       const deadline = document.getElementById('deadline-input').value;
       const reopenTime = document.getElementById('reopen-input').value;
       const status = document.getElementById('status-select').value;
+      const odds = document.getElementById('bet-odds').value;
       if (!deadline) {
         alert("Please select a date and time.");
         return;
@@ -293,7 +295,8 @@
         await setDoc(doc(db, "settings", "gameweek"), { 
           deadline: deadline, 
           reopenTime: reopenTime,
-          status: status 
+          status: status,
+          odds: odds
         }, { merge: true });
         alert("Settings updated successfully!");
       } catch (e) {
@@ -485,13 +488,13 @@
             const stake = 5;
             
             // New Bet Builder Logic (assuming 30/1 odds for fixed values 155 and 30)
-            const pointsBig = (oddsVal * stake) + stake;   // e.g. 30/1: 150 + 5 = 155
+            const pointsBig = oddsVal * stake;   // e.g. 30/1: 150 (profit, as per "5pts x odds")
             const pointsSmall = (stake * 5) + stake;       // e.g. 25 + 5 = 30
 
             if (betResult === 'landed') {
-              userBetScore = (choice === 'yes' ? pointsBig : -pointsBig); 
+              userBetScore = (choice === 'yes' ? pointsBig : -pointsBig); // If YES lands, profit. If NO lands, loss of profit.
             } else if (betResult === 'failed') {
-              userBetScore = (choice === 'no' ? pointsSmall : -pointsSmall);
+              userBetScore = (choice === 'no' ? pointsSmall : -pointsSmall); // If NO fails, profit. If YES fails, loss of profit.
             }
             
             userWeeklyTotal += userBetScore;

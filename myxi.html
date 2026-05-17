@@ -1873,6 +1873,28 @@ onSnapshot(gameweekSettingsRef, (docSnap) => {
             document.querySelector('header .user-only #deadline-timer').innerText = d.toLocaleString('en-GB', options).toUpperCase();
         }
 
+        // Update Bet Builder Points dynamically based on Admin Odds
+        if (settings.odds) {
+            const oddsVal = parseInt(settings.odds);
+            const stake = 5;
+            betPointsBig = oddsVal * stake; // e.g. 40/1 x 5pts = 200pts
+            betPointsSmall = (stake * 5) + stake; // Fixed 30pts
+
+            const btnYes = document.getElementById('btnYes');
+            const btnNo = document.getElementById('btnNo');
+            const oddsDisp = document.getElementById('betOddsDisplay');
+
+            if (btnYes) btnYes.title = `Sacrifice: 5 pts. Win ${betPointsBig} pts if bet lands, lose ${betPointsSmall} pts if it fails.`;
+            if (btnNo) btnNo.title = `Sacrifice: 5 pts. Win ${betPointsSmall} pts if bet fails, lose ${betPointsBig} pts if it lands.`;
+            if (oddsDisp) oddsDisp.innerText = oddsVal + "/1";
+
+            if (currentBetChoice === 'yes') {
+              document.getElementById('betInfo').innerHTML = `Reward: <strong>${betPointsBig} pts</strong> | Risk: <strong>${betPointsSmall} pts</strong>`;
+            } else if (currentBetChoice === 'no') {
+              document.getElementById('betInfo').innerHTML = `Reward: <strong>${betPointsSmall} pts</strong> | Risk: <strong>${betPointsBig} pts</strong>`;
+            }
+        }
+
         // Disable/Enable save buttons
         document.getElementById('saveTeamBottomBtn').disabled = isLocked;
         document.getElementById('clearTeamBtn').disabled = isLocked;
