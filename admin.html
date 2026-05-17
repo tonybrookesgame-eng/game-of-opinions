@@ -92,8 +92,12 @@
       </div>
     </div>
 
-    <p>5. Once everything is set, run the calculation for all managers.</p>
-    <button onclick="processGameweek()">Process & Update Leaderboard</button>
+    <p>5. Save your progress or run the calculation for all managers.</p>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+      <button onclick="saveDraft()" style="background: #3b82f6; width: auto; padding: 10px 20px;">Save Progress Draft</button>
+      <button onclick="loadDraft()" style="background: #fbbf24; color: #000; width: auto; padding: 10px 20px;">Load Last Draft</button>
+      <button onclick="processGameweek()" style="width: auto; padding: 10px 20px;">Process & Update Leaderboard</button>
+    </div>
 
     <div class="admin-section">
       <p>6. Reset Weekly Points for a new Gameweek</p>
@@ -182,7 +186,7 @@
       { name: "Smith Rowe", pos: "MID", club: "Fulham" }, { name: "Wilson", pos: "MID", club: "Fulham" }, { name: "Iwobi", pos: "MID", club: "Fulham" }, { name: "Bobb", pos: "MID", club: "Fulham" }, { name: "Lukic", pos: "MID", club: "Fulham" }, { name: "Berge", pos: "MID", club: "Fulham" }, { name: "Cairney", pos: "MID", club: "Fulham" }, { name: "King", pos: "MID", club: "Fulham" },
       { name: "Okafor", pos: "MID", club: "Leeds" }, { name: "Tanaka", pos: "MID", club: "Leeds" }, { name: "Aaronson", pos: "MID", club: "Leeds" }, { name: "Longstaff", pos: "MID", club: "Leeds" }, { name: "Stach", pos: "MID", club: "Leeds" },
       { name: "Mejbri", pos: "MID", club: "Burnley" }, { name: "Ward-Prowse", pos: "MID", club: "Burnley" }, { name: "Cullen", pos: "MID", club: "Burnley" },
-      { name: "Mac Allister", pos: "MID", club: "Liverpool" }, { name: "Szoboszlai", pos: "MID", club: "Liverpool" }, { name: "Gravenberch", pos: "MID", club: "Liverpool" }, { name: "Wirtz", pos: "MID", club: "Liverpool" }, { name: "Gakpo", pos: "MID", club: "Liverpool" },
+      { name: "Mac Allister", pos: "MID", club: "Liverpool" }, { name: "Szoboszlai", pos: "MID", club: "Liverpool" }, { name: "Gravenberch", pos: "MID", club: "Liverpool" }, { name: "Wirtz", pos: "MID", club: "Liverpool" }, { name: "Gakpo", pos: "MID", club: "Liverpool" }, { name: "Ngumoha", pos: "MID", club: "Liverpool" }, { name: "C Jones", pos: "MID", club: "Liverpool" },
       { name: "Cherki", pos: "MID", club: "Man City" }, { name: "Rodri", pos: "MID", club: "Man City" }, { name: "Foden", pos: "MID", club: "Man City" }, { name: "Doku", pos: "MID", club: "Man City" }, { name: "Semenyo", pos: "MID", club: "Man City" }, { name: "Bernardo", pos: "MID", club: "Man City" }, { name: "Savinho", pos: "MID", club: "Man City" },
       { name: "Bruno Fernandes", pos: "MID", club: "Man Utd" }, { name: "Mainoo", pos: "MID", club: "Man Utd" }, { name: "Mbuemo", pos: "MID", club: "Man Utd" }, { name: "Casemiro", pos: "MID", club: "Man Utd" },
       { name: "Guimaraes", pos: "MID", club: "Newcastle" }, { name: "Gordon", pos: "MID", club: "Newcastle" }, { name: "Joelinton", pos: "MID", club: "Newcastle" }, { name: "Barnes", pos: "MID", club: "Newcastle" }, { name: "Tonali", pos: "MID", club: "Newcastle" },
@@ -211,7 +215,7 @@
       { name: "Wood", pos: "FWD", club: "Nott'm Forest" }, { name: "Awoniyi", pos: "FWD", club: "Nott'm Forest" }, { name: "I Jesus", pos: "FWD", club: "Nott'm Forest" },
       { name: "Isidor", pos: "FWD", club: "Sunderland" }, { name: "Mayenda", pos: "FWD", club: "Sunderland" }, { name: "Brobbey", pos: "FWD", club: "Sunderland" },
       { name: "Richarlison", pos: "FWD", club: "Spurs" }, { name: "Solanke", pos: "FWD", club: "Spurs" }, { name: "Tel", pos: "FWD", club: "Spurs" },
-      { name: "Taty", pos: "FWD", club: "West Ham" }, { name: "Pablo", pos: "FWD", club: "West Ham" }, { name: "Wilson", pos: "FWD", club: "West Ham" },
+      { name: "Taty", pos: "FWD", club: "West Ham" }, { name: "Pablo", pos: "FWD", club: "West Ham" }, { name: "C Wilson", pos: "FWD", club: "West Ham" },
       { name: "Arokodare", pos: "FWD", club: "Wolves" }, { name: "Armstrong", pos: "FWD", club: "Wolves" }
     ];
     
@@ -325,6 +329,67 @@
         historyList.innerHTML = "<p>Error loading history.</p>";
       }
     }
+
+    window.saveDraft = async function() {
+      const draft = {
+        gwNum: document.getElementById('gameweek-num').value,
+        betResult: document.getElementById('bet-result').value,
+        betOdds: document.getElementById('bet-odds').value,
+        winClub: document.getElementById('winning-club').value,
+        winMin: document.getElementById('winning-minute').value,
+        playerStats: {}
+      };
+
+      playersData.forEach(p => {
+        draft.playerStats[p.name] = {
+          app: document.getElementById(`app-${p.name}`).checked,
+          gl: document.getElementById(`gl-${p.name}`).value,
+          ast: document.getElementById(`ast-${p.name}`).value,
+          cs: document.getElementById(`cs-${p.name}`).checked,
+          ps: document.getElementById(`ps-${p.name}`) ? document.getElementById(`ps-${p.name}`).value : 0,
+          yc: document.getElementById(`yc-${p.name}`).checked,
+          rc: document.getElementById(`rc-${p.name}`).checked
+        };
+      });
+
+      try {
+        await setDoc(doc(db, "settings", "adminDraft"), draft);
+        alert("Progress draft saved successfully!");
+      } catch (e) {
+        console.error(e);
+        alert("Error saving draft.");
+      }
+    };
+
+    window.loadDraft = async function() {
+      const snap = await getDoc(doc(db, "settings", "adminDraft"));
+      if (snap.exists()) {
+        const data = snap.data();
+        document.getElementById('gameweek-num').value = data.gwNum || "";
+        document.getElementById('bet-result').value = data.betResult || "none";
+        document.getElementById('bet-odds').value = data.betOdds || 30;
+        document.getElementById('winning-club').value = data.winClub || "none";
+        document.getElementById('winning-minute').value = data.winMin || "";
+
+        if (data.playerStats) {
+          playersData.forEach(p => {
+            const s = data.playerStats[p.name];
+            if (s) {
+              document.getElementById(`app-${p.name}`).checked = s.app;
+              document.getElementById(`gl-${p.name}`).value = s.gl;
+              document.getElementById(`ast-${p.name}`).value = s.ast;
+              document.getElementById(`cs-${p.name}`).checked = s.cs;
+              if (document.getElementById(`ps-${p.name}`)) document.getElementById(`ps-${p.name}`).value = s.ps;
+              document.getElementById(`yc-${p.name}`).checked = s.yc;
+              document.getElementById(`rc-${p.name}`).checked = s.rc;
+            }
+          });
+        }
+        alert("Draft loaded! Review the stats before processing.");
+      } else {
+        alert("No saved draft found.");
+      }
+    };
 
     window.processGameweek = async function() {
       const gwNum = document.getElementById('gameweek-num').value;
