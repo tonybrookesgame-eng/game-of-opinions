@@ -188,6 +188,11 @@ h1 {font-size:34px;margin-bottom:8px;}
 
 /* TOP 3 MEDALS */
 
+.rank {
+  font-weight: 800;
+  font-size: 1.15em;
+}
+
 .rank.gold {color:#FFD700;}
 
 .rank.silver {color:#e2e8f0;}
@@ -227,32 +232,6 @@ h1 {font-size:34px;margin-bottom:8px;}
   gap:10px;
 
   font-weight:600;
-
-}
-
-/* AVATAR */
-
-.avatar {
-
-  width:32px;
-
-  height:32px;
-
-  border-radius:50%;
-
-  background:#1f2937;
-
-  display:flex;
-
-  align-items:center;
-
-  justify-content:center;
-
-  font-size:13px;
-
-  font-weight:bold;
-
-  color:#c7ff38;
 
 }
 
@@ -338,6 +317,7 @@ h1 {font-size:34px;margin-bottom:8px;}
     grid-template-columns: 50px 200px 80px 80px; /* Fixed widths for perfect vertical alignment */
     min-width: 410px; /* Forces the table to be wider than the phone to enable swiping */
     padding: 12px 10px;
+    font-size: 11px;
   }
   /* Sticky Columns Logic */
   .leader-header div:nth-child(1), .leader-row .rank {
@@ -356,6 +336,10 @@ h1 {font-size:34px;margin-bottom:8px;}
   /* Ensure user highlight persists over sticky background */
   .leader-row.you .rank, .leader-row.you .team {
     background: #122114 !important;
+  }
+
+  .week {
+    font-size: 11px;
   }
 
   .mobile-nav {
@@ -518,8 +502,6 @@ async function loadLeaderboard(user){
       <div class="rank ${medalClass}">${medalIcon}</div>
 
       <div class="team" ${isTruncated ? `onclick="alert('${escapedName}')" style="cursor:help;"` : ""}>
-        <div class="avatar"></div>
-
         <span title="${teamName}">${displayTeamName}</span> ${isYou?"(You)":""}
 
       </div>
