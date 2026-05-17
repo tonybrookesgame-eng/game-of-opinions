@@ -335,9 +335,10 @@ h1 {font-size:34px;margin-bottom:8px;}
     -webkit-overflow-scrolling: touch;
   }
   .leader-header, .leader-row {
-    grid-template-columns: 50px 200px 80px 80px; /* Fixed widths for perfect vertical alignment */
-    min-width: 410px; /* Forces the table to be wider than the phone to enable swiping */
-    padding: 12px 10px;
+    grid-template-columns: 35px 1fr 65px 65px; /* Proportional columns to fit all data */
+    min-width: 320px; /* Fits standard mobile screens */
+    padding: 10px 5px;
+    font-size: 11px; /* Smaller text for better visibility */
   }
   /* Sticky Columns Logic */
   .leader-header div:nth-child(1), .leader-row .rank {
@@ -348,7 +349,7 @@ h1 {font-size:34px;margin-bottom:8px;}
   }
   .leader-header div:nth-child(2), .leader-row .team {
     position: sticky;
-    left: 50px; /* Offset by the width of the rank column */
+    left: 35px; /* Adjusted for the new rank column width */
     z-index: 5;
     background: #07101a;
     border-right: 1px solid rgba(255,255,255,0.05);
@@ -505,8 +506,8 @@ async function loadLeaderboard(user){
 
     const teamName = data.teamName || "Anonymous";
     const isMobile = window.innerWidth <= 768;
-    const isTruncated = isMobile && teamName.length > 10;
-    const displayTeamName = isTruncated ? teamName.substring(0, 10) + "..." : teamName;
+    const isTruncated = isMobile && teamName.length > 8;
+    const displayTeamName = isTruncated ? teamName.substring(0, 8) + "..." : teamName;
     const escapedName = teamName.replace(/'/g, "\\'");
 
     const row=document.createElement("div");
