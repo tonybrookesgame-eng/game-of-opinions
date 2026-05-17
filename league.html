@@ -311,6 +311,9 @@ h1 {font-size:34px;margin-bottom:8px;}
     padding: 10px 5px;
     font-size: 11px; /* Smaller text for better visibility */
   }
+  .leader-row .team {
+    font-size: 10px;
+  }
   /* Sticky Columns Logic */
   .leader-header div:nth-child(1), .leader-row .rank {
     position: sticky;
@@ -481,8 +484,8 @@ async function loadLeaderboard(user){
 
     const teamName = data.teamName || "Anonymous";
     const isMobile = window.innerWidth <= 768;
-    const isTruncated = isMobile && teamName.length > 18;
-    const displayTeamName = isTruncated ? teamName.substring(0, 18) + "..." : teamName;
+    const isTruncated = isMobile && teamName.length > 25;
+    const displayTeamName = isTruncated ? teamName.substring(0, 25) + "..." : teamName;
     const escapedName = teamName.replace(/'/g, "\\'");
 
     const row=document.createElement("div");    row.className = `leader-row ${isYou ? "you" : ""}`;
