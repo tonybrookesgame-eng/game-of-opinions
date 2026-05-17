@@ -306,6 +306,7 @@ h1 {font-size:34px;margin-bottom:8px;}
   }
   .leader-header, .leader-row {
     grid-template-columns: 30px 135px 1fr 1fr;
+    grid-template-columns: 30px 150px 1fr 1fr;
     min-width: 0;
     padding: 10px 5px;
     font-size: 11px; /* Smaller text for better visibility */
@@ -327,6 +328,10 @@ h1 {font-size:34px;margin-bottom:8px;}
   /* Ensure user highlight persists over sticky background */
   .leader-row.you .rank, .leader-row.you .team {
     background: #122114 !important;
+  }
+
+  .change-arrow {
+    font-size: 9px;
   }
 
   .mobile-nav {
@@ -476,8 +481,8 @@ async function loadLeaderboard(user){
 
     const teamName = data.teamName || "Anonymous";
     const isMobile = window.innerWidth <= 768;
-    const isTruncated = isMobile && teamName.length > 12;
-    const displayTeamName = isTruncated ? teamName.substring(0, 12) + "..." : teamName;
+    const isTruncated = isMobile && teamName.length > 18;
+    const displayTeamName = isTruncated ? teamName.substring(0, 18) + "..." : teamName;
     const escapedName = teamName.replace(/'/g, "\\'");
 
     const row=document.createElement("div");    row.className = `leader-row ${isYou ? "you" : ""}`;
@@ -495,7 +500,7 @@ async function loadLeaderboard(user){
 
       <div class="week ${changeClass}">
 
-        ${weekly>0?"+":""}${weekly} ${arrow}
+        ${weekly>0?"+":""}${weekly} <span class="change-arrow">${arrow}</span>
 
       </div>
 
