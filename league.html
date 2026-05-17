@@ -150,6 +150,8 @@ h1 {font-size:34px;margin-bottom:8px;}
 
   color:#9ca3af;
 
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
 }
 
 /* ROW */
@@ -164,7 +166,7 @@ h1 {font-size:34px;margin-bottom:8px;}
 
   padding:16px 20px;
 
-  border-top:1px solid rgba(255,255,255,0.05);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 
   transition:0.2s;
 
@@ -237,7 +239,11 @@ h1 {font-size:34px;margin-bottom:8px;}
 
 /* POINTS */
 
-.points {text-align:right;font-weight:bold;}
+.points {
+  text-align: right;
+  font-weight: 800;
+  font-size: 1.15em;
+}
 
 /* WEEKLY */
 
@@ -245,9 +251,9 @@ h1 {font-size:34px;margin-bottom:8px;}
 
   text-align:right;
 
-  font-size:13px;
+  font-size: 1.15em;
 
-  font-weight:600;
+  font-weight: 800;
 
 }
 
@@ -313,9 +319,9 @@ h1 {font-size:34px;margin-bottom:8px;}
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
-  .leader-header, .leader-row {
-    grid-template-columns: 50px 200px 80px 80px; /* Fixed widths for perfect vertical alignment */
-    min-width: 410px; /* Forces the table to be wider than the phone to enable swiping */
+  .leader-header, .leader-row { /* Reduced width for team name column */
+    grid-template-columns: 50px 160px 80px 80px;
+    min-width: 370px; /* Forces the table to be wider than the phone to enable swiping */
     padding: 12px 10px;
     font-size: 11px;
   }
@@ -331,15 +337,11 @@ h1 {font-size:34px;margin-bottom:8px;}
     left: 50px; /* Offset by the width of the rank column */
     z-index: 5;
     background: #07101a;
-    border-right: 1px solid rgba(255,255,255,0.05);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
   }
   /* Ensure user highlight persists over sticky background */
   .leader-row.you .rank, .leader-row.you .team {
     background: #122114 !important;
-  }
-
-  .week {
-    font-size: 11px;
   }
 
   .mobile-nav {
