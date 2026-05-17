@@ -150,13 +150,6 @@ h1 {font-size:34px;margin-bottom:8px;}
 
   color:#9ca3af;
 
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-
-  position: sticky;
-  top: 52px; /* Sticks below the desktop header */
-  z-index: 20;
-  background: #07101a;
-
 }
 
 /* ROW */
@@ -171,7 +164,7 @@ h1 {font-size:34px;margin-bottom:8px;}
 
   padding:16px 20px;
 
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top:1px solid rgba(255,255,255,0.05);
 
   transition:0.2s;
 
@@ -191,15 +184,6 @@ h1 {font-size:34px;margin-bottom:8px;}
 
   background:rgba(255,255,255,0.06);
 
-}
-
-.you-tag {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 1px 5px;
-  border-radius: 4px;
-  font-size: 10px;
-  color: #c7ff38;
-  margin-left: 4px;
 }
 
 /* TOP 3 MEDALS */
@@ -253,11 +237,7 @@ h1 {font-size:34px;margin-bottom:8px;}
 
 /* POINTS */
 
-.points {
-  text-align: right;
-  font-weight: 800;
-  font-size: 1.15em;
-}
+.points {text-align:right;font-weight:bold;}
 
 /* WEEKLY */
 
@@ -265,9 +245,9 @@ h1 {font-size:34px;margin-bottom:8px;}
 
   text-align:right;
 
-  font-size: 1.15em;
+  font-size:13px;
 
-  font-weight: 800;
+  font-weight:600;
 
 }
 
@@ -333,14 +313,11 @@ h1 {font-size:34px;margin-bottom:8px;}
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
-  .leader-header, .leader-row { 
-    grid-template-columns: 40px 130px 65px 65px;
-    min-width: 300px; 
-    padding: 8px 5px;
+  .leader-header, .leader-row {
+    grid-template-columns: 35px 110px 55px 55px; /* Condensed columns for mobile visibility */
+    min-width: 255px; 
+    padding: 12px 5px;
     font-size: 11px;
-  }
-  .leader-header {
-    top: 73px; /* Sticks below the taller mobile header */
   }
   /* Sticky Columns Logic */
   .leader-header div:nth-child(1), .leader-row .rank {
@@ -351,14 +328,18 @@ h1 {font-size:34px;margin-bottom:8px;}
   }
   .leader-header div:nth-child(2), .leader-row .team {
     position: sticky;
-    left: 40px; /* Offset by the width of the rank column */
+    left: 35px; /* Adjusted to match the new rank column width */
     z-index: 5;
     background: #07101a;
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-right: 1px solid rgba(255, 255, 255, 0.15);
   }
   /* Ensure user highlight persists over sticky background */
   .leader-row.you .rank, .leader-row.you .team {
     background: #122114 !important;
+  }
+
+  .week {
+    font-size: 11px;
   }
 
   .mobile-nav {
@@ -385,12 +366,6 @@ h1 {font-size:34px;margin-bottom:8px;}
     color: #c7ff38;
     transform: translateY(-3px);
     text-shadow: 0 0 15px rgba(199, 255, 56, 0.6);
-  }
-}
-
-@media (max-width: 768px) {
-  .you-tag {
-    font-size: 9px; /* Make the "(You)" tag even smaller on mobile */
   }
 }
 
@@ -514,8 +489,8 @@ async function loadLeaderboard(user){
 
     const teamName = data.teamName || "Anonymous";
     const isMobile = window.innerWidth <= 768;
-    const isTruncated = isMobile && teamName.length > 10;
-    const displayTeamName = isTruncated ? teamName.substring(0, 10) + "..." : teamName;
+    const isTruncated = isMobile && teamName.length > 8;
+    const displayTeamName = isTruncated ? teamName.substring(0, 8) + "..." : teamName;
     const escapedName = teamName.replace(/'/g, "\\'");
 
     const row=document.createElement("div");
@@ -527,7 +502,7 @@ async function loadLeaderboard(user){
       <div class="rank ${medalClass}">${medalIcon}</div>
 
       <div class="team" ${isTruncated ? `onclick="alert('${escapedName}')" style="cursor:help;"` : ""}>
-        <span title="${teamName}">${displayTeamName}</span> ${isYou?`<span class="you-tag">(You)</span>`:""}
+        <span title="${teamName}">${displayTeamName}</span> ${isYou?"(You)":""}
 
       </div>
 
