@@ -68,7 +68,7 @@ header {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 100000;
+  z-index: 1000;
   display:flex;
   justify-content:space-between;
   align-items:center;
@@ -142,13 +142,14 @@ h1 {font-size:34px;margin-bottom:8px;}
 
   display:grid;
 
-  grid-template-columns: 50px 1fr 90px 90px;
+  grid-template-columns: 60px 1fr 120px 100px;
 
   padding: 16px 20px;
 
   font-size:12px;
 
   color:#9ca3af;
+
 }
 
 /* ROW */
@@ -157,7 +158,7 @@ h1 {font-size:34px;margin-bottom:8px;}
 
   display:grid;
 
-  grid-template-columns: 50px 1fr 90px 90px;
+  grid-template-columns: 60px 1fr 120px 100px;
 
   align-items:center;
 
@@ -186,11 +187,6 @@ h1 {font-size:34px;margin-bottom:8px;}
 }
 
 /* TOP 3 MEDALS */
-
-.rank {
-  font-weight: 800;
-  font-size: 1.15em;
-}
 
 .rank.gold {color:#FFD700;}
 
@@ -231,6 +227,32 @@ h1 {font-size:34px;margin-bottom:8px;}
   gap:10px;
 
   font-weight:600;
+
+}
+
+/* AVATAR */
+
+.avatar {
+
+  width:32px;
+
+  height:32px;
+
+  border-radius:50%;
+
+  background:#1f2937;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  font-size:13px;
+
+  font-weight:bold;
+
+  color:#c7ff38;
 
 }
 
@@ -296,51 +318,44 @@ h1 {font-size:34px;margin-bottom:8px;}
 
 @media (max-width: 768px) {
   header {
-    background: rgba(0,0,0,0.95) !important;
-    padding: 0 10px;
-    height: 60px;
-    flex-direction: row;
+    background: rgba(0,0,0,0.9) !important;
     justify-content: center;
-    overflow: hidden;
-    overflow: hidden;
-  }
-  .container {8
-    padding-top: 130px;
-    padding-top: 180px;
-    padding-left: 10px;
-    padding-right: 10px;
+    align-items: center;
+    flex-direction: column;
+    padding: 15px 10px;
+    height: auto;
   }
   nav {
     display: none;
   }
 
   /* LEADERBOARD MOBILE OPTIMIZATION */
-  .leader-header {
-    position: sticky;
-    top: 60px;
-    z-index: 2000;1);
-    box-shadow: 0 4px 0px rgba(0,0,0,0.3
-    background: #07101a;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  }
   .leaderboard {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
   .leader-header, .leader-row {
-    grid-template-columns: 45px 1fr 75px 75px;
-    min-width: 320px; 
-    padding: 10px 5px;
-    font-size: 11px;
+    grid-template-columns: 50px 200px 80px 80px; /* Fixed widths for perfect vertical alignment */
+    min-width: 410px; /* Forces the table to be wider than the phone to enable swiping */
+    padding: 12px 10px;
+  }
+  /* Sticky Columns Logic */
+  .leader-header div:nth-child(1), .leader-row .rank {
+    position: sticky;
+    left: 0;
+    z-index: 5;
+    background: #07101a; /* Solid background to cover scrolling content */
+  }
+  .leader-header div:nth-child(2), .leader-row .team {
+    position: sticky;
+    left: 50px; /* Offset by the width of the rank column */
+    z-index: 5;
+    background: #07101a;
+    border-right: 1px solid rgba(255,255,255,0.05);
   }
   /* Ensure user highlight persists over sticky background */
   .leader-row.you .rank, .leader-row.you .team {
     background: #122114 !important;
-  }
-
-  .week {
-    font-size: 11px;
   }
 
   .mobile-nav {
@@ -490,8 +505,8 @@ async function loadLeaderboard(user){
 
     const teamName = data.teamName || "Anonymous";
     const isMobile = window.innerWidth <= 768;
-    const isTruncated = isMobile && teamName.length > 8;
-    const displayTeamName = isTruncated ? teamName.substring(0, 8) + "..." : teamName;
+    const isTruncated = isMobile && teamName.length > 10;
+    const displayTeamName = isTruncated ? teamName.substring(0, 10) + "..." : teamName;
     const escapedName = teamName.replace(/'/g, "\\'");
 
     const row=document.createElement("div");
@@ -503,6 +518,8 @@ async function loadLeaderboard(user){
       <div class="rank ${medalClass}">${medalIcon}</div>
 
       <div class="team" ${isTruncated ? `onclick="alert('${escapedName}')" style="cursor:help;"` : ""}>
+        <div class="avatar"></div>
+
         <span title="${teamName}">${displayTeamName}</span> ${isYou?"(You)":""}
 
       </div>
