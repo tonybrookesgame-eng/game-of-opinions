@@ -76,42 +76,34 @@ body::after{
 header {
 
   position: fixed;
-
   top: 0;
-
   left: 0;
-
   width: 100%;
-
   z-index: 1000;
-
   display: flex;
-  justify-content: space-between;
-
-  align-items: center;
-
-  padding: 20px 40px;
-  padding: 15px 30px;
-
+  flex-direction: column;
+  padding: 0;
   background: rgba(0,0,0,0.72);
   backdrop-filter: blur(10px);
-
   border-bottom: 1px solid rgba(255,255,255,0.12);
+}
 
+.header-top {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
 }
 
 /* =========================
    PREMIUM NEWS TICKER
 ========================= */
 .news-ticker {
-  position: fixed;
-  top: 62px; /* Adjusted for smaller header padding */
-  left: 0;
   width: 100%;
   background: rgba(199, 255, 56, 0.95);
   color: #041102;
   height: 32px;
-  z-index: 999;
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -1049,14 +1041,16 @@ nav a:hover {
 @media (max-width: 768px) {
 
   header {
-    display: flex;
     background: rgba(0,0,0,0.9) !important;
-    justify-content: center;
+    padding: 0;
+    height: auto;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .header-top {
     flex-direction: column;
     align-items: center;
     padding: 15px 10px;
-    height: auto;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .logo {
@@ -1075,10 +1069,6 @@ nav a:hover {
     padding: 0 !important;
     background-position: center !important;
     background-size: contain !important;
-  }
-
-  .news-ticker {
-    top: 92px;
   }
 
   .ticker-content {
@@ -1311,27 +1301,28 @@ nav a:hover {
 
 <!-- HEADER -->
 <header>
-  <div class="logo">GAME <span>OF OPINIONS</span></div>
-  <nav>
-    <a href="myxi.html" class="user-only">Your Team</a>
-    <a href="season.html" class="user-only">Season Picks</a>
-    <a href="league.html" class="user-only">League</a>
-    <a href="rules.html" class="guest-only">Rules</a>
-    <a href="javascript:void(0)" class="login-link guest-only" onclick="openLogin()">Log In</a>
-    <a href="signup.html" class="signup-btn guest-only">Sign Up</a>
-    <a href="javascript:void(0)" class="user-only" onclick="handleLogout()">Log Out</a>
-  </nav>
-</header>
-
-<!-- PREMIUM TICKER -->
-<div class="news-ticker">
-  <div class="ticker-content">
-    <span>Gameweek Approaching: Deadline Sunday 17th May 11:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    <span>Gameweek Approaching: Deadline Sunday 17th May 11:00  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    <span>Gameweek Approaching: Deadline Sunday 17th May 11:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    <span>Gameweek Approaching: Deadline Sunday 17th May 11:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+  <div class="header-top">
+    <div class="logo">GAME <span>OF OPINIONS</span></div>
+    <nav>
+      <a href="myxi.html" class="user-only">Your Team</a>
+      <a href="season.html" class="user-only">Season Picks</a>
+      <a href="league.html" class="user-only">League</a>
+      <a href="rules.html" class="guest-only">Rules</a>
+      <a href="javascript:void(0)" class="login-link guest-only" onclick="openLogin()">Log In</a>
+      <a href="signup.html" class="signup-btn guest-only">Sign Up</a>
+      <a href="javascript:void(0)" class="user-only" onclick="handleLogout()">Log Out</a>
+    </nav>
   </div>
-</div>
+  <!-- PREMIUM TICKER -->
+  <div class="news-ticker">
+    <div class="ticker-content">
+      <span>Gameweek Approaching: Deadline Sunday 17th May 11:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <span>Gameweek Approaching: Deadline Sunday 17th May 11:00  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <span>Gameweek Approaching: Deadline Sunday 17th May 11:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <span>Gameweek Approaching: Deadline Sunday 17th May 11:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    </div>
+  </div>
+</header>
 
 <!-- UNIFIED AUTH OVERLAY -->
 <div id="auth-overlay" class="auth-overlay">
@@ -1598,6 +1589,42 @@ window.handleLogout = () => {
     window.location.reload();
   });
 };
+
+// Check for login redirect from other pages
+if (window.location.search.includes('login=true')) {
+  window.openLogin();
+}
+
+// AUTH SCREEN CONTROLS
+window.openLogin = () => {
+  document.getElementById('auth-overlay').style.display = 'flex';
+};
+
+window.closeAuth = () => {
+  document.getElementById('auth-overlay').style.display = 'none';
+};
+
+// UNIFIED AUTH HANDLER
+window.handleAuth = async function() {
+  // This handler is now exclusively for login.
+  const email = document.getElementById("auth-email").value;
+  const password = document.getElementById("auth-password").value;
+
+  if (!email || !password) {
+    alert("Please enter your email and password.");
+    return;
+  }
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    window.location.href = "myxi.html";
+  } catch (error) {
+    alert(error.message);
+  }
+};
+
+</script>
+</body>
+</html>
 
 // Check for login redirect from other pages
 if (window.location.search.includes('login=true')) {
