@@ -152,6 +152,11 @@ h1 {font-size:34px;margin-bottom:8px;}
 
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
+  position: sticky;
+  top: 52px; /* Sticks below the desktop header */
+  z-index: 20;
+  background: #07101a;
+
 }
 
 /* ROW */
@@ -186,6 +191,15 @@ h1 {font-size:34px;margin-bottom:8px;}
 
   background:rgba(255,255,255,0.06);
 
+}
+
+.you-tag {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 10px;
+  color: #c7ff38;
+  margin-left: 4px;
 }
 
 /* TOP 3 MEDALS */
@@ -319,11 +333,14 @@ h1 {font-size:34px;margin-bottom:8px;}
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
-  .leader-header, .leader-row { /* Reduced width for team name column */
-    grid-template-columns: 50px 160px 80px 80px;
-    min-width: 370px; /* Forces the table to be wider than the phone to enable swiping */
-    padding: 12px 10px;
+  .leader-header, .leader-row { 
+    grid-template-columns: 40px 130px 65px 65px;
+    min-width: 300px; 
+    padding: 8px 5px;
     font-size: 11px;
+  }
+  .leader-header {
+    top: 73px; /* Sticks below the taller mobile header */
   }
   /* Sticky Columns Logic */
   .leader-header div:nth-child(1), .leader-row .rank {
@@ -334,7 +351,7 @@ h1 {font-size:34px;margin-bottom:8px;}
   }
   .leader-header div:nth-child(2), .leader-row .team {
     position: sticky;
-    left: 50px; /* Offset by the width of the rank column */
+    left: 40px; /* Offset by the width of the rank column */
     z-index: 5;
     background: #07101a;
     border-right: 1px solid rgba(255, 255, 255, 0.1);
@@ -368,6 +385,12 @@ h1 {font-size:34px;margin-bottom:8px;}
     color: #c7ff38;
     transform: translateY(-3px);
     text-shadow: 0 0 15px rgba(199, 255, 56, 0.6);
+  }
+}
+
+@media (max-width: 768px) {
+  .you-tag {
+    font-size: 9px; /* Make the "(You)" tag even smaller on mobile */
   }
 }
 
@@ -504,7 +527,7 @@ async function loadLeaderboard(user){
       <div class="rank ${medalClass}">${medalIcon}</div>
 
       <div class="team" ${isTruncated ? `onclick="alert('${escapedName}')" style="cursor:help;"` : ""}>
-        <span title="${teamName}">${displayTeamName}</span> ${isYou?"(You)":""}
+        <span title="${teamName}">${displayTeamName}</span> ${isYou?`<span class="you-tag">(You)</span>`:""}
 
       </div>
 
