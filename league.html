@@ -503,17 +503,11 @@ async function loadLeaderboard(user){
 
     const arrow = weekly>0 ? "⬆️" : weekly<0 ? "⬇️" : "—";
 
-    const initials = (data.teamName || "A")
-
-      .split(" ")
-
-      .map(w=>w[0])
-
-      .join("")
-
-      .substring(0,2)
-
-      .toUpperCase();
+    const teamName = data.teamName || "Anonymous";
+    const isMobile = window.innerWidth <= 768;
+    const isTruncated = isMobile && teamName.length > 10;
+    const displayTeamName = isTruncated ? teamName.substring(0, 10) + "..." : teamName;
+    const escapedName = teamName.replace(/'/g, "\\'");
 
     const row=document.createElement("div");
 
@@ -523,11 +517,10 @@ async function loadLeaderboard(user){
 
       <div class="rank ${medalClass}">${medalIcon}</div>
 
-      <div class="team">
+      <div class="team" ${isTruncated ? `onclick="alert('${escapedName}')" style="cursor:help;"` : ""}>
+        <div class="avatar"></div>
 
-        <div class="avatar">${initials}</div>
-
-        ${data.teamName || "Anonymous"} ${isYou?"(You)":""}
+        <span title="${teamName}">${displayTeamName}</span> ${isYou?"(You)":""}
 
       </div>
 
