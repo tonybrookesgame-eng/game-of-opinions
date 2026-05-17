@@ -219,8 +219,7 @@ h1 {font-size:34px;margin-bottom:8px;}
 /* TEAM CELL */
 
 .team {
-  font-weight: 60
-
+  font-weight: 600;
 }
 
 /* POINTS */
@@ -300,34 +299,27 @@ h1 {font-size:34px;margin-bottom:8px;}
   .leaderboard {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-  }container {
-    padding-ft: 10px;
-    pding-right: 10px;
   }
-  .lade
-  .container {0101f1r;
-    padding-lef p
+  .container {
+    padding-left: 10px;
     padding-right: 10px;
   }
   .leader-header, .leader-row {
-    grid-template-columns: 35px 1fr 65px 65px; /* Proportional columns to fit all data */
-    min-width: 320px; /* Fits standard mobile screens */
-    grid-template-columns: 30px 110px 1fr 1fr; 
+    grid-template-columns: 30px 110px 1fr 1fr;
     min-width: 0;
     padding: 10px 5px;
     font-size: 11px; /* Smaller text for better visibility */
   }
   /* Sticky Columns Logic */
   .leader-header div:nth-child(1), .leader-row .rank {
-    positio0: s
+    position: sticky;
     left: 0;
     z-index: 5;
     background: #07101a; /* Solid background to cover scrolling content */
   }
   .leader-header div:nth-child(2), .leader-row .team {
     position: sticky;
-    left: 35px; /* Adjusted for the new rank column width */
-    left: 30px; 
+    left: 30px;
     z-index: 5;
     background: #07101a;
     border-right: 1px solid rgba(255,255,255,0.05);
@@ -495,8 +487,6 @@ async function loadLeaderboard(user){
       <div class="rank ${medalClass}">${medalIcon}</div>
 
       <div class="team" ${isTruncated ? `onclick="alert('${escapedName}')" style="cursor:help;"` : ""}>
-        <div class="avatar"></div>
-
         <span title="${teamName}">${displayTeamName}</span> ${isYou?"(You)":""}
 
       </div>
