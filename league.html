@@ -68,7 +68,7 @@ header {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1000;
+  z-index: 10000;
   display:flex;
   justify-content:space-between;
   align-items:center;
@@ -142,14 +142,13 @@ h1 {font-size:34px;margin-bottom:8px;}
 
   display:grid;
 
-  grid-template-columns: 60px 1fr 120px 100px;
+  grid-template-columns: 50px 1fr 90px 90px;
 
   padding: 16px 20px;
 
   font-size:12px;
 
   color:#9ca3af;
-
 }
 
 /* ROW */
@@ -158,7 +157,7 @@ h1 {font-size:34px;margin-bottom:8px;}
 
   display:grid;
 
-  grid-template-columns: 60px 1fr 120px 100px;
+  grid-template-columns: 50px 1fr 90px 90px;
 
   align-items:center;
 
@@ -297,26 +296,36 @@ h1 {font-size:34px;margin-bottom:8px;}
 
 @media (max-width: 768px) {
   header {
-    background: rgba(0,0,0,0.9) !important;
+    background: rgba(0,0,0,0.95) !important;
+    padding: 0 10px;
+    height: 60px;
+    flex-direction: row;
     justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    padding: 15px 10px;
-    height: auto;
+  }
+  .container {
+    padding-top: 110px;
+    padding-left: 10px;
+    padding-right: 10px;
   }
   nav {
     display: none;
   }
 
   /* LEADERBOARD MOBILE OPTIMIZATION */
+  .leader-header {
+    position: sticky;
+    top: 60px;
+    z-index: 30;
+    background: #07101a;
+  }
   .leaderboard {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
   .leader-header, .leader-row {
-    grid-template-columns: 35px 110px 55px 55px; /* Condensed columns for mobile visibility */
-    min-width: 255px; 
-    padding: 12px 5px;
+    grid-template-columns: 30px 100px 50px 50px;
+    min-width: 230px; 
+    padding: 10px 5px;
     font-size: 11px;
   }
   /* Sticky Columns Logic */
@@ -328,7 +337,7 @@ h1 {font-size:34px;margin-bottom:8px;}
   }
   .leader-header div:nth-child(2), .leader-row .team {
     position: sticky;
-    left: 35px; /* Adjusted to match the new rank column width */
+    left: 30px; /* Matches the new rank column width */
     z-index: 5;
     background: #07101a;
     border-right: 1px solid rgba(255, 255, 255, 0.15);
