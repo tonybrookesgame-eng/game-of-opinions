@@ -68,7 +68,7 @@ header {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 10000;
+  z-index: 100000;
   display:flex;
   justify-content:space-between;
   align-items:center;
@@ -303,7 +303,7 @@ h1 {font-size:34px;margin-bottom:8px;}
     justify-content: center;
   }
   .container {
-    padding-top: 110px;
+    padding-top: 130px;
     padding-left: 10px;
     padding-right: 10px;
   }
@@ -315,7 +315,7 @@ h1 {font-size:34px;margin-bottom:8px;}
   .leader-header {
     position: sticky;
     top: 60px;
-    z-index: 30;
+    z-index: 1000;
     background: #07101a;
   }
   .leaderboard {
@@ -329,15 +329,18 @@ h1 {font-size:34px;margin-bottom:8px;}
     font-size: 11px;
   }
   /* Sticky Columns Logic */
-  .leader-header div:nth-child(1), .leader-row .rank {
+  .leader-header div:nth-child(1) { position: sticky; left: 0; z-index: 1001; background: #07101a; }
+  .leader-header div:nth-child(2) { position: sticky; left: 30px; z-index: 1001; background: #07101a; }
+
+  .leader-row .rank {
     position: sticky;
     left: 0;
     z-index: 5;
     background: #07101a; /* Solid background to cover scrolling content */
   }
-  .leader-header div:nth-child(2), .leader-row .team {
+  .leader-row .team {
     position: sticky;
-    left: 30px; /* Matches the new rank column width */
+    left: 30px; 
     z-index: 5;
     background: #07101a;
     border-right: 1px solid rgba(255, 255, 255, 0.15);
