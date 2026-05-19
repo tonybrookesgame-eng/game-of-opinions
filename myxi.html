@@ -869,6 +869,46 @@ button:hover {
   box-shadow: 0 20px 50px rgba(0,0,0,0.5);
 }
 .rules-card h2 { color: #c7ff38; margin-top: 0; text-transform: uppercase; font-size: 20px; }
+.chat-container {
+  background: rgba(0,0,0,0.5);
+  padding: 15px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+  margin-bottom: 20px;
+  min-height: 80px; /* Ensure it has some height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-bubble {
+  background: #0f172a; /* Darker background for the bubble */
+  color: #cbd5e1;
+  padding: 12px 18px;
+  border-radius: 20px;
+  position: relative;
+  max-width: 90%;
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: center; /* Center text within the bubble */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* Optional: Add a "tail" to the chat bubble */
+.chat-bubble::before {
+  content: '';
+  position: absolute;
+  bottom: -10px; /* Position below the bubble */
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 20px;
+  height: 20px;
+  background: #0f172a;
+  border-radius: 0 0 0 5px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  z-index: -1; /* Behind the bubble */
+}
 .rules-card p { font-size: 14px; color: #cbd5e1; line-height: 1.6; margin-bottom: 20px; }
 .rules-card ul { text-align: left; color: #cbd5e1; font-size: 13px; margin-bottom: 25px; }
 
@@ -1231,6 +1271,10 @@ MOBILE
   </div>
 </div>
 
+<div class="tutorial-btn-container">
+  <button class="tutorial-trigger-btn" onclick="openTutorial()">Tutorial - How To Play</button>
+</div>
+
 <div class="main-layout">
 
 <!-- LEFT SIDE - PITCH -->
@@ -1256,7 +1300,6 @@ MOBILE
   </select>
 </div>
 <button class="rules-btn-trigger" onclick="openScoringRules()">How Players Score</button>
-<button class="fixtures-btn-trigger" onclick="openFixturesModal()">Upcoming Fixtures</button>
 
 <div class="center-circle"></div>
 
@@ -1343,6 +1386,7 @@ MOBILE
       <option>Select</option>
     </select>
     <p style="font-size: 13px; color: #9ca3af; margin: 10px 0 5px; display: flex; justify-content: space-between;">
+      <span>Minute of first goal:</span>
       <span style="color: #c7ff38; font-weight: bold;">40 pts</span>
     </p>
     <select id="goalMinute" onchange="this.parentElement.classList.remove('panel-saved')">
@@ -1353,7 +1397,7 @@ MOBILE
   </div>
 
   <div class="bet-builder-panel">
-    <h3>Scout's Bet Builder</h3>
+    <h3>Game Of Opinions Bet Builder</h3>
     <div class="bet-match" id="betMatchDisplay">Loading match...</div>
     <ul class="bet-list" id="betPicksDisplay"></ul>
     <div class="bet-odds-box">
@@ -1421,24 +1465,33 @@ MOBILE
   </div>
 </div>
 
-<!-- Fixtures Modal -->
-<div id="fixturesModal" class="rules-modal">
-  <div class="rules-card">
-    <h2 style="font-size: 16px; margin-bottom: 10px;">Upcoming Fixtures</h2>
-    <div id="modal-fixtures-list"></div>
-    <button onclick="document.getElementById('fixturesModal').style.display='none'" style="margin-top: 15px; padding: 10px;">Close</button>
+<!-- Tutorial Modal -->
+<div id="tutorialModal" class="rules-modal">
+  <div class="rules-card" style="max-width: 600px; padding: 20px; max-height: 90vh; display: flex; flex-direction: column; overflow-y: auto;">
+    <h2 style="font-size: 18px; margin-bottom: 12px; color: #c7ff38; text-transform: uppercase;">Manager's Briefing</h2>
+    
+    <div style="margin-bottom: 12px; text-align: left; font-size: 12px; color: #cbd5e1;">
+      <p style="margin-bottom: 6px;"><strong>The Oracle:</strong> Risk: Low. Cautious strategies.</p>
+      <p style="margin-bottom: 6px;"><strong>The Tactician (Sir Alex):</strong> Risk: Medium. Tactical system advantages.</p>
+      <p style="margin-bottom: 0;"><strong>The Maverick:</strong> Risk: High. High-variance anomalies.</p>
+    </div>
+
+    <img src="ai tutorial.png" alt="How to Play" class="tutorial-img" style="width: 100%; max-height: 180px; object-fit: contain; border-radius: 12px; border: 1px solid rgba(199,255,56,0.3); margin-bottom: 12px;">
+    
+    <div class="chat-container" style="min-height: 70px; margin-bottom: 15px;">
+      <div id="tutorialChatBubble" class="chat-bubble">
+        <p style="margin: 0; font-style: italic; font-size: 13px; color: #cbd5e1; line-height: 1.4;">
+          <!-- Tutorial text will be inserted here by JavaScript -->
+        </p>
+      </div>
+    </div>
+
+    <div style="display: flex; justify-content: center; gap: 12px; margin-top: auto;">
+      <button onclick="closeOnboarding()" style="background: transparent; color: #9ca3af; border: 1px solid #334155; width: 100px; padding: 10px;">Skip</button>
+      <button id="nextTutBtn" onclick="nextTutorialStep()" style="width: 140px; padding: 10px;">Next Step</button>
+    </div>
   </div>
 </div>
-
-<!-- FOOTER -->
-<!-- MOBILE NAV -->
-<div class="mobile-nav">
-  <a href="index.html">🏠<br>Home</a>
-  <a href="myxi.html">⚽<br>Team</a>
-  <a href="season.html">🏆<br>Picks</a>
-  <a href="league.html">📊<br>League</a>
-</div>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -1616,7 +1669,6 @@ const loadFixtures = () => {
   const list = document.getElementById('fixtures-list');
   const modalList = document.getElementById('modal-fixtures-list');
   const fixtures = [
-
     {date: "Friday 15th May", games: [
       { home: "Aston Villa", away: "Liverpool", time: "20:00" }
     ]},
@@ -1640,7 +1692,6 @@ const loadFixtures = () => {
   ];
 
   list.innerHTML = '';
-  if (modalList) modalList.innerHTML = '';
   fixtures.forEach(day => {
     const dateHeader = `<div class="fixture-date-header">${day.date}</div>`;
     list.innerHTML += dateHeader;
@@ -1654,7 +1705,6 @@ const loadFixtures = () => {
         </div>
       `;
       list.innerHTML += gameHtml;
-      if (modalList) modalList.innerHTML += gameHtml;
     });
   });
 };
@@ -2140,14 +2190,62 @@ window.openScoringRules = () => {
   document.getElementById('scoringRulesModal').style.display = 'flex';
 };
 
-window.openFixturesModal = () => {
-  document.getElementById('fixturesModal').style.display = 'flex';
+// Tutorial Logic
+let currentTutStep = 1;
+const tutorialData = [
+  { text: '"Welcome, Gaffer. I\'m The Oracle. Remember: you can only pick ONE player from each Premier League team. Strategy starts now."' },
+  { text: '"The Tactician here. Use the formation toggle to set your shape. Note: Goalkeepers are picked by Club."' },
+  { text: '"The Maverick here. Check the Bet Builder. Sacrifice 5 points to back my weekly lock. Land it to rocket up the table."' }
+];
+
+window.updateTutorialUI = function() {
+  const step = tutorialData[currentTutStep - 1];
+  const bubble = document.getElementById('tutorialChatBubble');
+  if (bubble && bubble.querySelector('p')) {
+    bubble.querySelector('p').innerText = step.text;
+  }
+  const btn = document.getElementById('nextTutBtn');
+  if (btn) {
+    btn.innerText = (currentTutStep === tutorialData.length) ? "Let's Play" : "Next Step";
+  }
 };
 
+window.nextTutorialStep = function() {
+  if (currentTutStep < tutorialData.length) {
+    currentTutStep++;
+    window.updateTutorialUI();
+  } else {
+    window.closeOnboarding();
+  }
+};
+
+window.openTutorial = function() {
+  currentTutStep = 1;
+  const modal = document.getElementById('tutorialModal');
+  if (modal) {
+    modal.style.display = 'flex';
+    window.updateTutorialUI();
+  }
+};
+
+window.closeOnboarding = function() {
+  const modal = document.getElementById('tutorialModal');
+  if (modal) {
+    modal.style.display = 'none';
+  }
+  localStorage.setItem('onboarding_complete', 'true');
+};
+
+const checkOnboarding = () => {
+  if (!localStorage.getItem('onboarding_complete')) {
+    window.openTutorial();
+  }
+};
+
+// Run onboarding check after a short delay
+setTimeout(checkOnboarding, 800);
 
 loadFixtures();
-populateWeeklyOptions();
-loadCurrentBet();
-changeFormation();
 </script>
 </body>
+</html>

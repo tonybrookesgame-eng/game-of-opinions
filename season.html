@@ -354,7 +354,7 @@
 
     .lock-bottom button {
 
-      width: 260px;
+      width: 100%;
 
       background: #c7ff38;
       color: #041102;
@@ -390,10 +390,9 @@
     @media (max-width: 768px) {
       header {
         background: rgba(0,0,0,0.9) !important;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        padding: 15px 10px;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 8px 10px;
         height: auto;
       }
       nav {
@@ -410,7 +409,6 @@
 
       .mobile-nav {
         display: flex; /* Show on mobile */
-        justify-content: space-around;
         position: fixed;
         bottom: 0;
         left: 0;
@@ -419,58 +417,15 @@
         padding: 10px 0;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
         z-index: 1000;
-      }
-      .mobile-nav a {
-        text-decoration: none !important;
-        color: white;
-        font-size: 12px;
-        text-align: center;
-        margin-left: 0; /* Reset margin for mobile nav links */
-        transition: all 0.2s ease;
-      }
-      .mobile-nav a:hover {
-        color: #c7ff38;
-        transform: translateY(-3px);
-        text-shadow: 0 0 15px rgba(199, 255, 56, 0.6);
+        justify-content: space-around;
       }
 
-      header {
-
-        flex-wrap: wrap;
-
-        gap: 12px;
-
-      }
-
-      .top-panel {
-
-        flex-direction: column;
-
-      }
-
-      .grid {
-
-        grid-template-columns: 1fr;
-
-      }
-
-      .bottom-row {
-
-        flex-direction: column;
-
-      }
-
-
-      .lock-bottom button {
-
-        width: 100%;
-
-      }
-
+      .top-panel { flex-direction: column; }
+      .grid { grid-template-columns: 1fr; }
+      .bottom-row { flex-direction: column; }
     }
 
-
-git    .ai-modal {
+    .ai-modal {
       position: fixed;
       inset: 0;
       background: rgba(0,0,0,0.85);
@@ -499,9 +454,6 @@ git    .ai-modal {
       border-bottom: 1px solid rgba(255,255,255,0.05);
     }
     .stat-val { color: #c7ff38; font-weight: bold; }
-
-    @media (max-width: 768px) {
-    }
 
     /* =========================
        AI SCOUT STYLES (in-card)
@@ -564,9 +516,9 @@ git    .ai-modal {
     }
 
     /* AI Image Classes */
-    .striker-img { background-image: url('the ai legend.png'); }
-    .analyst-img { background-image: url('the opinion architect.png'); }
-    .scout-img { background-image: url('the tactical mentor.png'); }
+    .striker-img { background-image: url('the oracle.png'); }
+    .analyst-img { background-image: url('the maverick.png'); }
+    .scout-img { background-image: url('the tactician.png'); }
 
     .ai-mini-avatar:hover {
       transform: scale(1.1);
@@ -604,8 +556,115 @@ git    .ai-modal {
     }
     .stat-val { color: #c7ff38; font-weight: bold; }
 
-  </style>
+    /* Tutorial Trigger Button (copied from myxi.html) */
+    .tutorial-btn-container {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .tutorial-trigger-btn {
+      background: #c7ff38;
+      color: #041102;
+      padding: 14px;
+      width: 100%;
+      border-radius: 999px;
+      border: none;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+    .tutorial-trigger-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(199, 255, 56, 0.6);
+    }
 
+    /* =========================
+       TUTORIAL MODAL STYLES (copied from myxi.html)
+    ========================= */
+    .rules-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .rules-card {
+      background: #000;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 24px;
+      max-width: 440px;
+      width: 95%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+    .rules-card h2 { color: #c7ff38; margin-top: 0; text-transform: uppercase; font-size: 20px; }
+    .chat-container {
+      background: rgba(0,0,0,0.5);
+      padding: 15px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 20px;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .chat-bubble {
+      background: #0f172a;
+      color: #cbd5e1;
+      padding: 12px 18px;
+      border-radius: 20px;
+      position: relative;
+      max-width: 90%;
+      font-style: italic;
+      font-size: 14px;
+      line-height: 1.6;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .chat-bubble::before {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%) rotate(45deg);
+      width: 20px;
+      height: 20px;
+      background: #0f172a;
+      border-radius: 0 0 0 5px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      z-index: -1;
+    }
+    .rules-card p { font-size: 14px; color: #cbd5e1; line-height: 1.6; margin-bottom: 20px; }
+    .rules-card ul { text-align: left; color: #cbd5e1; font-size: 13px; margin-bottom: 25px; }
+
+    @media (max-width: 768px) {
+      .tutorial-btn-container {
+        margin-bottom: 20px;
+      }
+      .tutorial-trigger-btn {
+        font-size: 13px;
+      }
+      .tutorial-img {
+        max-height: 130px !important;
+      }
+      #tutorialModal .rules-card {
+        padding: 15px !important;
+        width: 98% !important;
+      }
+      #tutorialModal .chat-container {
+        min-height: 60px !important;
+        margin-bottom: 10px !important;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -630,6 +689,10 @@ git    .ai-modal {
   <strong>Boost Your Final Points.</strong></h1>
   <p>Lean on elite AI knowledge with different risk levels to gain an advantage.</p>
 
+  <div class="tutorial-btn-container">
+    <button class="tutorial-trigger-btn" onclick="openTutorial()">Tutorial - How To Play</button>
+  </div>
+
 
   <div style="margin-bottom: 30px;"></div>
 
@@ -640,13 +703,13 @@ git    .ai-modal {
       <h3>Premier League Winner</h3>
       <div class="scouts-container">
         <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'winner')">
-          <div class="speech-bubble-in-card">The AI Legend<br><small style="font-weight:400">Cautious Picks</small></div>
+          <div class="speech-bubble-in-card">The Oracle<br><small style="font-weight:400">Cautious Picks</small></div>
         </div>
         <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'winner')">
-          <div class="speech-bubble-in-card">The Tactical Mentor<br><small style="font-weight:400">Bold Picks</small></div>
+          <div class="speech-bubble-in-card">The Tactician<br><small style="font-weight:400">Bold Picks</small></div>
         </div>
         <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'winner')">
-          <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
+          <div class="speech-bubble-in-card">The Maverick<br><small style="font-weight:400">Extreme Risk</small></div>
         </div>
       </div>
       <select>
@@ -660,13 +723,13 @@ git    .ai-modal {
       <h3>FA Cup Winner</h3>
       <div class="scouts-container">
         <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'facup')">
-          <div class="speech-bubble-in-card">The AI Legend<br><small style="font-weight:400">Cautious Picks</small></div>
+          <div class="speech-bubble-in-card">The Oracle<br><small style="font-weight:400">Cautious Picks</small></div>
         </div>
         <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'facup')">
-          <div class="speech-bubble-in-card">The Tactical Mentor<br><small style="font-weight:400">Bold Picks</small></div>
+          <div class="speech-bubble-in-card">The Tactician<br><small style="font-weight:400">Bold Picks</small></div>
         </div>
         <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'facup')">
-          <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
+          <div class="speech-bubble-in-card">The Maverick<br><small style="font-weight:400">Extreme Risk</small></div>
         </div>
       </div>
       <select>
@@ -679,13 +742,13 @@ git    .ai-modal {
       <h3>Top Scorer</h3>
       <div class="scouts-container">
         <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'scorer')">
-          <div class="speech-bubble-in-card">The AI Legend<br><small style="font-weight:400">Cautious Picks</small></div>
+          <div class="speech-bubble-in-card">The Oracle<br><small style="font-weight:400">Cautious Picks</small></div>
         </div>
         <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'scorer')">
-          <div class="speech-bubble-in-card">The Tactical Mentor<br><small style="font-weight:400">Bold Picks</small></div>
+          <div class="speech-bubble-in-card">The Tactician<br><small style="font-weight:400">Bold Picks</small></div>
         </div>
         <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'scorer')">
-          <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
+          <div class="speech-bubble-in-card">The Maverick<br><small style="font-weight:400">Extreme Risk</small></div>
         </div>
       </div>
       <select id="topScorerSelect">
@@ -698,13 +761,13 @@ git    .ai-modal {
       <h3>Top Assists</h3>
       <div class="scouts-container">
         <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'assists')">
-          <div class="speech-bubble-in-card">The AI Legend<br><small style="font-weight:400">Cautious Picks</small></div>
+          <div class="speech-bubble-in-card">The Oracle<br><small style="font-weight:400">Cautious Picks</small></div>
         </div>
         <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'assists')">
-          <div class="speech-bubble-in-card">The Tactical Mentor<br><small style="font-weight:400">Bold Picks</small></div>
+          <div class="speech-bubble-in-card">The Tactician<br><small style="font-weight:400">Bold Picks</small></div>
         </div>
         <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'assists')">
-          <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
+          <div class="speech-bubble-in-card">The Maverick<br><small style="font-weight:400">Extreme Risk</small></div>
         </div>
       </div>
       <select id="topAssistsSelect">
@@ -717,13 +780,13 @@ git    .ai-modal {
       <h3>Most Clean Sheets</h3>
       <div class="scouts-container">
         <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'cleansheets')">
-          <div class="speech-bubble-in-card">The AI Legend<br><small style="font-weight:400">Cautious Picks</small></div>
+          <div class="speech-bubble-in-card">The Oracle<br><small style="font-weight:400">Cautious Picks</small></div>
         </div>
         <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'cleansheets')">
-          <div class="speech-bubble-in-card">The Tactical Mentor<br><small style="font-weight:400">Bold Picks</small></div>
+          <div class="speech-bubble-in-card">The Tactician<br><small style="font-weight:400">Bold Picks</small></div>
         </div>
         <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'cleansheets')">
-          <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
+          <div class="speech-bubble-in-card">The Maverick<br><small style="font-weight:400">Extreme Risk</small></div>
         </div>
       </div>
       <select id="cleanSheetsSelect">
@@ -736,13 +799,13 @@ git    .ai-modal {
       <h3>First Hat-Trick</h3>
       <div class="scouts-container">
         <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'hattrick')">
-          <div class="speech-bubble-in-card">The AI Legend<br><small style="font-weight:400">Cautious Picks</small></div>
+          <div class="speech-bubble-in-card">The Oracle<br><small style="font-weight:400">Cautious Picks</small></div>
         </div>
         <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'hattrick')">
-          <div class="speech-bubble-in-card">The Tactical Mentor<br><small style="font-weight:400">Bold Picks</small></div>
+          <div class="speech-bubble-in-card">The Tactician<br><small style="font-weight:400">Bold Picks</small></div>
         </div>
         <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'hattrick')">
-          <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
+          <div class="speech-bubble-in-card">The Maverick<br><small style="font-weight:400">Extreme Risk</small></div>
         </div>
       </div>
       <select id="hatTrickSelect">
@@ -755,13 +818,13 @@ git    .ai-modal {
       <h3>First Manager Sacked</h3>
       <div class="scouts-container">
         <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'sacked')">
-          <div class="speech-bubble-in-card">The AI Legend<br><small style="font-weight:400">Cautious Picks</small></div>
+          <div class="speech-bubble-in-card">The Oracle<br><small style="font-weight:400">Cautious Picks</small></div>
         </div>
         <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'sacked')">
-          <div class="speech-bubble-in-card">The Tactical Mentor<br><small style="font-weight:400">Bold Picks</small></div>
+          <div class="speech-bubble-in-card">The Tactician<br><small style="font-weight:400">Bold Picks</small></div>
         </div>
         <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'sacked')">
-          <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
+          <div class="speech-bubble-in-card">The Maverick<br><small style="font-weight:400">Extreme Risk</small></div>
         </div>
       </div>
       <select id="managerSackedSelect">
@@ -774,13 +837,13 @@ git    .ai-modal {
       <h3>Most Red Cards</h3>
       <div class="scouts-container">
         <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'redcards')">
-          <div class="speech-bubble-in-card">The AI Legend<br><small style="font-weight:400">Cautious Picks</small></div>
+          <div class="speech-bubble-in-card">The Oracle<br><small style="font-weight:400">Cautious Picks</small></div>
         </div>
         <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'redcards')">
-          <div class="speech-bubble-in-card">The Tactical Mentor<br><small style="font-weight:400">Bold Picks</small></div>
+          <div class="speech-bubble-in-card">The Tactician<br><small style="font-weight:400">Bold Picks</small></div>
         </div>
         <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'redcards')">
-          <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
+          <div class="speech-bubble-in-card">The Maverick<br><small style="font-weight:400">Extreme Risk</small></div>
         </div>
       </div>
       <select id="redCardsSelect">
@@ -793,13 +856,13 @@ git    .ai-modal {
       <h3>Bottom 3 Finishers (Relegation)</h3>
       <div class="scouts-container">
         <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'relegated')">
-          <div class="speech-bubble-in-card">The AI Legend<br><small style="font-weight:400">Cautious Picks</small></div>
+          <div class="speech-bubble-in-card">The Oracle<br><small style="font-weight:400">Cautious Picks</small></div>
         </div>
         <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'relegated')">
-          <div class="speech-bubble-in-card">The Tactical Mentor<br><small style="font-weight:400">Bold Picks</small></div>
+          <div class="speech-bubble-in-card">The Tactician<br><small style="font-weight:400">Bold Picks</small></div>
         </div>
         <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'relegated')">
-          <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
+          <div class="speech-bubble-in-card">The Maverick<br><small style="font-weight:400">Extreme Risk</small></div>
         </div>
       </div>
       <select class="relegated-select" onchange="refreshRelegated()"><option>Select team</option></select>
@@ -812,13 +875,13 @@ git    .ai-modal {
       <h3>Most Yellow Cards</h3>
       <div class="scouts-container">
         <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'yellows')">
-          <div class="speech-bubble-in-card">The AI Legend<br><small style="font-weight:400">Cautious Picks</small></div>
+          <div class="speech-bubble-in-card">The Oracle<br><small style="font-weight:400">Cautious Picks</small></div>
         </div>
         <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'yellows')">
-          <div class="speech-bubble-in-card">The Tactical Mentor<br><small style="font-weight:400">Bold Picks</small></div>
+          <div class="speech-bubble-in-card">The Tactician<br><small style="font-weight:400">Bold Picks</small></div>
         </div>
         <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'yellows')">
-          <div class="speech-bubble-in-card">The Opinion Architect<br><small style="font-weight:400">Extreme Risk</small></div>
+          <div class="speech-bubble-in-card">The Maverick<br><small style="font-weight:400">Extreme Risk</small></div>
         </div>
       </div>
       <select id="yellowCardSelect"><option>Select player</option></select>
@@ -831,7 +894,7 @@ git    .ai-modal {
 
     <div class="lock-bottom">
 
-      <button onclick="lockSeason()">Lock In Selections</button>
+      <button onclick="lockSeason()">Submit Season Selections</button>
 
     </div>
 
@@ -844,11 +907,39 @@ git    .ai-modal {
 <div class="ai-modal" id="aiModal" onclick="this.style.display='none'">
   <div class="ai-report" onclick="event.stopPropagation()">
     <h2>🤖 AI Scout Report</h2>
-    <p id="aiContent">Initializing R9 AI...</p>
+    <p id="aiContent">Initializing The Oracle...</p>
     <div id="aiStats"></div>
     <div style="display: flex; gap: 10px; margin-top: 20px;">
       <button id="aiActionBtn" onclick="nextAiPage()" style="flex: 2; background: #c7ff38; color: #041102; font-weight:800; border-radius:999px; border:none; padding:10px; cursor:pointer;">Next</button>
       <button onclick="document.getElementById('aiModal').style.display='none'" style="flex: 1; background: #334155; color: white;">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Tutorial Modal -->
+<div id="tutorialModal" class="rules-modal">
+  <div class="rules-card" style="max-width: 600px; padding: 20px; max-height: 90vh; display: flex; flex-direction: column; overflow-y: auto;">
+    <h2 style="font-size: 18px; margin-bottom: 12px; color: #c7ff38; text-transform: uppercase;">Manager's Briefing</h2>
+    
+    <div style="margin-bottom: 12px; text-align: left; font-size: 12px; color: #cbd5e1;">
+      <p style="margin-bottom: 6px;"><strong>The Oracle:</strong> Risk: Low. Cautious strategies.</p>
+      <p style="margin-bottom: 6px;"><strong>The Tactician (Sir Alex):</strong> Risk: Medium. Tactical system advantages.</p>
+      <p style="margin-bottom: 0;"><strong>The Maverick:</strong> Risk: High. High-variance anomalies.</p>
+    </div>
+
+    <img src="ai tutorial.png" alt="How to Play" class="tutorial-img" style="width: 100%; max-height: 180px; object-fit: contain; border-radius: 12px; border: 1px solid rgba(199,255,56,0.3); margin-bottom: 12px;">
+    
+    <div class="chat-container" style="min-height: 70px; margin-bottom: 15px;">
+      <div id="tutorialChatBubble" class="chat-bubble">
+        <p style="margin: 0; font-style: italic; font-size: 13px; color: #cbd5e1; line-height: 1.4;">
+          <!-- Tutorial text will be inserted here by JavaScript -->
+        </p>
+      </div>
+    </div>
+
+    <div style="display: flex; justify-content: center; gap: 12px; margin-top: auto;">
+      <button onclick="closeOnboarding()" style="background: transparent; color: #9ca3af; border: 1px solid #334155; width: 100px; padding: 10px;">Skip</button>
+      <button id="nextTutBtn" onclick="nextTutorialStep()" style="width: 140px; padding: 10px;">Next Step</button>
     </div>
   </div>
 </div>
@@ -908,7 +999,7 @@ window.handleLogout = () => {
 
 const scoutData = {
   striker: {
-    name: "The AI Legend",
+    name: "The Oracle",
     risk: "Low (Cautious)",
     blurb: "Focuses on high-probability outcomes and proven goalscorers. Minimal risk, steady gains.",
     flavor: "Clinical Instinct",
@@ -926,7 +1017,7 @@ const scoutData = {
     }
   },
   analyst: {
-    name: "The Opinion Architect",
+    name: "The Maverick",
     risk: "High (Extreme)",
     blurb: "Chases massive rewards by identifying high-variance anomalies that others ignore.",
     flavor: "Probabilistic Modelling",
@@ -944,7 +1035,7 @@ const scoutData = {
     }
   },
   scout: {
-    name: "The Tactical Mentor",
+    name: "The Tactician",
     risk: "Medium (Bold)",
     blurb: "Suggests 'out there' picks based on tactical matchups and system advantages.",
     flavor: "Strategic Vision",
@@ -1180,6 +1271,59 @@ async function loadSeasonPicks(uid) {
     console.error("Error loading season picks:", error);
   }
 }
+
+// Tutorial Logic (copied from myxi.html and adapted)
+let currentTutStep = 1;
+const tutorialData = [
+  { text: '"Welcome, Gaffer. On this page, you\'ll make your Season Picks. These are long-term predictions that can earn you big points at the end of the campaign. Let\'s get started!"' },
+  { text: '"See those AI avatars? They\'re your scouts! The Oracle gives cautious advice, The Tactician (Sir Alex) offers bold tactical insights, and The Maverick provides extreme, high-risk predictions. Click them to get their reports!"' },
+  { text: '"Once you\'ve made all your selections, hit the \'Lock In Selections\' button at the bottom. Be careful, these picks are permanent once locked, so choose wisely!"' }
+];
+
+window.updateTutorialUI = function() {
+  const step = tutorialData[currentTutStep - 1];
+  const bubble = document.getElementById('tutorialChatBubble');
+  if (bubble && bubble.querySelector('p')) {
+    bubble.querySelector('p').innerText = step.text;
+  }
+  const btn = document.getElementById('nextTutBtn');
+  if (btn) {
+    btn.innerText = (currentTutStep === tutorialData.length) ? "Let's Play" : "Next Step";
+  }
+};
+
+window.nextTutorialStep = function() {
+  if (currentTutStep < tutorialData.length) {
+    currentTutStep++;
+    window.updateTutorialUI();
+  } else {
+    window.closeOnboarding();
+  }
+};
+
+window.openTutorial = function() {
+  currentTutStep = 1;
+  const modal = document.getElementById('tutorialModal');
+  if (modal) {
+    modal.style.display = 'flex';
+    window.updateTutorialUI();
+  }
+};
+
+window.closeOnboarding = function() {
+  const modal = document.getElementById('tutorialModal');
+  if (modal) modal.style.display = 'none';
+  localStorage.setItem('onboarding_complete', 'true');
+};
+
+const checkOnboarding = () => {
+  if (!localStorage.getItem('onboarding_complete')) {
+    window.openTutorial();
+  }
+};
+
+// Run onboarding check after a short delay
+setTimeout(checkOnboarding, 800);
 
   populateAllSelects();
 
