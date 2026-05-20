@@ -190,7 +190,6 @@ p {
   padding: 24px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.14);
   min-height: 400px; /* Increased size to accommodate more fixtures */
-  min-height: auto;
   backdrop-filter: blur(12px);
 }
 .panel-saved {
@@ -435,7 +434,7 @@ p {
   top: 55px;
   right: 15px;
   z-index: 10;
-  display: flex;
+  display: none;
   align-items: center;
   gap: 8px;
   background: rgba(0, 0, 0, 0.6);
@@ -1067,6 +1066,7 @@ MOBILE
   }
 
   .fixtures-btn-trigger {
+    display: flex;
     top: 38px;
     right: 8px;
     padding: 4px 8px;
@@ -1139,15 +1139,12 @@ MOBILE
     flex-direction: column;
     padding: 10px 0;
     gap: 4px;
-    padding: 6px 0;
-    gap: 2px;
   }
 
   .fixture-team {
     width: 100% !important;
     text-align: center !important;
     font-size: 13px;
-    font-size: 12px;
   }
 
   .fixture-time {
@@ -1309,6 +1306,7 @@ MOBILE
   </select>
 </div>
 <button class="rules-btn-trigger" onclick="openScoringRules()">How Players Score</button>
+<button class="fixtures-btn-trigger" onclick="openFixtures()">Fixtures</button>
 
 <div class="center-circle"></div>
 
@@ -1476,11 +1474,9 @@ MOBILE
 
 <!-- Fixtures Modal -->
 <div id="fixturesModal" class="rules-modal">
-  <div class="rules-card">
+  <div class="rules-card" style="max-width: 500px;">
     <h2 style="font-size: 16px; margin-bottom: 10px;">Upcoming Fixtures</h2>
-    <div id="modal-fixtures-list">
-      <!-- Populated by JS -->
-    </div>
+    <div id="modal-fixtures-list" style="margin-top: 15px; text-align: left;"></div>
     <button onclick="document.getElementById('fixturesModal').style.display='none'" style="margin-top: 15px; padding: 10px;">Close</button>
   </div>
 </div>
@@ -1690,7 +1686,6 @@ const loadFixtures = () => {
   const modalList = document.getElementById('modal-fixtures-list');
   const fixtures = [
     {date: "Friday 15th May", games: [
-    { date: "Friday 15th May", games: [
       { home: "Aston Villa", away: "Liverpool", time: "20:00" }
     ]},
 
@@ -1713,13 +1708,10 @@ const loadFixtures = () => {
   ];
 
   list.innerHTML = '';
-  if (list) list.innerHTML = '';
   if (modalList) modalList.innerHTML = '';
-
   fixtures.forEach(day => {
     const dateHeader = `<div class="fixture-date-header">${day.date}</div>`;
     list.innerHTML += dateHeader;
-    if (list) list.innerHTML += dateHeader;
     if (modalList) modalList.innerHTML += dateHeader;
     day.games.forEach(g => {
       const gameHtml = `
@@ -1730,8 +1722,6 @@ const loadFixtures = () => {
         </div>
       `;
       list.innerHTML += gameHtml;
-      if (list) list.innerHTML += gameHtml;
-      if (modalList) modalList.innerHTML += gameHtml;
     });
   });
 };
@@ -1956,8 +1946,6 @@ onSnapshot(gameweekSettingsRef, (docSnap) => {
             const stake = 5;
             betPointsBig = oddsVal * stake; // e.g. 40/1 x 5pts = 200pts
             betPointsSmall = (stake * 5) + stake; // Fixed 30pts
-            const betPointsBig = oddsVal * stake; 
-            const betPointsSmall = (stake * 5) + stake; 
 
             const btnYes = document.getElementById('btnYes');
             const btnNo = document.getElementById('btnNo');
@@ -2219,7 +2207,7 @@ window.openScoringRules = () => {
   document.getElementById('scoringRulesModal').style.display = 'flex';
 };
 
-window.openFixturesModal = () => {
+window.openFixtures = () => {
   document.getElementById('fixturesModal').style.display = 'flex';
 };
 
