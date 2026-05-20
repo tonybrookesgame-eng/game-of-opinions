@@ -1470,6 +1470,17 @@ MOBILE
   </div>
 </div>
 
+<!-- Fixtures Modal -->
+<div id="fixturesModal" class="rules-modal">
+  <div class="rules-card">
+    <h2 style="font-size: 16px; margin-bottom: 10px;">Upcoming Fixtures</h2>
+    <div id="modal-fixtures-list">
+      <!-- Populated by JS -->
+    </div>
+    <button onclick="document.getElementById('fixturesModal').style.display='none'" style="margin-top: 15px; padding: 10px;">Close</button>
+  </div>
+</div>
+
 <!-- Tutorial Modal -->
 <div id="tutorialModal" class="rules-modal">
   <div class="rules-card" style="max-width: 600px; padding: 20px; max-height: 90vh; display: flex; flex-direction: column; overflow-y: auto;">
@@ -1675,6 +1686,7 @@ const loadFixtures = () => {
   const modalList = document.getElementById('modal-fixtures-list');
   const fixtures = [
     {date: "Friday 15th May", games: [
+    { date: "Friday 15th May", games: [
       { home: "Aston Villa", away: "Liverpool", time: "20:00" }
     ]},
 
@@ -1697,9 +1709,13 @@ const loadFixtures = () => {
   ];
 
   list.innerHTML = '';
+  if (list) list.innerHTML = '';
+  if (modalList) modalList.innerHTML = '';
+
   fixtures.forEach(day => {
     const dateHeader = `<div class="fixture-date-header">${day.date}</div>`;
     list.innerHTML += dateHeader;
+    if (list) list.innerHTML += dateHeader;
     if (modalList) modalList.innerHTML += dateHeader;
     day.games.forEach(g => {
       const gameHtml = `
@@ -1710,6 +1726,8 @@ const loadFixtures = () => {
         </div>
       `;
       list.innerHTML += gameHtml;
+      if (list) list.innerHTML += gameHtml;
+      if (modalList) modalList.innerHTML += gameHtml;
     });
   });
 };
@@ -2193,6 +2211,10 @@ window.clearTeam = clearTeam;
 
 window.openScoringRules = () => {
   document.getElementById('scoringRulesModal').style.display = 'flex';
+};
+
+window.openFixturesModal = () => {
+  document.getElementById('fixturesModal').style.display = 'flex';
 };
 
 // Tutorial Logic
