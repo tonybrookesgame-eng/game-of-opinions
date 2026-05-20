@@ -1741,13 +1741,9 @@ const updateShirt = function(select) {
   nameLabel.innerText = clubAbbr[team] || team.substring(0,3).toUpperCase();
   shirt.style.background = colors[team] || "linear-gradient(#2563eb, #1d4ed8)";
 
-  if (selectedGw || gameweekStatus === 'locked') {
-    if (window.currentDisplayedPlayerScores && window.currentDisplayedPlayerScores[val] !== undefined) {
-      ptsLabel.innerText = window.currentDisplayedPlayerScores[val] + " PTS";
-      ptsLabel.style.display = "block";
-    } else {
-      ptsLabel.style.display = "none";
-    }
+  if (selectedGw || gameweekStatus === 'locked') { // Show points for historical GWs or when current GW is locked
+    ptsLabel.innerText = (window.currentDisplayedPlayerScores[val] !== undefined ? window.currentDisplayedPlayerScores[val] : 0) + " PTS";
+    ptsLabel.style.display = "block";
   } else {
     // Live view and Gameweek is Open: Hide points entirely
     ptsLabel.style.display = "none";
@@ -1943,19 +1939,29 @@ const populateGameweekHistoryDropdown = async () => {
   });
 };
 
-const loadSelectedGameweekHistory = () => {
+const loadSelectedGameweekHistory = async () => {
   const selectedGw = document.getElementById('gameweekHistorySelect').value;
 
   if (!selectedGw) {
-      // If "Live" selected, the onSnapshot listener will handle updates
-      return;
+      // "Live" selected: fetch the most recent processed gameweek points
+      const q = query(collection(db, "gameweekHistory"), orderBy("processedAt", "desc"), limit(1));
+      const snap = await getDocs(q);
+      if (!snap.empty) {
+        window.currentDisplayedPlayerScores = snap.docs[0].data().playerScores || {};
+      } else {
+        window.currentDisplayedPlayerScores = {};
+      }
+  } else {
+      // A specific historical gameweek selected
+      const gwData = allGameweekHistory.find(gw => gw.gw == selectedGw);
+      if (gwData) {
+        window.currentDisplayedPlayerScores = gwData.playerScores || {};
+      } else {
+        window.currentDisplayedPlayerScores = {};
+      }
   }
-
-  const gwData = allGameweekHistory.find(gw => gw.gw == selectedGw); // Use == for type coercion
-  if (gwData) {
-    window.currentDisplayedPlayerScores = gwData.playerScores || {}; // Set global variable
-    document.querySelectorAll('.pitch select').forEach(s => updateShirt(s)); // Refresh shirts
-  }
+  // Refresh all shirts on the pitch to show points for the selected context
+  document.querySelectorAll('.pitch select').forEach(s => updateShirt(s));
 };
 window.loadSelectedGameweekHistory = loadSelectedGameweekHistory; // Make it global
 
@@ -2141,18 +2147,9 @@ const loadUserData = async function(uid) {
   } else {
     console.log("No saved team found for user.");
   }
-  populateGameweekHistoryDropdown(); // Populate history dropdown after user data is loaded
+  await populateGameweekHistoryDropdown(); // Populate history dropdown after user data is loaded
+  await loadSelectedGameweekHistory(); // Initialize the pitch with current points
 };
-
-// REAL-TIME SCORE SYNC
-window.currentDisplayedPlayerScores = {}; // Use this for both latest and historical scores
-onSnapshot(query(collection(db, "gameweekHistory"), orderBy("processedAt", "desc"), limit(1)), (snapshot) => {
-  if (!snapshot.empty) {
-    window.currentDisplayedPlayerScores = snapshot.docs[0].data().playerScores || {};
-    // Refresh all shirts on the pitch to show new points
-    document.querySelectorAll('.pitch select').forEach(s => updateShirt(s));
-  }
-});
 
 const saveTeam = async function() {
   if (!currentUser) {
