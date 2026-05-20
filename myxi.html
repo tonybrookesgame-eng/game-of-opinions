@@ -1060,9 +1060,12 @@ MOBILE
     top: 8px;
     right: 8px;
     padding: 4px 8px;
+    padding: 6px 0;
     font-size: 9px;
     background: rgba(0, 0, 0, 0.75);
     border: 1px solid #c7ff38;
+    width: 110px;
+    justify-content: center;
   }
 
   .fixtures-btn-trigger {
@@ -1070,9 +1073,12 @@ MOBILE
     top: 38px;
     right: 8px;
     padding: 4px 8px;
+    padding: 6px 0;
     font-size: 9px;
     background: rgba(0, 0, 0, 0.75);
     border: 1px solid #c7ff38;
+    width: 110px;
+    justify-content: center;
   }
 
   .container {
@@ -1145,6 +1151,24 @@ MOBILE
     width: 100% !important;
     text-align: center !important;
     font-size: 13px;
+  }
+
+  /* Force Desktop Format in Fixtures Modal */
+  #modal-fixtures-list .fixture-item {
+    flex-direction: row !important;
+    padding: 8px 0 !important;
+    gap: 0 !important;
+  }
+  #modal-fixtures-list .fixture-team {
+    width: 40% !important;
+    text-align: inherit !important;
+    font-size: 12px !important;
+  }
+  #modal-fixtures-list .fixture-time {
+    width: 20% !important;
+    background: none !important;
+    padding: 0 !important;
+    text-align: center !important;
   }
 
   .fixture-time {
