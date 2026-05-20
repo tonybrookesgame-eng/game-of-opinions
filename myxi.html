@@ -1032,8 +1032,12 @@ MOBILE
     gap: 8px;
     padding: 5px 8px;
     background: rgba(0, 0, 0, 0.3);
+    gap: 12px;
+    padding: 6px 12px;
+    background: rgba(0, 0, 0, 0.4);
     margin-top: 0;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(199, 255, 56, 0.15);
     border-radius: 8px;
     margin-left: 0; /* Resets the desktop push-to-right behavior for mobile rows */
   }
@@ -1042,6 +1046,7 @@ MOBILE
     flex-direction: column;
     align-items: center;
     gap: 1px;
+    min-width: 35px;
   }
   
   .point-item:nth-child(even) {
@@ -1051,12 +1056,18 @@ MOBILE
   .point-item:last-child {
     border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
     padding-left: 8px !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.2) !important;
+    padding-left: 12px !important;
+    margin-left: 4px;
     margin-top: 0;
   }
 
   .point-item label {
     margin-bottom: 0;
     font-size: 8px;
+    font-size: 7.5px;
+    white-space: nowrap;
+    letter-spacing: 0.1px;
   }
 
   .point-item span {
