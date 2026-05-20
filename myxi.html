@@ -967,6 +967,7 @@ MOBILE
     display: flex;
     flex-direction: column;
     padding: 15px;
+    padding: 10px 12px;
     gap: 10px;
     border-radius: 18px; /* Consistent with other panels */
     box-shadow: 0 10px 30px rgba(0,0,0,0.14);
@@ -1014,19 +1015,34 @@ MOBILE
     flex-direction: row;
     align-items: center;
     gap: 6px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    min-width: 65px;
+  }
+
+  .history-selector span {
+    font-size: 8px;
+    text-transform: uppercase;
   }
 
   .history-selector select {
     width: auto;
     min-width: 80px;
+    width: 65px;
+    min-width: 65px;
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
     font-size: 13px;
     padding: 4px;
+    font-size: 10px;
+    padding: 2px;
+    height: 24px;
   }
 
   .points-summary {
     width: auto;
+    flex: 1;
     display: flex;
     flex-direction: row;
     gap: 8px;
@@ -1034,6 +1050,8 @@ MOBILE
     background: rgba(0, 0, 0, 0.3);
     gap: 12px;
     padding: 6px 12px;
+    justify-content: space-around;
+    padding: 6px 8px;
     background: rgba(0, 0, 0, 0.4);
     margin-top: 0;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -1317,6 +1335,7 @@ MOBILE
     <div class="mobile-row">
       <div class="history-selector">
         <span>History:</span>
+        <span>HISTORY</span>
         <select id="gameweekHistorySelect" onchange="loadSelectedGameweekHistory()">
           <option value="">Live</option>
         </select>
@@ -1541,7 +1560,7 @@ MOBILE
     
     <div style="margin-bottom: 12px; text-align: left; font-size: 12px; color: #cbd5e1;">
       <p style="margin-bottom: 6px;"><strong>The Oracle:</strong> Risk: Low. Cautious strategies.</p>
-      <p style="margin-bottom: 6px;"><strong>The Tactician (Sir Alex):</strong> Risk: Medium. Tactical system advantages.</p>
+      <p style="margin-bottom: 6px;"><strong>The Tactician:</strong> Risk: Medium. Tactical system advantages.</p>
       <p style="margin-bottom: 0;"><strong>The Maverick:</strong> Risk: High. High-variance anomalies.</p>
     </div>
 
@@ -1563,7 +1582,7 @@ MOBILE
 </div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, orderBy, limit, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const clubAbbr = {
@@ -1706,11 +1725,9 @@ const updateShirt = function(select) {
   const ptsLabel = shirt.querySelector('.shirt-pts');
   const val = select.value;
   const pos = select.dataset.pos;
+  const historySelect = document.getElementById('gameweekHistorySelect');
+  const selectedGw = historySelect ? historySelect.value : "";
 
-  if (window.currentDisplayedPlayerScores && window.currentDisplayedPlayerScores[val] !== undefined) {
-    ptsLabel.innerText = window.currentDisplayedPlayerScores[val] + " PTS";
-    ptsLabel.style.display = "block";
-  }
   if (val === "Select") {
     shirt.style.background = "linear-gradient(#2563eb, #1d4ed8)";
     nameLabel.innerText = "";
@@ -1725,9 +1742,16 @@ const updateShirt = function(select) {
   nameLabel.innerText = clubAbbr[team] || team.substring(0,3).toUpperCase();
   shirt.style.background = colors[team] || "linear-gradient(#2563eb, #1d4ed8)";
 
-  if (window.currentDisplayedPlayerScores && window.currentDisplayedPlayerScores[val] !== undefined) {
-    ptsLabel.innerText = window.currentDisplayedPlayerScores[val] + " PTS";
-    ptsLabel.style.display = "block";
+  if (selectedGw || gameweekStatus === 'locked') {
+    if (window.currentDisplayedPlayerScores && window.currentDisplayedPlayerScores[val] !== undefined) {
+      ptsLabel.innerText = window.currentDisplayedPlayerScores[val] + " PTS";
+      ptsLabel.style.display = "block";
+    } else {
+      ptsLabel.style.display = "none";
+    }
+  } else {
+    // Live view and Gameweek is Open: Hide points entirely
+    ptsLabel.style.display = "none";
   }
 
   refreshDropdowns();
@@ -2019,6 +2043,9 @@ onSnapshot(gameweekSettingsRef, (docSnap) => {
         document.getElementById('clearTeamBtn').disabled = isLocked;
         document.getElementById('saveWeeklyBtn').disabled = isLocked;
         document.getElementById('saveBetBuilderBtn').disabled = isLocked;
+
+        // Refresh shirts to apply "0 PTS" logic if week just opened
+        document.querySelectorAll('.pitch select').forEach(s => updateShirt(s));
     }
 });
 
@@ -2279,9 +2306,9 @@ window.openFixtures = () => {
 // Tutorial Logic
 let currentTutStep = 1;
 const tutorialData = [
-  { text: '"Welcome, Gaffer. I\'m The Oracle. Remember: you can only pick ONE player from each Premier League team. Strategy starts now."' },
-  { text: '"The Tactician here. Use the formation toggle to set your shape. Note: Goalkeepers are picked by Club."' },
-  { text: '"The Maverick here. Check the Bet Builder. Sacrifice 5 points to back my weekly lock. Land it to rocket up the table."' }
+  { text: '"Welcome, Gaffer. The Oracle here... Remember: you can only pick ONE player from each Premier League team. Check how points are obtained & make smart decisions"' },
+  { text: '"Nice to meet you boss I am The Tactician. Use the formation toggle to set your shape. Note: Goalkeepers are picked by Club. No need to worry about your keeper getting dropped."' },
+  { text: '"The Maverick here. Check the Weekly Picks section and the Bet Builder. You will not find these sorts of opportunities usually with fantasy football. Use your football IQ and gain an advantage."' }
 ];
 
 window.updateTutorialUI = function() {
