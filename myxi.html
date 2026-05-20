@@ -1311,9 +1311,9 @@ MOBILE
         </select>
       </div>
       <div class="points-summary">
-        <div class="point-item"><label>Sel</label><span id="pts-selection">0</span></div>
+        <div class="point-item"><label>Team</label><span id="pts-selection">0</span></div>
         <div class="point-item"><label>Picks</label><span id="pts-picks">0</span></div>
-        <div class="point-item"><label>Bet</label><span id="pts-bet">0</span></div>
+        <div class="point-item"><label>Bet Builder</label><span id="pts-bet">0</span></div>
         <div class="point-item">
           <label style="color: #c7ff38;">Total</label>
           <span id="pts-total" style="color: #c7ff38; font-weight: 900;">0</span>
@@ -2044,6 +2044,18 @@ const loadUserData = async function(uid) {
   // Ensure UI options and latest bet info are loaded before restoring user picks
   populateWeeklyOptions();
   loadCurrentBet();
+
+  // Load Points Summary
+  const statsRef = doc(db, "users", uid, "stats", "points");
+  onSnapshot(statsRef, (docSnap) => {
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      document.getElementById('pts-selection').innerText = data.selectionPts || 0;
+      document.getElementById('pts-picks').innerText = data.picksPts || 0;
+      document.getElementById('pts-bet').innerText = data.betPts || 0;
+      document.getElementById('pts-total').innerText = data.totalPts || 0;
+    }
+  });
 
   // Load Weekly Picks (First Scorer & Minute)
   const picksDocRef = doc(db, "users", uid, "myxi", "weeklyPicks");
