@@ -842,6 +842,28 @@ button:hover {
   display: none;
 }
 
+/* Tutorial Trigger Button */
+.tutorial-btn-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.tutorial-trigger-btn {
+  background: #c7ff38;
+  color: #041102;
+  padding: 14px;
+  width: 100%;
+  border-radius: 999px;
+  border: none;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+.tutorial-trigger-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(199, 255, 56, 0.6);
+}
+
 /* =========================
    POSITION RULES MODAL
 ========================= */
@@ -1271,9 +1293,9 @@ MOBILE
 
 <div class="container">
 
-<h1>You're The Gaffer.<br>
-<strong>Run The Dressing Room.</strong></h1>
-<p>Pick Your Key Players Whilst Keeping A Close Eye On Your Rivals.</p>
+<div class="tutorial-btn-container">
+  <button class="tutorial-trigger-btn" onclick="openTutorial()">Tutorial - How To Play</button>
+</div>
 
 <div class="team-name-ribbon">
   <div class="name-section">
@@ -1299,10 +1321,6 @@ MOBILE
       </div>
     </div>
   </div>
-</div>
-
-<div class="tutorial-btn-container">
-  <button class="tutorial-trigger-btn" onclick="openTutorial()">Tutorial - How To Play</button>
 </div>
 
 <div class="main-layout">
