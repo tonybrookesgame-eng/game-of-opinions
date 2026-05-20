@@ -190,6 +190,7 @@ p {
   padding: 24px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.14);
   min-height: 400px; /* Increased size to accommodate more fixtures */
+  min-height: auto;
   backdrop-filter: blur(12px);
 }
 .panel-saved {
@@ -1138,12 +1139,15 @@ MOBILE
     flex-direction: column;
     padding: 10px 0;
     gap: 4px;
+    padding: 6px 0;
+    gap: 2px;
   }
 
   .fixture-team {
     width: 100% !important;
     text-align: center !important;
     font-size: 13px;
+    font-size: 12px;
   }
 
   .fixture-time {
@@ -1952,6 +1956,8 @@ onSnapshot(gameweekSettingsRef, (docSnap) => {
             const stake = 5;
             betPointsBig = oddsVal * stake; // e.g. 40/1 x 5pts = 200pts
             betPointsSmall = (stake * 5) + stake; // Fixed 30pts
+            const betPointsBig = oddsVal * stake; 
+            const betPointsSmall = (stake * 5) + stake; 
 
             const btnYes = document.getElementById('btnYes');
             const btnNo = document.getElementById('btnNo');
