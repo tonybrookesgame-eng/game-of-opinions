@@ -1712,7 +1712,6 @@ const loadFixtures = () => {
     {date: "Friday 15th May", games: [
       { home: "Aston Villa", away: "Liverpool", time: "20:00" }
     ]},
-
     { date: "Sunday 17th May", games: [
       { home: "Man Utd", away: "Nottingham Forest", time: "12:30" },
       { home: "Brentford", away: "Crystal Palace", time: "15:00" },
@@ -1720,7 +1719,6 @@ const loadFixtures = () => {
       { home: "Leeds", away: "Brighton", time: "15:00" },
       { home: "Wolves", away: "Fulham", time: "15:00" },
       { home: "Newcastle", away: "West Ham", time: "17:30" }
-
     ]},
     { date: "Monday 18th May", games: [
       { home: "Arsenal", away: "Burnley", time: "20:00" }
@@ -1731,11 +1729,11 @@ const loadFixtures = () => {
     ]}
   ];
 
-  list.innerHTML = '';
+  if (list) list.innerHTML = '';
   if (modalList) modalList.innerHTML = '';
   fixtures.forEach(day => {
     const dateHeader = `<div class="fixture-date-header">${day.date}</div>`;
-    list.innerHTML += dateHeader;
+    if (list) list.innerHTML += dateHeader;
     if (modalList) modalList.innerHTML += dateHeader;
     day.games.forEach(g => {
       const gameHtml = `
@@ -1745,7 +1743,8 @@ const loadFixtures = () => {
           <div class="fixture-team" style="text-align:left;">${g.away}</div>
         </div>
       `;
-      list.innerHTML += gameHtml;
+      if (list) list.innerHTML += gameHtml;
+      if (modalList) modalList.innerHTML += gameHtml;
     });
   });
 };
@@ -2232,6 +2231,7 @@ window.openScoringRules = () => {
 };
 
 window.openFixtures = () => {
+  loadFixtures(); // Re-populate just in case
   document.getElementById('fixturesModal').style.display = 'flex';
 };
 
