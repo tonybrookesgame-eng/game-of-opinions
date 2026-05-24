@@ -487,7 +487,7 @@
             const oddsVal = parseInt(document.getElementById('bet-odds').value) || 30;
             const stake = 5;
             
-            // New Bet Builder Logic (assuming 30/1 odds for fixed values 155 and 30)
+            // New Bet Builder Logic (e.g. 30/1 odds results in 150 and 30)
             const pointsBig = oddsVal * stake;   // e.g. 30/1: 150 (profit, as per "5pts x odds")
             const pointsSmall = (stake * 5) + stake;       // e.g. 25 + 5 = 30
 

@@ -1668,6 +1668,8 @@ const playersByPos = {
 };
 
 let currentBetChoice = null;
+let betPointsBig = 150;
+let betPointsSmall = 30;
 
 // Bet Builder Data - Add new weeks at the end of this array
 const weeklyBets = [
@@ -2046,10 +2048,10 @@ const setBetChoice = function(choice) {
   
   if(choice === 'yes') {
     document.getElementById('btnYes').classList.add('selected');
-    document.getElementById('betInfo').innerHTML = "Reward: <strong>155 pts</strong> | Risk: <strong>30 pts</strong>";
+    document.getElementById('betInfo').innerHTML = `Reward: <strong>${betPointsBig} pts</strong> | Risk: <strong>${betPointsSmall} pts</strong>`;
   } else {
     document.getElementById('btnNo').classList.add('selected');
-    document.getElementById('betInfo').innerHTML = "Reward: <strong>30 pts</strong> | Risk: <strong>155 pts</strong>";
+    document.getElementById('betInfo').innerHTML = `Reward: <strong>${betPointsSmall} pts</strong> | Risk: <strong>${betPointsBig} pts</strong>`;
   }
 }
 window.setBetChoice = setBetChoice;
@@ -2097,8 +2099,8 @@ onSnapshot(gameweekSettingsRef, (docSnap) => {
         if (settings.odds) {
             const oddsVal = parseInt(settings.odds);
             const stake = 5;
-            betPointsBig = oddsVal * stake; // e.g. 40/1 x 5pts = 200pts
-            betPointsSmall = (stake * 5) + stake; // Fixed 30pts
+            betPointsBig = oddsVal * stake; 
+            betPointsSmall = (stake * 5) + stake; 
 
             const btnYes = document.getElementById('btnYes');
             const btnNo = document.getElementById('btnNo');
