@@ -481,7 +481,7 @@
 
           userWeeklyTotal = userPlayerScore + userPicksScore;
 
-          // 6. Calculate Bet Builder Points
+          // 6. Calculate Bet Builder Points (Archiving stake and choice)
           if (betDoc && betResult !== 'none') {
             const choice = betDoc.data().choice; // 'yes' or 'no'
             const oddsVal = parseInt(document.getElementById('bet-odds').value) || 30;
@@ -515,6 +515,20 @@
               totalPoints: increment(deltaTotal)
             }, { merge: true });
             
+            // ARCHIVE FOR HISTORY: Save user's team, picks, and bet for this specific GW
+            const archiveRef = doc(db, `users/${userId}/history`, "GW" + gwNum);
+            await setDoc(archiveRef, {
+              gw: gwNum,
+              team: teamDoc ? teamDoc.data() : null,
+              picks: picksDoc ? picksDoc.data() : null,
+              bet: betDoc ? betDoc.data() : null,
+              processedAt: new Date(),
+              weeklyPoints: userWeeklyTotal,
+              selectionScore: userPlayerScore,
+              picksScore: userPicksScore,
+              betScore: userBetScore
+            });
+
             const statsRef = doc(db, `users/${userId}/stats/points`);
             await setDoc(statsRef, {
               selectionPts: increment(deltaSel),
