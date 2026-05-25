@@ -67,7 +67,6 @@
     
 
     <div class="admin-section">
-      <p>3. What was the result of the Scout's Bet Builder?</p>
       <p>3. Scout's Bet Builder Result</p>
       <label>Match Odds (e.g. 30 for 30/1):</label>
       <input type="number" id="bet-odds" value="30" style="width: 80px; margin-bottom: 10px;"><br>
@@ -341,6 +340,18 @@
         winClub: document.getElementById('winning-club').value,
         winMin: document.getElementById('winning-minute').value,
         playerStats: {}
+        , seasonResults: {
+          winner: document.getElementById('res-winner').value,
+          facup: document.getElementById('res-facup').value,
+          scorer: document.getElementById('res-scorer').value,
+          assists: document.getElementById('res-assists').value,
+          cs: document.getElementById('res-cs').value,
+          ht: document.getElementById('res-ht').value,
+          sacked: document.getElementById('res-sacked').value,
+          reds: document.getElementById('res-reds').value,
+          yellows: document.getElementById('res-yellows').value,
+          rel: [document.getElementById('res-rel1').value, document.getElementById('res-rel2').value, document.getElementById('res-rel3').value]
+        }
       };
 
       playersData.forEach(p => {
@@ -387,6 +398,22 @@
               document.getElementById(`rc-${p.name}`).checked = s.rc;
             }
           });
+        }
+        if (data.seasonResults) {
+          document.getElementById('res-winner').value = data.seasonResults.winner || "";
+          document.getElementById('res-facup').value = data.seasonResults.facup || "";
+          document.getElementById('res-scorer').value = data.seasonResults.scorer || "";
+          document.getElementById('res-assists').value = data.seasonResults.assists || "";
+          document.getElementById('res-cs').value = data.seasonResults.cs || "";
+          document.getElementById('res-ht').value = data.seasonResults.ht || "";
+          document.getElementById('res-sacked').value = data.seasonResults.sacked || "";
+          document.getElementById('res-reds').value = data.seasonResults.reds || "";
+          document.getElementById('res-yellows').value = data.seasonResults.yellows || "";
+          if(data.seasonResults.rel) {
+            document.getElementById('res-rel1').value = data.seasonResults.rel[0] || "";
+            document.getElementById('res-rel2').value = data.seasonResults.rel[1] || "";
+            document.getElementById('res-rel3').value = data.seasonResults.rel[2] || "";
+          }
         }
         alert("Draft loaded! Review the stats before processing.");
       } else {
@@ -435,6 +462,18 @@
       const winClub = document.getElementById('winning-club').value;
       const winMin = document.getElementById('winning-minute').value.trim();
 
+      // SEASON RESULTS
+      const resWinner = document.getElementById('res-winner').value.trim();
+      const resFacup = document.getElementById('res-facup').value.trim();
+      const resScorer = document.getElementById('res-scorer').value.trim();
+      const resAssists = document.getElementById('res-assists').value.trim();
+      const resCS = document.getElementById('res-cs').value.trim();
+      const resHT = document.getElementById('res-ht').value.trim();
+      const resSacked = document.getElementById('res-sacked').value.trim();
+      const resReds = document.getElementById('res-reds').value.trim();
+      const resYellows = document.getElementById('res-yellows').value.trim();
+      const resRel = [document.getElementById('res-rel1').value.trim(), document.getElementById('res-rel2').value.trim(), document.getElementById('res-rel3').value.trim()].filter(x => x);
+
       try {
         // 2. Fetch every user's team from the leaderboard
         const leaderboardSnap = await getDocs(collection(db, "leaderboard"));
@@ -448,6 +487,7 @@
           const prevSel = userData.weeklySelection || 0;
           const prevPicks = userData.weeklyPicks || 0;
           const prevBet = userData.weeklyBet || 0;
+          const prevSeason = userData.seasonPoints || 0;
 
           // 3. Get their specific team of 11 players
           // Note: In your current saveTeam, you save players to users/{uid}/myxi/team
@@ -500,18 +540,45 @@
             userWeeklyTotal += userBetScore;
           }
 
-          const deltaTotal = userWeeklyTotal - prevWeekly;
+          // 7. Calculate Season Points
+          const seasonSnap = await getDoc(doc(db, `users/${userId}/predictions/season`));
+          let userSeasonScore = 0;
+          if (seasonSnap.exists()) {
+            const sp = seasonSnap.data();
+            if (resWinner && sp["Premier League Winner"] === resWinner) userSeasonScore += 25;
+            if (resFacup && sp["FA Cup Winner"] === resFacup) userSeasonScore += 50;
+            if (resScorer && sp["Top Scorer"] === resScorer) userSeasonScore += 25;
+            if (resAssists && sp["Top Assists"] === resAssists) userSeasonScore += 50;
+            if (resCS && sp["Most Clean Sheets"] === resCS) userSeasonScore += 50;
+            if (resHT && sp["First Hat-Trick"] === resHT) userSeasonScore += 50;
+            if (resSacked && sp["First Manager Sacked"] === resSacked) userSeasonScore += 50;
+            if (resReds && sp["Most Red Cards"] === resReds) userSeasonScore += 75;
+            if (resYellows && sp["Most Yellow Cards"] === resYellows) userSeasonScore += 50;
+            
+            if (resRel.length > 0 && sp["Bottom 3 Finishers (Relegation)"]) {
+              const picks = Array.isArray(sp["Bottom 3 Finishers (Relegation)"]) ? sp["Bottom 3 Finishers (Relegation)"] : [sp["Bottom 3 Finishers (Relegation)"]];
+              picks.forEach(pick => {
+                if (resRel.includes(pick)) userSeasonScore += 40;
+              });
+            }
+          }
+
+          const deltaWeeklyTotal = userWeeklyTotal - prevWeekly;
+          const deltaSeason = userSeasonScore - prevSeason;
           const deltaSel = userPlayerScore - prevSel;
           const deltaPicks = userPicksScore - prevPicks;
           const deltaBet = userBetScore - prevBet;
+          
+          const deltaTotal = deltaWeeklyTotal + deltaSeason;
 
-          if (deltaTotal !== 0) {
+          if (deltaTotal !== 0 || deltaWeeklyTotal !== 0 || deltaSeason !== 0) {
             const leaderRef = doc(db, "leaderboard", userId);
             await setDoc(leaderRef, {
               weeklyPoints: userWeeklyTotal,
               weeklySelection: userPlayerScore,
               weeklyPicks: userPicksScore,
               weeklyBet: userBetScore,
+              seasonPoints: userSeasonScore,
               totalPoints: increment(deltaTotal)
             }, { merge: true });
             

@@ -113,7 +113,7 @@ nav a:hover {
 
   margin:auto;
 
-  padding: 90px 40px 100px;
+  padding: 90px 30px 100px;
 
 }
 
@@ -142,7 +142,7 @@ h1 {font-size:34px;margin-bottom:8px;}
 
   display:grid;
 
-  grid-template-columns: 60px 1fr 120px 100px;
+  grid-template-columns: 60px 1fr 100px 100px 100px;
 
   padding: 16px 20px;
 
@@ -158,7 +158,7 @@ h1 {font-size:34px;margin-bottom:8px;}
 
   display:grid;
 
-  grid-template-columns: 60px 1fr 120px 100px;
+  grid-template-columns: 60px 1fr 100px 100px 100px;
 
   align-items:center;
 
@@ -406,9 +406,11 @@ h1 {font-size:34px;margin-bottom:8px;}
 
       <div>Team</div>
 
-      <div style="text-align:right;">Points</div>
+      <div style="text-align:right;">Season</div>
 
       <div style="text-align:right;">Week</div>
+
+      <div style="text-align:right;">Total</div>
 
     </div>
 
@@ -477,6 +479,7 @@ async function loadLeaderboard(user){
     if(rank===3){medalClass="bronze"; medalIcon="🥉";}
 
     const weekly = data.weeklyPoints || 0;
+    const season = data.seasonPoints || 0;
 
     const changeClass = weekly>0 ? "up" : weekly<0 ? "down" : "same";
 
@@ -499,13 +502,15 @@ async function loadLeaderboard(user){
 
       </div>
 
-      <div class="points">${data.totalPoints || 0}</div>
+      <div class="points">${season}</div>
 
       <div class="week ${changeClass}">
 
         ${weekly>0?"+":""}${weekly} <span class="change-arrow">${arrow}</span>
 
       </div>
+
+      <div class="points" style="font-weight: 900; color: #c7ff38;">${data.totalPoints || 0}</div>
 
     `;
 

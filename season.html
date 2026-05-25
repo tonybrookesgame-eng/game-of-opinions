@@ -112,7 +112,7 @@
 
     .container {
 
-      padding: 90px 40px 40px;
+      padding: 90px 30px 40px;
 
       max-width: 1080px;
 
@@ -252,6 +252,12 @@
 
       font-size: 16px;
 
+    }
+
+     .card.selected {
+      border-color: #c7ff38 !important;
+      box-shadow: 0 0 20px rgba(199, 255, 56, 0.3) !important;
+      transition: all 0.3s ease;
     }
 
     select {
@@ -406,6 +412,7 @@
       }
       .container {
         padding-bottom: 100px;
+        padding: 80px 15px 100px;
       }
 
       .mobile-nav {
@@ -1096,6 +1103,19 @@ const YELLOW_CANDIDATES = [
 ];
 
 // Helper to add options to a select element
+function updateCardStatus(select) {
+  const card = select.closest('.card');
+  if (!card) return;
+  const selects = card.querySelectorAll('select');
+  const isSelected = Array.from(selects).every(s => s.value && !s.value.toLowerCase().includes("select"));
+  
+  if (isSelected) {
+    card.classList.add('selected');
+  } else {
+    card.classList.remove('selected');
+  }
+}
+
 function addOptionsToSelect(selectElement, optionsArray) {
   optionsArray.forEach(item => {
     let opt = document.createElement('option');
@@ -1108,7 +1128,9 @@ function addOptionsToSelect(selectElement, optionsArray) {
 function populateAllSelects() {
   const selects = document.querySelectorAll("select");
   selects.forEach(select => {
-    const title = select.parentElement.querySelector('h3').innerText;
+    const h3 = select.parentElement.querySelector('h3');
+    if (!h3) return;
+    const title = h3.innerText;
     
     if (title.includes("Winner") || title.includes("Red Cards") || title.includes("Bottom 3")) {
       PL_CLUBS.forEach(club => {
@@ -1130,6 +1152,8 @@ function populateAllSelects() {
     } else if (title.includes("Yellow Cards")) {
       addOptionsToSelect(select, YELLOW_CANDIDATES);
     }
+
+    select.addEventListener('change', () => updateCardStatus(select));
   });
 }
 
@@ -1236,15 +1260,30 @@ window.lockSeason = async function() {
     return;
   }
 
+  if (!confirm("Are you sure you want to lock your Season Selections? Once locked, these picks cannot be changed.")) {
+    // User clicked 'Cancel'
+    return;
+  }
+
+  if (!confirm("Are you sure you want to lock your Season Selections? Once locked, these picks cannot be changed.")) {
+    // User clicked 'Cancel'
+    return;
+  }
+
   const selects = document.querySelectorAll("select");
   let picks = {};
   for (let select of selects) {
-    const title = select.parentElement.querySelector('h3').innerText;
     if (select.value.includes("Select")) {
       alert("Please complete all season picks.");
       return;
     }
-    picks[title] = select.value;
+    const title = select.parentElement.querySelector('h3').innerText;
+    if (title.includes("Bottom 3")) {
+      if (!picks[title]) picks[title] = [];
+      picks[title].push(select.value);
+    } else {
+      picks[title] = select.value;
+    }
   }
 
   try {
@@ -1265,13 +1304,21 @@ async function loadSeasonPicks(uid) {
 
     if (docSnap.exists()) {
       const saved = docSnap.data();
-      const selects = document.querySelectorAll("select");
+      const allSelects = document.querySelectorAll("select");
       
-      selects.forEach((select) => {
-        const title = select.parentElement.querySelector('h3').innerText;
-        if (saved[title]) {
+      allSelects.forEach((select) => {
+        const h3 = select.parentElement.querySelector('h3');
+        if (!h3) return;
+        const title = h3.innerText;
+
+        if (Array.isArray(saved[title])) {
+          const group = Array.from(select.parentElement.querySelectorAll('select'));
+          const idx = group.indexOf(select);
+          select.value = saved[title][idx] || "Select team";
+        } else if (saved[title]) {
           select.value = saved[title];
         }
+        updateCardStatus(select);
       });
       refreshRelegated();
     }
@@ -1325,6 +1372,19 @@ window.closeOnboarding = function() {
 };
 
 const checkOnboarding = () => {
+  if (!localStorage.getItem('onboarding_complete')) {
+    window.openTutorial();
+  }
+};
+
+// Run onboarding check after a short delay
+setTimeout(checkOnboarding, 800);
+
+  populateAllSelects();
+
+</script>
+</body>
+</html>heckOnboarding = () => {
   if (!localStorage.getItem('onboarding_complete')) {
     window.openTutorial();
   }

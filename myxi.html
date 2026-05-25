@@ -132,6 +132,47 @@ nav a:hover{
 
 }
 
+/* Hide guest and user only nav items by default */
+nav a.user-only {
+  display: none;
+}
+
+nav a.guest-only {
+  display: none;
+}
+
+.fixture-date-header {
+  font-weight: 700;
+  color: #c7ff38;
+  margin-top: 12px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.fixture-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  font-size: 13px;
+  color: #cbd5e1;
+}
+
+.fixture-team {
+  flex: 1;
+  min-width: 0;
+}
+
+.fixture-time {
+  text-align: center;
+  min-width: 60px;
+  color: #9ca3af;
+  font-size: 11px;
+}
+
 /* =========================
 
 LAYOUT
@@ -529,14 +570,12 @@ PITCH
 
   border-radius:20px;
 
-  padding:30px 10px;
   padding:10px 10px 60px;
 
   display:flex;
 
   flex-direction:column;
 
-  gap:18px;
   gap:12px;
 
   background:
@@ -864,6 +903,17 @@ button:hover {
   box-shadow: 0 0 20px rgba(199, 255, 56, 0.6);
 }
 
+@media(max-width:768px){
+  .tutorial-btn-container {
+    margin-bottom: 15px;
+    padding: 0 15px;
+  }
+  .tutorial-trigger-btn {
+    padding: 12px;
+    font-size: 13px;
+  }
+}
+
 /* =========================
    POSITION RULES MODAL
 ========================= */
@@ -955,6 +1005,18 @@ MOBILE
     display: none;
   }
 
+  .fixture-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 10px 0;
+  }
+
+  .fixture-time {
+    width: 100%;
+    text-align: left;
+  }
+
   h1 {
     text-align: left;
     font-size: 24px;
@@ -966,7 +1028,6 @@ MOBILE
   .team-name-ribbon {
     display: flex;
     flex-direction: column;
-    padding: 15px;
     padding: 10px 12px;
     gap: 10px;
     border-radius: 18px; /* Consistent with other panels */
@@ -1012,9 +1073,6 @@ MOBILE
 
   .history-selector {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 6px;
     flex-direction: column;
     align-items: flex-start;
     gap: 2px;
@@ -1028,13 +1086,9 @@ MOBILE
 
   .history-selector select {
     width: auto;
-    min-width: 80px;
-    width: 65px;
     min-width: 65px;
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
-    font-size: 13px;
-    padding: 4px;
     font-size: 10px;
     padding: 2px;
     height: 24px;
@@ -1045,19 +1099,13 @@ MOBILE
     flex: 1;
     display: flex;
     flex-direction: row;
-    gap: 8px;
-    padding: 5px 8px;
-    background: rgba(0, 0, 0, 0.3);
     gap: 12px;
-    padding: 6px 12px;
-    justify-content: space-around;
     padding: 6px 8px;
     background: rgba(0, 0, 0, 0.4);
     margin-top: 0;
-    border: 1px solid rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(199, 255, 56, 0.15);
     border-radius: 8px;
-    margin-left: 0; /* Resets the desktop push-to-right behavior for mobile rows */
+    margin-left: 0;
   }
 
   .point-item {
@@ -1072,8 +1120,6 @@ MOBILE
   }
 
   .point-item:last-child {
-    border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
-    padding-left: 8px !important;
     border-left: 1px solid rgba(255, 255, 255, 0.2) !important;
     padding-left: 12px !important;
     margin-left: 4px;
@@ -1082,7 +1128,6 @@ MOBILE
 
   .point-item label {
     margin-bottom: 0;
-    font-size: 8px;
     font-size: 7.5px;
     white-space: nowrap;
     letter-spacing: 0.1px;
@@ -1110,7 +1155,6 @@ MOBILE
   .rules-btn-trigger {
     top: 8px;
     right: 8px;
-    padding: 4px 8px;
     padding: 6px 0;
     font-size: 9px;
     background: rgba(0, 0, 0, 0.75);
@@ -1123,7 +1167,6 @@ MOBILE
     display: flex;
     top: 38px;
     right: 8px;
-    padding: 4px 8px;
     padding: 6px 0;
     font-size: 9px;
     background: rgba(0, 0, 0, 0.75);
@@ -1278,7 +1321,12 @@ MOBILE
 
   .weekly-panel, .bet-builder-panel, .fixtures-panel {
     min-height: auto; /* Removes the big gap under Save button */
-    padding: 20px;
+    padding: 15px;
+    margin-bottom: 10px;
+  }
+
+  .bottom-panels {
+    padding: 0 10px 80px 10px; /* Account for fixed footer nav */
   }
 }
 
@@ -1343,7 +1391,7 @@ MOBILE
         <div class="point-item"><label>Team</label><span id="pts-selection">0</span></div>
         <div class="point-item"><label>Picks</label><span id="pts-picks">0</span></div>
         <div class="point-item"><label>Bet Builder</label><span id="pts-bet">0</span></div>
-        <div class="point-item">
+        <div class="point-item" onclick="openGameweekSummary()" style="cursor: pointer;">
           <label style="color: #c7ff38;">Total</label>
           <span id="pts-total" style="color: #c7ff38; font-weight: 900;">0</span>
         </div>
@@ -1552,6 +1600,32 @@ MOBILE
   </div>
 </div>
 
+<!-- Gameweek Summary Modal -->
+<div id="gameweekSummaryModal" class="rules-modal">
+  <div class="rules-card">
+    <h2 style="font-size: 18px; margin-bottom: 15px; color: #c7ff38;">Gameweek Summary</h2>
+    <div id="summaryContent" style="text-align: left; color: #cbd5e1;">
+      <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+        <span>Team Selection:</span>
+        <span id="summary-selection" style="color: #c7ff38; font-weight: 800;">0 PTS</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+        <span>Weekly Picks:</span>
+        <span id="summary-picks" style="color: #c7ff38; font-weight: 800;">0 PTS</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+        <span>Bet Builder:</span>
+        <span id="summary-bet" style="color: #c7ff38; font-weight: 800;">0 PTS</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; padding: 15px 0; font-size: 18px; font-weight: 900;">
+        <span style="color: #fff;">TOTAL:</span>
+        <span id="summary-total" style="color: #c7ff38;">0 PTS</span>
+      </div>
+    </div>
+    <button onclick="document.getElementById('gameweekSummaryModal').style.display='none'" style="margin-top: 15px; padding: 10px;">Close</button>
+  </div>
+</div>
+
 <!-- Tutorial Modal -->
 <div id="tutorialModal" class="rules-modal">
   <div class="rules-card" style="max-width: 600px; padding: 20px; max-height: 90vh; display: flex; flex-direction: column; overflow-y: auto;">
@@ -1728,7 +1802,8 @@ const updateShirt = function(select) {
   const selectedGw = historySelect ? historySelect.value : "";
 
   if (val === "Select") {
-    shirt.style.background = "linear-gradient(#2563eb, #1d4ed8)";
+    shirt.style.background = "linear-gradient(#2563eb,#1d4ed8)";
+    shirt.style.background = "linear-gradient(#2563eb,#1d4ed8)";
     nameLabel.innerText = "";
     nameLabel.style.display = "none";
     ptsLabel.innerText = "";
@@ -1736,10 +1811,27 @@ const updateShirt = function(select) {
     return;
   }
 
-  nameLabel.style.display = "block";
-  const team = playerToClub[val] || val;
-  nameLabel.innerText = clubAbbr[team] || team.substring(0,3).toUpperCase();
-  shirt.style.background = colors[team] || "linear-gradient(#2563eb, #1d4ed8)";
+  let displayPlayerName;
+  ptsLabel.style.display = "block"; // Get club for outfield player
+
+  if(pos === 'GK') { // If it's a GK, val is already the club name
+    team = val;
+    displayPlayerName = clubAbbr[val] || val.substring(0,3).toUpperCase(); // For GK, show club abbr
+  } else {
+    displayPlayerName = val; // Show player name for outfield player
+  }
+
+  let team = playerToClub[val]; // Get club for outfield player
+
+  if (pos === 'GK') { // If it's a GK, val is already the club name
+    team = val;
+    displayPlayerName = clubAbbr[val] || val.substring(0,3).toUpperCase(); // For GK, show club abbr
+  } else {
+    displayPlayerName = val; // Show player name for outfield player
+  }
+  
+  nameLabel.innerText = displayPlayerName;
+  shirt.style.background = colors[team] || "linear-gradient(#2563eb,#1d4ed8)";
 
   // Show points if they exist in the current display buffer
   const points = window.currentDisplayedPlayerScores[val];
@@ -1997,16 +2089,27 @@ const loadSelectedGameweekHistory = async () => {
   document.getElementById('pts-bet').innerText = statsData.betPts;
   document.getElementById('pts-total').innerText = statsData.totalPts;
 
+  const weeklyPanel = document.querySelector('.weekly-panel');
+  const betPanel = document.querySelector('.bet-builder-panel');
+
   document.getElementById('firstScorer').value = picksData ? picksData.first || "Select" : "Select";
   document.getElementById('goalMinute').value = picksData ? picksData.minute || "Select" : "Select";
 
+  if (picksData && picksData.first && picksData.minute && picksData.first !== "Select" && picksData.minute !== "Select") {
+    weeklyPanel.classList.add('panel-saved');
+  } else {
+    weeklyPanel.classList.remove('panel-saved');
+  }
+
   if (betData && betData.choice) {
     setBetChoice(betData.choice);
+    betPanel.classList.add('panel-saved');
   } else {
     currentBetChoice = null;
     document.getElementById('btnYes').classList.remove('selected');
     document.getElementById('btnNo').classList.remove('selected');
     document.getElementById('betInfo').innerText = "Pick if the bet lands. Cost: 5 pts to play.";
+    betPanel.classList.remove('panel-saved');
   }
 
   if (teamData) {
@@ -2014,12 +2117,19 @@ const loadSelectedGameweekHistory = async () => {
     document.getElementById('formationSelect').value = teamData.formation || "4-4-2";
     changeFormation(); // Renders the slots
     const selects = document.querySelectorAll('.pitch .player select');
-    selects.forEach((s, i) => {
-      if (teamData.players && teamData.players[i]) {
-        s.value = teamData.players[i];
-        updateShirt(s);
-      }
-    });
+    if (teamData.players && teamData.players.length > 0) {
+      selects.forEach((s, i) => {
+        if (teamData.players[i]) {
+          s.value = teamData.players[i];
+          updateShirt(s);
+        }
+      });
+    }
+  } else {
+    // Default reset if no team data
+    document.getElementById('teamNameInput').value = "";
+    document.getElementById('formationSelect').value = "4-4-2";
+    changeFormation();
   }
 
   // 4. Toggle Editability
@@ -2034,6 +2144,17 @@ const loadSelectedGameweekHistory = async () => {
   document.getElementById('clearTeamBtn').disabled = isLocked;
   document.getElementById('saveWeeklyBtn').disabled = isLocked;
   document.getElementById('saveBetBuilderBtn').disabled = isLocked;
+  const isLockedForEditing = gameweekStatus === 'locked' || isHistory; // Cannot edit if history or if live and locked
+  document.getElementById('teamNameInput').disabled = isHistory || (gameweekStatus === 'locked' && teamData && teamData.teamName); // Allow editing team name if live and not yet set
+  document.getElementById('formationSelect').disabled = isLockedForEditing;
+  document.querySelectorAll('.pitch select').forEach(s => s.disabled = isLockedForEditing);
+  document.getElementById('firstScorer').disabled = isLockedForEditing;
+  document.getElementById('goalMinute').disabled = isLockedForEditing;
+  document.querySelectorAll('.bet-choice').forEach(b => b.disabled = isLockedForEditing);
+  document.getElementById('saveTeamBottomBtn').disabled = isLockedForEditing;
+  document.getElementById('clearTeamBtn').disabled = isLockedForEditing;
+  document.getElementById('saveWeeklyBtn').disabled = isLockedForEditing;
+  document.getElementById('saveBetBuilderBtn').disabled = isLockedForEditing;
 };
 window.loadSelectedGameweekHistory = loadSelectedGameweekHistory; // Make it global
 
@@ -2311,6 +2432,14 @@ window.openScoringRules = () => {
 window.openFixtures = () => {
   loadFixtures(); // Re-populate just in case
   document.getElementById('fixturesModal').style.display = 'flex';
+};
+
+window.openGameweekSummary = () => {
+  document.getElementById('summary-selection').innerText = document.getElementById('pts-selection').innerText + " PTS";
+  document.getElementById('summary-picks').innerText = document.getElementById('pts-picks').innerText + " PTS";
+  document.getElementById('summary-bet').innerText = document.getElementById('pts-bet').innerText + " PTS";
+  document.getElementById('summary-total').innerText = document.getElementById('pts-total').innerText + " PTS";
+  document.getElementById('gameweekSummaryModal').style.display = 'flex';
 };
 
 // Tutorial Logic
