@@ -1388,15 +1388,19 @@ MOBILE
         </select>
       </div>
       <div class="points-summary">
-        <div class="point-item"><label>Team</label><span id="pts-selection">0</span></div>
-        <div class="point-item"><label>Picks</label><span id="pts-picks">0</span></div>
-        <div class="point-item"><label>Bet Builder</label><span id="pts-bet">0</span></div>
-        <div class="point-item" onclick="openGameweekSummary()" style="cursor: pointer;">
-          <label style="color: #c7ff38;">Total</label>
-          <span id="pts-total" style="color: #c7ff38; font-weight: 900;">0</span>
+        <div id="points-display-container">
+          <div class="point-item"><label>Team</label><span id="pts-selection">0</span></div>
+          <div class="point-item"><label>Picks</label><span id="pts-picks">0</span></div>
+          <div class="point-item"><label>Bet Builder</label><span id="pts-bet">0</span></div>
+          <div class="point-item" onclick="openGameweekSummary()" style="cursor: pointer;">
+            <label style="color: #c7ff38;">Total</label>
+            <span id="pts-total" style="color: #c7ff38; font-weight: 900;">0</span>
+          </div>
+        </div>
+        <div id="live-team-only-message" style="display: none; padding: 15px; background: rgba(199,255,56,0.08); border-radius: 8px; text-align: center; color: #c7ff38; font-weight: bold; border: 1px solid rgba(199,255,56,0.2);">
+          Gameweek Live — Editable
         </div>
       </div>
-    </div>
   </div>
 </div>
 
@@ -2084,10 +2088,38 @@ const loadSelectedGameweekHistory = async () => {
   }
 
   // 3. Update UI
-  document.getElementById('pts-selection').innerText = statsData.selectionPts;
-  document.getElementById('pts-picks').innerText = statsData.picksPts;
-  document.getElementById('pts-bet').innerText = statsData.betPts;
-  document.getElementById('pts-total').innerText = statsData.totalPts;
+  // Conditional Points Display Logic:
+  // - If Live gameweek (not history) AND gameweek is OPEN → Hide points, show "Gameweek Live"
+  // - If Live gameweek AND gameweek is LOCKED → Show 0 (no points earned until admin processes)
+  // - If History (past gameweek) → Show actual earned points
+  
+  const isLiveAndOpen = !isHistory && gameweekStatus === 'open';
+  const pointsContainer = document.getElementById('points-display-container');
+  const liveMessage = document.getElementById('live-team-only-message');
+  
+  if (isLiveAndOpen) {
+    // Live gameweek in open state - hide all points, show message
+    pointsContainer.style.display = 'none';
+    liveMessage.style.display = 'block';
+  } else {
+    // Show points (either processing gameweek or history view)
+    pointsContainer.style.display = 'grid';
+    liveMessage.style.display = 'none';
+    
+    // If locked but not yet processed by admin, show 0
+    if (!isHistory && gameweekStatus === 'locked' && statsData.totalPts === 0) {
+      document.getElementById('pts-selection').innerText = '0';
+      document.getElementById('pts-picks').innerText = '0';
+      document.getElementById('pts-bet').innerText = '0';
+      document.getElementById('pts-total').innerText = '0';
+    } else {
+      // Show actual stats (from processed gameweek or history)
+      document.getElementById('pts-selection').innerText = statsData.selectionPts;
+      document.getElementById('pts-picks').innerText = statsData.picksPts;
+      document.getElementById('pts-bet').innerText = statsData.betPts;
+      document.getElementById('pts-total').innerText = statsData.totalPts;
+    }
+  }
 
   const weeklyPanel = document.querySelector('.weekly-panel');
   const betPanel = document.querySelector('.bet-builder-panel');
@@ -2189,37 +2221,62 @@ const auth = getAuth(app);
 
 let gameweekStatus = 'open'; // Default to open
 
-// Listener for gameweek settings (status and deadline)
+// Listener for gameweek settings (status and deadline) with auto-lock/unlock
 const gameweekSettingsRef = doc(db, "settings", "gameweek");
-onSnapshot(gameweekSettingsRef, (docSnap) => {
+onSnapshot(gameweekSettingsRef, async (docSnap) => {
     if (docSnap.exists()) {
         const settings = docSnap.data();
         const now = new Date();
+        const deadlineDate = settings.deadline ? new Date(settings.deadline) : null;
         const reopenDate = settings.reopenTime ? new Date(settings.reopenTime) : null;
         
-        gameweekStatus = settings.status || 'open';
-        let isLocked = (gameweekStatus === 'locked'); // This is the initial state from Firestore
-
-        // Dynamic reopen check: If past the specified time, treat as open
-        if (isLocked && reopenDate && now >= reopenDate) {
-            isLocked = false;
+        let storedStatus = settings.status || 'open';
+        let effectiveStatus = storedStatus;
+        let statusNeedsUpdate = false;
+        
+        // AUTO-LOCK: If we're past the deadline and status is still 'open', lock it
+        if (deadlineDate && now >= deadlineDate && storedStatus === 'open') {
+            effectiveStatus = 'locked';
+            statusNeedsUpdate = true;
         }
+        
+        // AUTO-UNLOCK: If we're past the reopen time and status is 'locked', unlock it
+        if (reopenDate && now >= reopenDate && storedStatus === 'locked') {
+            effectiveStatus = 'open';
+            statusNeedsUpdate = true;
+        }
+        
+        // Update Firebase if status changed
+        if (statusNeedsUpdate && currentUser) {
+            try {
+                await updateDoc(gameweekSettingsRef, { status: effectiveStatus });
+                console.log(`Gameweek status auto-updated to: ${effectiveStatus}`);
+            } catch (e) {
+                console.error('Error updating gameweek status:', e);
+            }
+        }
+        
+        gameweekStatus = effectiveStatus;
+        let isLocked = (gameweekStatus === 'locked');
 
         // Update deadline timer in header
-        if (settings.status === 'locked') {
-            document.querySelector('header .user-only #deadline-timer').innerText = "GW LOCKED";
-        } else if (settings.deadline) {
-            const d = new Date(settings.deadline);
-            const options = { weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false };
-            document.querySelector('header .user-only #deadline-timer').innerText = d.toLocaleString('en-GB', options).toUpperCase();
+        if (isLocked) {
+            try {
+              document.querySelector('header .user-only #deadline-timer').innerText = "GW LOCKED";
+            } catch(e) {}
+        } else if (deadlineDate) {
+            try {
+              const options = { weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false };
+              document.querySelector('header .user-only #deadline-timer').innerText = deadlineDate.toLocaleString('en-GB', options).toUpperCase();
+            } catch(e) {}
         }
 
         // Update Bet Builder Points dynamically based on Admin Odds
         if (settings.odds) {
             const oddsVal = parseInt(settings.odds);
             const stake = 5;
-            betPointsBig = oddsVal * stake; // e.g. 40/1 x 5pts = 200pts
-            betPointsSmall = (stake * 5) + stake; // Fixed 30pts
+            betPointsBig = oddsVal * stake;
+            betPointsSmall = (stake * 5) + stake;
 
             const btnYes = document.getElementById('btnYes');
             const btnNo = document.getElementById('btnNo');
@@ -2236,13 +2293,13 @@ onSnapshot(gameweekSettingsRef, (docSnap) => {
             }
         }
 
-        // Disable/Enable save buttons
+        // Disable/Enable save buttons based on lock status
         document.getElementById('saveTeamBottomBtn').disabled = isLocked;
         document.getElementById('clearTeamBtn').disabled = isLocked;
         document.getElementById('saveWeeklyBtn').disabled = isLocked;
         document.getElementById('saveBetBuilderBtn').disabled = isLocked;
 
-        // Refresh shirts to apply "0 PTS" logic if week just opened
+        // Refresh to apply points display logic
         document.querySelectorAll('.pitch select').forEach(s => updateShirt(s));
     }
 });
