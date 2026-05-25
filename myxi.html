@@ -203,6 +203,7 @@ p {
   flex-direction: row;
   gap: 30px;
   align-items: flex-start;
+  flex-wrap: nowrap;
 }
 
 .left-side {
@@ -355,8 +356,14 @@ p {
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   margin-bottom: 20px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   backdrop-filter: blur(10px);
+}
+#points-display-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  width: 100%;
 }
 .name-section {
   display: flex;
@@ -1050,6 +1057,10 @@ MOBILE
     gap: 10px;
   }
   
+  #points-display-container {
+    gap: 6px;
+  }
+
   /* Row helper for Mobile */
   .mobile-row {
     display: flex; /* Restores flex behavior for stacking on mobile */
@@ -1071,11 +1082,11 @@ MOBILE
   .team-name-ribbon input {
     flex: 1;
     min-width: 0;
-    color: #ffffff !important;
-    -webkit-text-fill-color: #ffffff !important;
+    color: #ffffff;
     opacity: 1 !important;
     font-size: 13px;
     padding: 6px 10px;
+    height: 32px;
     text-align: left;
   }
 
@@ -1085,6 +1096,7 @@ MOBILE
     align-items: flex-start;
     gap: 2px;
     min-width: 65px;
+    flex-shrink: 0;
   }
 
   .history-selector span {
@@ -1103,35 +1115,26 @@ MOBILE
   }
 
   .points-summary {
-    width: auto;
-    flex: 1;
+    flex: 2;
     display: flex;
     flex-direction: row;
-    gap: 12px;
-    padding: 6px 8px;
-    background: rgba(0, 0, 0, 0.4);
+    gap: 0;
+    padding: 4px;
+    background: rgba(0, 0, 0, 0.3);
     margin-top: 0;
     border: 1px solid rgba(199, 255, 56, 0.15);
     border-radius: 8px;
-    margin-left: 0;
   }
 
   .point-item {
     flex-direction: column;
     align-items: center;
-    gap: 1px;
-    min-width: 35px;
-  }
-  
-  .point-item:nth-child(even) {
-    border-left: none !important;
+    gap: 0;
+    min-width: 0;
   }
 
   .point-item:last-child {
-    border-left: 1px solid rgba(255, 255, 255, 0.2) !important;
-    padding-left: 12px !important;
-    margin-left: 4px;
-    margin-top: 0;
+    border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
   }
 
   .point-item label {
@@ -1399,13 +1402,14 @@ MOBILE
         <div id="points-display-container">
           <div class="point-item"><label>Team</label><span id="pts-selection">0</span></div>
           <div class="point-item"><label>Picks</label><span id="pts-picks">0</span></div>
-          <div class="point-item"><label>Bet Builder</label><span id="pts-bet">0</span></div>
+          <div class="point-item"><label>Bet</label><span id="pts-bet">0</span></div>
           <div class="point-item" onclick="openGameweekSummary()" style="cursor: pointer;">
             <label style="color: #c7ff38;">Total</label>
             <span id="pts-total" style="color: #c7ff38; font-weight: 900;">0</span>
           </div>
         </div>
       </div>
+    </div>
   </div>
 </div>
 
@@ -2558,20 +2562,6 @@ const checkOnboarding = () => {
 // Run onboarding check after a short delay
 setTimeout(checkOnboarding, 800);
 
-loadFixtures();
-</script>
-
-<!-- FOOTER -->
-<!-- MOBILE NAV -->
-<div class="mobile-nav">
-  <a href="index.html">🏠<br>Home</a>
-  <a href="myxi.html">⚽<br>Team</a>
-  <a href="season.html">🏆<br>Picks</a>
-  <a href="league.html">📊<br>League</a>
-</div>
-
-</body>
-</html>
 loadFixtures();
 </script>
 
