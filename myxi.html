@@ -1811,11 +1811,9 @@ const updateShirt = function(select) {
   const ptsLabel = shirt.querySelector('.shirt-pts');
   const val = select.value;
   const pos = select.dataset.pos;
-  const historySelect = document.getElementById('gameweekHistorySelect');
-  const selectedGw = historySelect ? historySelect.value : "";
+  const selectedGw = document.getElementById('gameweekHistorySelect')?.value || "";
 
   if (val === "Select") {
-    shirt.style.background = "linear-gradient(#2563eb,#1d4ed8)";
     shirt.style.background = "linear-gradient(#2563eb,#1d4ed8)";
     nameLabel.innerText = "";
     nameLabel.style.display = "none";
@@ -1824,26 +1822,17 @@ const updateShirt = function(select) {
     return;
   }
 
-  let displayPlayerName;
-  ptsLabel.style.display = "block"; // Get club for outfield player
-
-  if(pos === 'GK') { // If it's a GK, val is already the club name
+  let displayPlayerName, team;
+  if (pos === 'GK') {
     team = val;
-    displayPlayerName = clubAbbr[val] || val.substring(0,3).toUpperCase(); // For GK, show club abbr
+    displayPlayerName = clubAbbr[val] || val.substring(0,3).toUpperCase();
   } else {
-    displayPlayerName = val; // Show player name for outfield player
-  }
-
-  let team = playerToClub[val]; // Get club for outfield player
-
-  if (pos === 'GK') { // If it's a GK, val is already the club name
-    team = val;
-    displayPlayerName = clubAbbr[val] || val.substring(0,3).toUpperCase(); // For GK, show club abbr
-  } else {
+    team = playerToClub[val];
     displayPlayerName = val; // Show player name for outfield player
   }
   
   nameLabel.innerText = displayPlayerName;
+  nameLabel.style.display = "block";
   shirt.style.background = colors[team] || "linear-gradient(#2563eb,#1d4ed8)";
 
   // Show points if they exist in the current display buffer
@@ -2082,7 +2071,19 @@ const loadSelectedGameweekHistory = async () => {
       getDoc(doc(db, `users/${currentUser.uid}/myxi`, "betBuilder")),
       getDoc(doc(db, `users/${currentUser.uid}/stats`, "points"))
     ]);
-    if (teamSnap.exists()) teamData = teamSnap.data();
+    if (teamSnap.exists()) {
+      teamData = teamSnap.data();
+    } else {
+      // Sourcing data from server history (e.g. GW37) if live is blank
+      const q = query(collection(db, `users/${currentUser.uid}/history`), orderBy("gw", "desc"), limit(1));
+      const histSnap = await getDocs(q);
+      if (!histSnap.empty) {
+        teamData = histSnap.docs[0].data().team;
+        if (teamData && teamData.teamName && !document.getElementById('teamNameInput').value) {
+          document.getElementById('teamNameInput').value = teamData.teamName;
+        }
+      }
+    }
     if (picksSnap.exists()) picksData = picksSnap.data();
     if (betSnap.exists()) betData = betSnap.data();
     if (statsSnap.exists()) {
@@ -2107,7 +2108,11 @@ const loadSelectedGameweekHistory = async () => {
   
   pointsContainer.style.display = 'grid';
   if (isLiveAndOpen) {
-    // Live gameweek in open state - show zero/placeholder since they are editable
+    // Live gameweek in open state - reset points display to 0
+    document.getElementById('pts-selection').innerText = '0';
+    document.getElementById('pts-picks').innerText = '0';
+    document.getElementById('pts-bet').innerText = '0';
+    document.getElementById('pts-total').innerText = '0';
   } else {    
     // If locked but not yet processed by admin, show 0
     if (!isHistory && gameweekStatus === 'locked' && statsData.totalPts === 0) {
@@ -2185,16 +2190,6 @@ const loadSelectedGameweekHistory = async () => {
   document.getElementById('clearTeamBtn').disabled = isLocked;
   document.getElementById('saveWeeklyBtn').disabled = isLocked;
   document.getElementById('saveBetBuilderBtn').disabled = isLocked;
-  const isLockedForEditing = gameweekStatus === 'locked' || isHistory; // Cannot edit if history or if live and locked
-  document.getElementById('formationSelect').disabled = isLockedForEditing;
-  document.querySelectorAll('.pitch select').forEach(s => s.disabled = isLockedForEditing);
-  document.getElementById('firstScorer').disabled = isLockedForEditing;
-  document.getElementById('goalMinute').disabled = isLockedForEditing;
-  document.querySelectorAll('.bet-choice').forEach(b => b.disabled = isLockedForEditing);
-  document.getElementById('saveTeamBottomBtn').disabled = isLockedForEditing;
-  document.getElementById('clearTeamBtn').disabled = isLockedForEditing;
-  document.getElementById('saveWeeklyBtn').disabled = isLockedForEditing;
-  document.getElementById('saveBetBuilderBtn').disabled = isLockedForEditing;
 };
 window.loadSelectedGameweekHistory = loadSelectedGameweekHistory; // Make it global
 

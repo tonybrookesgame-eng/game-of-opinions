@@ -91,21 +91,32 @@
       </div>
     </div>
 
-    <p>5. Save your progress or run the calculation for all managers.</p>
+    <div class="admin-section">
+      <p>5. Season Results (Update only when result is confirmed)</p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px;">
+        <input type="text" id="res-winner" placeholder="PL Winner">
+        <input type="text" id="res-facup" placeholder="FA Cup Winner">
+        <input type="text" id="res-scorer" placeholder="Top Scorer">
+        <input type="text" id="res-assists" placeholder="Top Assists">
+        <input type="text" id="res-cs" placeholder="Most CS">
+        <input type="text" id="res-ht" placeholder="First Hat-Trick">
+        <input type="text" id="res-sacked" placeholder="First Sacked">
+        <input type="text" id="res-reds" placeholder="Most Reds (Team)">
+        <input type="text" id="res-yellows" placeholder="Most Yellows (Team)">
+        <input type="text" id="res-rel1" placeholder="Rel 1">
+        <input type="text" id="res-rel2" placeholder="Rel 2">
+        <input type="text" id="res-rel3" placeholder="Rel 3">
+      </div>
+    </div>
+
+    <p>6. Save your progress or run the calculation for all managers.</p>
+    <div style="background: rgba(251, 191, 36, 0.1); padding: 10px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #fbbf24;">
+      <input type="checkbox" id="dry-run-mode"> <label for="dry-run-mode" style="color: #fbbf24; font-weight: bold;">Simulation Mode (Dry Run - No database changes, results show in console)</label>
+    </div>
     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
       <button onclick="saveDraft()" style="background: #3b82f6; width: auto; padding: 10px 20px;">Save Progress Draft</button>
       <button onclick="loadDraft()" style="background: #fbbf24; color: #000; width: auto; padding: 10px 20px;">Load Last Draft</button>
       <button onclick="processGameweek()" style="width: auto; padding: 10px 20px;">Process & Update Leaderboard</button>
-    </div>
-
-    <div class="admin-section">
-      <p>6. Reset Weekly Points for a new Gameweek</p>
-      <button onclick="resetWeeklyPoints()" style="background: #f87171;">Reset Weekly Points to 0</button>
-    </div>
-
-    <div class="admin-section">
-      <p>7. Prepare for Next Week</p>
-      <button onclick="clearMatchStats()" style="background: #3b82f6;">Clear Match Stats (Checkboxes & Numbers)</button>
     </div>
 
     <div class="admin-section" style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; border: 1px solid #c7ff38;">
@@ -113,7 +124,6 @@
       <label>User UID:</label> <input type="text" id="admin-user-uid" style="width: 250px; margin-right: 10px;">
       <label>New Team Name:</label> <input type="text" id="admin-new-teamname" style="width: 200px; margin-right: 10px;">
       <button onclick="adminUpdateTeamName()" style="margin-top: 0; padding: 8px 20px; width: auto;">Update Team Name</button>
-      <p style="font-size: 11px; color: #9ca3af; margin-top: 5px;">Use this to override a user's locked team name.</p>
     </div>
 
     <div class="admin-section">
@@ -347,18 +357,18 @@
         betOdds: document.getElementById('bet-odds').value,
         winClub: document.getElementById('winning-club').value,
         winMin: document.getElementById('winning-minute').value,
-        playerStats: {}
-        , seasonResults: {
-          winner: document.getElementById('res-winner').value,
-          facup: document.getElementById('res-facup').value,
-          scorer: document.getElementById('res-scorer').value,
-          assists: document.getElementById('res-assists').value,
-          cs: document.getElementById('res-cs').value,
-          ht: document.getElementById('res-ht').value,
-          sacked: document.getElementById('res-sacked').value,
-          reds: document.getElementById('res-reds').value,
-          yellows: document.getElementById('res-yellows').value,
-          rel: [document.getElementById('res-rel1').value, document.getElementById('res-rel2').value, document.getElementById('res-rel3').value]
+        playerStats: {},
+        seasonResults: {
+          winner: document.getElementById('res-winner')?.value || "",
+          facup: document.getElementById('res-facup')?.value || "",
+          scorer: document.getElementById('res-scorer')?.value || "",
+          assists: document.getElementById('res-assists')?.value || "",
+          cs: document.getElementById('res-cs')?.value || "",
+          ht: document.getElementById('res-ht')?.value || "",
+          sacked: document.getElementById('res-sacked')?.value || "",
+          reds: document.getElementById('res-reds')?.value || "",
+          yellows: document.getElementById('res-yellows')?.value || "",
+          rel: [document.getElementById('res-rel1')?.value || "", document.getElementById('res-rel2')?.value || "", document.getElementById('res-rel3')?.value || ""]
         }
       };
 
@@ -408,19 +418,19 @@
           });
         }
         if (data.seasonResults) {
-          document.getElementById('res-winner').value = data.seasonResults.winner || "";
-          document.getElementById('res-facup').value = data.seasonResults.facup || "";
-          document.getElementById('res-scorer').value = data.seasonResults.scorer || "";
-          document.getElementById('res-assists').value = data.seasonResults.assists || "";
-          document.getElementById('res-cs').value = data.seasonResults.cs || "";
-          document.getElementById('res-ht').value = data.seasonResults.ht || "";
-          document.getElementById('res-sacked').value = data.seasonResults.sacked || "";
-          document.getElementById('res-reds').value = data.seasonResults.reds || "";
-          document.getElementById('res-yellows').value = data.seasonResults.yellows || "";
+          if(document.getElementById('res-winner')) document.getElementById('res-winner').value = data.seasonResults.winner || "";
+          if(document.getElementById('res-facup')) document.getElementById('res-facup').value = data.seasonResults.facup || "";
+          if(document.getElementById('res-scorer')) document.getElementById('res-scorer').value = data.seasonResults.scorer || "";
+          if(document.getElementById('res-assists')) document.getElementById('res-assists').value = data.seasonResults.assists || "";
+          if(document.getElementById('res-cs')) document.getElementById('res-cs').value = data.seasonResults.cs || "";
+          if(document.getElementById('res-ht')) document.getElementById('res-ht').value = data.seasonResults.ht || "";
+          if(document.getElementById('res-sacked')) document.getElementById('res-sacked').value = data.seasonResults.sacked || "";
+          if(document.getElementById('res-reds')) document.getElementById('res-reds').value = data.seasonResults.reds || "";
+          if(document.getElementById('res-yellows')) document.getElementById('res-yellows').value = data.seasonResults.yellows || "";
           if(data.seasonResults.rel) {
-            document.getElementById('res-rel1').value = data.seasonResults.rel[0] || "";
-            document.getElementById('res-rel2').value = data.seasonResults.rel[1] || "";
-            document.getElementById('res-rel3').value = data.seasonResults.rel[2] || "";
+            if(document.getElementById('res-rel1')) document.getElementById('res-rel1').value = data.seasonResults.rel[0] || "";
+            if(document.getElementById('res-rel2')) document.getElementById('res-rel2').value = data.seasonResults.rel[1] || "";
+            if(document.getElementById('res-rel3')) document.getElementById('res-rel3').value = data.seasonResults.rel[2] || "";
           }
         }
         alert("Draft loaded! Review the stats before processing.");
@@ -430,8 +440,10 @@
     };
 
     window.processGameweek = async function() {
-      const gwNum = document.getElementById('gameweek-num').value;
-      if (!gwNum) {
+      const gwNum = parseInt(document.getElementById('gameweek-num').value);
+      const isDryRun = document.getElementById('dry-run-mode').checked;
+
+      if (isNaN(gwNum)) {
         alert("Please enter a Gameweek Number.");
         return;
       }
@@ -440,7 +452,11 @@
       const historyRef = doc(db, "gameweekHistory", "GW" + gwNum);
       const historySnap = await getDoc(historyRef);
       if (historySnap.exists()) {
-        if (!confirm("This Gameweek has already been processed! Processing again will add points AGAIN. Are you sure?")) return;
+        if (!isDryRun && !confirm("This Gameweek has already been processed! Processing again will add points AGAIN. Are you sure?")) return;
+      }
+
+      if (isDryRun) {
+        console.log("--- STARTING DRY RUN SIMULATION ---");
       }
 
       if (!confirm(`This will update points for ALL users for Gameweek ${gwNum}. Proceed?`)) return;
@@ -471,16 +487,16 @@
       const winMin = document.getElementById('winning-minute').value.trim();
 
       // SEASON RESULTS
-      const resWinner = document.getElementById('res-winner').value.trim();
-      const resFacup = document.getElementById('res-facup').value.trim();
-      const resScorer = document.getElementById('res-scorer').value.trim();
-      const resAssists = document.getElementById('res-assists').value.trim();
-      const resCS = document.getElementById('res-cs').value.trim();
-      const resHT = document.getElementById('res-ht').value.trim();
-      const resSacked = document.getElementById('res-sacked').value.trim();
-      const resReds = document.getElementById('res-reds').value.trim();
-      const resYellows = document.getElementById('res-yellows').value.trim();
-      const resRel = [document.getElementById('res-rel1').value.trim(), document.getElementById('res-rel2').value.trim(), document.getElementById('res-rel3').value.trim()].filter(x => x);
+      const resWinner = document.getElementById('res-winner')?.value.trim();
+      const resFacup = document.getElementById('res-facup')?.value.trim();
+      const resScorer = document.getElementById('res-scorer')?.value.trim();
+      const resAssists = document.getElementById('res-assists')?.value.trim();
+      const resCS = document.getElementById('res-cs')?.value.trim();
+      const resHT = document.getElementById('res-ht')?.value.trim();
+      const resSacked = document.getElementById('res-sacked')?.value.trim();
+      const resReds = document.getElementById('res-reds')?.value.trim();
+      const resYellows = document.getElementById('res-yellows')?.value.trim();
+      const resRel = [document.getElementById('res-rel1')?.value.trim(), document.getElementById('res-rel2')?.value.trim(), document.getElementById('res-rel3')?.value.trim()].filter(x => x);
 
       try {
         // 2. Fetch every user's team from the leaderboard
@@ -578,6 +594,14 @@
           const deltaBet = userBetScore - prevBet;
           
           const deltaTotal = deltaWeeklyTotal + deltaSeason;
+
+          if (isDryRun) {
+            console.log(`User: ${userData.teamName || userId}`);
+            console.log(`- Weekly (Players+Picks+Bet): ${userWeeklyTotal} (Delta: ${deltaWeeklyTotal})`);
+            console.log(`- Season Total: ${userSeasonScore} (Delta: ${deltaSeason})`);
+            console.log(`- Final Points Increment: ${deltaTotal}`);
+            continue; 
+          }
 
           if (deltaTotal !== 0 || deltaWeeklyTotal !== 0 || deltaSeason !== 0) {
             const leaderRef = doc(db, "leaderboard", userId);
