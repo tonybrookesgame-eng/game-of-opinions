@@ -74,27 +74,32 @@ body::after{
 ========================= */
 
 header {
+
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
+  width: 100%;
   z-index: 1000;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 30px;
+  flex-direction: column;
+  padding: 0;
   background: rgba(0,0,0,0.72);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+
+.header-top {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
 }
 
 /* =========================
    PREMIUM NEWS TICKER
 ========================= */
 .news-ticker {
-  position: fixed;
-  top: 52px;
-  z-index: 999;
   width: 100%;
   background: rgba(199, 255, 56, 0.95);
   color: #041102;
@@ -121,14 +126,15 @@ header {
 
 .logo {
   font-size: 22px;
+
   font-weight: 800;
-  letter-spacing: -0.5px;
-  text-transform: uppercase;
-  line-height: 1;
-  display: inline-block;
+
 }
+
 .logo span {
+
   color: #c7ff38;
+
 }
 
 /* =========================
@@ -138,13 +144,19 @@ header {
 ========================= */
 
 nav {
+
   display: flex;
+
   align-items: center;
-  gap: 32px;
+
+  gap: 24px;
+
 }
 
 nav a {
-  color: white;
+
+  color: rgba(255,255,255,0.85);
+
   text-decoration: none;
   font-size: 16px;
 
@@ -219,7 +231,7 @@ nav a:hover {
 
 /* MANAGER'S OFFICE STYLES */
 .office-section {
-  margin-top: 84px; /* Adjusted to sit below the new header/ticker height */
+  margin-top: 94px; /* Adjusted to sit below the new header/ticker height */
   position: relative;
   z-index: 10;
   display: flex;
@@ -1027,13 +1039,19 @@ nav a:hover {
 }
 
 @media (max-width: 768px) {
+
   header {
     background: rgba(0,0,0,0.9) !important;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    padding: 15px 10px;
+    padding: 0;
     height: auto;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .header-top {
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 10px;
+    padding: 8px 10px;
   }
 
   .logo {
@@ -1059,11 +1077,18 @@ nav a:hover {
   }
 
   body {
-    padding-top: 100px;
+    top: 72px; 
+    padding-top: 120px;
   } 
 
   nav {
-    display: none;
+    display: flex;
+    justify-content: center;
+    justify-content: space-around;
+    flex-wrap: nowrap;
+    gap: 8px;
+    margin-top: 10px;
+    width: 100%;
   }
 
   nav div.user-only {
@@ -1178,24 +1203,6 @@ nav a:hover {
 
   .section {
     padding-top: 0;
-    padding: 20px 15px;
-  }
-
-  .section-title {
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
-
-  .card {
-    padding: 20px;
-  }
-
-  .card h3 {
-    font-size: 14px;
-  }
-
-  .card p {
-    font-size: 13px;
   }
 
   .primary-btn {
@@ -1293,28 +1300,28 @@ nav a:hover {
 
 <!-- HEADER -->
 <header>
-  <div class="logo">GAME <span>OF OPINIONS</span></div>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="myxi.html" class="user-only">Your Team</a>
-    <a href="season.html" class="user-only">Season Picks</a>
-    <a href="league.html" class="user-only">League</a>
-    <a href="rules.html" class="guest-only">Rules</a>
-    <a href="javascript:void(0)" class="login-link guest-only" onclick="openLogin()">Log In</a>
-    <a href="signup.html" class="signup-btn guest-only">Sign Up</a>
-    <a href="javascript:void(0)" class="user-only" onclick="handleLogout()">Log Out</a>
-  </nav>
-</header>
-
-<!-- PREMIUM TICKER -->
-<div class="news-ticker">
-  <div class="ticker-content">
-    <span>Gameweek Approaching: Deadline Sunday 24th May 13:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    <span>Gameweek Approaching: Deadline Sunday 24th May 13:00  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    <span>Gameweek Approaching: Deadline Sunday 24th May 13:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    <span>Gameweek Approaching: Deadline Sunday 24th May 13:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+  <div class="header-top">
+    <div class="logo">GAME <span>OF OPINIONS</span></div>
+    <nav>
+      <a href="myxi.html" class="user-only">Your Team</a>
+      <a href="season.html" class="user-only">Season Picks</a>
+      <a href="league.html" class="user-only">League</a>
+      <a href="rules.html" class="guest-only">Rules</a>
+      <a href="javascript:void(0)" class="login-link guest-only" onclick="openLogin()">Log In</a>
+      <a href="signup.html" class="signup-btn guest-only">Sign Up</a>
+      <a href="javascript:void(0)" class="user-only" onclick="handleLogout()">Log Out</a>
+    </nav>
   </div>
-</div>
+  <!-- PREMIUM TICKER -->
+  <div class="news-ticker">
+    <div class="ticker-content">
+      <span>Gameweek Approaching: Deadline Sunday 24th May 13:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <span>Gameweek Approaching: Deadline Sunday 24th May 13:00  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <span>Gameweek Approaching: Deadline Sunday 24th May 13:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <span>Gameweek Approaching: Deadline Sunday 24th May 13:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    </div>
+  </div>
+</header>
 
 <!-- UNIFIED AUTH OVERLAY -->
 <div id="auth-overlay" class="auth-overlay">
@@ -1615,54 +1622,4 @@ window.handleAuth = async function() {
 };
 
 </script>
-
-
-</body>handleLogout = () => {
-  signOut(auth).then(() => {
-    window.location.reload();
-  });
-};
-
-// Check for login redirect from other pages
-if (window.location.search.includes('login=true')) {
-  window.openLogin();
-}
-
-// AUTH SCREEN CONTROLS
-window.openLogin = () => {
-  document.getElementById('auth-overlay').style.display = 'flex';
-};
-
-window.closeAuth = () => {
-  document.getElementById('auth-overlay').style.display = 'none';
-};
-
-// UNIFIED AUTH HANDLER
-window.handleAuth = async function() {
-  // This handler is now exclusively for login.
-  const email = document.getElementById("auth-email").value;
-  const password = document.getElementById("auth-password").value;
-
-  if (!email || !password) {
-    alert("Please enter your email and password.");
-    return;
-  }
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-    window.location.href = "myxi.html";
-  } catch (error) {
-    alert(error.message);
-  }
-};
-
-</script>
-
-<!-- MOBILE NAV -->
-<div class="mobile-nav">
-  <a href="index.html">🏠<br>Home</a>
-  <a href="myxi.html">⚽<br>Team</a>
-  <a href="season.html">🏆<br>Picks</a>
-  <a href="league.html">📊<br>League</a>
-</div>
-
 </body>
