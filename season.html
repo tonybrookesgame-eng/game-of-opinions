@@ -1376,19 +1376,12 @@ const checkOnboarding = () => {
     window.openTutorial();
   }
 };
-
-// Run onboarding check after a short delay
-setTimeout(checkOnboarding, 800);
-
-  populateAllSelects();
-
-</script>
-</body>
-</html>heckOnboarding = () => {
-  if (!localStorage.getItem('onboarding_complete')) {
-    window.openTutorial();
-  }
-};
+  // Run onboarding check after a short delay
+  setTimeout(() => {
+    if (!localStorage.getItem('onboarding_complete')) {
+      window.openTutorial();
+    }
+  }, 800);
 
 // Run onboarding check after a short delay
 setTimeout(checkOnboarding, 800);

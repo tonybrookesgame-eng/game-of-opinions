@@ -247,6 +247,14 @@ p {
   border-color: #f87171 !important;
   box-shadow: 0 0 20px rgba(248, 113, 113, 0.4) !important;
 }
+.weekly-correct {
+  border-color: #4ade80 !important;
+  box-shadow: 0 0 20px rgba(74, 222, 128, 0.4) !important;
+}
+.weekly-incorrect {
+  border-color: #f87171 !important;
+  box-shadow: 0 0 20px rgba(248, 113, 113, 0.4) !important;
+}
 .weekly-panel button, .bet-builder-panel button.save-btn, .fixtures-panel button {
   margin-top: 20px;
 }
@@ -1811,9 +1819,11 @@ const updateShirt = function(select) {
   const ptsLabel = shirt.querySelector('.shirt-pts');
   const val = select.value;
   const pos = select.dataset.pos;
-  const selectedGw = document.getElementById('gameweekHistorySelect')?.value || "";
+  const historySelect = document.getElementById('gameweekHistorySelect');
+  const selectedGw = historySelect ? historySelect.value : "";
 
   if (val === "Select") {
+    shirt.style.background = "linear-gradient(#2563eb,#1d4ed8)";
     shirt.style.background = "linear-gradient(#2563eb,#1d4ed8)";
     nameLabel.innerText = "";
     nameLabel.style.display = "none";
@@ -1822,17 +1832,26 @@ const updateShirt = function(select) {
     return;
   }
 
-  let displayPlayerName, team;
-  if (pos === 'GK') {
+  let displayPlayerName;
+  ptsLabel.style.display = "block"; // Get club for outfield player
+
+  if(pos === 'GK') { // If it's a GK, val is already the club name
     team = val;
-    displayPlayerName = clubAbbr[val] || val.substring(0,3).toUpperCase();
+    displayPlayerName = clubAbbr[val] || val.substring(0,3).toUpperCase(); // For GK, show club abbr
   } else {
-    team = playerToClub[val];
+    displayPlayerName = val; // Show player name for outfield player
+  }
+
+  let team = playerToClub[val]; // Get club for outfield player
+
+  if (pos === 'GK') { // If it's a GK, val is already the club name
+    team = val;
+    displayPlayerName = clubAbbr[val] || val.substring(0,3).toUpperCase(); // For GK, show club abbr
+  } else {
     displayPlayerName = val; // Show player name for outfield player
   }
   
   nameLabel.innerText = displayPlayerName;
-  nameLabel.style.display = "block";
   shirt.style.background = colors[team] || "linear-gradient(#2563eb,#1d4ed8)";
 
   // Show points if they exist in the current display buffer
@@ -2071,19 +2090,7 @@ const loadSelectedGameweekHistory = async () => {
       getDoc(doc(db, `users/${currentUser.uid}/myxi`, "betBuilder")),
       getDoc(doc(db, `users/${currentUser.uid}/stats`, "points"))
     ]);
-    if (teamSnap.exists()) {
-      teamData = teamSnap.data();
-    } else {
-      // Sourcing data from server history (e.g. GW37) if live is blank
-      const q = query(collection(db, `users/${currentUser.uid}/history`), orderBy("gw", "desc"), limit(1));
-      const histSnap = await getDocs(q);
-      if (!histSnap.empty) {
-        teamData = histSnap.docs[0].data().team;
-        if (teamData && teamData.teamName && !document.getElementById('teamNameInput').value) {
-          document.getElementById('teamNameInput').value = teamData.teamName;
-        }
-      }
-    }
+    if (teamSnap.exists()) teamData = teamSnap.data();
     if (picksSnap.exists()) picksData = picksSnap.data();
     if (betSnap.exists()) betData = betSnap.data();
     if (statsSnap.exists()) {
@@ -2108,11 +2115,7 @@ const loadSelectedGameweekHistory = async () => {
   
   pointsContainer.style.display = 'grid';
   if (isLiveAndOpen) {
-    // Live gameweek in open state - reset points display to 0
-    document.getElementById('pts-selection').innerText = '0';
-    document.getElementById('pts-picks').innerText = '0';
-    document.getElementById('pts-bet').innerText = '0';
-    document.getElementById('pts-total').innerText = '0';
+    // Live gameweek in open state - show zero/placeholder since they are editable
   } else {    
     // If locked but not yet processed by admin, show 0
     if (!isHistory && gameweekStatus === 'locked' && statsData.totalPts === 0) {
@@ -2131,30 +2134,36 @@ const loadSelectedGameweekHistory = async () => {
 
   const weeklyPanel = document.querySelector('.weekly-panel');
   const betPanel = document.querySelector('.bet-builder-panel');
-  betPanel.classList.remove('bet-correct', 'bet-incorrect');
+  
+  // Reset all visual states
+  weeklyPanel.classList.remove('weekly-correct', 'weekly-incorrect', 'panel-saved');
+  betPanel.classList.remove('bet-correct', 'bet-incorrect', 'panel-saved');
 
   document.getElementById('firstScorer').value = picksData ? picksData.first || "Select" : "Select";
   document.getElementById('goalMinute').value = picksData ? picksData.minute || "Select" : "Select";
 
-  if (picksData && picksData.first && picksData.minute && picksData.first !== "Select" && picksData.minute !== "Select") {
+  if (!isHistory && picksData?.first !== "Select" && picksData?.minute !== "Select") {
     weeklyPanel.classList.add('panel-saved');
-  } else {
-    weeklyPanel.classList.remove('panel-saved');
   }
 
   if (betData && betData.choice) {
     setBetChoice(betData.choice);
-    betPanel.classList.add('panel-saved');
-    if (isHistory) {
-      if (statsData.betPts > 0) betPanel.classList.add('bet-correct');
-      else if (statsData.betPts < 0) betPanel.classList.add('bet-incorrect');
-    }
+    if (!isHistory) betPanel.classList.add('panel-saved');
   } else {
     currentBetChoice = null;
     document.getElementById('btnYes').classList.remove('selected');
     document.getElementById('btnNo').classList.remove('selected');
     document.getElementById('betInfo').innerText = "Pick if the bet lands. Cost: 5 pts to play.";
-    betPanel.classList.remove('panel-saved');
+  }
+
+  if (isHistory) {
+    // Color coding for Bet Builder
+    if (statsData.betPts > 0) betPanel.classList.add('bet-correct');
+    else if (statsData.betPts < 0) betPanel.classList.add('bet-incorrect');
+
+    // Color coding for Weekly Picks
+    if (statsData.picksPts > 0) weeklyPanel.classList.add('weekly-correct');
+    else if (picksData && picksData.first !== "Select") weeklyPanel.classList.add('weekly-incorrect');
   }
 
   if (teamData) {
