@@ -108,6 +108,14 @@
       <button onclick="clearMatchStats()" style="background: #3b82f6;">Clear Match Stats (Checkboxes & Numbers)</button>
     </div>
 
+    <div class="admin-section" style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; border: 1px solid #c7ff38;">
+      <p style="margin-top: 0; font-weight: bold; color: #c7ff38;">User Management</p>
+      <label>User UID:</label> <input type="text" id="admin-user-uid" style="width: 250px; margin-right: 10px;">
+      <label>New Team Name:</label> <input type="text" id="admin-new-teamname" style="width: 200px; margin-right: 10px;">
+      <button onclick="adminUpdateTeamName()" style="margin-top: 0; padding: 8px 20px; width: auto;">Update Team Name</button>
+      <p style="font-size: 11px; color: #9ca3af; margin-top: 5px;">Use this to override a user's locked team name.</p>
+    </div>
+
     <div class="admin-section">
       <h2>Processing History</h2>
       <div id="history-list">
@@ -661,6 +669,28 @@
       document.getElementById('winning-club').value = 'none';
       document.getElementById('winning-minute').value = '';
       alert("Form cleared.");
+    };
+
+    window.adminUpdateTeamName = async function() {
+      const uid = document.getElementById('admin-user-uid').value.trim();
+      const newName = document.getElementById('admin-new-teamname').value.trim();
+      if (!uid || !newName) {
+        alert("Please provide both the User UID and the New Team Name.");
+        return;
+      }
+      if (!confirm(`Are you sure you want to change the team name for user ${uid} to "${newName}"?`)) return;
+      
+      try {
+        const batch = writeBatch(db);
+        batch.update(doc(db, "users", uid, "myxi", "team"), { teamName: newName });
+        batch.update(doc(db, "leaderboard", uid), { teamName: newName });
+        
+        await batch.commit();
+        alert("Team Name updated successfully in both user profile and leaderboard.");
+      } catch (e) {
+        console.error(e);
+        alert("Error updating team name. Ensure the UID is correct.");
+      }
     };
   </script>
 </body>

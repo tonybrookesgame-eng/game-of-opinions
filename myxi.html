@@ -238,6 +238,14 @@ p {
   box-shadow: 0 0 20px rgba(199, 255, 56, 0.3) !important;
   transition: all 0.3s ease;
 }
+.bet-correct {
+  border-color: #4ade80 !important;
+  box-shadow: 0 0 20px rgba(74, 222, 128, 0.4) !important;
+}
+.bet-incorrect {
+  border-color: #f87171 !important;
+  box-shadow: 0 0 20px rgba(248, 113, 113, 0.4) !important;
+}
 .weekly-panel button, .bet-builder-panel button.save-btn, .fixtures-panel button {
   margin-top: 20px;
 }
@@ -1397,9 +1405,6 @@ MOBILE
             <span id="pts-total" style="color: #c7ff38; font-weight: 900;">0</span>
           </div>
         </div>
-        <div id="live-team-only-message" style="display: none; padding: 15px; background: rgba(199,255,56,0.08); border-radius: 8px; text-align: center; color: #c7ff38; font-weight: bold; border: 1px solid rgba(199,255,56,0.2);">
-          Gameweek Live — Editable
-        </div>
       </div>
   </div>
 </div>
@@ -2095,17 +2100,11 @@ const loadSelectedGameweekHistory = async () => {
   
   const isLiveAndOpen = !isHistory && gameweekStatus === 'open';
   const pointsContainer = document.getElementById('points-display-container');
-  const liveMessage = document.getElementById('live-team-only-message');
   
+  pointsContainer.style.display = 'grid';
   if (isLiveAndOpen) {
-    // Live gameweek in open state - hide all points, show message
-    pointsContainer.style.display = 'none';
-    liveMessage.style.display = 'block';
-  } else {
-    // Show points (either processing gameweek or history view)
-    pointsContainer.style.display = 'grid';
-    liveMessage.style.display = 'none';
-    
+    // Live gameweek in open state - show zero/placeholder since they are editable
+  } else {    
     // If locked but not yet processed by admin, show 0
     if (!isHistory && gameweekStatus === 'locked' && statsData.totalPts === 0) {
       document.getElementById('pts-selection').innerText = '0';
@@ -2123,6 +2122,7 @@ const loadSelectedGameweekHistory = async () => {
 
   const weeklyPanel = document.querySelector('.weekly-panel');
   const betPanel = document.querySelector('.bet-builder-panel');
+  betPanel.classList.remove('bet-correct', 'bet-incorrect');
 
   document.getElementById('firstScorer').value = picksData ? picksData.first || "Select" : "Select";
   document.getElementById('goalMinute').value = picksData ? picksData.minute || "Select" : "Select";
@@ -2136,6 +2136,10 @@ const loadSelectedGameweekHistory = async () => {
   if (betData && betData.choice) {
     setBetChoice(betData.choice);
     betPanel.classList.add('panel-saved');
+    if (isHistory) {
+      if (statsData.betPts > 0) betPanel.classList.add('bet-correct');
+      else if (statsData.betPts < 0) betPanel.classList.add('bet-incorrect');
+    }
   } else {
     currentBetChoice = null;
     document.getElementById('btnYes').classList.remove('selected');
@@ -2166,7 +2170,8 @@ const loadSelectedGameweekHistory = async () => {
 
   // 4. Toggle Editability
   const isLocked = gameweekStatus === 'locked' || isHistory;
-  document.getElementById('teamNameInput').disabled = isHistory || (teamData && teamData.teamName);
+  // Team name is constant once set, unless changed by admin
+  document.getElementById('teamNameInput').disabled = !!(teamData && teamData.teamName);
   document.getElementById('formationSelect').disabled = isLocked;
   document.querySelectorAll('.pitch select').forEach(s => s.disabled = isLocked);
   document.getElementById('firstScorer').disabled = isLocked;
@@ -2177,7 +2182,6 @@ const loadSelectedGameweekHistory = async () => {
   document.getElementById('saveWeeklyBtn').disabled = isLocked;
   document.getElementById('saveBetBuilderBtn').disabled = isLocked;
   const isLockedForEditing = gameweekStatus === 'locked' || isHistory; // Cannot edit if history or if live and locked
-  document.getElementById('teamNameInput').disabled = isHistory || (gameweekStatus === 'locked' && teamData && teamData.teamName); // Allow editing team name if live and not yet set
   document.getElementById('formationSelect').disabled = isLockedForEditing;
   document.querySelectorAll('.pitch select').forEach(s => s.disabled = isLockedForEditing);
   document.getElementById('firstScorer').disabled = isLockedForEditing;
@@ -2193,7 +2197,7 @@ window.loadSelectedGameweekHistory = loadSelectedGameweekHistory; // Make it glo
 let currentUser = null;
 const setBetChoice = function(choice) {
   currentBetChoice = choice;
-  document.querySelector('.bet-builder-panel').classList.remove('panel-saved');
+  document.querySelector('.bet-builder-panel').classList.remove('panel-saved', 'bet-correct', 'bet-incorrect');
   document.getElementById('btnYes').classList.remove('selected');
   document.getElementById('btnNo').classList.remove('selected');
   
@@ -2554,6 +2558,20 @@ const checkOnboarding = () => {
 // Run onboarding check after a short delay
 setTimeout(checkOnboarding, 800);
 
+loadFixtures();
+</script>
+
+<!-- FOOTER -->
+<!-- MOBILE NAV -->
+<div class="mobile-nav">
+  <a href="index.html">🏠<br>Home</a>
+  <a href="myxi.html">⚽<br>Team</a>
+  <a href="season.html">🏆<br>Picks</a>
+  <a href="league.html">📊<br>League</a>
+</div>
+
+</body>
+</html>
 loadFixtures();
 </script>
 
