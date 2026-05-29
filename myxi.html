@@ -2128,6 +2128,7 @@ const loadSelectedGameweekHistory = async () => {
       getDoc(doc(db, `users/${currentUser.uid}/stats`, "points"))
     ]);
     if (teamSnap.exists()) teamData = teamSnap.data();
+    // IMPORTANT: Only load picks and bet if they exist - don't persist them across gameweeks
     if (picksSnap.exists()) picksData = picksSnap.data();
     if (betSnap.exists()) betData = betSnap.data();
     if (statsSnap.exists()) {
@@ -2139,6 +2140,15 @@ const loadSelectedGameweekHistory = async () => {
         totalPts: d.totalPts || 0
       };
     }
+    
+    // PERSISTENCE: If no current team data, load from most recent archive (previous gameweek)
+    if (!teamData && allGameweekHistory.length > 0) {
+      const mostRecentArchive = allGameweekHistory[0]; // First item is most recent (ordered by desc)
+      if (mostRecentArchive && mostRecentArchive.team) {
+        teamData = mostRecentArchive.team;
+        console.log(`No current team found. Loading previous gameweek team from GW${mostRecentArchive.gw}`);
+      }
+    }
   }
 
   // 3. Load Team Data First to Preserve Team Name
@@ -2146,25 +2156,39 @@ const loadSelectedGameweekHistory = async () => {
   if (teamData) {
     persistedTeamName = teamData.teamName || "";
     document.getElementById('teamNameInput').value = persistedTeamName;
-    document.getElementById('formationSelect').value = teamData.formation || "4-4-2";
-    changeFormation(); // Renders the slots
+    const selectedFormation = teamData.formation || "4-4-2";
+    document.getElementById('formationSelect').value = selectedFormation;
+    changeFormation(); // Renders the slots and populates players
     
-    // Verify we have the correct number of player slots for this formation
-    const selects = document.querySelectorAll('.pitch .player select');
-    console.log(`Formation: ${teamData.formation || "4-4-2"}, Player slots created: ${selects.length}, Players to load: ${teamData.players ? teamData.players.length : 0}`);
-    
-    if (teamData.players && teamData.players.length > 0) {
-      // Ensure we load exactly as many players as there are slots
-      for (let i = 0; i < selects.length && i < teamData.players.length; i++) {
-        if (teamData.players[i] && teamData.players[i] !== "Select") {
-          selects[i].value = teamData.players[i];
-          updateShirt(selects[i]);
+    // Load players after DOM has settled - use a delay to ensure options are populated
+    setTimeout(() => {
+      const selects = document.querySelectorAll('.pitch .player select');
+      console.log(`Loading team for ${selectedFormation}. Slots: ${selects.length}, Players in data: ${teamData.players ? teamData.players.length : 0}`);
+      console.log('Players array:', teamData.players);
+      
+      if (teamData.players && teamData.players.length > 0) {
+        // Load exactly as many players as there are slots for this formation
+        let loadedCount = 0;
+        for (let i = 0; i < selects.length && i < teamData.players.length; i++) {
+          const playerValue = teamData.players[i];
+          if (playerValue && playerValue !== "Select") {
+            selects[i].value = playerValue;
+            updateShirt(selects[i]);
+            loadedCount++;
+            console.log(`Slot ${i}: Set to ${playerValue}`);
+          } else {
+            console.log(`Slot ${i}: Skipped (value: "${playerValue}")`);
+          }
         }
+        console.log(`✓ Loaded ${loadedCount} players for ${selectedFormation} formation`);
+      } else {
+        console.log('⚠ No players in teamData.players array');
       }
-      console.log(`Loaded ${Math.min(selects.length, teamData.players.length)} players for ${teamData.formation || "4-4-2"} formation`);
-    }
+      refreshDropdowns(); // Refresh duplicate prevention
+    }, 100); // Increased delay to ensure DOM is fully ready
   } else {
     // Default reset if no team data
+    console.log('⚠ No team data found');
     document.getElementById('teamNameInput').value = "";
     document.getElementById('formationSelect').value = "4-4-2";
     changeFormation();
