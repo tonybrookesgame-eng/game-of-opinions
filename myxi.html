@@ -751,54 +751,65 @@ ROWS + PLAYERS
 }
 
 .shirt{
-
-
-  width:50px;
-
-  height:50px;
-
-  margin:auto;
-
-  border-radius:14px;
-
-  background:linear-gradient(#2563eb,#1d4ed8);
-
+  width: 48px;
+  height: 48px;
+  margin: auto;
+  border-radius: 8px 8px 4px 4px;
+  background: linear-gradient(#2563eb, #1d4ed8);
   position: relative;
-
+  /* Generic fabric lighting effect */
+  box-shadow: 
+    inset 0 2px 4px rgba(255,255,255,0.3), 
+    inset 0 -3px 6px rgba(0,0,0,0.3),
+    0 4px 12px rgba(0,0,0,0.4);
 }
 
-.shirt::before,
-
+/* V-Neck Collar */
 .shirt::after {
-
   content: "";
-
   position: absolute;
-
-  width: 10px;
-
-  height: 12px;
-
-  background: inherit;
-
-  top: 6px;
-
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 8px;
+  background: rgba(0,0,0,0.2);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  z-index: 2;
 }
 
+/* Realistic Sleeves */
 .shirt::before {
-
-  left: -9px;
-
-  border-radius: 4px 0 0 4px;
-
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: -12px;
+  width: 72px; /* Wraps around both sides */
+  height: 18px;
+  background: inherit;
+  z-index: -1;
+  /* Creates the T-shirt shoulder look */
+  clip-path: polygon(0 40%, 15% 0, 85% 0, 100% 40%, 85% 100%, 15% 100%);
 }
 
-.shirt::after {
-
-  right: -9px;
-
-  border-radius: 0 4px 4px 0;
-
+/* Minimalist Badge Shield */
+.shirt-badge {
+  position: absolute;
+  top: 12px;
+  right: 10px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.2);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 7px;
+  font-weight: 900;
+  color: rgba(0,0,0,0.6);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
 .shirt-name {
@@ -1791,13 +1802,13 @@ function loadCurrentBet() {
 }
 
 const colors = {
-  "Arsenal": "linear-gradient(#ef4444, #991b1b)",
+  "Arsenal": "linear-gradient(to bottom, #ef4444 0%, #ef4444 100%)", // Body red, CSS logic handles sleeves
   "Aston Villa": "linear-gradient(#94bee5, #670e36)",
   "Bournemouth": "linear-gradient(#da291c, #000000)",
-  "Brentford": "linear-gradient(#e30613, #ffffff)",
+  "Brentford": "repeating-linear-gradient(90deg, #e30613, #e30613 8px, #ffffff 8px, #ffffff 16px)",
   "Brighton": "linear-gradient(#0057b8, #ffffff)",
   "Chelsea": "linear-gradient(#034694, #002d72)",
-  "Crystal Palace": "linear-gradient(#1b458f, #c4122e)",
+  "Crystal Palace": "linear-gradient(90deg, #1b458f 50%, #c4122e 50%)",
   "Everton": "linear-gradient(#003399, #002060)",
   "Fulham": "linear-gradient(#ffffff, #000000)",
   "Ipswich": "linear-gradient(#0055a5, #ffffff)",
@@ -1805,13 +1816,37 @@ const colors = {
   "Liverpool": "linear-gradient(#c8102e, #8d0514)",
   "Man City": "linear-gradient(#6cabdd, #1c2c5b)",
   "Man Utd": "linear-gradient(#da291c, #000000)",
-  "Newcastle": "linear-gradient(#241f20, #ffffff)",
+  "Newcastle": "repeating-linear-gradient(90deg, #000, #000 8px, #fff 8px, #fff 16px)",
   "Nott'm Forest": "linear-gradient(#dd0000, #ffffff)",
   "Southampton": "linear-gradient(#d71920, #ffffff)",
   "Spurs": "linear-gradient(#ffffff, #132257)",
   "West Ham": "linear-gradient(#7a263a, #1bb1e7)",
   "Wolves": "linear-gradient(#fdb913, #231f20)"
 };
+
+const secondaryColors = {
+  "Arsenal": "#ffffff",
+  "Aston Villa": "#94bee5",
+  "Bournemouth": "#000000",
+  "Brentford": "#e30613",
+  "Brighton": "#ffffff",
+  "Chelsea": "#ffffff",
+  "Crystal Palace": "#1b458f",
+  "Everton": "#ffffff",
+  "Fulham": "#000000",
+  "Ipswich": "#ffffff",
+  "Leicester": "#ffffff",
+  "Liverpool": "#00a398",
+  "Man City": "#ffffff",
+  "Man Utd": "#fbe122",
+  "Newcastle": "#ffffff",
+  "Nott'm Forest": "#ffffff",
+  "Southampton": "#000000",
+  "Spurs": "#132257",
+  "West Ham": "#1bb1e7",
+  "Wolves": "#231f20"
+};
+
 window.currentDisplayedPlayerScores = {}; // Global variable for currently displayed player scores
 const updateShirt = function(select) {
   const shirt = select.parentElement.querySelector('.shirt');
@@ -1859,7 +1894,9 @@ const updateShirt = function(select) {
   const hasPoints = points !== undefined;
 
   ptsLabel.innerText = (hasPoints ? points : 0) + " PTS";
-  ptsLabel.style.display = (selectedGw || gameweekStatus === 'locked') ? "block" : "none";
+  // Show points in history view or when gameweek is locked
+  const isHistoryView = selectedGw !== "";
+  ptsLabel.style.display = (isHistoryView || gameweekStatus === 'locked') ? "block" : "none";
 
   refreshDropdowns();
 }
@@ -2104,7 +2141,36 @@ const loadSelectedGameweekHistory = async () => {
     }
   }
 
-  // 3. Update UI
+  // 3. Load Team Data First to Preserve Team Name
+  let persistedTeamName = "";
+  if (teamData) {
+    persistedTeamName = teamData.teamName || "";
+    document.getElementById('teamNameInput').value = persistedTeamName;
+    document.getElementById('formationSelect').value = teamData.formation || "4-4-2";
+    changeFormation(); // Renders the slots
+    
+    // Verify we have the correct number of player slots for this formation
+    const selects = document.querySelectorAll('.pitch .player select');
+    console.log(`Formation: ${teamData.formation || "4-4-2"}, Player slots created: ${selects.length}, Players to load: ${teamData.players ? teamData.players.length : 0}`);
+    
+    if (teamData.players && teamData.players.length > 0) {
+      // Ensure we load exactly as many players as there are slots
+      for (let i = 0; i < selects.length && i < teamData.players.length; i++) {
+        if (teamData.players[i] && teamData.players[i] !== "Select") {
+          selects[i].value = teamData.players[i];
+          updateShirt(selects[i]);
+        }
+      }
+      console.log(`Loaded ${Math.min(selects.length, teamData.players.length)} players for ${teamData.formation || "4-4-2"} formation`);
+    }
+  } else {
+    // Default reset if no team data
+    document.getElementById('teamNameInput').value = "";
+    document.getElementById('formationSelect').value = "4-4-2";
+    changeFormation();
+  }
+
+  // 4. Update UI - Points Display
   // Conditional Points Display Logic:
   // - If Live gameweek (not history) AND gameweek is OPEN → Hide points, show "Gameweek Live"
   // - If Live gameweek AND gameweek is LOCKED → Show 0 (no points earned until admin processes)
@@ -2132,6 +2198,7 @@ const loadSelectedGameweekHistory = async () => {
     }
   }
 
+  // 5. Update Weekly Picks Panel - Always show selections in historic view
   const weeklyPanel = document.querySelector('.weekly-panel');
   const betPanel = document.querySelector('.bet-builder-panel');
   
@@ -2144,11 +2211,20 @@ const loadSelectedGameweekHistory = async () => {
 
   if (!isHistory && picksData?.first !== "Select" && picksData?.minute !== "Select") {
     weeklyPanel.classList.add('panel-saved');
+  } else if (isHistory && picksData?.first && picksData?.first !== "Select") {
+    // In history view, show that picks were made by highlighting
+    weeklyPanel.classList.add('panel-saved');
   }
 
+  // 6. Update Bet Builder Panel - Always show selection in historic view
   if (betData && betData.choice) {
     setBetChoice(betData.choice);
-    if (!isHistory) betPanel.classList.add('panel-saved');
+    if (!isHistory) {
+      betPanel.classList.add('panel-saved');
+    } else {
+      // In history view, show that bet was made by highlighting
+      betPanel.classList.add('panel-saved');
+    }
   } else {
     currentBetChoice = null;
     document.getElementById('btnYes').classList.remove('selected');
@@ -2156,6 +2232,7 @@ const loadSelectedGameweekHistory = async () => {
     document.getElementById('betInfo').innerText = "Pick if the bet lands. Cost: 5 pts to play.";
   }
 
+  // 7. Apply color coding for historic results
   if (isHistory) {
     // Color coding for Bet Builder
     if (statsData.betPts > 0) betPanel.classList.add('bet-correct');
@@ -2166,30 +2243,10 @@ const loadSelectedGameweekHistory = async () => {
     else if (picksData && picksData.first !== "Select") weeklyPanel.classList.add('weekly-incorrect');
   }
 
-  if (teamData) {
-    document.getElementById('teamNameInput').value = teamData.teamName || "";
-    document.getElementById('formationSelect').value = teamData.formation || "4-4-2";
-    changeFormation(); // Renders the slots
-    const selects = document.querySelectorAll('.pitch .player select');
-    if (teamData.players && teamData.players.length > 0) {
-      selects.forEach((s, i) => {
-        if (teamData.players[i]) {
-          s.value = teamData.players[i];
-          updateShirt(s);
-        }
-      });
-    }
-  } else {
-    // Default reset if no team data
-    document.getElementById('teamNameInput').value = "";
-    document.getElementById('formationSelect').value = "4-4-2";
-    changeFormation();
-  }
-
-  // 4. Toggle Editability
+  // 8. Toggle Editability
   const isLocked = gameweekStatus === 'locked' || isHistory;
-  // Team name is constant once set, unless changed by admin
-  document.getElementById('teamNameInput').disabled = !!(teamData && teamData.teamName);
+  // Team name is constant once set, unless changed by admin - always disable if a name has been saved
+  document.getElementById('teamNameInput').disabled = !!persistedTeamName;
   document.getElementById('formationSelect').disabled = isLocked;
   document.querySelectorAll('.pitch select').forEach(s => s.disabled = isLocked);
   document.getElementById('firstScorer').disabled = isLocked;
