@@ -2375,7 +2375,7 @@ const auth = getAuth(app);
 
 let gameweekStatus = 'open'; // Default to open
 
-// Listener for gameweek settings (status and deadline) with auto-lock/unlock
+// Listener for gameweek settings (status and deadline) with dynamic auto-lock/unlock
 const gameweekSettingsRef = doc(db, "settings", "gameweek");
 onSnapshot(gameweekSettingsRef, async (docSnap) => {
     if (docSnap.exists()) {
@@ -2384,32 +2384,17 @@ onSnapshot(gameweekSettingsRef, async (docSnap) => {
         const deadlineDate = settings.deadline ? new Date(settings.deadline) : null;
         const reopenDate = settings.reopenTime ? new Date(settings.reopenTime) : null;
         
-        let storedStatus = settings.status || 'open';
-        let effectiveStatus = storedStatus;
-        let statusNeedsUpdate = false;
-        
-        // AUTO-LOCK: If we're past the deadline and status is still 'open', lock it
-        if (deadlineDate && now >= deadlineDate && storedStatus === 'open') {
+        // DYNAMIC STATUS: Calculate based on current time vs deadline/reopen times
+        // If time is between deadline and reopenTime → LOCKED
+        // Otherwise → OPEN
+        let effectiveStatus = 'open';
+        if (deadlineDate && reopenDate && now >= deadlineDate && now < reopenDate) {
             effectiveStatus = 'locked';
-            statusNeedsUpdate = true;
+        } else if (deadlineDate && !reopenDate && now >= deadlineDate) {
+            // If only deadline is set and we're past it, lock it
+            effectiveStatus = 'locked';
         }
-        
-        // AUTO-UNLOCK: If we're past the reopen time and status is 'locked', unlock it
-        if (reopenDate && now >= reopenDate && storedStatus === 'locked') {
-            effectiveStatus = 'open';
-            statusNeedsUpdate = true;
-        }
-        
-        // Update Firebase if status changed
-        if (statusNeedsUpdate && currentUser) {
-            try {
-                await updateDoc(gameweekSettingsRef, { status: effectiveStatus });
-                console.log(`Gameweek status auto-updated to: ${effectiveStatus}`);
-            } catch (e) {
-                console.error('Error updating gameweek status:', e);
-            }
-        }
-        
+
         gameweekStatus = effectiveStatus;
         let isLocked = (gameweekStatus === 'locked');
 
