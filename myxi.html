@@ -1902,6 +1902,67 @@ const updateShirt = function(select) {
 }
 window.updateShirt = updateShirt;
 
+const calculateAndSaveDeadlines = async () => {
+  const fixtures = [
+    { date: "Sunday 24th May", games: [
+      { home: "Brighton", away: "Man Utd", time: "16:00" },
+      { home: "Burnley", away: "Wolves", time: "16:00" },
+      { home: "Crystal Palace", away: "Arsenal", time: "16:00" },
+      { home: "Fulham", away: "Newcastle", time: "16:00" },
+      { home: "Liverpool", away: "Brentford", time: "16:00" },
+      { home: "Man City", away: "Aston Villa", time: "16:00" },
+      { home: "Forest", away: "Bournemouth", time: "16:00" },
+      { home: "Sunderland", away: "Chelsea", time: "16:00" },
+      { home: "Tottenham", away: "Everton", time: "16:00" },
+      { home: "West Ham", away: "Leeds", time: "16:00" }
+    ]}
+  ];
+
+  // Extract all fixtures and times
+  let allTimes = [];
+  fixtures.forEach(day => {
+    day.games.forEach(g => {
+      const [hours, minutes] = g.time.split(':').map(Number);
+      // Parse the date from the day.date string (e.g., "Sunday 24th May")
+      const dateMatch = day.date.match(/(\d+)(?:st|nd|rd|th)\s+(\w+)/);
+      if (dateMatch) {
+        const dayOfMonth = parseInt(dateMatch[1]);
+        const monthName = dateMatch[2];
+        // Current year context (2026 based on the session context)
+        const date = new Date(2026, new Date(Date.parse(monthName + " 1")).getMonth(), dayOfMonth, hours, minutes);
+        allTimes.push(date);
+      }
+    });
+  });
+
+  if (allTimes.length === 0) return;
+
+  // Find earliest and latest kick-off times
+  const firstKickOff = new Date(Math.min(...allTimes));
+  const lastKickOff = new Date(Math.max(...allTimes));
+
+  // Deadline: 2 hours before the first kick-off
+  const deadline = new Date(firstKickOff);
+  deadline.setHours(deadline.getHours() - 2);
+
+  // Reopen: 1am on 2 days after the final fixture
+  const reopenTime = new Date(lastKickOff);
+  reopenTime.setDate(reopenTime.getDate() + 2);
+  reopenTime.setHours(1, 0, 0, 0);
+
+  // Save to Firebase
+  try {
+    await updateDoc(doc(db, "settings", "gameweek"), {
+      deadline: deadline.toISOString(),
+      reopenTime: reopenTime.toISOString()
+    });
+    console.log(`✓ Deadline set to: ${deadline.toLocaleString('en-GB')}`);
+    console.log(`✓ Gameweek will reopen at: ${reopenTime.toLocaleString('en-GB')}`);
+  } catch (error) {
+    console.error('Error saving deadlines:', error);
+  }
+};
+
 const loadFixtures = () => {
   const list = document.getElementById('fixtures-list');
   const modalList = document.getElementById('modal-fixtures-list');
@@ -2647,7 +2708,43 @@ const checkOnboarding = () => {
 // Run onboarding check after a short delay
 setTimeout(checkOnboarding, 800);
 
-loadFixtures();
+// Load fixtures but don't calculate deadlines yet (will be done after user authenticates)
+const fixtures = [
+  { date: "Sunday 24th May", games: [
+    { home: "Brighton", away: "Man Utd", time: "16:00" },
+    { home: "Burnley", away: "Wolves", time: "16:00" },
+    { home: "Crystal Palace", away: "Arsenal", time: "16:00" },
+    { home: "Fulham", away: "Newcastle", time: "16:00" },
+    { home: "Liverpool", away: "Brentford", time: "16:00" },
+    { home: "Man City", away: "Aston Villa", time: "16:00" },
+    { home: "Forest", away: "Bournemouth", time: "16:00" },
+    { home: "Sunderland", away: "Chelsea", time: "16:00" },
+    { home: "Tottenham", away: "Everton", time: "16:00" },
+    { home: "West Ham", away: "Leeds", time: "16:00" }
+  ]}
+];
+
+// Populate fixtures UI without triggering deadline calculation yet
+const list = document.getElementById('fixtures-list');
+const modalList = document.getElementById('modal-fixtures-list');
+if (list) list.innerHTML = '';
+if (modalList) modalList.innerHTML = '';
+fixtures.forEach(day => {
+  const dateHeader = `<div class="fixture-date-header">${day.date}</div>`;
+  if (list) list.innerHTML += dateHeader;
+  if (modalList) modalList.innerHTML += dateHeader;
+  day.games.forEach(g => {
+    const gameHtml = `
+      <div class="fixture-item">
+        <div class="fixture-team" style="text-align:right;">${g.home}</div>
+        <div class="fixture-time">${g.time}</div>
+        <div class="fixture-team" style="text-align:left;">${g.away}</div>
+      </div>
+    `;
+    if (list) list.innerHTML += gameHtml;
+    if (modalList) modalList.innerHTML += gameHtml;
+  });
+});
 </script>
 
 <!-- FOOTER -->

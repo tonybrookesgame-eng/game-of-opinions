@@ -53,7 +53,8 @@
       </div>
       <label>Next Deadline:</label>
       <input type="datetime-local" id="deadline-input" style="width: 220px; background: #fff; color: #000; margin: 0 10px;">
-      <button onclick="setDeadline()" style="margin-top: 0; padding: 8px 20px; width: auto;">Set Deadline</button>
+      <button onclick="autoCalculateDeadlines()" style="margin-top: 0; padding: 8px 20px; width: auto; background: #8b5cf6; margin-left: 10px;">Auto-Calculate from Fixtures</button>
+      <button onclick="setDeadline()" style="margin-top: 0; padding: 8px 20px; width: auto;">Save Settings</button>
     </div>
     <div class="admin-section" style="background: rgba(59, 130, 246, 0.05); border: 1px solid #3b82f6; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
       <label>Selections Re-open At:</label>
@@ -315,33 +316,113 @@
       const snap = await getDoc(doc(db, "settings", "gameweek"));
       if (snap.exists()) {
         const data = snap.data();
-        document.getElementById('deadline-input').value = data.deadline || "";
-        document.getElementById('reopen-input').value = data.reopenTime || "";
+        
+        // Format ISO strings to datetime-local format (YYYY-MM-DDTHH:mm)
+        if (data.deadline) {
+          const deadlineDate = new Date(data.deadline);
+          document.getElementById('deadline-input').value = deadlineDate.toISOString().slice(0, 16);
+        }
+        if (data.reopenTime) {
+          const reopenDate = new Date(data.reopenTime);
+          document.getElementById('reopen-input').value = reopenDate.toISOString().slice(0, 16);
+        }
+        
         document.getElementById('status-select').value = data.status || "open";
         if (data.odds) document.getElementById('bet-odds').value = data.odds;
       }
     }
 
-    window.setDeadline = async function() {
-      const deadline = document.getElementById('deadline-input').value;
-      const reopenTime = document.getElementById('reopen-input').value;
-      const status = document.getElementById('status-select').value;
-      const odds = document.getElementById('bet-odds').value;
-      if (!deadline) {
-        alert("Please select a date and time.");
+    window.autoCalculateDeadlines = async function() {
+      const fixtures = [
+        { date: "Sunday 24th May", games: [
+          { home: "Brighton", away: "Man Utd", time: "16:00" },
+          { home: "Burnley", away: "Wolves", time: "16:00" },
+          { home: "Crystal Palace", away: "Arsenal", time: "16:00" },
+          { home: "Fulham", away: "Newcastle", time: "16:00" },
+          { home: "Liverpool", away: "Brentford", time: "16:00" },
+          { home: "Man City", away: "Aston Villa", time: "16:00" },
+          { home: "Forest", away: "Bournemouth", time: "16:00" },
+          { home: "Sunderland", away: "Chelsea", time: "16:00" },
+          { home: "Tottenham", away: "Everton", time: "16:00" },
+          { home: "West Ham", away: "Leeds", time: "16:00" }
+        ]}
+      ];
+
+      // Extract all fixtures and times
+      let allTimes = [];
+      fixtures.forEach(day => {
+        day.games.forEach(g => {
+          const [hours, minutes] = g.time.split(':').map(Number);
+          // Parse the date from the day.date string (e.g., "Sunday 24th May")
+          const dateMatch = day.date.match(/(\d+)(?:st|nd|rd|th)\s+(\w+)/);
+          if (dateMatch) {
+            const dayOfMonth = parseInt(dateMatch[1]);
+            const monthName = dateMatch[2];
+            // Current year context (2026)
+            const date = new Date(2026, new Date(Date.parse(monthName + " 1")).getMonth(), dayOfMonth, hours, minutes);
+            allTimes.push(date);
+          }
+        });
+      });
+
+      if (allTimes.length === 0) {
+        alert("Could not parse fixture times.");
         return;
       }
+
+      // Find earliest and latest kick-off times
+      const firstKickOff = new Date(Math.min(...allTimes));
+      const lastKickOff = new Date(Math.max(...allTimes));
+
+      // Deadline: 2 hours before the first kick-off
+      const deadline = new Date(firstKickOff);
+      deadline.setHours(deadline.getHours() - 2);
+
+      // Reopen: 1am on 2 days after the final fixture
+      const reopenTime = new Date(lastKickOff);
+      reopenTime.setDate(reopenTime.getDate() + 2);
+      reopenTime.setHours(1, 0, 0, 0);
+
+      // Display in input fields (datetime-local format)
+      document.getElementById('deadline-input').value = deadline.toISOString().slice(0, 16);
+      document.getElementById('reopen-input').value = reopenTime.toISOString().slice(0, 16);
+
+      console.log(`✓ Deadline calculated: ${deadline.toLocaleString('en-GB')}`);
+      console.log(`✓ Reopen calculated: ${reopenTime.toLocaleString('en-GB')}`);
+      alert(`✓ Deadline: ${deadline.toLocaleString('en-GB')}\n✓ Reopen: ${reopenTime.toLocaleString('en-GB')}\n\nClick "Save Settings" to confirm.`);
+    };
+
+    window.setDeadline = async function() {
+      const deadlineInput = document.getElementById('deadline-input').value;
+      const reopenInput = document.getElementById('reopen-input').value;
+      const status = document.getElementById('status-select').value;
+      const odds = document.getElementById('bet-odds').value;
+      
+      if (!deadlineInput) {
+        alert("Please select a deadline date and time.");
+        return;
+      }
+      
       try {
-        await setDoc(doc(db, "settings", "gameweek"), { 
-          deadline: deadline, 
-          reopenTime: reopenTime,
+        // Convert datetime-local to ISO string
+        const deadlineDate = new Date(deadlineInput);
+        const reopenDate = reopenInput ? new Date(reopenInput) : null;
+        
+        const updateData = {
+          deadline: deadlineDate.toISOString(),
           status: status,
           odds: odds
-        }, { merge: true });
-        alert("Settings updated successfully!");
+        };
+        
+        if (reopenDate) {
+          updateData.reopenTime = reopenDate.toISOString();
+        }
+        
+        await setDoc(doc(db, "settings", "gameweek"), updateData, { merge: true });
+        alert(`✓ Settings saved!\n\nDeadline: ${deadlineDate.toLocaleString('en-GB')}\nReopen: ${reopenDate ? reopenDate.toLocaleString('en-GB') : 'Not set'}`);
       } catch (e) {
         console.error(e);
-        alert("Error saving deadline.");
+        alert("Error saving settings.");
       }
     };
 
