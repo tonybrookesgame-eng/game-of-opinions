@@ -2108,12 +2108,13 @@ const loadSelectedGameweekHistory = async () => {
       };
     }
     
-    // PERSISTENCE: If no current team data, load from most recent archive (previous gameweek)
-    if (!teamData && allGameweekHistory.length > 0) {
+    // PERSISTENCE: If there is no playable current team, fall back to the most recent archive
+    const hasPlayableTeam = teamData && Array.isArray(teamData.players) && teamData.players.some(player => player && player !== "Select");
+    if ((!teamData || !hasPlayableTeam) && allGameweekHistory.length > 0) {
       const mostRecentArchive = allGameweekHistory[0]; // First item is most recent (ordered by desc)
       if (mostRecentArchive && mostRecentArchive.team) {
         teamData = mostRecentArchive.team;
-        console.log(`No current team found. Loading previous gameweek team from GW${mostRecentArchive.gw}`);
+        console.log(`No current playable team found. Loading previous gameweek team from GW${mostRecentArchive.gw}`);
       }
     }
   }
@@ -2590,14 +2591,27 @@ window.closeOnboarding = function() {
   localStorage.setItem('onboarding_complete', 'true');
 };
 
+const isMobileViewport = window.matchMedia('(max-width: 768px)').matches;
+
 const checkOnboarding = () => {
-  if (!localStorage.getItem('onboarding_complete')) {
+  if (!isMobileViewport && !localStorage.getItem('onboarding_complete')) {
     window.openTutorial();
   }
 };
 
 // Run onboarding check after a short delay
 setTimeout(checkOnboarding, 800);
+
+const initializeDefaultFormation = () => {
+  const formationSelect = document.getElementById('formationSelect');
+  if (formationSelect) {
+    formationSelect.value = '4-4-2';
+  }
+  if (typeof changeFormation === 'function') {
+    changeFormation();
+  }
+};
+initializeDefaultFormation();
 
 // Populate fixtures UI using the shared fixture source
 const list = document.getElementById('fixtures-list');
