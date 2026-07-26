@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Read the full Game of Opinions rules, scoring system, and weekly deadline structure before you play.">
+  <meta name="theme-color" content="#020611">
   <title>Rules - Game of Opinions</title>
   <style>
     body {
@@ -262,66 +264,47 @@
   </ul>
 
   <h3>The Bet Builder (Risk & Reward)</h3>
-  <p>This is where leagues are won or lost. Every week, a "Game Of Opinions Bet Builder" is presented. You must decide if it will land (YES) or fail (NO).</p>
+  <p>This is where leagues are won or lost. Every week, a "Game Of Opinions Bet Builder" is presented at fixed <strong>16/1 odds</strong>. You must decide if it will land (YES) or fail (NO).</p>
   <ul>
-    <li><strong>The Sacrifice:</strong> It costs <span class="point-tag">5 PTS</span> to play.</li>
-    <li><strong>YES Selection:</strong> You win your <strong>Stake × Odds</strong> if it lands (e.g. 30/1 = <span class="point-tag">150 PTS</span>). If it fails, you lose <span class="point-tag">30 PTS</span>.</li>
-    <li><strong>NO Selection:</strong> You win <span class="point-tag">30 PTS</span> if the bet fails. If the bet lands, you lose the potential profit of the odds (e.g. 30/1 = <span class="point-tag">-150 PTS</span>).</li>
-    <li><em>Note: The 30-point value is calculated as (Stake × 5) + Stake.</em></li>
+    <li><strong>The Stake:</strong> It costs <span class="point-tag">5 PTS</span> to play.</li>
+    <li><strong>YES Selection:</strong> If the bet lands, you win <strong>5 × 16 + 5 = 85 PTS</strong>. If it fails, you lose <strong>5 × 6 + 5 = 35 PTS</strong>.</li>
+    <li><strong>NO Selection:</strong> If the bet fails, you win <strong>35 PTS</strong>. If the bet lands, you lose <strong>85 PTS</strong>.</li>
+    <li><em>Note: This asymmetric payoff structure creates different risk/reward profiles for each choice at 16/1 fixed odds.</em></li>
   </ul>
 
   <div style="overflow-x: auto;">
     <table class="rules-table">
       <thead>
         <tr>
-          <th>Odds</th>
-          <th>YES Win</th>
-          <th>YES Loss</th>
-          <th>NO Win</th>
-          <th>NO Loss</th>
+          <th>Outcome</th>
+          <th>YES Choice</th>
+          <th>NO Choice</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>10/1</td>
-          <td class="win">+50</td>
-          <td class="loss">-30</td>
-          <td class="win">+30</td>
-          <td class="loss">-50</td>
+          <td><strong>Bet Lands</strong></td>
+          <td class="win">+85 PTS</td>
+          <td class="loss">-85 PTS</td>
         </tr>
         <tr>
-          <td>25/1</td>
-          <td class="win">+125</td>
-          <td class="loss">-30</td>
-          <td class="win">+30</td>
-          <td class="loss">-125</td>
-        </tr>
-        <tr>
-          <td>40/1</td>
-          <td class="win">+200</td>
-          <td class="loss">-30</td>
-          <td class="win">+30</td>
-          <td class="loss">-200</td>
+          <td><strong>Bet Fails</strong></td>
+          <td class="loss">-35 PTS</td>
+          <td class="win">+35 PTS</td>
         </tr>
       </tbody>
     </table>
   </div>
 
   <div class="calc-container">
-    <h3 style="margin-top:0; color:#c7ff38;">Points Calculator</h3>
-    <p style="font-size: 14px; margin-bottom: 20px;">Test your own odds scenarios (Based on 5 PT Sacrifice)</p>
+    <h3 style="margin-top:0; color:#c7ff38;">About 16/1 Odds</h3>
+    <p style="font-size: 14px; margin-bottom: 20px;">All bets are set at fixed 16/1 odds. The calculation logic:</p>
     
-    <div class="calc-input-group">
-      <label style="font-weight:800;">ODDS:</label>
-      <input type="number" id="oddsInput" value="30" oninput="runCalc()">
-      <span style="font-weight:800; color:#c7ff38;">/ 1</span>
-    </div>
-
     <div class="calc-grid">
-      <div class="calc-card"><label>YES Lands</label><span id="res-yes-win" class="win">+150</span></div>
-      <div class="calc-card"><label>YES Fails</label><span id="res-yes-loss" class="loss">-30</span></div>
-      <div class="calc-card"><label>NO Fails</label><span id="res-no-win" class="win">+30</span></div>
-      <div class="calc-card"><label>NO Lands</label><span id="res-no-loss" class="loss">-150</span></div>
+      <div class="calc-card"><label>YES Lands</label><span id="res-yes-win" class="win">+85 PTS</span><span style="font-size:11px; color:#c7ff38;">5×16+5</span></div>
+      <div class="calc-card"><label>YES Fails</label><span id="res-yes-loss" class="loss">-35 PTS</span><span style="font-size:11px; color:#c7ff38;">5×6+5</span></div>
+      <div class="calc-card"><label>NO Fails</label><span id="res-no-win" class="win">+35 PTS</span><span style="font-size:11px; color:#c7ff38;">5×6+5</span></div>
+      <div class="calc-card"><label>NO Lands</label><span id="res-no-loss" class="loss">-85 PTS</span><span style="font-size:11px; color:#c7ff38;">5×16+5</span></div>
     </div>
   </div>
 

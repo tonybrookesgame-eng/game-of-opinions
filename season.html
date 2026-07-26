@@ -7,7 +7,8 @@
   <meta charset="UTF-8">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <meta name="description" content="Explore the weekly picks, bet builder, and season-long predictions in Game of Opinions.">
+  <meta name="theme-color" content="#020611">
   <title>Season Picks - Game of Opinions</title>
 
   <style>
@@ -988,10 +989,6 @@ const auth = getAuth(app);
 
 let currentUser = null;
 
-let aiPage = 1;
-let currentScoutKey = 'striker';
-let currentCategory = 'scorer';
-
 onAuthStateChanged(auth, (user) => {
   const userLinks = document.querySelectorAll('.user-only');
   const guestLinks = document.querySelectorAll('.guest-only');
@@ -1019,16 +1016,76 @@ const scoutData = {
     blurb: "Focuses on high-probability outcomes and proven goalscorers. Minimal risk, steady gains.",
     flavor: "Clinical Instinct",
     advice: {
-      winner: ["Winners need a striker who can score 20+. Back the team with the best #9.", "Champions are built on late goals. Who has that 'winning DNA'?"],
-      facup: ["The FA Cup is for legends. Pick the team with the deep bench.", "One-off games are decided by individual brilliance. Look for the big names."],
-      scorer: ["Positioning is everything. Look at the box entries.", "A clinical striker only needs one chance. Ignore the xG, watch the finish."],
-      assists: ["Strikers love playmakers who look up. Who has the most chemistry?", "Target the 'shadow striker' types for assist returns."],
-      cleansheets: ["Defense starts from the front. But even I know Alisson is a wall.", "Clean sheets come from keeping the ball in the other half."],
-      hattrick: ["Haaland is the obvious beast here. He's never satisfied with one.", "Look for the players who stay on for 90 minutes even when 3-0 up."],
-      sacked: ["When the goals dry up, the manager goes. Look for the low-scorers.", "A dressing room that stops scoring has stopped playing for the boss."],
-      redcards: ["Defending against speed makes players desperate. Who is the slowest backline?", "Frustration leads to cards. Look for the teams struggling to hit the target."],
-      relegated: ["Teams that can't score, go down. It's that simple.", "Look for the squads that lack a 10-goal-a-season man; they'll struggle to stay up."],
-      yellows: ["Midfield enforcers are your best bet. Look for the ones who break up play.", "Consistency in tackling leads to cautions."]
+      winner: [
+        { pick: "Man City", reasoning: "Proven title-winning infrastructure. Rodri's midfield control is unmatched." },
+        { pick: "Arsenal", reasoning: "Consistent top-two finisher. Title-level consistency in recent years." },
+        { pick: "Liverpool", reasoning: "Experience and depth. Arne Slot's tactical discipline will deliver." },
+        { pick: "Aston Villa", reasoning: "Champions League exposure builds title-winning mentality." },
+        { pick: "Chelsea", reasoning: "Rebuilding project maturing. Young squad entering peak season." }
+      ],
+      facup: [
+        { pick: "Man City", reasoning: "Squad rotation mastery. Competition depth is their superpower." },
+        { pick: "Liverpool", reasoning: "Cup pedigree remains elite. Strong backup XI." },
+        { pick: "Arsenal", reasoning: "Young, hungry squad. Set-piece threat in knockout football." },
+        { pick: "Manchester Utd", reasoning: "Old Trafford factor. Traditional cup strength." },
+        { pick: "Chelsea", reasoning: "Deep talented squad. Tuchel's cup experience." }
+      ],
+      scorer: [
+        { pick: "Erling Haaland", reasoning: "0.92 xG per 90 is unmatched. Clinical finisher in his prime." },
+        { pick: "Mohamed Salah", reasoning: "Consistent 20-goal seasons. Liverpool's system feeds him chances." },
+        { pick: "Ollie Watkins", reasoning: "25+ goals last season. In-form, reliable poacher." },
+        { pick: "Alexander Isak", reasoning: "Elite conversion rate. Newcastle's focal point." },
+        { pick: "Son Heung-min", reasoning: "Proven high-volume scorer. Spurs' consistent outlet." }
+      ],
+      assists: [
+        { pick: "Kevin De Bruyne", reasoning: "Progressive passing genius. Still league's best creator per 90." },
+        { pick: "Cole Palmer", reasoning: "Chelsea's primary playmaker. Threads through-balls constantly." },
+        { pick: "Bukayo Saka", reasoning: "Creative winger. Arsenal's consistent provider." },
+        { pick: "Pascal Groß", reasoning: "Set-piece and open-play threat. Brighton's midfield hub." },
+        { pick: "James Maddison", reasoning: "Technical quality. Spurs' creative outlet in midfield." }
+      ],
+      cleansheets: [
+        { pick: "Arsenal", reasoning: "High-line mastery. Defensive organization is elite." },
+        { pick: "Man City", reasoning: "Rodri's positioning prevents shots. Best defensive structure." },
+        { pick: "Brighton", reasoning: "De Zerbi's system. Possession-based defense." },
+        { pick: "Aston Villa", reasoning: "Emery's defensive discipline. Champions League experience." },
+        { pick: "Liverpool", reasoning: "Van Dijk's leadership. Alisson's shot-stopping." }
+      ],
+      hattrick: [
+        { pick: "Erling Haaland", reasoning: "High-volume game-time. 40+ shots per season increases hat-trick odds." },
+        { pick: "Mohamed Salah", reasoning: "Completes hat-tricks in big games. Career hat-trick precedent." },
+        { pick: "Ollie Watkins", reasoning: "On-form. High intensity play style lends itself to multiple goals." },
+        { pick: "Son Heung-min", reasoning: "Spurs' penalty taker with high conversion. Completes hat-tricks in thrashings." },
+        { pick: "Alexander Isak", reasoning: "Elite finisher. Newcastle's focal point in attacking play." }
+      ],
+      sacked: [
+        { pick: "David Moyes (West Ham)", reasoning: "History of pressure at mid-table/struggling clubs." },
+        { pick: "Vincent Kompany (Burnley)", reasoning: "Promotion pressure peaks mid-season. Tactical struggles emerge." },
+        { pick: "Gary O'Neil (Wolves)", reasoning: "System failures under early pressure. Seat heating quickly." },
+        { pick: "Marco Silva (Fulham)", reasoning: "Tactical plateau. System needs refresh or investment." },
+        { pick: "Stuart Pearce (Coventry)", reasoning: "Newly promoted manager pressure. Early struggles likely." }
+      ],
+      redcards: [
+        { pick: "Declan Rice", reasoning: "Defensive midfielder. High tackles-per-90 in possession chains." },
+        { pick: "Bruno Fernandes", reasoning: "High intensity play. Box-to-box role breeds tactical fouls." },
+        { pick: "Palhinha", reasoning: "Enforcer role. Aggressive duels accumulate bookings leading to reds." },
+        { pick: "Jorginho", reasoning: "Defensive midfielder. Tactical foul pattern frequency highest." },
+        { pick: "Edson Alvarez", reasoning: "Physical playing style. High fouls-per-90 defensive role." }
+      ],
+      relegated: [
+        { pick: "West Ham", reasoning: "Financial pressures mount. Squad instability in Championship." },
+        { pick: "Burnley", reasoning: "Sustained promotion fatigue. Financial constraints. Squad turnover likely." },
+        { pick: "Wolves", reasoning: "Tactical system failure. Recruitment backfired. Defensive struggles." },
+        { pick: "Bournemouth", reasoning: "Underperformance against odds. Youth development plateaus." },
+        { pick: "Everton", reasoning: "Chaotic season trajectory. Emotional volatility breeding poor form." }
+      ],
+      yellows: [
+        { pick: "Palhinha", reasoning: "Enforcer role. High fouls-per-90 in midfield." },
+        { pick: "Edson Alvarez", reasoning: "Defensive midfielder. Regular tactical fouls." },
+        { pick: "Bruno Guimaraes", reasoning: "Box-to-box work rate. Consistent bookings." },
+        { pick: "Declan Rice", reasoning: "Holding role. Defensive discipline sometimes crosses line." },
+        { pick: "Christian Norgaard", reasoning: "Brentford's tackle machine. High foul rate." }
+      ]
     }
   },
   analyst: {
@@ -1037,16 +1094,76 @@ const scoutData = {
     blurb: "Chases massive rewards by identifying high-variance anomalies that others ignore.",
     flavor: "Probabilistic Modelling",
     advice: {
-      winner: ["Man City has a 42% probability based on squad depth and historical trends.", "Arsenal's xG difference is closing the gap. It's a data-driven toss-up."],
-      facup: ["The FA Cup often yields outliers. Probability favors a top 6 finish.", "Rotation data shows Liverpool manage multiple competitions most efficiently."],
-      scorer: ["Haaland's non-penalty xG is 0.92 per 90. He is the statistical anomaly.", "Isak conversion rates are elite, but volume is lower. Choose volume."],
-      assists: ["De Bruyne's progressive passes per 90 remain league-high.", "Palmer's creative output is high, but look at the quality of teammates' finishes."],
-      cleansheets: ["Arsenal's high-line suppression metrics suggest the most shutouts.", "Alisson's post-shot xG prevented is still world-class."],
-      hattrick: ["High volume shooters have a 12% higher chance of multiple goals.", "Look for high-variance games (Top vs Bottom) for hat-trick potential."],
-      sacked: ["Underperformance against xPoints is the leading indicator of dismissal.", "Market odds show Manager A is the statistical favorite for departure."],
-      redcards: ["Everton's high-press intensity leads to more tactical fouls.", "Look at the 'Aggression Index' - some teams simply average more bookings."],
-      relegated: ["Expected Points (xP) metrics often highlight teams performing above their true level.", "Data suggests the jump from the Championship is getting harder every year."],
-      yellows: ["Look for players with high 'Fouls per 90' but low tackle success rates.", "Historical booking data points toward a high frequency in defensive transitions."]
+      winner: [
+        { pick: "Man City", reasoning: "Quadruple attempt feasible. Best squad depth on metrics." },
+        { pick: "Arsenal", reasoning: "xG difference closing. Young team entering peak window." },
+        { pick: "Liverpool", reasoning: "Arne Slot effect. System fit improves data models." },
+        { pick: "Aston Villa", reasoning: "Expected points (xP) overperforming. Outlier trajectory." },
+        { pick: "Newcastle", reasoning: "Spending power + PSR constraints create value anomaly." }
+      ],
+      facup: [
+        { pick: "Aston Villa", reasoning: "Squad depth now rivals top six. Rotation advantage." },
+        { pick: "Newcastle", reasoning: "Fixture congestion eases after European drop." },
+        { pick: "Brentford", reasoning: "Underrated squad quality. Deep cup runs likely." },
+        { pick: "Bournemouth", reasoning: "Burnley's trajectory. Mid-table teams thrive in cups." },
+        { pick: "Brighton", reasoning: "Youth + depth combo. Tactical flexibility in knockouts." }
+      ],
+      scorer: [
+        { pick: "Lautaro Martínez", reasoning: "Yet to fully adjust to PL. xG suggests 25+ potential." },
+        { pick: "Myles Goodridge", reasoning: "Breakout candidate. High underlying metrics at Bournemouth." },
+        { pick: "Tammy Abraham", reasoning: "Aston Villa move provides platform. Volume will spike." },
+        { pick: "Ivan Toney", reasoning: "Return from suspension. Penalty-taker opportunity." },
+        { pick: "Amdouni", reasoning: "Burnley forward. Championship success + PL time = outlier" }
+      ],
+      assists: [
+        { pick: "Bukayo Saka", reasoning: "xA metrics suggest underrated. High crossing volume." },
+        { pick: "Marten Ødegaard", reasoning: "Progressive passing elite. Assists lag expected output." },
+        { pick: "Tielemans", reasoning: "Box-to-box role in Aston Villa system. High chance creation." },
+        { pick: "Luis Díaz", reasoning: "Liverpool's tactical width. Underrated chance provider." },
+        { pick: "Neto (Wolves)", reasoning: "Winger role explosion. Volume-based assist spike expected." }
+      ],
+      cleansheets: [
+        { pick: "Brentford", reasoning: "Low xGA metrics. Underrated defensive structure." },
+        { pick: "Newcastle", reasoning: "Ashworth effect. Data-driven defensive setup." },
+        { pick: "Brighton", reasoning: "Possession-based suppression. xGA best in league." },
+        { pick: "Fulham", reasoning: "Defensive metrics spike under Saleh's system." },
+        { pick: "Bournemouth", reasoning: "Small-ball defensive philosophy. Low xGA profile." }
+      ],
+      hattrick: [
+        { pick: "Lautaro Martínez", reasoning: "High variance new player. PL adjustment could produce explosive game." },
+        { pick: "Ollie Watkins", reasoning: "Variance player. One-off performances in top-vs-bottom games." },
+        { pick: "Son Heung-min", reasoning: "Penalty taker + high variance. Hat-trick in thrashing likely." },
+        { pick: "Tammy Abraham", reasoning: "New squad integration. Explosive debut season pattern." },
+        { pick: "Neto", reasoning: "Winger role + emerging form. Volume could spike in one match." }
+      ],
+      sacked: [
+        { pick: "David Moyes", reasoning: "Exit probability rising. West Ham underperformance mounting." },
+        { pick: "Gary O'Neil", reasoning: "Wolves chaos metrics rising. Statistical relegation probability high." },
+        { pick: "Vincent Kompany", reasoning: "Burnley data suggests early exit risk likelihood." },
+        { pick: "Marco Silva", reasoning: "Fulham system adjustment underperformance. Early pressure mounting." },
+        { pick: "Stuart Pearce", reasoning: "Coventry promotion pressure. Firing odds empirically high." }
+      ],
+      redcards: [
+        { pick: "Bruno Fernandes", reasoning: "High fouls-per-90 in box. Tactical foul pattern data." },
+        { pick: "Casemiro", reasoning: "Age factor. Disciplinary volatility increases with age in aggressive duels." },
+        { pick: "Palhinha", reasoning: "Defensive midfielder role. Empirical red card rate 2.1 per season." },
+        { pick: "Jorginho", reasoning: "Pressing system demands. High tactical foul rate in possession chains." },
+        { pick: "Marten Ødegaard", reasoning: "Box-to-box intensity. Possession recovery fouls lead to reds." }
+      ],
+      relegated: [
+        { pick: "Wolves", reasoning: "Expected points analysis signals Championship trajectory. Squad balance poor." },
+        { pick: "Burnley", reasoning: "Promotion curse: Empirical data shows 2-3 year relegation cycle." },
+        { pick: "West Ham", reasoning: "Financial fair play constraints + tactical instability = downside risk." },
+        { pick: "Southampton", reasoning: "Rebuild incomplete. Squad quality metrics lowest quartile xG." },
+        { pick: "Brighton", reasoning: "Summer departures + competition depth challenges." }
+      ],
+      yellows: [
+        { pick: "Bruno Fernandes", reasoning: "High fouls-per-90 in box. Tactical foul pattern data." },
+        { pick: "Jarrad Bruma (PSV loaned back?)", reasoning: "Aggressive style. High booking frequency metrics." },
+        { pick: "Casemiro", reasoning: "Age factor. Disciplinary volatility increases with age." },
+        { pick: "Jorginho", reasoning: "Defensive midfielder. High foul rate in possession chains." },
+        { pick: "Mount (Chelsea loaned)", reasoning: "Pressing system = high fouls-per-90 likelihood." }
+      ]
     }
   },
   scout: {
@@ -1055,25 +1172,84 @@ const scoutData = {
     blurb: "Suggests 'out there' picks based on tactical matchups and system advantages.",
     flavor: "Strategic Vision",
     advice: {
-      winner: ["It's about the mid-season grind. Who handles the European fatigue better?", "Squad depth is the ultimate tactical advantage in the Premier League."],
-      facup: ["Tactical flexibility wins cups. Managers who can switch to a back 5 are safer.", "Underdogs thrive when they can force a low-block. Who is vulnerable?"],
-      scorer: ["Look for the teams that play with high wingers. They provide the most service.", "Target man vs Poacher? In this league, speed and movement win the Boot."],
-      assists: ["Set-piece specialists are a tactical goldmine for assists.", "The inverted full-back role is creating more chances than traditional #10s."],
-      cleansheets: ["The double pivot is the key to clean sheets. Who has the best DM duo?", "Defensive organization is more important than individual keepers."],
-      hattrick: ["Exploit the high line. Who is playing against a team that doesn't track back?", "Transition-based teams are the ones that rack up multiple goals."],
-      sacked: ["Fixture congestion early on will break the managers with thin squads.", "Watch the post-match interviews. The tactical 'lost' feeling is easy to spot."],
-      redcards: ["Tactical fouling is a system. Some teams use it more than others.", "Target the high-intensity derbies. Those are where the reds live."],
-      relegated: ["A weak bench is a death sentence during the winter schedule.", "Look for teams with high turnover in the defensive line; lack of chemistry leads to the drop."],
-      yellows: ["Aggressive pressing systems naturally lead to more 'tactical' bookings.", "Identify players tasked with stopping counter-attacks at all costs."]
+      winner: [
+        { pick: "Arsenal", reasoning: "Tactical structure maturity. Defensive solidity + attacking depth." },
+        { pick: "Liverpool", reasoning: "Arne Slot system fits PL perfectly. Transition efficiency gains." },
+        { pick: "Aston Villa", reasoning: "Emery's Champions League system translates. Tactical flexibility." },
+        { pick: "Manchester City", reasoning: "Guardiola evolution. New tactical adjustments mid-season." },
+        { pick: "Tottenham", reasoning: "Ange's high-press system peaks. European distraction lessens." }
+      ],
+      facup: [
+        { pick: "Liverpool", reasoning: "Rotation management mastered. Deep bench quality elite." },
+        { pick: "Chelsea", reasoning: "Tuchel's cup success. Tactical flexibility in knockouts." },
+        { pick: "Manchester Utd", reasoning: "Old Trafford advantage + set-piece threat." },
+        { pick: "Aston Villa", reasoning: "Emery's tactical adjustments. System allows squad rotation." },
+        { pick: "Newcastle", reasoning: "St James Park support. Tactical discipline under pressure." }
+      ],
+      scorer: [
+        { pick: "Bukayo Saka", reasoning: "Inverted winger role evolution. Positioning inside creates chances." },
+        { pick: "Ollie Watkins", reasoning: "Tactical focal point in Emery system. Movement patterns elite." },
+        { pick: "Dominic Solanke", reasoning: "Tactical upgrade at Bournemouth. Movement patterns refined." },
+        { pick: "Jude Bellingham", reasoning: "Midfield-to-box runs. Tactical position evolution." },
+        { pick: "Phil Foden", reasoning: "System freedom post-Cancelo. Tactical repositioning." }
+      ],
+      assists: [
+        { pick: "Marten Ødegaard", reasoning: "Playmaking role in Arteta's system. Passes through lines perfectly." },
+        { pick: "Tielemans", reasoning: "Box-to-box role in Aston Villa. Tactical positioning for creation." },
+        { pick: "Sané (Bayern return?)", reasoning: "Crossing threat evolution. Tactical fullback role emerging." },
+        { pick: "Grealish", reasoning: "Left flank revival. System unlocks creative freedom." },
+        { pick: "Bernardo Silva", reasoning: "Midfield hub. Tactical positioning for chance creation." }
+      ],
+      cleansheets: [
+        { pick: "Arsenal", reasoning: "High-line defensive organization. Offside trap mastery." },
+        { pick: "Brighton", reasoning: "Possession-based defense. Tactical press prevents shots." },
+        { pick: "Aston Villa", reasoning: "Emery's defensive structure. Tactical discipline in shape." },
+        { pick: "Brentford", reasoning: "Tactical flexibility. Defensive shape adaptation." },
+        { pick: "Manchester City", reasoning: "Guardiola's defensive shapes. Tactical fluidity prevents chances." }
+      ],
+      hattrick: [
+        { pick: "Bukayo Saka", reasoning: "Tactical freedom in wide role. Multiple goal-scoring angles." },
+        { pick: "Ollie Watkins", reasoning: "Movement patterns create space. Tactical positioning for opportunities." },
+        { pick: "Alexander Isak", reasoning: "Tactical focal point. Newcastle's structure creates chances." },
+        { pick: "Son Heung-min", reasoning: "Tactical flexibility in left role. Multiple shooting angles." },
+        { pick: "Phil Foden", reasoning: "System freedom evolving. Box presence in tactical adjustments." }
+      ],
+      sacked: [
+        { pick: "Gary O'Neil (Wolves)", reasoning: "Tactical mismatch. Squad structure doesn't fit system." },
+        { pick: "David Moyes (West Ham)", reasoning: "Tactical inflexibility. System struggles with squad." },
+        { pick: "Marco Silva (Fulham)", reasoning: "Tactical plateau. System needs refresh or investment." },
+        { pick: "Vincent Kompany (Burnley)", reasoning: "Tactical overhaul needed at Burnley mid-season." },
+        { pick: "Stuart Pearce (Coventry)", reasoning: "Tactical demands strain system implementation with promoted squad." }
+      ],
+      redcards: [
+        { pick: "Declan Rice", reasoning: "Defensive positioning role. High tackle density = accumulation risk." },
+        { pick: "Palhinha", reasoning: "System demands high physical intensity. Tactical role = red card threat." },
+        { pick: "Casemiro", reasoning: "Aggressive defending. Tactical fouls in system integration." },
+        { pick: "James Maddison", reasoning: "Box-to-box intensity in pressing. Possession recovery fouls." },
+        { pick: "Edson Alvarez", reasoning: "Physical defensive approach. System creates tackling opportunities." }
+      ],
+      relegated: [
+        { pick: "West Ham", reasoning: "Tactical structure mismatch. System doesn't optimize squad strengths." },
+        { pick: "Burnley", reasoning: "Tactical rigidity post-promotion. System adaptation failure guaranteed." },
+        { pick: "Wolves", reasoning: "Tactical overhaul failure. Squad alignment issues create chaos." },
+        { pick: "Bournemouth", reasoning: "European demands strain system. Tactics don't travel." },
+        { pick: "Leicester", reasoning: "System identity lost. Tactical structure post-promotion doomed." }
+      ],
+      yellows: [
+        { pick: "Palhinha", reasoning: "System demands high fouls. Tactical role is defensive enforcer." },
+        { pick: "Edson Alvarez", reasoning: "Tactical midfield role breeds bookings." },
+        { pick: "Bruno Fernandes", reasoning: "Tactical box-to-box role. Defensive fouls in possession." },
+        { pick: "Casemiro", reasoning: "Tactical holding role. High fouls-per-90 by design." },
+        { pick: "Jorginho", reasoning: "Tactical midfield pressing. High foul rate in system." }
+      ]
     }
   }
 };
 
 const PL_CLUBS = [
   "Arsenal", "Aston Villa", "Bournemouth", "Brentford", "Brighton", "Chelsea", 
-  "Crystal Palace", "Everton", "Fulham", "Ipswich", "Leicester", "Liverpool", 
-  "Man City", "Man Utd", "Newcastle", "Nott'm Forest", "Southampton", "Spurs", 
-  "West Ham", "Wolves"
+  "Coventry", "Crystal Palace", "Everton", "Fulham", "Hull", "Ipswich", "Leicester", "Liverpool", 
+  "Man City", "Man Utd", "Newcastle", "Nott'm Forest", "Southampton", "Spurs"
 ];
 
 const TOP_SCORER_CANDIDATES = [
@@ -1093,7 +1269,7 @@ const CLEAN_SHEET_CANDIDATES = [
 ];
 
 const MANAGER_CANDIDATES = [
-  "Erik ten Hag", "Mauricio Pochettino", "Vincent Kompany", "Steve Cooper", "David Moyes", "Marco Silva"
+  "David Moyes", "Vincent Kompany", "Gary O'Neil", "Marco Silva", "Stuart Pearce", "Steve Bruce"
 ];
 
 const YELLOW_CANDIDATES = [
@@ -1172,11 +1348,14 @@ window.refreshRelegated = function() {
   });
 }
 
+let currentScoutKey = null;
+let currentCategory = null;
+let aiPage = 0;
+
 window.showAiScout = function(scoutKey, category) {
   currentScoutKey = scoutKey;
   currentCategory = category;
   const scout = scoutData[scoutKey];
-  const adviceList = scout.advice[category];
   
   const modal = document.getElementById('aiModal');
   const content = document.getElementById('aiContent');
@@ -1187,72 +1366,44 @@ window.showAiScout = function(scoutKey, category) {
   aiPage = 0; // Start at Risk Warning
   modal.style.display = 'flex';
   title.innerText = `⚠️ Scout Warning`;
-  content.innerText = `${scout.name} is ready. \n\nRisk Profile: ${scout.risk}\n\n${scout.blurb}`;
+  content.innerText = `${scout.name} is ready to analyze.\n\nRisk Profile: ${scout.risk}\n\n"${scout.blurb}"`;
   stats.innerHTML = "";
-  actionBtn.innerText = "Proceed to Opinion";
+  actionBtn.innerText = "View Top Picks";
   actionBtn.onclick = () => window.loadAiReport();
 }
 
 window.loadAiReport = function() {
   const scout = scoutData[currentScoutKey];
-  const adviceList = scout.advice[currentCategory];
+  const predictions = scout.advice[currentCategory];
   const content = document.getElementById('aiContent');
   const stats = document.getElementById('aiStats');
   const actionBtn = document.getElementById('aiActionBtn');
   const title = document.getElementById('aiModal').querySelector('h2');
 
   aiPage = 1;
-  title.innerText = `🤖 ${scout.name}`;
-  content.innerText = `${scout.name} is analyzing the field...`;
+  title.innerText = `🤖 ${scout.name} - Top Picks`;
+  content.innerText = `${scout.flavor} Analysis for ${currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1)}:`;
   
-  // Show "Next" button once content loads
-  actionBtn.innerText = "Processing...";
-  actionBtn.disabled = true;
-  actionBtn.onclick = window.nextAiPage;
-
-  setTimeout(() => {
-    const randomAdvice = adviceList[Math.floor(Math.random() * adviceList.length)];
-    content.innerText = `Page 1: Tactical Perspective. My scouting report for this category:`;
-    stats.innerHTML = `
-      <div style="padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px; font-style: italic;">
-        "${randomAdvice}"
-      </div>
-      <div style="margin-top: 15px; font-size: 12px; color: #c7ff38;">
-        <strong>${scout.flavor} Recommendation:</strong> 
-        ${currentCategory === 'scorer' ? 'High volume poacher' : currentCategory === 'winner' ? 'Consistent top-four pedigree' : 'Tactical specialist'}
+  // Display all 5 predictions ranked
+  let pickHtml = '<div style="text-align: left; padding: 10px 0;">';
+  predictions.forEach((pred, idx) => {
+    pickHtml += `
+      <div style="padding: 12px; margin: 8px 0; background: rgba(199,255,56,0.08); border-left: 3px solid #c7ff38; border-radius: 6px;">
+        <div style="color: #c7ff38; font-weight: bold; margin-bottom: 4px;">#${idx + 1} - ${pred.pick}</div>
+        <div style="font-size: 12px; color: #cbd5e1; font-style: italic;">"${pred.reasoning}"</div>
       </div>
     `;
-    actionBtn.disabled = false;
-    actionBtn.innerText = "Next: Advanced Stats";
-    actionBtn.onclick = window.nextAiPage;
-  }, 800);
+  });
+  pickHtml += '</div>';
+  
+  stats.innerHTML = pickHtml;
+  actionBtn.innerText = "Close";
+  actionBtn.onclick = () => document.getElementById('aiModal').style.display = 'none';
 }
 
 window.nextAiPage = function() {
-  if (aiPage === 2) {
-    document.getElementById('aiModal').style.display = 'none';
-    return;
-  }
-
-  const content = document.getElementById('aiContent');
-  const stats = document.getElementById('aiStats');
-  const actionBtn = document.getElementById('aiActionBtn');
-
-  if (aiPage === 1) {
-    aiPage = 2;
-    content.innerText = "Page 2: Deep Dive - Underlying Metrics";
-    actionBtn.innerText = "Close Report";
-    actionBtn.onclick = () => document.getElementById('aiModal').style.display = 'none';
-    
-    stats.innerHTML = `
-      <div class="stat-row"><span>Avg xG per 90</span> <span class="stat-val">0.92</span></div>
-      <div class="stat-row"><span>Conversion Rate</span> <span class="stat-val">24.2%</span></div>
-      <div class="stat-row"><span>Big Chances Missed</span> <span class="stat-val">Low</span></div>
-      <div class="stat-row"><span>AI Recommended Pick</span> <span class="stat-val" style="color:#c7ff38">Haaland</span></div>
-      <p style="margin-top:15px; font-size:12px; color:#9ca3af;">Data processed via Game of Opinions Scout Algorithm v1.2</p>
-    `;
-  }
-}
+  document.getElementById('aiModal').style.display = 'none';
+};
 
 window.lockSeason = async function() {
   if (!currentUser) {

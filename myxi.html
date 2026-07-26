@@ -6,8 +6,11 @@
 
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Build your Game of Opinions XI, manage your squad, and track your live weekly points from one premium dashboard.">
+<meta name="theme-color" content="#020611">
 <title>Your Team - Game of Opinions</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="shared-fixtures.js"></script>
 <style>
 
 /* =========================
@@ -1476,38 +1479,13 @@ MOBILE
 </div>
 
 <!-- DEF -->
-
-<div class="row">
-<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="DEF" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-
-</div>
+<div class="row"></div>
 
 <!-- MID -->
-<div class="row">
-<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="MID" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-
-</div>
+<div class="row"></div>
 
 <!-- FWD -->
-
-<div class="row">
-<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="FWD" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="FWD" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="FWD" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="FWD" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select></div>
-
-</div>
+<div class="row"></div>
 
 </div>
 
@@ -1563,8 +1541,8 @@ MOBILE
       <span class="odds-value" id="betOddsDisplay">--</span>
     </div>
     <div class="bet-actions">
-      <button class="bet-choice" onclick="setBetChoice('yes')" id="btnYes" title="Sacrifice: 5 pts. Win 155 pts if bet lands, lose 30 pts if it fails.">YES</button>
-      <button class="bet-choice" onclick="setBetChoice('no')" id="btnNo" title="Sacrifice: 5 pts. Win 30 pts if bet fails, lose 155 pts if it lands.">NO</button>
+      <button class="bet-choice" onclick="setBetChoice('yes')" id="btnYes" title="Stake: 5 pts. Win 85 pts if bet lands (16/1 odds), lose 35 pts if it fails.">YES</button>
+      <button class="bet-choice" onclick="setBetChoice('no')" id="btnNo" title="Stake: 5 pts. Win 35 pts if bet fails, lose 85 pts if it lands (16/1 odds).">NO</button>
     </div>
     <div class="bet-info" id="betInfo">
       Pick if the bet lands. Cost: 5 pts to play.
@@ -1692,84 +1670,84 @@ import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/fi
 
 const clubAbbr = {
   "Arsenal": "ARS", "Aston Villa": "AVL", "Bournemouth": "BOU", "Brentford": "BRE",
-  "Brighton": "BHA", "Chelsea": "CHE", "Crystal Palace": "CRY", "Everton": "EVE",
-  "Fulham": "FUL", "Leeds": "LEE", "Burnley": "BUR", "Liverpool": "LIV",
-  "Man City": "MCI", "Man Utd": "MUN", "Newcastle": "NEW", "Nott'm Forest": "NFO",
-  "Sunderland": "SUN", "Spurs": "TOT", "West Ham": "WHU", "Wolves": "WOL"
+  "Brighton": "BHA", "Chelsea": "CHE", "Coventry": "COV", "Crystal Palace": "CRY",
+  "Everton": "EVE", "Fulham": "FUL", "Hull": "HUL", "Ipswich": "IPS",
+  "Leeds": "LEE", "Liverpool": "LIV", "Man City": "MCI", "Man Utd": "MUN",
+  "Newcastle": "NEW", "Nott'm Forest": "NFO", "Sunderland": "SUN", "Spurs": "TOT"
 };
 
 const playersByPos = {
   GK: [
-    "Arsenal", "Aston Villa", "Bournemouth", "Brentford", "Brighton", 
-    "Chelsea", "Crystal Palace", "Everton", "Fulham", "Leeds", 
-    "Burnley", "Liverpool", "Man City", "Man Utd", "Newcastle", 
-    "Nott'm Forest", "Sunderland", "Spurs", "West Ham", "Wolves"
+    "Arsenal", "Aston Villa", "Bournemouth", "Brentford", "Brighton",
+    "Chelsea", "Coventry", "Crystal Palace", "Everton", "Fulham",
+    "Hull", "Ipswich", "Leeds", "Liverpool", "Man City",
+    "Man Utd", "Newcastle", "Nott'm Forest", "Sunderland", "Spurs"
   ],
   DEF: [
-    { name: "Saliba", club: "Arsenal" }, { name: "Gabriel", club: "Arsenal" }, { name: "White", club: "Arsenal" }, { name: "Calafiori", club: "Arsenal" }, { name: "Hincapie", club: "Arsenal" }, { name: "Timber", club: "Arsenal" },  { name: "C Mosquera", club: "Arsenal" },
+    { name: "Saliba", club: "Arsenal" }, { name: "Gabriel", club: "Arsenal" }, { name: "White", club: "Arsenal" }, { name: "Calafiori", club: "Arsenal" }, { name: "Hincapie", club: "Arsenal" }, { name: "Timber", club: "Arsenal" },  { name: "C Mosquera", club: "Arsenal" }, { name: "Lewis-Skelly", club: "Arsenal" },
     { name: "Konsa", club: "Aston Villa" }, { name: "Pau Torres", club: "Aston Villa" }, { name: "Maatsen", club: "Aston Villa" }, { name: "Cash", club: "Aston Villa" }, { name: "Lindelof", club: "Aston Villa" }, { name: "Digne", club: "Aston Villa" }, { name: "Mings", club: "Aston Villa" },
-    { name: "Senesi", club: "Bournemouth" }, { name: "Truffert", club: "Bournemouth" }, { name: "Diakite", club: "Bournemouth" },
-    { name: "Pinnock", club: "Brentford" }, { name: "Collins", club: "Brentford" }, { name: "Van den Berg", club: "Brentford" }, { name: "Kayode", club: "Brentford" }, { name: "Ajer", club: "Brentford" },
-    { name: "Dunk", club: "Brighton" }, { name: "Van Hecke", club: "Brighton" }, { name: "Kadioglu", club: "Brighton" }, { name: "De Cuyper", club: "Brighton" }, { name: "Veltman", club: "Brighton" },
-    { name: "Colwill", club: "Chelsea" }, { name: "Fofana", club: "Chelsea" }, { name: "James", club: "Chelsea" }, { name: "Cucurella", club: "Chelsea" }, { name: "Gusto", club: "Chelsea" }, { name: "Tosin", club: "Chelsea" }, { name: "Chalobah", club: "Chelsea" },
-    { name: "Richards", club: "Crystal Palace" }, { name: "Lacroix", club: "Crystal Palace" }, { name: "Munoz", club: "Crystal Palace" }, { name: "Mitchell", club: "Crystal Palace" },
-    { name: "Branthwaite", club: "Everton" }, { name: "Tarkowski", club: "Everton" }, { name: "Mykolenko", club: "Everton" }, { name: "OBrien", club: "Everton" }, { name: "Keane", club: "Everton" },
-    { name: "Andersen", club: "Fulham" }, { name: "Robinson", club: "Fulham" }, { name: "Bassey", club: "Fulham" }, { name: "Diop", club: "Fulham" }, { name: "Castagne", club: "Fulham" },
-    { name: "Rodon", club: "Leeds" }, { name: "Ampadu", club: "Leeds" }, { name: "Struijk", club: "Leeds" }, { name: "Bijot", club: "Leeds" },
-    { name: "Esteve", club: "Burnley" }, { name: "Al-Dakhil", club: "Burnley" }, { name: "Egan-Riley", club: "Burnley" },
-    { name: "Van Dijk", club: "Liverpool" }, { name: "Kerkez", club: "Liverpool" }, { name: "Konate", club: "Liverpool" }, { name: "Robertson", club: "Liverpool" }, { name: "J Gomez", club: "Liverpool" }, { name: "Frimpong", club: "Liverpool" },
-    { name: "Gvardiol", club: "Man City" }, { name: "Khusanov", club: "Man City" }, { name: "Dias", club: "Man City" }, { name: "O'Reilly", club: "Man City" }, { name: "Guehi", club: "Man City" }, { name: "Ait-Nouri", club: "Man City" }, { name: "Ake", club: "Man City" },
-    { name: "Martinez", club: "Man Utd" }, { name: "De Ligt", club: "Man Utd" }, { name: "Dalot", club: "Man Utd" }, { name: "Yoro", club: "Man Utd" }, { name: "Shaw", club: "Man Utd" }, { name: "Maguire", club: "Man Utd" }, { name: "Heaven", club: "Man Utd" },
-    { name: "Schar", club: "Newcastle" }, { name: "Botman", club: "Newcastle" }, { name: "Hall", club: "Newcastle" }, { name: "Burn", club: "Newcastle" }, { name: "Thiaw", club: "Newcastle" }, { name: "Livramento", club: "Newcastle" }, { name: "Trippier", club: "Newcastle" },
-    { name: "Murillo", club: "Nott'm Forest" }, { name: "Milenkovic", club: "Nott'm Forest" }, { name: "Aina", club: "Nott'm Forest" }, { name: "Williams", club: "Nott'm Forest" }, { name: "Morato", club: "Nott'm Forest" }, { name: "Jair", club: "Nott'm Forest" },
-    { name: "O'Nien", club: "Sunderland" }, { name: "Hume", club: "Sunderland" }, { name: "Ballard", club: "Sunderland" }, { name: "Alderete", club: "Sunderland" }, { name: "Mukiele", club: "Sunderland" }, { name: "Geertruida", club: "Sunderland" }, { name: "Mandava", club: "Sunderland" },
-    { name: "Romero", club: "Spurs" }, { name: "Van de Ven", club: "Spurs" }, { name: "Porro", club: "Spurs" }, { name: "Udogie", club: "Spurs" }, { name: "Spence", club: "Spurs" }, { name: "Danso", club: "Spurs" },
-    { name: "Mavropanos", club: "West Ham" }, { name: "Disasi", club: "West Ham" }, { name: "Todibo", club: "West Ham" }, { name: "Walker-Peters", club: "West Ham" }, { name: "Wan Bissaka", club: "West Ham" }, { name: "Scarles", club: "West Ham" },
-    { name: "Hugo Bueno", club: "Wolves" }, { name: "Santi Bueno", club: "Wolves" }, { name: "Toti", club: "Wolves" }, { name: "Krejci", club: "Wolves" }, { name: "Y Mosquera", club: "Wolves" }, { name: "Doherty", club: "Wolves" }
+    { name: "Araujo", club: "Bournemouth" }, { name: "Truffert", club: "Bournemouth" }, { name: "Diakite", club: "Bournemouth" }, { name: "Soler", club: "Bournemouth" }, { name: "Milosavljevic", club: "Bournemouth" },
+    { name: "Pinnock", club: "Brentford" }, { name: "Collins", club: "Brentford" }, { name: "Van den Berg", club: "Brentford" }, { name: "Kayode", club: "Brentford" }, { name: "Ajer", club: "Brentford" }, { name: "Ji-Soo", club: "Brentford" }, { name: "Lewis-Potter", club: "Brentford" }, { name: "Hickey", club: "Brentford" },
+    { name: "Dunk", club: "Brighton" }, { name: "Vuskovic", club: "Brighton" }, { name: "Kadioglu", club: "Brighton" }, { name: "De Cuyper", club: "Brighton" }, { name: "Wieffer", club: "Brighton" }, { name: "Struijk", club: "Brighton" }, { name: "Igor Julio", club: "Brighton" }, { name: "Boscagli", club: "Brighton" }, { name: "Costinha", club: "Brighton" },
+    { name: "Colwill", club: "Chelsea" }, { name: "Fofana", club: "Chelsea" }, { name: "James", club: "Chelsea" }, { name: "Sarr", club: "Chelsea" }, { name: "Gusto", club: "Chelsea" }, { name: "Hato", club: "Chelsea" }, { name: "Chalobah", club: "Chelsea" }, { name: "Badiashile", club: "Chelsea" }, { name: "Acheampong", club: "Chelsea" }, { name: "Anselmino", club: "Chelsea" },
+    { name: "Amenda", club: "Coventry" }, { name: "Van Ewijk", club: "Coventry" }, { name: "Latibeaudiere", club: "Coventry" }, { name: "Thomas", club: "Coventry" }, { name: "Kitching", club: "Coventry" }, { name: "Woolfenden", club: "Coventry" }, { name: "Bidwell", club: "Coventry" },
+    { name: "Richards", club: "Crystal Palace" }, { name: "Lacroix", club: "Crystal Palace" }, { name: "Munoz", club: "Crystal Palace" }, { name: "Mitchell", club: "Crystal Palace" }, { name: "Canvot", club: "Crystal Palace" }, { name: "Clyne", club: "Crystal Palace" }, { name: "Sosa", club: "Crystal Palace" }, { name: "Mingueza", club: "Crystal Palace" },
+    { name: "Aznou", club: "Everton" }, { name: "Mykolenko", club: "Everton" }, { name: "Branthwaite", club: "Everton" }, { name: "Tarkowski", club: "Everton" }, { name: "O'Brien", club: "Everton" }, { name: "Patterson", club: "Everton" }, { name: "Keane", club: "Everton" },
+    { name: "Andersen", club: "Fulham" }, { name: "Robinson", club: "Fulham" }, { name: "Bassey", club: "Fulham" }, { name: "Tete", club: "Fulham" }, { name: "Castagne", club: "Fulham" }, { name: "Sessengnon", club: "Fulham" }, { name: "Cuenca", club: "Fulham" },
+    { name: "Ajayi", club: "Hull" }, { name: "Targett", club: "Hull" }, { name: "Hughes", club: "Hull" }, { name: "Egan", club: "Hull" }, { name: "McNair", club: "Hull" }, { name: "Drameh", club: "Hull" },
+    { name: "Diop", club: "Ipswich" }, { name: "Davis", club: "Ipswich" }, { name: "O'Shea", club: "Ipswich" }, { name: "Kipre", club: "Ipswich" }, { name: "Johnson", club: "Ipswich" }, { name: "Greaves", club: "Ipswich" },
+    { name: "Rodon", club: "Leeds" }, { name: "Ampadu", club: "Leeds" }, { name: "Muharemovic", club: "Leeds" }, { name: "Bijol", club: "Leeds" }, { name: "Gudmundsson", club: "Leeds" }, { name: "Justin", club: "Leeds" }, { name: "Bogle", club: "Leeds" }, { name: "Bornauw", club: "Leeds" }, { name: "Byram", club: "Leeds" },
+    { name: "Van Dijk", club: "Liverpool" }, { name: "Kerkez", club: "Liverpool" }, { name: "Konate", club: "Liverpool" }, { name: "Bradley", club: "Liverpool" }, { name: "J Gomez", club: "Liverpool" }, { name: "Frimpong", club: "Liverpool" }, { name: "Tsimikas", club: "Liverpool" }, { name: "Bradley", club: "Liverpool" }, { name: "Jacquet", club: "Liverpool" }, { name: "Leoni", club: "Liverpool" },
+    { name: "Gvardiol", club: "Man City" }, { name: "Khusanov", club: "Man City" }, { name: "Dias", club: "Man City" }, { name: "O'Reilly", club: "Man City" }, { name: "Guehi", club: "Man City" }, { name: "Ait-Nouri", club: "Man City" }, { name: "Nunes", club: "Man City" }, { name: "Rico Lewis", club: "Man City" }, { name: "Reis", club: "Man City" }, { name: "Alleyne", club: "Man City" },
+    { name: "Martinez", club: "Man Utd" }, { name: "De Ligt", club: "Man Utd" }, { name: "Dalot", club: "Man Utd" }, { name: "Yoro", club: "Man Utd" }, { name: "Shaw", club: "Man Utd" }, { name: "Maguire", club: "Man Utd" }, { name: "Heaven", club: "Man Utd" }, { name: "Mazraoui", club: "Man Utd" },
+    { name: "Schar", club: "Newcastle" }, { name: "Botman", club: "Newcastle" }, { name: "Hall", club: "Newcastle" }, { name: "Burn", club: "Newcastle" }, { name: "Thiaw", club: "Newcastle" }, { name: "Livramento", club: "Newcastle" },
+    { name: "Murillo", club: "Nott'm Forest" }, { name: "Milenkovic", club: "Nott'm Forest" }, { name: "Aina", club: "Nott'm Forest" }, { name: "Williams", club: "Nott'm Forest" }, { name: "Morato", club: "Nott'm Forest" }, { name: "Jair", club: "Nott'm Forest" }, { name: "Savona", club: "Nott'm Forest" }, { name: "Netz", club: "Nott'm Forest" },
+    { name: "O'Nien", club: "Sunderland" }, { name: "Hume", club: "Sunderland" }, { name: "Ballard", club: "Sunderland" }, { name: "Alderete", club: "Sunderland" }, { name: "Mukiele", club: "Sunderland" }, { name: "Masuaku", club: "Sunderland" }, { name: "Mandava", club: "Sunderland" }, { name: "Meunier", club: "Sunderland" },
+    { name: "Romero", club: "Spurs" }, { name: "Van de Ven", club: "Spurs" }, { name: "Porro", club: "Spurs" }, { name: "Udogie", club: "Spurs" }, { name: "Spence", club: "Spurs" }, { name: "Danso", club: "Spurs" }, { name: "Senesi", club: "Spurs" }, { name: "Van Hecke", club: "Spurs" }, { name: "Souza", club: "Spurs" },
   ],
   MID: [
-    { name: "Odegaard", club: "Arsenal" }, { name: "Rice", club: "Arsenal" }, { name: "Saka", club: "Arsenal" }, { name: "Eze", club: "Arsenal" }, { name: "Madueke", club: "Arsenal" }, { name: "Zubimendi", club: "Arsenal" }, { name: "Merino", club: "Arsenal" }, { name: "Norgaard", club: "Arsenal" }, { name: "Dowman", club: "Arsenal" },
-    { name: "Tielemans", club: "Aston Villa" }, { name: "McGinn", club: "Aston Villa" }, { name: "Rogers", club: "Aston Villa" }, { name: "Sancho", club: "Aston Villa" }, { name: "Onana", club: "Aston Villa" }, { name: "Douglas Luiz", club: "Aston Villa" }, { name: "Buendia", club: "Aston Villa" }, { name: "Bailey", club: "Aston Villa" },
-    { name: "Brooks", club: "Bournemouth" }, { name: "Cook", club: "Bournemouth" }, { name: "Tavernier", club: "Bournemouth" }, { name: "Rayan", club: "Bournemouth" }, { name: "Scott", club: "Bournemouth" }, { name: "Doak", club: "Bournemouth" }, { name: "Christie", club: "Bournemouth" }, { name: "Adams", club: "Bournemouth" },
-    { name: "Ouattara", club: "Brentford" }, { name: "Schade", club: "Brentford" }, { name: "Damsgaard", club: "Brentford" }, { name: "Jensen", club: "Brentford" }, { name: "Yarmoliuk", club: "Brentford" }, { name: "Henderson", club: "Brentford" }, { name: "Janelt", club: "Brentford" },
-    { name: "Mitoma", club: "Brighton" }, { name: "Baleba", club: "Brighton" }, { name: "Minteh", club: "Brighton" }, { name: "Gross", club: "Brighton" }, { name: "Milner", club: "Brighton" }, { name: "S Gomez", club: "Brighton" }, { name: "Ayari", club: "Brighton" }, { name: "Hinshelwood", club: "Brighton" },
-    { name: "Palmer", club: "Chelsea" }, { name: "Caicedo", club: "Chelsea" }, { name: "Fernandez", club: "Chelsea" }, { name: "Neto", club: "Chelsea" }, { name: "Lavia", club: "Chelsea" }, { name: "Andrey Santos", club: "Chelsea" }, { name: "Estevao", club: "Chelsea" },       
-    { name: "I Sarr", club: "Crystal Palace" }, { name: "Wharton", club: "Crystal Palace" }, { name: "Kamada", club: "Crystal Palace" }, { name: "Pino", club: "Crystal Palace" }, { name: "Hughes", club: "Crystal Palace" }, { name: "Lerma", club: "Crystal Palace" },
-    { name: "McNeil", club: "Everton" }, { name: "Garner", club: "Everton" }, { name: "Gueye", club: "Everton" }, { name: "Ndiaye", club: "Everton" }, { name: "Dewsbury-Hall", club: "Everton" }, { name: "Alcaraz", club: "Everton" },
-    { name: "Smith Rowe", club: "Fulham" }, { name: "H Wilson", club: "Fulham" }, { name: "Iwobi", club: "Fulham" }, { name: "Bobb", club: "Fulham" }, { name: "Lukic", club: "Fulham" }, { name: "Berge", club: "Fulham" }, { name: "Cairney", club: "Fulham" }, { name: "King", club: "Fulham" },
-    { name: "Okafor", club: "Leeds" }, { name: "Tanaka", club: "Leeds" }, { name: "Aaronson", club: "Leeds" }, { name: "Longstaff", club: "Leeds" }, { name: "Stach", club: "Leeds" },
-    { name: "Mejbri", club: "Burnley" }, { name: "Ward-Prowse", club: "Burnley" }, { name: "Cullen", club: "Burnley" },
-    { name: "Mac Allister", club: "Liverpool" }, { name: "Szoboszlai", club: "Liverpool" }, { name: "Gravenberch", club: "Liverpool" }, { name: "Wirtz", club: "Liverpool" }, { name: "Gakpo", club: "Liverpool" }, { name: "Ngumoha", club: "Liverpool" }, { name: "C Jones", club: "Liverpool" },
-    { name: "Cherki", club: "Man City" }, { name: "Rodri", club: "Man City" }, { name: "Foden", club: "Man City" }, { name: "Doku", club: "Man City" }, { name: "Semenyo", club: "Man City" }, { name: "Bernardo", club: "Man City" }, { name: "Savinho", club: "Man City" },
-    { name: "Bruno Fernandes", club: "Man Utd" }, { name: "Mainoo", club: "Man Utd" }, { name: "Mbuemo", club: "Man Utd" }, { name: "Casemiro", club: "Man Utd" },
-    { name: "Guimaraes", club: "Newcastle" }, { name: "Gordon", club: "Newcastle" }, { name: "Joelinton", club: "Newcastle" }, { name: "Barnes", club: "Newcastle" }, { name: "Tonali", club: "Newcastle" },
-    { name: "Gibbs-White", club: "Nott'm Forest" }, { name: "Hudson-Odoi", club: "Nott'm Forest" }, { name: "Anderson", club: "Nott'm Forest" }, { name: "Ndoye", club: "Nott'm Forest" },
-    { name: "Diarra", club: "Sunderland" }, { name: "Le Fee", club: "Sunderland" }, { name: "Rigg", club: "Sunderland" }, { name: "Xhaka", club: "Sunderland" },
-    { name: "Maddison", club: "Spurs" }, { name: "Kulusevski", club: "Spurs" }, { name: "Bentancur", club: "Spurs" }, { name: "Gallagher", club: "Spurs" }, { name: "PM Sarr", club: "Spurs" }, { name: "Bergvall", club: "Spurs" },
-    { name: "Bowen", club: "West Ham" }, { name: "Summerville", club: "West Ham" }, { name: "Soucek", club: "West Ham" }, { name: "Fernandes", club: "West Ham" },
-    { name: "Bellegarde", club: "Wolves" }, { name: "Joao Gomes", club: "Wolves" }, { name: "Andre", club: "Wolves" }, { name: "Mane", club: "Wolves" }
+    { name: "Odegaard", club: "Arsenal" }, { name: "Rice", club: "Arsenal" }, { name: "Saka", club: "Arsenal" }, { name: "Eze", club: "Arsenal" }, { name: "Madueke", club: "Arsenal" }, { name: "Zubimendi", club: "Arsenal" }, { name: "Merino", club: "Arsenal" }, { name: "Norgaard", club: "Arsenal" }, { name: "Dowman", club: "Arsenal" }, { name: "Nwaneri", club: "Arsenal" },
+    { name: "Joao Gomes", club: "Aston Villa" }, { name: "Manzambi", club: "Aston Villa" }, { name: "McGinn", club: "Aston Villa" }, { name: "Bogarde", club: "Aston Villa" }, { name: "Alysson", club: "Aston Villa" }, { name: "Onana", club: "Aston Villa" }, { name: "Kamara", club: "Aston Villa" }, { name: "Buendia", club: "Aston Villa" }, { name: "Bailey", club: "Aston Villa" },
+    { name: "Brooks", club: "Bournemouth" }, { name: "Cook", club: "Bournemouth" }, { name: "Tavernier", club: "Bournemouth" }, { name: "Rayan", club: "Bournemouth" }, { name: "Scott", club: "Bournemouth" }, { name: "Doak", club: "Bournemouth" }, { name: "Christie", club: "Bournemouth" }, { name: "Adams", club: "Bournemouth" }, { name: "Adli", club: "Bournemouth" }, { name: "Kluivert", club: "Bournemouth" },
+    { name: "Ouattara", club: "Brentford" }, { name: "Schade", club: "Brentford" }, { name: "Damsgaard", club: "Brentford" }, { name: "Jensen", club: "Brentford" }, { name: "Yarmoliuk", club: "Brentford" }, { name: "Henderson", club: "Brentford" }, { name: "Janelt", club: "Brentford" }, { name: "Milambo", club: "Brentford" }, { name: "Anthony", club: "Brentford" },
+    { name: "Mitoma", club: "Brighton" }, { name: "Baleba", club: "Brighton" }, { name: "Minteh", club: "Brighton" }, { name: "Gross", club: "Brighton" }, { name: "Milner", club: "Brighton" }, { name: "S Gomez", club: "Brighton" }, { name: "Ayari", club: "Brighton" }, { name: "Hinshelwood", club: "Brighton" }, { name: "Buonanotte", club: "Brighton" }, { name: "O'Riley", club: "Brighton" },
+    { name: "Palmer", club: "Chelsea" }, { name: "Caicedo", club: "Chelsea" }, { name: "Fernandez", club: "Chelsea" }, { name: "Neto", club: "Chelsea" }, { name: "Lavia", club: "Chelsea" }, { name: "Rogers", club: "Chelsea" }, { name: "Estevao", club: "Chelsea" }, { name: "Gittens", club: "Chelsea" }, { name: "Quenda", club: "Chelsea" },       
+    { name: "Onyeka", club: "Coventry" }, { name: "Sakamoto", club: "Coventry" }, { name: "Mason-Clarke", club: "Coventry" }, { name: "Rudoni", club: "Coventry" }, { name: "Torp", club: "Coventry" }, { name: "Grimes", club: "Coventry" }, { name: "Eccles", club: "Coventry" },
+    { name: "I Sarr", club: "Crystal Palace" }, { name: "Wharton", club: "Crystal Palace" }, { name: "Kamada", club: "Crystal Palace" }, { name: "Pino", club: "Crystal Palace" }, { name: "Hughes", club: "Crystal Palace" }, { name: "Lerma", club: "Crystal Palace" }, { name: "Doucoure", club: "Crystal Palace" }, { name: "Esse", club: "Crystal Palace" }, { name: "Devenney", club: "Crystal Palace" },
+    { name: "McNeil", club: "Everton" }, { name: "Garner", club: "Everton" }, { name: "Gueye", club: "Everton" }, { name: "Ndiaye", club: "Everton" }, { name: "Dewsbury-Hall", club: "Everton" }, { name: "Alcaraz", club: "Everton" }, { name: "Dibling", club: "Everton" }, { name: "Hackney", club: "Everton" }, { name: "Rohl", club: "Everton" }, { name: "Armstrong", club: "Everton" }, { name: "Iroegbunam", club: "Everton" }, { name: "George", club: "Everton" },
+    { name: "Smith Rowe", club: "Fulham" }, { name: "Kevin", club: "Fulham" }, { name: "Iwobi", club: "Fulham" }, { name: "Bobb", club: "Fulham" }, { name: "Lukic", club: "Fulham" }, { name: "Berge", club: "Fulham" }, { name: "Cairney", club: "Fulham" }, { name: "King", club: "Fulham" }, { name: "Reed", club: "Fulham" },
+    { name: "Belloumi", club: "Hull" }, { name: "Morita", club: "Hull" }, { name: "Zambrano", club: "Hull" }, { name: "Miller", club: "Hull" }, { name: "Gyabi", club: "Hull" }, { name: "Omar", club: "Hull" }, { name: "Dowell", club: "Hull" },
+    { name: "Fatawu", club: "Ipswich" }, { name: "Nunez", club: "Ipswich" }, { name: "Philogene-Bidace", club: "Ipswich" }, { name: "Clarke", club: "Ipswich" }, { name: "Walle Egeli", club: "Ipswich" }, { name: "Szmodics", club: "Ipswich" }, { name: "Ogbene", club: "Ipswich" }, { name: "McAteer", club: "Ipswich" },
+    { name: "Okafor", club: "Leeds" }, { name: "Tanaka", club: "Leeds" }, { name: "Aaronson", club: "Leeds" }, { name: "Longstaff", club: "Leeds" }, { name: "Stach", club: "Leeds" }, { name: "Wilson", club: "Leeds" }, { name: "James", club: "Leeds" }, { name: "Gruev", club: "Leeds" }, { name: "Gnonto", club: "Leeds" },
+    { name: "Mac Allister", club: "Liverpool" }, { name: "Szoboszlai", club: "Liverpool" }, { name: "Gravenberch", club: "Liverpool" }, { name: "Wirtz", club: "Liverpool" }, { name: "Gakpo", club: "Liverpool" }, { name: "Ngumoha", club: "Liverpool" }, { name: "C Jones", club: "Liverpool" }, { name: "Elliot", club: "Liverpool" }, { name: "Endo", club: "Liverpool" },
+    { name: "Cherki", club: "Man City" }, { name: "Rodri", club: "Man City" }, { name: "Foden", club: "Man City" }, { name: "Doku", club: "Man City" }, { name: "Semenyo", club: "Man City" }, { name: "Grealish", club: "Man City" }, { name: "Savinho", club: "Man City" }, { name: "Reijnders", club: "Man City" }, { name: "Kovacic", club: "Man City" }, { name: "Echverri", club: "Man City" }, { name: "Anderson", club: "Man City" }, { name: "Nico Gonzales", club: "Man City" },
+    { name: "Bruno Fernandes", club: "Man Utd" }, { name: "Mainoo", club: "Man Utd" }, { name: "Mbuemo", club: "Man Utd" }, { name: "Diallo", club: "Man Utd" }, { name: "Andrey Santos", club: "Man Utd" }, { name: "Dorgu", club: "Man Utd" }, { name: "Ugarte", club: "Man Utd" }, { name: "Tielemans", club: "Man Utd" }, { name: "Mount", club: "Man Utd" },
+    { name: "Guimaraes", club: "Newcastle" }, { name: "Miley", club: "Newcastle" }, { name: "Joelinton", club: "Newcastle" }, { name: "Barnes", club: "Newcastle" }, { name: "Toure", club: "Newcastle" }, { name: "Ramsey", club: "Newcastle" }, { name: "Willock", club: "Newcastle" },
+    { name: "Gibbs-White", club: "Nott'm Forest" }, { name: "Hudson-Odoi", club: "Nott'm Forest" }, { name: "Sangare", club: "Nott'm Forest" }, { name: "Ndoye", club: "Nott'm Forest" }, { name: "McAtee", club: "Nott'm Forest" }, { name: "Dominguez", club: "Nott'm Forest" }, { name: "Hutchinson", club: "Nott'm Forest" }, { name: "Bakwa", club: "Nott'm Forest" },
+    { name: "Diarra", club: "Sunderland" }, { name: "Le Fee", club: "Sunderland" }, { name: "Rigg", club: "Sunderland" }, { name: "Xhaka", club: "Sunderland" }, { name: "Adingra", club: "Sunderland" }, { name: "Talbi", club: "Sunderland" }, { name: "Sadiki", club: "Sunderland" }, { name: "Angulo", club: "Sunderland" },
+    { name: "Maddison", club: "Spurs" }, { name: "Kulusevski", club: "Spurs" }, { name: "Bentancur", club: "Spurs" }, { name: "Tonali", club: "Spurs" }, { name: "Kudus", club: "Spurs" }, { name: "Xavi Simons", club: "Spurs" }, { name: "Fernandes", club: "Spurs" }, { name: "Gray", club: "Spurs" },
   ],
   FWD: [
     { name: "Havertz", club: "Arsenal" }, { name: "G Jesus", club: "Arsenal" }, { name: "Martinelli", club: "Arsenal" }, { name: "Gyokeres", club: "Arsenal" },
-    { name: "Watkins", club: "Aston Villa" }, { name: "Abraham", club: "Aston Villa" },
-    { name: "Evanilson", club: "Bournemouth" }, { name: "Junior Kroupi", club: "Bournemouth" }, { name: "Adli", club: "Bournemouth" },
-    { name: "Thiago", club: "Brentford" }, { name: "Furo", club: "Brentford" },
-    { name: "Welbeck", club: "Brighton" }, { name: "Kostoulas", club: "Brighton" },
-    { name: "Joao Pedro", club: "Chelsea" }, { name: "Delap", club: "Chelsea" }, { name: "Guiu", club: "Chelsea" },
-    { name: "Mateta", club: "Crystal Palace" }, { name: "Strand-Larsen", club: "Crystal Palace" }, { name: "Johnson", club: "Crystal Palace" },
-    { name: "Barry", club: "Everton" }, { name: "Beto", club: "Everton" }, { name: "George", club: "Everton" },
-    { name: "Jimenez", club: "Fulham" }, { name: "Muniz", club: "Fulham" },
+    { name: "Watkins", club: "Aston Villa" }, { name: "Abraham", club: "Aston Villa" }, { name: "Guessand", club: "Aston Villa" },
+    { name: "Evanilson", club: "Bournemouth" }, { name: "Junior Kroupi", club: "Bournemouth" }, { name: "Alvaro Rodriguez", club: "Bournemouth" }, { name: "Unal", club: "Bournemouth" }, { name: "Jebbison", club: "Bournemouth" },
+    { name: "Thiago", club: "Brentford" }, { name: "Wilson", club: "Brentford" }, { name: "Nunes", club: "Brentford" }, { name: "Furo", club: "Brentford" },
+    { name: "Welbeck", club: "Brighton" }, { name: "Kostoulas", club: "Brighton" }, { name: "Tzimas", club: "Brighton" }, { name: "Ferguson", club: "Brighton" },
+    { name: "Joao Pedro", club: "Chelsea" }, { name: "Delap", club: "Chelsea" }, { name: "Guiu", club: "Chelsea" }, { name: "Jackson", club: "Chelsea" }, { name: "Emegha", club: "Chelsea" },
+    { name: "Thomas-Asante", club: "Coventry" }, { name: "Wright", club: "Coventry" }, { name: "Tchaouna", club: "Coventry" }, { name: "Simms", club: "Coventry" },
+    { name: "Mateta", club: "Crystal Palace" }, { name: "Strand-Larsen", club: "Crystal Palace" }, { name: "Johnson", club: "Crystal Palace" }, { name: "Nketiah", club: "Crystal Palace" },
+    { name: "Barry", club: "Everton" }, { name: "Beto", club: "Everton" },
+    { name: "Kusi-Asare", club: "Fulham" }, { name: "Muniz", club: "Fulham" },
+    { name: "McBurnie", club: "Hull" }, { name: "Burstow", club: "Hull" }, { name: "Destan", club: "Hull" },
+    { name: "Al-Hamadi", club: "Ipswich" }, { name: "Maeda", club: "Ipswich" }, { name: "Akpom", club: "Ipswich" },{ name: "Mehmeti", club: "Ipswich" }, { name: "Hirst", club: "Ipswich" }, { name: "Emersonn", club: "Ipswich" },
     { name: "Calvert-Lewin", club: "Leeds" }, { name: "Piroe", club: "Leeds" }, { name: "Nmecha", club: "Leeds" },
-    { name: "Foster", club: "Burnley" }, { name: "Amdouni", club: "Burnley" }, { name: "Broja", club: "Burnley" },
-    { name: "Salah", club: "Liverpool" }, { name: "Isak", club: "Liverpool" }, { name: "Ekitike", club: "Liverpool" },
+    { name: "Isak", club: "Liverpool" }, { name: "Ekitike", club: "Liverpool" },
     { name: "Haaland", club: "Man City" }, { name: "Marmoush", club: "Man City" },
-    { name: "Hojlund", club: "Man Utd" }, { name: "Sesko", club: "Man Utd" }, { name: "Cunha", club: "Man Utd" },
+    { name: "Rashford", club: "Man Utd" }, { name: "Sesko", club: "Man Utd" }, { name: "Cunha", club: "Man Utd" },
     { name: "Wissa", club: "Newcastle" }, { name: "Woltemade", club: "Newcastle" }, { name: "Osula", club: "Newcastle" },
-    { name: "Wood", club: "Nott'm Forest" }, { name: "Awoniyi", club: "Nott'm Forest" }, { name: "I Jesus", club: "Nott'm Forest" },
+    { name: "Wood", club: "Nott'm Forest" }, { name: "Awoniyi", club: "Nott'm Forest" }, { name: "I Jesus", club: "Nott'm Forest" }, { name: "Kalimuendo", club: "Nott'm Forest" },
     { name: "Isidor", club: "Sunderland" }, { name: "Mayenda", club: "Sunderland" }, { name: "Brobbey", club: "Sunderland" },
-    { name: "Richarlison", club: "Spurs" }, { name: "Solanke", club: "Spurs" }, { name: "Tel", club: "Spurs" },
-    { name: "Taty", club: "West Ham" }, { name: "Pablo", club: "West Ham" }, { name: "C Wilson", club: "West Ham" },
-    { name: "Arokodare", club: "Wolves" }, { name: "Armstrong", club: "Wolves" },
+    { name: "Richarlison", club: "Spurs" }, { name: "Solanke", club: "Spurs" }, { name: "Tel", club: "Spurs" }, { name: "Soloman", club: "Spurs" },
   ]
 };
 
@@ -1778,9 +1756,9 @@ let currentBetChoice = null;
 // Bet Builder Data - Add new weeks at the end of this array
 const weeklyBets = [
   {
-    match: "West Ham Vs Leeds",
-    picks: ["West Ham to win", "Over 2.5 Goals", "Over 10 Corners", "Ampadu To Be carded"],
-    odds: "12/1"
+    match: "Hull Vs Leeds",
+    picks: ["Hull to win", "Over 2.5 Goals", "Over 10 Corners", "Ampadu To Be carded"],
+    odds: "16/1"
   }
 ];
 
@@ -1808,9 +1786,11 @@ const colors = {
   "Brentford": "repeating-linear-gradient(90deg, #e30613, #e30613 8px, #ffffff 8px, #ffffff 16px)",
   "Brighton": "linear-gradient(#0057b8, #ffffff)",
   "Chelsea": "linear-gradient(#034694, #002d72)",
+  "Coventry": "linear-gradient(#6cb4ee, #ffffff)",
   "Crystal Palace": "linear-gradient(90deg, #1b458f 50%, #c4122e 50%)",
   "Everton": "linear-gradient(#003399, #002060)",
   "Fulham": "linear-gradient(#ffffff, #000000)",
+  "Hull": "linear-gradient(#000000, #fdb913)",
   "Ipswich": "linear-gradient(#0055a5, #ffffff)",
   "Leicester": "linear-gradient(#003090, #ffffff)",
   "Liverpool": "linear-gradient(#c8102e, #8d0514)",
@@ -1819,9 +1799,7 @@ const colors = {
   "Newcastle": "repeating-linear-gradient(90deg, #000, #000 8px, #fff 8px, #fff 16px)",
   "Nott'm Forest": "linear-gradient(#dd0000, #ffffff)",
   "Southampton": "linear-gradient(#d71920, #ffffff)",
-  "Spurs": "linear-gradient(#ffffff, #132257)",
-  "West Ham": "linear-gradient(#7a263a, #1bb1e7)",
-  "Wolves": "linear-gradient(#fdb913, #231f20)"
+  "Spurs": "linear-gradient(#ffffff, #132257)"
 };
 
 const secondaryColors = {
@@ -1831,9 +1809,11 @@ const secondaryColors = {
   "Brentford": "#e30613",
   "Brighton": "#ffffff",
   "Chelsea": "#ffffff",
+  "Coventry": "#ffffff",
   "Crystal Palace": "#1b458f",
   "Everton": "#ffffff",
   "Fulham": "#000000",
+  "Hull": "#fdb913",
   "Ipswich": "#ffffff",
   "Leicester": "#ffffff",
   "Liverpool": "#00a398",
@@ -1842,9 +1822,7 @@ const secondaryColors = {
   "Newcastle": "#ffffff",
   "Nott'm Forest": "#ffffff",
   "Southampton": "#000000",
-  "Spurs": "#132257",
-  "West Ham": "#1bb1e7",
-  "Wolves": "#231f20"
+  "Spurs": "#132257"
 };
 
 window.currentDisplayedPlayerScores = {}; // Global variable for currently displayed player scores
@@ -1903,54 +1881,11 @@ const updateShirt = function(select) {
 window.updateShirt = updateShirt;
 
 const calculateAndSaveDeadlines = async () => {
-  const fixtures = [
-    { date: "Sunday 24th May", games: [
-      { home: "Brighton", away: "Man Utd", time: "16:00" },
-      { home: "Burnley", away: "Wolves", time: "16:00" },
-      { home: "Crystal Palace", away: "Arsenal", time: "16:00" },
-      { home: "Fulham", away: "Newcastle", time: "16:00" },
-      { home: "Liverpool", away: "Brentford", time: "16:00" },
-      { home: "Man City", away: "Aston Villa", time: "16:00" },
-      { home: "Forest", away: "Bournemouth", time: "16:00" },
-      { home: "Sunderland", away: "Chelsea", time: "16:00" },
-      { home: "Tottenham", away: "Everton", time: "16:00" },
-      { home: "West Ham", away: "Leeds", time: "16:00" }
-    ]}
-  ];
+  const info = window.getGameweekDeadlineInfo ? window.getGameweekDeadlineInfo() : null;
+  if (!info) return;
 
-  // Extract all fixtures and times
-  let allTimes = [];
-  fixtures.forEach(day => {
-    day.games.forEach(g => {
-      const [hours, minutes] = g.time.split(':').map(Number);
-      // Parse the date from the day.date string (e.g., "Sunday 24th May")
-      const dateMatch = day.date.match(/(\d+)(?:st|nd|rd|th)\s+(\w+)/);
-      if (dateMatch) {
-        const dayOfMonth = parseInt(dateMatch[1]);
-        const monthName = dateMatch[2];
-        // Current year context (2026 based on the session context)
-        const date = new Date(2026, new Date(Date.parse(monthName + " 1")).getMonth(), dayOfMonth, hours, minutes);
-        allTimes.push(date);
-      }
-    });
-  });
+  const { deadline, reopenTime } = info;
 
-  if (allTimes.length === 0) return;
-
-  // Find earliest and latest kick-off times
-  const firstKickOff = new Date(Math.min(...allTimes));
-  const lastKickOff = new Date(Math.max(...allTimes));
-
-  // Deadline: 2 hours before the first kick-off
-  const deadline = new Date(firstKickOff);
-  deadline.setHours(deadline.getHours() - 2);
-
-  // Reopen: 1am on 2 days after the final fixture
-  const reopenTime = new Date(lastKickOff);
-  reopenTime.setDate(reopenTime.getDate() + 2);
-  reopenTime.setHours(1, 0, 0, 0);
-
-  // Save to Firebase
   try {
     await updateDoc(doc(db, "settings", "gameweek"), {
       deadline: deadline.toISOString(),
@@ -1966,40 +1901,11 @@ const calculateAndSaveDeadlines = async () => {
 const loadFixtures = () => {
   const list = document.getElementById('fixtures-list');
   const modalList = document.getElementById('modal-fixtures-list');
-  const fixtures = [
+  const fixtures = window.getGameweekFixtures ? window.getGameweekFixtures() : [];
 
-    { date: "Sunday 24th May", games: [
-      { home: "Brighton", away: "Man Utd", time: "16:00" },
-      { home: "Burnley", away: "Wolves", time: "16:00" },
-      { home: "Crystal Palace", away: "Arsenal", time: "16:00" },
-      { home: "Fulham", away: "Newcastle", time: "16:00" },
-      { home: "Liverpool", away: "Brentford", time: "16:00" },
-      { home: "Man City", away: "Aston Villa", time: "16:00" },
-      { home: "Forest", away: "Bournemouth", time: "16:00" },
-      { home: "Sunderland", away: "Chelsea", time: "16:00" },
-      { home: "Tottenham", away: "Everton", time: "16:00" },
-      { home: "West Ham", away: "Leeds", time: "16:00" }
-    ]}
-  ];
-
-  if (list) list.innerHTML = '';
-  if (modalList) modalList.innerHTML = '';
-  fixtures.forEach(day => {
-    const dateHeader = `<div class="fixture-date-header">${day.date}</div>`;
-    if (list) list.innerHTML += dateHeader;
-    if (modalList) modalList.innerHTML += dateHeader;
-    day.games.forEach(g => {
-      const gameHtml = `
-        <div class="fixture-item">
-          <div class="fixture-team" style="text-align:right;">${g.home}</div>
-          <div class="fixture-time">${g.time}</div>
-          <div class="fixture-team" style="text-align:left;">${g.away}</div>
-        </div>
-      `;
-      if (list) list.innerHTML += gameHtml;
-      if (modalList) modalList.innerHTML += gameHtml;
-    });
-  });
+  if (typeof window.renderFixtureList === 'function') {
+    window.renderFixtureList(list, modalList, fixtures);
+  }
 };
 
 const changeFormation = function() {
@@ -2353,10 +2259,10 @@ const setBetChoice = function(choice) {
   
   if(choice === 'yes') {
     document.getElementById('btnYes').classList.add('selected');
-    document.getElementById('betInfo').innerHTML = "Reward: <strong>155 pts</strong> | Risk: <strong>30 pts</strong>";
+    document.getElementById('betInfo').innerHTML = "Reward: <strong>85 pts</strong> | Risk: <strong>35 pts</strong>";
   } else {
     document.getElementById('btnNo').classList.add('selected');
-    document.getElementById('betInfo').innerHTML = "Reward: <strong>30 pts</strong> | Risk: <strong>155 pts</strong>";
+    document.getElementById('betInfo').innerHTML = "Reward: <strong>35 pts</strong> | Risk: <strong>85 pts</strong>";
   }
 }
 window.setBetChoice = setBetChoice;
@@ -2693,43 +2599,12 @@ const checkOnboarding = () => {
 // Run onboarding check after a short delay
 setTimeout(checkOnboarding, 800);
 
-// Load fixtures but don't calculate deadlines yet (will be done after user authenticates)
-const fixtures = [
-  { date: "Sunday 24th May", games: [
-    { home: "Brighton", away: "Man Utd", time: "16:00" },
-    { home: "Burnley", away: "Wolves", time: "16:00" },
-    { home: "Crystal Palace", away: "Arsenal", time: "16:00" },
-    { home: "Fulham", away: "Newcastle", time: "16:00" },
-    { home: "Liverpool", away: "Brentford", time: "16:00" },
-    { home: "Man City", away: "Aston Villa", time: "16:00" },
-    { home: "Forest", away: "Bournemouth", time: "16:00" },
-    { home: "Sunderland", away: "Chelsea", time: "16:00" },
-    { home: "Tottenham", away: "Everton", time: "16:00" },
-    { home: "West Ham", away: "Leeds", time: "16:00" }
-  ]}
-];
-
-// Populate fixtures UI without triggering deadline calculation yet
+// Populate fixtures UI using the shared fixture source
 const list = document.getElementById('fixtures-list');
 const modalList = document.getElementById('modal-fixtures-list');
-if (list) list.innerHTML = '';
-if (modalList) modalList.innerHTML = '';
-fixtures.forEach(day => {
-  const dateHeader = `<div class="fixture-date-header">${day.date}</div>`;
-  if (list) list.innerHTML += dateHeader;
-  if (modalList) modalList.innerHTML += dateHeader;
-  day.games.forEach(g => {
-    const gameHtml = `
-      <div class="fixture-item">
-        <div class="fixture-team" style="text-align:right;">${g.home}</div>
-        <div class="fixture-time">${g.time}</div>
-        <div class="fixture-team" style="text-align:left;">${g.away}</div>
-      </div>
-    `;
-    if (list) list.innerHTML += gameHtml;
-    if (modalList) modalList.innerHTML += gameHtml;
-  });
-});
+if (typeof window.renderFixtureList === 'function') {
+  window.renderFixtureList(list, modalList, window.getGameweekFixtures ? window.getGameweekFixtures() : []);
+}
 </script>
 
 <!-- FOOTER -->
