@@ -1156,7 +1156,6 @@ const scoutData = {
         { pick: "Wolves", reasoning: "Expected points analysis signals Championship trajectory. Squad balance poor." },
         { pick: "Burnley", reasoning: "Promotion curse: Empirical data shows 2-3 year relegation cycle." },
         { pick: "West Ham", reasoning: "Financial fair play constraints + tactical instability = downside risk." },
-        { pick: "Southampton", reasoning: "Rebuild incomplete. Squad quality metrics lowest quartile xG." },
         { pick: "Brighton", reasoning: "Summer departures + competition depth challenges." }
       ],
       yellows: [
@@ -1251,8 +1250,30 @@ const scoutData = {
 const PL_CLUBS = [
   "Arsenal", "Aston Villa", "Bournemouth", "Brentford", "Brighton", "Chelsea", 
   "Coventry", "Crystal Palace", "Everton", "Fulham", "Hull", "Ipswich", "Leicester", "Liverpool", 
-  "Man City", "Man Utd", "Newcastle", "Nott'm Forest", "Southampton", "Spurs"
+  "Man City", "Man Utd", "Newcastle", "Nott'm Forest", "Spurs"
 ];
+
+const clubProfiles = {
+  Arsenal: { titleThreat: 0.92, cupPotential: 0.9, goalOutput: 0.76, creativeOutput: 0.74, defensiveControl: 0.95, matchBurst: 0.72, managerPressure: 0.2, disciplineRisk: 0.34, dropZoneDanger: 0.04, bookingRisk: 0.36 },
+  "Aston Villa": { titleThreat: 0.8, cupPotential: 0.92, goalOutput: 0.62, creativeOutput: 0.7, defensiveControl: 0.8, matchBurst: 0.68, managerPressure: 0.28, disciplineRisk: 0.4, dropZoneDanger: 0.16, bookingRisk: 0.38 },
+  Bournemouth: { titleThreat: 0.2, cupPotential: 0.6, goalOutput: 0.46, creativeOutput: 0.5, defensiveControl: 0.42, matchBurst: 0.58, managerPressure: 0.42, disciplineRisk: 0.44, dropZoneDanger: 0.34, bookingRisk: 0.48 },
+  Brentford: { titleThreat: 0.22, cupPotential: 0.62, goalOutput: 0.4, creativeOutput: 0.42, defensiveControl: 0.48, matchBurst: 0.62, managerPressure: 0.44, disciplineRisk: 0.43, dropZoneDanger: 0.32, bookingRisk: 0.56 },
+  Brighton: { titleThreat: 0.48, cupPotential: 0.76, goalOutput: 0.5, creativeOutput: 0.8, defensiveControl: 0.78, matchBurst: 0.6, managerPressure: 0.38, disciplineRisk: 0.45, dropZoneDanger: 0.24, bookingRisk: 0.42 },
+  Chelsea: { titleThreat: 0.82, cupPotential: 0.88, goalOutput: 0.74, creativeOutput: 0.76, defensiveControl: 0.56, matchBurst: 0.74, managerPressure: 0.34, disciplineRisk: 0.4, dropZoneDanger: 0.16, bookingRisk: 0.4 },
+  Coventry: { titleThreat: 0.18, cupPotential: 0.5, goalOutput: 0.32, creativeOutput: 0.38, defensiveControl: 0.45, matchBurst: 0.4, managerPressure: 0.54, disciplineRisk: 0.38, dropZoneDanger: 0.62, bookingRisk: 0.4 },
+  "Crystal Palace": { titleThreat: 0.24, cupPotential: 0.58, goalOutput: 0.42, creativeOutput: 0.4, defensiveControl: 0.5, matchBurst: 0.48, managerPressure: 0.42, disciplineRisk: 0.4, dropZoneDanger: 0.38, bookingRisk: 0.44 },
+  Everton: { titleThreat: 0.22, cupPotential: 0.5, goalOutput: 0.4, creativeOutput: 0.38, defensiveControl: 0.4, matchBurst: 0.44, managerPressure: 0.6, disciplineRisk: 0.46, dropZoneDanger: 0.58, bookingRisk: 0.5 },
+  Fulham: { titleThreat: 0.3, cupPotential: 0.56, goalOutput: 0.45, creativeOutput: 0.46, defensiveControl: 0.58, matchBurst: 0.5, managerPressure: 0.44, disciplineRisk: 0.42, dropZoneDanger: 0.37, bookingRisk: 0.48 },
+  Hull: { titleThreat: 0.1, cupPotential: 0.34, goalOutput: 0.3, creativeOutput: 0.3, defensiveControl: 0.34, matchBurst: 0.34, managerPressure: 0.72, disciplineRisk: 0.36, dropZoneDanger: 0.74, bookingRisk: 0.42 },
+  Ipswich: { titleThreat: 0.12, cupPotential: 0.4, goalOutput: 0.32, creativeOutput: 0.32, defensiveControl: 0.37, matchBurst: 0.34, managerPressure: 0.72, disciplineRisk: 0.4, dropZoneDanger: 0.7, bookingRisk: 0.43 },
+  Leicester: { titleThreat: 0.16, cupPotential: 0.42, goalOutput: 0.34, creativeOutput: 0.33, defensiveControl: 0.36, matchBurst: 0.36, managerPressure: 0.7, disciplineRisk: 0.41, dropZoneDanger: 0.74, bookingRisk: 0.46 },
+  Liverpool: { titleThreat: 0.95, cupPotential: 0.95, goalOutput: 0.84, creativeOutput: 0.92, defensiveControl: 0.94, matchBurst: 0.8, managerPressure: 0.2, disciplineRisk: 0.3, dropZoneDanger: 0.06, bookingRisk: 0.28 },
+  "Man City": { titleThreat: 1, cupPotential: 0.98, goalOutput: 0.9, creativeOutput: 0.88, defensiveControl: 0.96, matchBurst: 0.78, managerPressure: 0.15, disciplineRisk: 0.28, dropZoneDanger: 0.03, bookingRisk: 0.26 },
+  "Man Utd": { titleThreat: 0.6, cupPotential: 0.8, goalOutput: 0.58, creativeOutput: 0.64, defensiveControl: 0.6, matchBurst: 0.72, managerPressure: 0.42, disciplineRisk: 0.45, dropZoneDanger: 0.22, bookingRisk: 0.44 },
+  Newcastle: { titleThreat: 0.72, cupPotential: 0.74, goalOutput: 0.66, creativeOutput: 0.6, defensiveControl: 0.67, matchBurst: 0.66, managerPressure: 0.38, disciplineRisk: 0.38, dropZoneDanger: 0.24, bookingRisk: 0.36 },
+  "Nott'm Forest": { titleThreat: 0.24, cupPotential: 0.45, goalOutput: 0.4, creativeOutput: 0.42, defensiveControl: 0.42, matchBurst: 0.44, managerPressure: 0.55, disciplineRisk: 0.47, dropZoneDanger: 0.48, bookingRisk: 0.5 },
+  Spurs: { titleThreat: 0.66, cupPotential: 0.72, goalOutput: 0.64, creativeOutput: 0.68, defensiveControl: 0.5, matchBurst: 0.72, managerPressure: 0.4, disciplineRisk: 0.5, dropZoneDanger: 0.26, bookingRisk: 0.5 }
+};
 
 const TOP_SCORER_CANDIDATES = [
   "Erling Haaland", "Ollie Watkins", "Mohamed Salah", "Son Heung-min", "Alexander Isak", "Dominic Solanke"
@@ -1373,88 +1394,135 @@ if (aiModal) {
 
 const getScoutPredictions = function(scoutKey, category) {
   const scout = scoutData[scoutKey];
-  const clubPool = [...PL_CLUBS];
-  const scoutTones = {
+  const categoryKey = {
+    winner: 'titleThreat',
+    facup: 'cupPotential',
+    scorer: 'goalOutput',
+    assists: 'creativeOutput',
+    cleansheets: 'defensiveControl',
+    hattrick: 'matchBurst',
+    sacked: 'managerPressure',
+    redcards: 'disciplineRisk',
+    relegated: 'dropZoneDanger',
+    yellows: 'bookingRisk'
+  }[category] || 'titleThreat';
+
+  const personalityWeights = {
+    striker: {
+      titleThreat: 1.12,
+      cupPotential: 1.08,
+      goalOutput: 1.16,
+      creativeOutput: 0.94,
+      defensiveControl: 1.1,
+      matchBurst: 0.98,
+      managerPressure: 0.72,
+      disciplineRisk: 0.82,
+      dropZoneDanger: 0.56,
+      bookingRisk: 0.76
+    },
+    scout: {
+      titleThreat: 1.04,
+      cupPotential: 1.14,
+      goalOutput: 0.96,
+      creativeOutput: 1.02,
+      defensiveControl: 1.16,
+      matchBurst: 0.98,
+      managerPressure: 0.78,
+      disciplineRisk: 0.9,
+      dropZoneDanger: 0.62,
+      bookingRisk: 0.84
+    },
+    analyst: {
+      titleThreat: 0.96,
+      cupPotential: 0.98,
+      goalOutput: 0.98,
+      creativeOutput: 0.96,
+      defensiveControl: 0.9,
+      matchBurst: 1.18,
+      managerPressure: 1.06,
+      disciplineRisk: 1.12,
+      dropZoneDanger: 1.14,
+      bookingRisk: 1.1
+    }
+  };
+
+  const toneList = {
     striker: ['clinical', 'steady', 'disciplined', 'measured', 'pragmatic'],
     scout: ['tactical', 'structured', 'shape-based', 'adaptive', 'systemic'],
     analyst: ['volatile', 'outlier', 'value-driven', 'swing', 'high-upside']
-  };
-  const categoryTypes = {
-    winner: ['title threat', 'title threat', 'title threat', 'title threat', 'title threat'],
-    facup: ['cup potential', 'cup potential', 'cup potential', 'cup potential', 'cup potential'],
-    scorer: ['goal-output', 'goal-output', 'goal-output', 'goal-output', 'goal-output'],
-    assists: ['creative output', 'creative output', 'creative output', 'creative output', 'creative output'],
-    cleansheets: ['defensive control', 'defensive control', 'defensive control', 'defensive control', 'defensive control'],
-    hattrick: ['match-winning burst', 'match-winning burst', 'match-winning burst', 'match-winning burst', 'match-winning burst'],
-    sacked: ['manager pressure', 'manager pressure', 'manager pressure', 'manager pressure', 'manager pressure'],
-    redcards: ['discipline risk', 'discipline risk', 'discipline risk', 'discipline risk', 'discipline risk'],
-    relegated: ['drop-zone danger', 'drop-zone danger', 'drop-zone danger', 'drop-zone danger', 'drop-zone danger'],
-    yellows: ['booking risk', 'booking risk', 'booking risk', 'booking risk', 'booking risk']
-  };
-  const supportPhrases = {
-    winner: [
-      'their squad depth and big-game mentality should carry them through a long campaign',
-      'their balance between attack and defence makes them a realistic title contender',
-      'the current setup looks sustainable even when fixtures come thick and fast'
-    ],
-    facup: [
-      'their rotation options make knockout football feel manageable',
-      'their tactical flexibility is ideal for cup football',
-      'their squad can absorb congestion without losing structure'
-    ],
-    scorer: [
-      'their attacking role gives them a straightforward route to high goal output',
-      'their chance creation and finishing profile point to strong returns',
-      'their movement patterns should produce enough clean opportunities to matter'
-    ],
-    assists: [
-      'their chance creation rate is high enough to keep them among the regular providers',
-      'the current tactical setup gives them plenty of final-third passes',
-      'their role in possession should create regular service for team-mates'
-    ],
-    cleansheets: [
-      'their defensive structure is hard to break down in open play',
-      'their back line and goalkeeper combination looks well-organized',
-      'their press and shape limit the quality of opposition chances'
-    ],
-    hattrick: [
-      'their attacking role gives them real upside in a high-scoring match',
-      'their finishing quality makes a one-off explosion realistic',
-      'their side should create enough space for a huge individual haul'
-    ],
-    sacked: [
-      'the pressure points are already visible and the margin for error is narrow',
-      'the current squad balance is not yet convincing under the present setup',
-      'the early results are pointing to a difficult season for the manager'
-    ],
-    redcards: [
-      'their role in transition and defensive duels creates real disciplinary risk',
-      'their aggressive habits can turn a good game into a costly one',
-      'the tempo of the matches suits a player who commits plenty of fouls'
-    ],
-    relegated: [
-      'the current balance feels fragile and the margin for error is small',
-      'their squad looks short of the resilience needed to survive the run-in',
-      'the style is too exposed to lose tight matches'
-    ],
-    yellows: [
-      'their defensive positioning and duels leave them vulnerable to cards',
-      'their role in midfield means they are often in the middle of the chaos',
-      'their tactical style naturally creates more booking opportunities'
-    ]
+  }[scoutKey] || ['balanced'];
+
+  const categoryLabels = {
+    winner: 'title threat',
+    facup: 'cup contender',
+    scorer: 'goal-output pick',
+    assists: 'creative outlet',
+    cleansheets: 'clean-sheet candidate',
+    hattrick: 'match-winning burst',
+    sacked: 'manager pressure case',
+    redcards: 'discipline risk',
+    relegated: 'drop-zone danger',
+    yellows: 'booking risk'
   };
 
-  const toneList = scoutTones[scoutKey] || scoutTones.analyst;
-  const categoryList = categoryTypes[category] || categoryTypes.winner;
-  const phrases = supportPhrases[category] || supportPhrases.winner;
+  const supportPhrases = {
+    striker: {
+      winner: ['their balance and depth make them a safer title bet', 'their consistency gives them a strong long-season profile', 'their quality is reliable even when the fixtures stack up'],
+      facup: ['their squad depth suits knockout football', 'their rotation options make cup football easier to manage', 'their bench strength helps them survive congestion'],
+      scorer: ['their attacking role gives them a dependable route to goals', 'their finishing profile points to reliable output', 'their movement and service should generate consistent chances'],
+      assists: ['their chance creation keeps them involved in a lot of attacks', 'their off-the-ball movement should create regular service', 'their playmaking profile is strong enough to drive chances'],
+      cleansheets: ['their defensive shape is difficult to break down', 'their back line and keeper look well organized', 'their structure limits the quality of opposition chances'],
+      hattrick: ['their attacking role gives them a high ceiling in a big game', 'their finishing quality makes a one-off explosion realistic', 'their side should create enough space for a burst of goals'],
+      sacked: ['the pressure points are already visible and the margin for error is small', 'the current setup is giving off signs of strain', 'their form has not yet looked convincing enough to settle the nerves'],
+      redcards: ['their defensive role brings real discipline risk', 'their aggressive habits can turn a good game into a costly one', 'their style naturally creates more foul pressure'],
+      relegated: ['the balance looks too fragile to survive a long run of tight games', 'they do not look robust enough to weather pressure', 'their structure is exposed when results start turning'],
+      yellows: ['their defensive positioning leaves them exposed to cards', 'their midfield role means they are often in the middle of the chaos', 'their style naturally creates more booking opportunities']
+    },
+    scout: {
+      winner: ['their structure and balance make them a proper title threat', 'their tactical identity gives them a solid platform for a long campaign', 'their shape and game-plan look sustainable over time'],
+      facup: ['their tactical flexibility is ideal for cup football', 'their shape can change without losing control', 'their game plan adapts well to knockout pressure'],
+      scorer: ['their role in the system gives them a clear route to goals', 'their positioning and timing should keep them in the right places', 'their tactical role suits a regular goal threat'],
+      assists: ['their role in possession should keep them feeding the attack', 'their positioning gives them plenty of final-third passes', 'their system naturally creates chances for them to supply'],
+      cleansheets: ['their defensive structure is well drilled', 'their press and shape limit the quality of opposition chances', 'their back line looks compact and difficult to break'],
+      hattrick: ['their role gives them real upside in a high-scoring match', 'their movement patterns create space for a big individual haul', 'their tactical freedom should produce a burst of output'],
+      sacked: ['their tactical identity is currently looking too rigid', 'their setup does not yet look robust enough under pressure', 'their style is leaving too little room for error'],
+      redcards: ['their role in transition creates clear disciplinary risk', 'their aggressive positioning can produce cheap fouls', 'their system involves repeated defensive duels'],
+      relegated: ['their tactical balance looks too thin for a survival fight', 'their structure can be exposed when the pressure rises', 'they look vulnerable when games become tight and reactive'],
+      yellows: ['their defensive role places them in the middle of the foul pattern', 'their tactical style naturally produces more card-risk moments', 'their role in the team creates repeated booking opportunities']
+    },
+    analyst: {
+      winner: ['their ceiling is high enough to still look like a real outlier', 'their upside makes them a fascinating title candidate', 'their peak performance level is strong enough to swing the season'],
+      facup: ['their swing potential makes them dangerous in knockout football', 'their squad can produce a big cup run if the pattern clicks', 'their upside makes them more dangerous than their baseline suggests'],
+      scorer: ['their ceiling is high enough to deliver a big scoring season', 'their role could produce a breakout goal haul', 'their output can spike quickly when the chemistry clicks'],
+      assists: ['their creative upside is good enough to make them a real difference-maker', 'their chance creation can explode if the pattern turns', 'their role is volatile but capable of huge weeks'],
+      cleansheets: ['their defensive ceiling is strong enough to produce surprise shutouts', 'their structure can turn a match on its head with clean-sheet runs', 'their upside is there even if the base is not perfectly stable'],
+      hattrick: ['their ceiling is high enough to produce a huge match-winning burst', 'their explosive profile makes a big game very possible', 'their upside can turn one match into a monster game'],
+      sacked: ['their pressure profile is rising and the risk is becoming very real', 'their current balance is too unstable to ignore', 'the underlying numbers are now pointing toward a difficult spell'],
+      redcards: ['their disciplinary volatility is high enough to make this a very real risk', 'their style can quickly become expensive in a tight match', 'their role leaves them exposed to card-heavy games'],
+      relegated: ['their margin for error is so small that a slide becomes plausible', 'their profile has enough fragility to threaten a drop-zone run', 'their upside is not enough to offset the underlying risk'],
+      yellows: ['their card risk is uncomfortable enough to be worth watching', 'their aggressive role could easily turn week to week', 'their style leaves them exposed to bookings when the game gets physical']
+    }
+  };
+
+  const ranked = PL_CLUBS.map((club) => {
+    const profile = clubProfiles[club];
+    const baseScore = Number(profile[categoryKey] || 0);
+    const personalityMultiplier = personalityWeights[scoutKey][categoryKey] || 1;
+    const adjustedScore = baseScore * personalityMultiplier;
+    return { club, score: adjustedScore };
+  }).sort((a, b) => b.score - a.score);
+
   const picks = [];
-  const offset = scoutKey === 'analyst' ? 3 : scoutKey === 'scout' ? 1 : 0;
+  const seen = new Set();
+  const vibe = supportPhrases[scoutKey][category] || supportPhrases[scoutKey].winner;
 
   for (let i = 0; i < 5; i++) {
-    const club = clubPool[(i + offset) % clubPool.length];
+    const nextPick = ranked.find((entry) => !seen.has(entry.club));
+    if (!nextPick) break;
+    seen.add(nextPick.club);
     picks.push({
-      pick: club,
-      reasoning: `${scout.name} sees ${club} as a ${toneList[i % toneList.length]} ${categoryList[i % categoryList.length]} because ${phrases[i % phrases.length]}.`
+      pick: nextPick.club,
+      reasoning: `${scout.name} sees ${nextPick.club} as a ${toneList[i % toneList.length]} ${categoryLabels[category] || 'title threat'} because ${vibe[i % vibe.length]}.`
     });
   }
 
