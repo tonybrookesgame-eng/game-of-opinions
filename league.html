@@ -250,31 +250,84 @@ h1 {font-size:34px;margin-bottom:8px;}
 /* ========================= BUTTONS ========================= */
 
 .league-actions {
-
   display:flex;
-
   gap:15px;
+  margin-bottom:24px;
+  flex-wrap:wrap;
+  align-items:center;
+}
 
-  margin-bottom:30px;
+.league-input-row {
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+}
 
+.league-input {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: white;
+  border-radius: 999px;
+  padding: 10px 14px;
+  min-width: 200px;
+  outline: none;
 }
 
 .league-btn {
-
   background:rgba(199,255,56,0.1);
-
   border:1px solid #c7ff38;
-
   color:#c7ff38;
-
   padding:10px 20px;
-
-  border-radius:8px;
-
+  border-radius:999px;
   cursor:pointer;
-
   font-weight:bold;
+}
 
+.league-btn.secondary {
+  background: rgba(255,255,255,0.08);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.league-status {
+  display:none;
+  margin: 0 0 24px;
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(199,255,56,0.08);
+  border: 1px solid rgba(199,255,255,0.2);
+}
+
+.league-status h3 {
+  margin: 0 0 6px;
+  color: #c7ff38;
+  font-size: 16px;
+}
+
+.league-status p {
+  margin: 0 0 10px;
+  color: #cbd5e1;
+  font-size: 14px;
+}
+
+.league-code-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+
+.league-status-actions {
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
 }
 
 /* ========================= MOBILE ========================= */
@@ -391,11 +444,26 @@ h1 {font-size:34px;margin-bottom:8px;}
   <p class="subtitle">Climb. Dominate. Prove your opinions.</p>
 
   <div class="league-actions user-only">
+    <div class="league-input-row">
+      <input id="league-name-input" class="league-input" placeholder="League name" />
+      <button class="league-btn" onclick="createLeague()">+ Create League</button>
+    </div>
+    <div class="league-input-row">
+      <input id="join-code-input" class="league-input" placeholder="Enter league code" />
+      <button class="league-btn" onclick="joinLeague()">Join League</button>
+    </div>
+  </div>
 
-    <button class="league-btn" onclick="createLeague()">+ Create League</button>
-
-    <button class="league-btn" onclick="joinLeague()">Join League</button>
-
+  <div id="league-status" class="league-status">
+    <h3 id="league-status-title">League ready</h3>
+    <p id="league-status-text">Share this code with friends.</p>
+    <div class="league-code-pill">
+      <span id="league-code-display">--</span>
+    </div>
+    <div class="league-status-actions">
+      <button class="league-btn secondary" onclick="copyLeagueCode()">Copy Code</button>
+      <button class="league-btn secondary" onclick="shareLeagueCode()">Share</button>
+    </div>
   </div>
 
   <div class="leaderboard">
@@ -424,7 +492,7 @@ h1 {font-size:34px;margin-bottom:8px;}
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
-import { getFirestore, collection, query, orderBy, getDocs, doc, setDoc, updateDoc, arrayUnion, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, query, orderBy, getDocs, getDoc, doc, setDoc, updateDoc, arrayUnion, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
@@ -522,42 +590,131 @@ async function loadLeaderboard(user){
 
 }
 
+let activeLeagueCode = "";
+let activeLeagueName = "";
+
+function showLeagueStatus(title, message, code) {
+  const panel = document.getElementById("league-status");
+  const titleEl = document.getElementById("league-status-title");
+  const textEl = document.getElementById("league-status-text");
+  const codeEl = document.getElementById("league-code-display");
+
+  titleEl.innerText = title;
+  textEl.innerText = message;
+  codeEl.innerText = code || "--";
+  panel.style.display = "block";
+
+  activeLeagueCode = code || "";
+}
+
+async function copyLeagueCode() {
+  if (!activeLeagueCode) return;
+
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(activeLeagueCode);
+    } else {
+      const temp = document.createElement("textarea");
+      temp.value = activeLeagueCode;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand("copy");
+      document.body.removeChild(temp);
+    }
+    alert(`League code copied: ${activeLeagueCode}`);
+  } catch (err) {
+    console.error(err);
+    alert("Unable to copy automatically. Please copy the code manually.");
+  }
+}
+
+async function shareLeagueCode() {
+  if (!activeLeagueCode) return;
+
+  const shareText = `Join my Game of Opinions league with code ${activeLeagueCode}`;
+
+  try {
+    if (navigator.share) {
+      await navigator.share({
+        title: "Game of Opinions League",
+        text: shareText
+      });
+    } else {
+      await copyLeagueCode();
+      alert(`Share this code: ${activeLeagueCode}`);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+window.copyLeagueCode = copyLeagueCode;
+window.shareLeagueCode = shareLeagueCode;
+
 window.createLeague = async ()=>{
+  const nameInput = document.getElementById("league-name-input");
+  const name = (nameInput?.value || "").trim();
 
-  const name=prompt("League name:");
+  if (!name) {
+    alert("Please enter a league name.");
+    return;
+  }
 
-  if(!name) return;
+  let code = "";
+  let attempts = 0;
 
-  const code=Math.random().toString(36).substring(2,8).toUpperCase();
+  while (attempts < 10) {
+    code = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const existing = await getDoc(doc(db, "leagues", "L-" + code));
+    if (!existing.exists()) break;
+    attempts++;
+  }
 
-  await setDoc(doc(db,"leagues","L-"+code),{
+  if (!code) {
+    alert("Unable to create a league right now. Please try again.");
+    return;
+  }
 
-    name,code,
-
-    creator:auth.currentUser.uid,
-
-    members:[auth.currentUser.uid]
-
+  await setDoc(doc(db, "leagues", "L-" + code), {
+    name,
+    code,
+    creator: auth.currentUser.uid,
+    members: [auth.currentUser.uid]
   });
 
-  alert("Code: "+code);
-
+  nameInput.value = "";
+  showLeagueStatus("League created", `Share this code with your friends to join ${name}.`, code);
 };
 
 window.joinLeague = async ()=>{
+  const input = document.getElementById("join-code-input");
+  const code = (input?.value || "").trim().toUpperCase();
 
-  const code=prompt("Enter code:");
+  if (!code) {
+    alert("Please enter a league code.");
+    return;
+  }
 
-  if(!code) return;
+  const leagueRef = doc(db, "leagues", "L-" + code);
+  const leagueSnap = await getDoc(leagueRef);
 
-  await updateDoc(doc(db,"leagues","L-"+code),{
+  if (!leagueSnap.exists()) {
+    alert("League code not found. Please check the code and try again.");
+    return;
+  }
 
-    members:arrayUnion(auth.currentUser.uid)
+  const leagueData = leagueSnap.data();
+  if (leagueData.members && leagueData.members.includes(auth.currentUser.uid)) {
+    alert("You are already in this league.");
+    return;
+  }
 
+  await updateDoc(leagueRef, {
+    members: arrayUnion(auth.currentUser.uid)
   });
 
-  alert("Joined!");
-
+  input.value = "";
+  showLeagueStatus("Joined league", `You joined ${leagueData.name || "the league"}.`, code);
 };
 
 onAuthStateChanged(auth,(user)=>{

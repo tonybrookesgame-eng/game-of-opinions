@@ -111,6 +111,33 @@
       margin-right: 5px;
     }
 
+    .quick-start-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 24px 0 12px;
+    }
+    .quick-start-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .quick-start-card strong {
+      display: block;
+      color: #c7ff38;
+      margin-bottom: 6px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .quick-start-card p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.55;
+      color: #cbd5e1;
+    }
+
     .rules-table {
       width: 100%;
       border-collapse: collapse;
@@ -235,41 +262,59 @@
 
 <div class="container">
   <h1>How It Works</h1>
-  <p>Game of Opinions is a football management game built on the belief that pure football knowledge should trump spreadsheets and template teams.</p>
+  <p>Game of Opinions is a weekly football-management challenge where your XI, your weekly predictions, and your long-term season calls all feed into a single leaderboard.</p>
+
+  <div class="quick-start-grid">
+    <div class="quick-start-card">
+      <strong>Pick Your XI</strong>
+      <p>Choose 11 players from 11 different clubs and build around the one-club rule.</p>
+    </div>
+    <div class="quick-start-card">
+      <strong>Weekly Calls</strong>
+      <p>Back your first-goal club and minute, then try the Bet Builder for extra points.</p>
+    </div>
+    <div class="quick-start-card">
+      <strong>Score Big</strong>
+      <p>Appearances, goals, assists, clean sheets, and cards all feed into your total.</p>
+    </div>
+    <div class="quick-start-card">
+      <strong>Think Long Term</strong>
+      <p>Season picks add a bigger end-of-campaign swing once you submit them.</p>
+    </div>
+  </div>
 
   <div class="highlight-box">
-    <strong>The Golden Rule:</strong> You can only select ONE player from any single Premier League club. Every team is a puzzle.
+    <strong>The Golden Rule:</strong> You can only select one player from any one Premier League club. Every team is a puzzle, and every week is a fresh test of judgment.
   </div>
 
   <div class="highlight-box" style="background: rgba(248, 113, 113, 0.05); border-color: rgba(248, 113, 113, 0.2);">
-    <strong>No Real Money:</strong> Game of Opinions is a virtual points-based game for entertainment purposes only. The "Bet Builder" uses in-game points and does not involve real-world currency, gambling, or prizes with monetary value.
+    <strong>No Real Money:</strong> This is a virtual points game for fun. The Bet Builder uses in-game points only and does not involve real-world gambling or cash prizes.
   </div>
 
   <h2>1. Building Your XI</h2>
-  <h3>Squad Constraints</h3>
   <ul>
-    <li><strong>One Player Per Club:</strong> You must select 11 players from 11 different clubs. <em>Note: Selecting a club for your Goalkeeper counts as that club's selection for the week.</em></li>
-    <li><strong>Goalkeeper Flexibility:</strong> To mitigate the volatility of selection headaches, Goalkeeper picks are made at the **Club level**. Your team earns points for the position’s performance regardless of which individual starts, keeping your defensive strategy agnostic to late squad rotations or injury withdrawals.</li>
-    <li><strong>No Budget:</strong> There are no player prices. If you want Haaland, you can have him—but you lose access to every other Man City player.</li>
-    <li><strong>Formations:</strong> You can choose from standard formations (4-4-2, 4-3-3, 3-5-2, 3-4-3, 4-5-1).</li>
+    <li><strong>One player per club:</strong> You must pick 11 players from 11 different clubs.</li>
+    <li><strong>Goalkeeper rule:</strong> Goalkeeper picks are made at club level, so your keeper selection counts as that club’s entry for the week.</li>
+    <li><strong>No budget:</strong> There is no transfer market or price tag. You can pick any player you like, but that usually means sacrificing another player from the same club.</li>
+    <li><strong>Formations:</strong> You can switch between standard shapes before the deadline, with 4-4-2 as the default starting point.</li>
+    <li><strong>Team name:</strong> Once you save a team name, it is kept for that manager and remains part of your profile.</li>
   </ul>
 
-  <h2>2. Weekly Match Predictions</h2>
-  <p>Every week, your knowledge is tested on specific match outcomes alongside your player selections.</p>
-  
+  <h2>2. Weekly Picks & The Bet Builder</h2>
+  <p>Every gameweek has three ways to score points: your selected XI, your weekly picks, and your Bet Builder prediction.</p>
+
   <h3>Weekly Picks</h3>
   <ul>
-    <li><strong>Club to Score First:</strong> Pick the club you think will open the scoring across the weekend fixtures. <span class="point-tag">10 PTS</span></li>
-    <li><strong>Minute of First Goal:</strong> Predict the exact minute the first goal will be scored in the featured match. Minutes 1-90 are selectable. Any goal scored in stoppage time (90+) is categorized as <strong>"Other"</strong>. <span class="point-tag">40 PTS</span></li>
+    <li><strong>Club to score first:</strong> Pick the club you think will open the scoring. <span class="point-tag">10 PTS</span></li>
+    <li><strong>Minute of first goal:</strong> Predict the minute the first goal of the weekend will arrive. Minutes 1-90 are selectable; 90+ is grouped as <strong>Other</strong>. <span class="point-tag">40 PTS</span></li>
   </ul>
 
-  <h3>The Bet Builder (Risk & Reward)</h3>
-  <p>This is where leagues are won or lost. Every week, a "Game Of Opinions Bet Builder" is presented at fixed <strong>16/1 odds</strong>. You must decide if it will land (YES) or fail (NO).</p>
+  <h3>The Bet Builder</h3>
+  <p>The Bet Builder is a weekly risk/reward call. The admin sets the odds for the market each week, and the current live UI shows them as an odds value such as 16/1 or 30/1.</p>
   <ul>
-    <li><strong>The Stake:</strong> It costs <span class="point-tag">5 PTS</span> to play.</li>
-    <li><strong>YES Selection:</strong> If the bet lands, you win <strong>5 × 16 + 5 = 85 PTS</strong>. If it fails, you lose <strong>5 × 6 + 5 = 35 PTS</strong>.</li>
-    <li><strong>NO Selection:</strong> If the bet fails, you win <strong>35 PTS</strong>. If the bet lands, you lose <strong>85 PTS</strong>.</li>
-    <li><em>Note: This asymmetric payoff structure creates different risk/reward profiles for each choice at 16/1 fixed odds.</em></li>
+    <li><strong>Stake:</strong> It costs <span class="point-tag">5 PTS</span> to play.</li>
+    <li><strong>YES pick:</strong> If the bet lands, you win <strong>5 × odds</strong> points. If it fails, you lose <strong>30</strong> points.</li>
+    <li><strong>NO pick:</strong> If the bet fails, you win <strong>30</strong> points. If it lands, you lose <strong>5 × odds</strong> points.</li>
   </ul>
 
   <div style="overflow-x: auto;">
@@ -284,108 +329,82 @@
       <tbody>
         <tr>
           <td><strong>Bet Lands</strong></td>
-          <td class="win">+85 PTS</td>
-          <td class="loss">-85 PTS</td>
+          <td class="win">+5 × odds</td>
+          <td class="loss">-5 × odds</td>
         </tr>
         <tr>
           <td><strong>Bet Fails</strong></td>
-          <td class="loss">-35 PTS</td>
-          <td class="win">+35 PTS</td>
+          <td class="loss">-30</td>
+          <td class="win">+30</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <div class="calc-container">
-    <h3 style="margin-top:0; color:#c7ff38;">About 16/1 Odds</h3>
-    <p style="font-size: 14px; margin-bottom: 20px;">All bets are set at fixed 16/1 odds. The calculation logic:</p>
-    
-    <div class="calc-grid">
-      <div class="calc-card"><label>YES Lands</label><span id="res-yes-win" class="win">+85 PTS</span><span style="font-size:11px; color:#c7ff38;">5×16+5</span></div>
-      <div class="calc-card"><label>YES Fails</label><span id="res-yes-loss" class="loss">-35 PTS</span><span style="font-size:11px; color:#c7ff38;">5×6+5</span></div>
-      <div class="calc-card"><label>NO Fails</label><span id="res-no-win" class="win">+35 PTS</span><span style="font-size:11px; color:#c7ff38;">5×6+5</span></div>
-      <div class="calc-card"><label>NO Lands</label><span id="res-no-loss" class="loss">-85 PTS</span><span style="font-size:11px; color:#c7ff38;">5×16+5</span></div>
-    </div>
+  <h2>3. Weekly Scoring</h2>
+  <p>Your selected XI earns points from real-life match events. The current scoring values are:</p>
+
+  <div style="overflow-x: auto;">
+    <table class="rules-table">
+      <thead>
+        <tr>
+          <th>Position</th>
+          <th>Scoring</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Goalkeepers</strong></td>
+          <td>Appearance 1 • Clean Sheet 5 • Penalty Save 5 • Goal 20 • Assist 10 • Yellow -2 • Red -6</td>
+        </tr>
+        <tr>
+          <td><strong>Defenders</strong></td>
+          <td>Appearance 1 • Clean Sheet 5 • Goal 6 • Assist 6 • Yellow -1 • Red -5</td>
+        </tr>
+        <tr>
+          <td><strong>Midfielders</strong></td>
+          <td>Appearance 1 • Clean Sheet 2 • Goal 5 • Assist 5 • Yellow -1 • Red -5</td>
+        </tr>
+        <tr>
+          <td><strong>Strikers</strong></td>
+          <td>Appearance 1 • Goal 4 • Assist 5 • Yellow -1 • Red -5</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
-  <h2>3. Season Predictions</h2>
-  <p>Long-term vision pays off. These picks are locked at the start of the season (or when you join) and provide a huge point injection at the end of the campaign.</p>
+  <p><em>Clean sheets are a big differentiator, but the scoring is still designed to reward participation and attacking output rather than only defensive clean sheets.</em></p>
+
+  <h2>4. Season Picks</h2>
+  <p>Season picks are long-term calls that are submitted once and then scored at the end of the campaign.</p>
   <ul>
-    <li>PL Winner <span class="point-tag">25 PTS</span> | FA Cup Winner <span class="point-tag">50 PTS</span></li>
-    <li>Top Scorer <span class="point-tag">25 PTS</span> | Top Assists <span class="point-tag">50 PTS</span></li>
-    <li>Most Clean Sheets <span class="point-tag">50 PTS</span> | First Hat-Trick <span class="point-tag">50 PTS</span></li>
-    <li>First Manager Sacked <span class="point-tag">50 PTS</span> | Most Yellow Cards <span class="point-tag">50 PTS</span></li>
-    <li>Most Red Cards (Team) <span class="point-tag">75 PTS</span></li>
-    <li>Bottom 3 (Relegation) <span class="point-tag">40 PTS Per Correct Team</span></li>
+    <li>Premier League Winner <span class="point-tag">25 PTS</span></li>
+    <li>FA Cup Winner <span class="point-tag">50 PTS</span></li>
+    <li>Top Scorer <span class="point-tag">25 PTS</span></li>
+    <li>Top Assists <span class="point-tag">50 PTS</span></li>
+    <li>Most Clean Sheets <span class="point-tag">50 PTS</span></li>
+    <li>First Hat-Trick <span class="point-tag">50 PTS</span></li>
+    <li>First Manager Sacked <span class="point-tag">50 PTS</span></li>
+    <li>Most Yellow Cards <span class="point-tag">50 PTS</span></li>
+    <li>Most Red Cards <span class="point-tag">75 PTS</span></li>
+    <li>Bottom 3 Finishers (Relegation) <span class="point-tag">40 PTS</span> each correct team</li>
   </ul>
 
-  <h2>4. Scoring System</h2>
-  <p>Points are awarded based on real-world performance. <em>(Specific player point values to be finalized)</em>.</p>
-  <h3>Standard Scoring Categories:</h3>
+  <h2>5. League Position & Deadlines</h2>
+  <p>The leaderboard is built from your total points across the season. A gameweek is processed once the admin publishes the scores, and the game then reopens for the next cycle.</p>
   <ul>
-    <li><strong>All Players:</strong> Appearance, Goals, Assists, Yellow/Red Cards.</li>
-    <li><strong>Defenders/Keepers:</strong> Clean Sheets, Goals Conceded.</li>
+    <li><strong>Locking:</strong> The gameweek locks automatically two hours before the first kickoff of the fixture list.</li>
+    <li><strong>Editing:</strong> You can still adjust your XI, weekly picks, and Bet Builder before the lock.</li>
+    <li><strong>After scoring:</strong> Once results are published, the game reopens for the next week.</li>
+    <li><strong>Season picks:</strong> These are treated as long-term predictions and are not changed on a weekly basis.</li>
   </ul>
 
-  <h2>7. Position Scoring Breakdown</h2>
-  <p>To help you master the game, here is exactly how each role earns points:</p>
-  <div id="position-rules-container">
-    <h3>Goalkeepers (Club Level)</h3>
-    <ul>
-      <li><span class="point-tag">1 PT</span> Appearance | <span class="point-tag">5 PTS</span> Clean Sheet | <span class="point-tag">5 PTS</span> Penalty Save</li>
-      <li><span class="point-tag">10 PTS</span> Assist | <span class="point-tag">20 PTS</span> Goal</li>
-      <li><span class="point-tag">-2 PTS</span> Yellow Card | <span class="point-tag">-6 PTS</span> Red Card</li>
-    </ul>
-    <h3>Defenders</h3>
-    <ul>
-      <li><span class="point-tag">1 PT</span> Appearance | <span class="point-tag">5 PTS</span> Clean Sheet</li>
-      <li><span class="point-tag">6 PTS</span> Goal | <span class="point-tag">6 PTS</span> Assist</li>
-      <li><span class="point-tag">-1 PT</span> Yellow Card | <span class="point-tag">-5 PTS</span> Red Card</li>
-    </ul>
-    <h3>Midfielders</h3>
-    <ul>
-      <li><span class="point-tag">1 PT</span> Appearance | <span class="point-tag">2 PTS</span> Clean Sheet</li>
-      <li><span class="point-tag">5 PTS</span> Goal | <span class="point-tag">5 PTS</span> Assist</li>
-      <li><span class="point-tag">-1 PT</span> Yellow Card | <span class="point-tag">-5 PTS</span> Red Card</li>
-    </ul>
-    <h3>Strikers</h3>
-    <ul>
-      <li><span class="point-tag">1 PT</span> Appearance | <span class="point-tag">4 PTS</span> Goal | <span class="point-tag">5 PTS</span> Assist</li>
-      <li><span class="point-tag">-1 PT</span> Yellow Card | <span class="point-tag">-5 PTS</span> Red Card</li>
-    </ul>
-  </div>
+  <h2>6. AI Scout Integration</h2>
+  <p>The AI Scout opinions are there to spark debate and give you a second lens on your picks. They are useful for context, but they are still just opinions and should be weighed alongside your own judgment.</p>
 
-  <h2>8. League Standings & Tie-breakers</h2>
-  <p>The Global Leaderboard is updated after every Gameweek is processed. If two or more managers finish the season on identical points, the tie is broken by:</p>
-  <ul>
-    <li><strong>1. Highest GW Score:</strong> The manager with the highest single-week points total.</li>
-    <li><strong>2. Minute Mastery:</strong> Most correct "Goal Minute" predictions throughout the season.</li>
-    <li><strong>3. The Legend Status:</strong> The Top 3 managers are awarded the <span class="point-tag">🥇</span>, <span class="point-tag">🥈</span>, and <span class="point-tag">🥉</span> medals.</li>
-  </ul>
-
-  <h2>9. Postponed & Abandoned Matches</h2>
-  <p>Football is unpredictable. Our policy on match changes is as follows:</p>
-  <ul>
-    <li><strong>Postponements:</strong> If a match is moved outside of the current Gameweek window, players from those clubs will score <span class="point-tag">0 PTS</span>.</li>
-    <li><strong>Abandoned Matches:</strong> If a match is abandoned after kickoff, only the points earned up until the whistle blew will be counted.</li>
-    <li><strong>Rescheduled Matches:</strong> Points are only awarded for the Gameweek in which the match actually takes place.</li>
-  </ul>
-
-  <h2>10. Fair Play</h2>
-  <p>The Manager's Office is a place of integrity. Any attempt to exploit system bugs or create multiple accounts to "farm" predictions will result in a permanent ban from the league.</p>
-
-
-  <h2>5. AI Scout Integration</h2>
-  <p>Use the "Opinion AI" icons on the Season and Team pages to get insights from legends like R9 or Fergie. Their analysis is based on current form and historical data, but remember—it's just an opinion.</p>
-
-  <h2>6. Deadlines & Changes</h2>
-  <ul>
-    <li><strong>XI Changes:</strong> You can change your team as much as you like until the first kickoff of the Gameweek.</li>
-    <li><strong>Weekly Picks:</strong> Locked at the same time as your team.</li>
-    <li><strong>Season Picks:</strong> Locked permanently once submitted.</li>
-  </ul>
+  <h2>7. Fair Play</h2>
+  <p>Integrity matters. Any attempt to exploit system bugs, create duplicate accounts, or game the scoring flow will result in removal from the league.</p>
 </div>
-
 
 <div class="mobile-nav">
   <a href="index.html">🏠<br>Home</a>

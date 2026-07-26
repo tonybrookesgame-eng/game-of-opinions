@@ -1425,6 +1425,7 @@ MOBILE
           <div class="point-item"><label>Team</label><span id="pts-selection">0</span></div>
           <div class="point-item"><label>Picks</label><span id="pts-picks">0</span></div>
           <div class="point-item"><label>Bet</label><span id="pts-bet">0</span></div>
+          <div class="point-item"><label>Season</label><span id="pts-season">0</span></div>
           <div class="point-item" onclick="openGameweekSummary()" style="cursor: pointer;">
             <label style="color: #c7ff38;">Total</label>
             <span id="pts-total" style="color: #c7ff38; font-weight: 900;">0</span>
@@ -2090,11 +2091,12 @@ const loadSelectedGameweekHistory = async () => {
     }
   } else {
     // Load current live data
-    const [teamSnap, picksSnap, betSnap, statsSnap] = await Promise.all([
+    const [teamSnap, picksSnap, betSnap, statsSnap, leaderboardSnap] = await Promise.all([
       getDoc(doc(db, `users/${currentUser.uid}/myxi`, "team")),
       getDoc(doc(db, `users/${currentUser.uid}/myxi`, "weeklyPicks")),
       getDoc(doc(db, `users/${currentUser.uid}/myxi`, "betBuilder")),
-      getDoc(doc(db, `users/${currentUser.uid}/stats`, "points"))
+      getDoc(doc(db, `users/${currentUser.uid}/stats`, "points")),
+      getDoc(doc(db, "leaderboard", currentUser.uid))
     ]);
     if (teamSnap.exists()) teamData = teamSnap.data();
     // IMPORTANT: Only load picks and bet if they exist - don't persist them across gameweeks
@@ -2109,6 +2111,8 @@ const loadSelectedGameweekHistory = async () => {
         totalPts: d.totalPts || 0
       };
     }
+    const seasonTotal = leaderboardSnap.exists() ? (leaderboardSnap.data().totalPoints || 0) : 0;
+    document.getElementById('pts-season').innerText = seasonTotal;
     
     // PERSISTENCE: If there is no playable current team, fall back to the most recent archive
     const hasPlayableTeam = teamData && Array.isArray(teamData.players) && teamData.players.some(player => player && player !== "Select");
@@ -2406,9 +2410,6 @@ const saveTeam = async function() {
   const formation = document.getElementById('formationSelect').value;
   const teamName = document.getElementById('teamNameInput').value.trim();
   
-  const totalPts = parseInt(document.getElementById('pts-total').innerText) || 0;
-  const weeklyPts = 0; // Initialize for league visibility
-
   if (!teamName) {
     alert("Please enter a team name!");
     return;
@@ -2426,9 +2427,7 @@ const saveTeam = async function() {
 
     await setDoc(leaderboardRef, {
       teamName: teamName,
-      userId: currentUser.uid,
-      totalPoints: totalPts,
-      weeklyPoints: weeklyPts
+      userId: currentUser.uid
     }, { merge: true });
     document.getElementById('teamNameInput').disabled = true;
     alert("Team XI Saved!");
