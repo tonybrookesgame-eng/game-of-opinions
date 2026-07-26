@@ -565,6 +565,9 @@
       border-radius: 24px;
       max-width: 450px;
       width: 100%;
+      max-height: min(86vh, 720px);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
       padding: 30px;
       position: relative;
     }
@@ -920,14 +923,13 @@
 
 
 <!-- AI REPORT MODAL -->
-<div class="ai-modal" id="aiModal" onclick="this.style.display='none'">
+<div class="ai-modal" id="aiModal">
   <div class="ai-report" onclick="event.stopPropagation()">
     <h2>🤖 AI Scout Report</h2>
     <p id="aiContent">Initializing The Oracle...</p>
     <div id="aiStats"></div>
-    <div style="display: flex; gap: 10px; margin-top: 20px;">
-      <button id="aiActionBtn" onclick="nextAiPage()" style="flex: 2; background: #c7ff38; color: #041102; font-weight:800; border-radius:999px; border:none; padding:10px; cursor:pointer;">Next</button>
-      <button onclick="document.getElementById('aiModal').style.display='none'" style="flex: 1; background: #334155; color: white;">Close</button>
+    <div style="display: flex; justify-content: center; margin-top: 20px;">
+      <button id="aiActionBtn" type="button" onclick="window.loadAiReport()" style="width: 100%; max-width: 240px; background: #c7ff38; color: #041102; font-weight:800; border-radius:999px; border:none; padding:10px 14px; cursor:pointer; touch-action: manipulation;">View Top Picks</button>
     </div>
   </div>
 </div>
@@ -1352,6 +1354,113 @@ let currentScoutKey = null;
 let currentCategory = null;
 let aiPage = 0;
 
+const closeAiModal = function() {
+  const modal = document.getElementById('aiModal');
+  if (modal) {
+    modal.style.display = 'none';
+  }
+};
+window.closeAiModal = closeAiModal;
+
+const aiModal = document.getElementById('aiModal');
+if (aiModal) {
+  aiModal.addEventListener('click', (event) => {
+    if (event.target === aiModal) {
+      closeAiModal();
+    }
+  });
+}
+
+const getScoutPredictions = function(scoutKey, category) {
+  const scout = scoutData[scoutKey];
+  const clubPool = [...PL_CLUBS];
+  const scoutTones = {
+    striker: ['clinical', 'steady', 'disciplined', 'measured', 'pragmatic'],
+    scout: ['tactical', 'structured', 'shape-based', 'adaptive', 'systemic'],
+    analyst: ['volatile', 'outlier', 'value-driven', 'swing', 'high-upside']
+  };
+  const categoryTypes = {
+    winner: ['title threat', 'title threat', 'title threat', 'title threat', 'title threat'],
+    facup: ['cup potential', 'cup potential', 'cup potential', 'cup potential', 'cup potential'],
+    scorer: ['goal-output', 'goal-output', 'goal-output', 'goal-output', 'goal-output'],
+    assists: ['creative output', 'creative output', 'creative output', 'creative output', 'creative output'],
+    cleansheets: ['defensive control', 'defensive control', 'defensive control', 'defensive control', 'defensive control'],
+    hattrick: ['match-winning burst', 'match-winning burst', 'match-winning burst', 'match-winning burst', 'match-winning burst'],
+    sacked: ['manager pressure', 'manager pressure', 'manager pressure', 'manager pressure', 'manager pressure'],
+    redcards: ['discipline risk', 'discipline risk', 'discipline risk', 'discipline risk', 'discipline risk'],
+    relegated: ['drop-zone danger', 'drop-zone danger', 'drop-zone danger', 'drop-zone danger', 'drop-zone danger'],
+    yellows: ['booking risk', 'booking risk', 'booking risk', 'booking risk', 'booking risk']
+  };
+  const supportPhrases = {
+    winner: [
+      'their squad depth and big-game mentality should carry them through a long campaign',
+      'their balance between attack and defence makes them a realistic title contender',
+      'the current setup looks sustainable even when fixtures come thick and fast'
+    ],
+    facup: [
+      'their rotation options make knockout football feel manageable',
+      'their tactical flexibility is ideal for cup football',
+      'their squad can absorb congestion without losing structure'
+    ],
+    scorer: [
+      'their attacking role gives them a straightforward route to high goal output',
+      'their chance creation and finishing profile point to strong returns',
+      'their movement patterns should produce enough clean opportunities to matter'
+    ],
+    assists: [
+      'their chance creation rate is high enough to keep them among the regular providers',
+      'the current tactical setup gives them plenty of final-third passes',
+      'their role in possession should create regular service for team-mates'
+    ],
+    cleansheets: [
+      'their defensive structure is hard to break down in open play',
+      'their back line and goalkeeper combination looks well-organized',
+      'their press and shape limit the quality of opposition chances'
+    ],
+    hattrick: [
+      'their attacking role gives them real upside in a high-scoring match',
+      'their finishing quality makes a one-off explosion realistic',
+      'their side should create enough space for a huge individual haul'
+    ],
+    sacked: [
+      'the pressure points are already visible and the margin for error is narrow',
+      'the current squad balance is not yet convincing under the present setup',
+      'the early results are pointing to a difficult season for the manager'
+    ],
+    redcards: [
+      'their role in transition and defensive duels creates real disciplinary risk',
+      'their aggressive habits can turn a good game into a costly one',
+      'the tempo of the matches suits a player who commits plenty of fouls'
+    ],
+    relegated: [
+      'the current balance feels fragile and the margin for error is small',
+      'their squad looks short of the resilience needed to survive the run-in',
+      'the style is too exposed to lose tight matches'
+    ],
+    yellows: [
+      'their defensive positioning and duels leave them vulnerable to cards',
+      'their role in midfield means they are often in the middle of the chaos',
+      'their tactical style naturally creates more booking opportunities'
+    ]
+  };
+
+  const toneList = scoutTones[scoutKey] || scoutTones.analyst;
+  const categoryList = categoryTypes[category] || categoryTypes.winner;
+  const phrases = supportPhrases[category] || supportPhrases.winner;
+  const picks = [];
+  const offset = scoutKey === 'analyst' ? 3 : scoutKey === 'scout' ? 1 : 0;
+
+  for (let i = 0; i < 5; i++) {
+    const club = clubPool[(i + offset) % clubPool.length];
+    picks.push({
+      pick: club,
+      reasoning: `${scout.name} sees ${club} as a ${toneList[i % toneList.length]} ${categoryList[i % categoryList.length]} because ${phrases[i % phrases.length]}.`
+    });
+  }
+
+  return picks;
+};
+
 window.showAiScout = function(scoutKey, category) {
   currentScoutKey = scoutKey;
   currentCategory = category;
@@ -1363,7 +1472,7 @@ window.showAiScout = function(scoutKey, category) {
   const actionBtn = document.getElementById('aiActionBtn');
   const title = modal.querySelector('h2');
   
-  aiPage = 0; // Start at Risk Warning
+  aiPage = 0;
   modal.style.display = 'flex';
   title.innerText = `⚠️ Scout Warning`;
   content.innerText = `${scout.name} is ready to analyze.\n\nRisk Profile: ${scout.risk}\n\n"${scout.blurb}"`;
@@ -1374,7 +1483,7 @@ window.showAiScout = function(scoutKey, category) {
 
 window.loadAiReport = function() {
   const scout = scoutData[currentScoutKey];
-  const predictions = scout.advice[currentCategory];
+  const predictions = getScoutPredictions(currentScoutKey, currentCategory);
   const content = document.getElementById('aiContent');
   const stats = document.getElementById('aiStats');
   const actionBtn = document.getElementById('aiActionBtn');
@@ -1384,7 +1493,6 @@ window.loadAiReport = function() {
   title.innerText = `🤖 ${scout.name} - Top Picks`;
   content.innerText = `${scout.flavor} Analysis for ${currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1)}:`;
   
-  // Display all 5 predictions ranked
   let pickHtml = '<div style="text-align: left; padding: 10px 0;">';
   predictions.forEach((pred, idx) => {
     pickHtml += `
@@ -1398,11 +1506,11 @@ window.loadAiReport = function() {
   
   stats.innerHTML = pickHtml;
   actionBtn.innerText = "Close";
-  actionBtn.onclick = () => document.getElementById('aiModal').style.display = 'none';
+  actionBtn.onclick = () => closeAiModal();
 }
 
 window.nextAiPage = function() {
-  document.getElementById('aiModal').style.display = 'none';
+  closeAiModal();
 };
 
 window.lockSeason = async function() {
