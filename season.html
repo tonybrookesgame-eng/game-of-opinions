@@ -1249,7 +1249,7 @@ const scoutData = {
 
 const PL_CLUBS = [
   "Arsenal", "Aston Villa", "Bournemouth", "Brentford", "Brighton", "Chelsea", 
-  "Coventry", "Crystal Palace", "Everton", "Fulham", "Hull", "Ipswich", "Leicester", "Liverpool", 
+  "Coventry", "Crystal Palace", "Everton", "Fulham", "Hull", "Ipswich", "Liverpool", 
   "Man City", "Man Utd", "Newcastle", "Nott'm Forest", "Spurs"
 ];
 
@@ -1266,7 +1266,6 @@ const clubProfiles = {
   Fulham: { titleThreat: 0.3, cupPotential: 0.56, goalOutput: 0.45, creativeOutput: 0.46, defensiveControl: 0.58, matchBurst: 0.5, managerPressure: 0.44, disciplineRisk: 0.42, dropZoneDanger: 0.37, bookingRisk: 0.48 },
   Hull: { titleThreat: 0.1, cupPotential: 0.34, goalOutput: 0.3, creativeOutput: 0.3, defensiveControl: 0.34, matchBurst: 0.34, managerPressure: 0.72, disciplineRisk: 0.36, dropZoneDanger: 0.74, bookingRisk: 0.42 },
   Ipswich: { titleThreat: 0.12, cupPotential: 0.4, goalOutput: 0.32, creativeOutput: 0.32, defensiveControl: 0.37, matchBurst: 0.34, managerPressure: 0.72, disciplineRisk: 0.4, dropZoneDanger: 0.7, bookingRisk: 0.43 },
-  Leicester: { titleThreat: 0.16, cupPotential: 0.42, goalOutput: 0.34, creativeOutput: 0.33, defensiveControl: 0.36, matchBurst: 0.36, managerPressure: 0.7, disciplineRisk: 0.41, dropZoneDanger: 0.74, bookingRisk: 0.46 },
   Liverpool: { titleThreat: 0.95, cupPotential: 0.95, goalOutput: 0.84, creativeOutput: 0.92, defensiveControl: 0.94, matchBurst: 0.8, managerPressure: 0.2, disciplineRisk: 0.3, dropZoneDanger: 0.06, bookingRisk: 0.28 },
   "Man City": { titleThreat: 1, cupPotential: 0.98, goalOutput: 0.9, creativeOutput: 0.88, defensiveControl: 0.96, matchBurst: 0.78, managerPressure: 0.15, disciplineRisk: 0.28, dropZoneDanger: 0.03, bookingRisk: 0.26 },
   "Man Utd": { titleThreat: 0.6, cupPotential: 0.8, goalOutput: 0.58, creativeOutput: 0.64, defensiveControl: 0.6, matchBurst: 0.72, managerPressure: 0.42, disciplineRisk: 0.45, dropZoneDanger: 0.22, bookingRisk: 0.44 },
@@ -1409,40 +1408,79 @@ const getScoutPredictions = function(scoutKey, category) {
 
   const personalityWeights = {
     striker: {
-      titleThreat: 1.12,
+      titleThreat: 1.14,
       cupPotential: 1.08,
-      goalOutput: 1.16,
+      goalOutput: 1.18,
       creativeOutput: 0.94,
-      defensiveControl: 1.1,
-      matchBurst: 0.98,
-      managerPressure: 0.72,
-      disciplineRisk: 0.82,
-      dropZoneDanger: 0.56,
-      bookingRisk: 0.76
+      defensiveControl: 1.12,
+      matchBurst: 0.95,
+      managerPressure: 0.64,
+      disciplineRisk: 0.74,
+      dropZoneDanger: 0.48,
+      bookingRisk: 0.68
     },
     scout: {
-      titleThreat: 1.04,
-      cupPotential: 1.14,
-      goalOutput: 0.96,
-      creativeOutput: 1.02,
-      defensiveControl: 1.16,
-      matchBurst: 0.98,
-      managerPressure: 0.78,
-      disciplineRisk: 0.9,
-      dropZoneDanger: 0.62,
-      bookingRisk: 0.84
+      titleThreat: 1.02,
+      cupPotential: 1.16,
+      goalOutput: 0.98,
+      creativeOutput: 1.04,
+      defensiveControl: 1.18,
+      matchBurst: 0.96,
+      managerPressure: 0.76,
+      disciplineRisk: 0.84,
+      dropZoneDanger: 0.56,
+      bookingRisk: 0.8
     },
     analyst: {
-      titleThreat: 0.96,
-      cupPotential: 0.98,
-      goalOutput: 0.98,
-      creativeOutput: 0.96,
-      defensiveControl: 0.9,
-      matchBurst: 1.18,
-      managerPressure: 1.06,
-      disciplineRisk: 1.12,
-      dropZoneDanger: 1.14,
-      bookingRisk: 1.1
+      titleThreat: 0.92,
+      cupPotential: 0.96,
+      goalOutput: 0.96,
+      creativeOutput: 0.94,
+      defensiveControl: 0.86,
+      matchBurst: 1.22,
+      managerPressure: 1.16,
+      disciplineRisk: 1.18,
+      dropZoneDanger: 1.24,
+      bookingRisk: 1.14
+    }
+  };
+
+  const riskBias = {
+    striker: {
+      titleThreat: 0.06,
+      cupPotential: 0.04,
+      goalOutput: 0.06,
+      creativeOutput: 0,
+      defensiveControl: 0.06,
+      matchBurst: 0.02,
+      managerPressure: -0.16,
+      disciplineRisk: -0.1,
+      dropZoneDanger: -0.2,
+      bookingRisk: -0.12
+    },
+    scout: {
+      titleThreat: 0.04,
+      cupPotential: 0.08,
+      goalOutput: 0.02,
+      creativeOutput: 0.04,
+      defensiveControl: 0.08,
+      matchBurst: 0.01,
+      managerPressure: -0.08,
+      disciplineRisk: -0.04,
+      dropZoneDanger: -0.1,
+      bookingRisk: -0.06
+    },
+    analyst: {
+      titleThreat: -0.02,
+      cupPotential: 0.01,
+      goalOutput: 0.01,
+      creativeOutput: 0.02,
+      defensiveControl: -0.04,
+      matchBurst: 0.1,
+      managerPressure: 0.14,
+      disciplineRisk: 0.12,
+      dropZoneDanger: 0.16,
+      bookingRisk: 0.12
     }
   };
 
@@ -1508,7 +1546,8 @@ const getScoutPredictions = function(scoutKey, category) {
     const profile = clubProfiles[club];
     const baseScore = Number(profile[categoryKey] || 0);
     const personalityMultiplier = personalityWeights[scoutKey][categoryKey] || 1;
-    const adjustedScore = baseScore * personalityMultiplier;
+    const bias = riskBias[scoutKey][categoryKey] || 0;
+    const adjustedScore = Math.max(0.02, baseScore * personalityMultiplier + bias);
     return { club, score: adjustedScore };
   }).sort((a, b) => b.score - a.score);
 
