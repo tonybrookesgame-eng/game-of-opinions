@@ -249,12 +249,52 @@ h1 {font-size:34px;margin-bottom:8px;}
 
 /* ========================= BUTTONS ========================= */
 
-.league-actions {
-  display:flex;
-  gap:15px;
-  margin-bottom:24px;
-  flex-wrap:wrap;
-  align-items:center;
+.league-management {
+  display:grid;
+  gap:18px;
+  margin: 24px 0 28px;
+}
+
+.league-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.16);
+}
+
+.league-card h2 {
+  margin: 0 0 6px;
+  font-size: 20px;
+}
+
+.league-card p {
+  margin: 0 0 16px;
+  color: #9ca3af;
+  line-height: 1.5;
+}
+
+.league-control-grid {
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.league-panel {
+  background: rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.league-label {
+  display:block;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #c7ff38;
+  margin-bottom: 10px;
 }
 
 .league-input-row {
@@ -262,6 +302,7 @@ h1 {font-size:34px;margin-bottom:8px;}
   gap:10px;
   flex-wrap:wrap;
   align-items:center;
+  margin-bottom: 10px;
 }
 
 .league-input {
@@ -270,8 +311,13 @@ h1 {font-size:34px;margin-bottom:8px;}
   color: white;
   border-radius: 999px;
   padding: 10px 14px;
-  min-width: 200px;
+  min-width: 220px;
   outline: none;
+}
+
+.league-select {
+  width: 100%;
+  min-width: 0;
 }
 
 .league-btn {
@@ -443,14 +489,32 @@ h1 {font-size:34px;margin-bottom:8px;}
 
   <p class="subtitle">Climb. Dominate. Prove your opinions.</p>
 
-  <div class="league-actions user-only">
-    <div class="league-input-row">
-      <input id="league-name-input" class="league-input" placeholder="League name" />
-      <button class="league-btn" onclick="createLeague()">+ Create League</button>
-    </div>
-    <div class="league-input-row">
-      <input id="join-code-input" class="league-input" placeholder="Enter league code" />
-      <button class="league-btn" onclick="joinLeague()">Join League</button>
+  <div class="league-management user-only">
+    <div class="league-card">
+      <h2>League manager</h2>
+      <p>Create your own league, join a friend’s code, or switch between the leagues you are already in.</p>
+      <div class="league-control-grid">
+        <div class="league-panel">
+          <label class="league-label" for="league-name-input">Create a league</label>
+          <div class="league-input-row">
+            <input id="league-name-input" class="league-input" placeholder="League name" />
+            <button class="league-btn" onclick="createLeague()">Create</button>
+          </div>
+        </div>
+        <div class="league-panel">
+          <label class="league-label" for="join-code-input">Join a league</label>
+          <div class="league-input-row">
+            <input id="join-code-input" class="league-input" placeholder="Enter league code" />
+            <button class="league-btn" onclick="joinLeague()">Join</button>
+          </div>
+        </div>
+        <div class="league-panel" style="grid-column: 1 / -1;">
+          <label class="league-label" for="league-select">View a league</label>
+          <select id="league-select" class="league-input league-select">
+            <option value="">Global League</option>
+          </select>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -465,6 +529,8 @@ h1 {font-size:34px;margin-bottom:8px;}
       <button class="league-btn secondary" onclick="shareLeagueCode()">Share</button>
     </div>
   </div>
+
+  <h2 id="league-table-title" style="margin: 8px 0 12px; font-size: 22px;">Global League Table</h2>
 
   <div class="leaderboard">
 
@@ -492,7 +558,7 @@ h1 {font-size:34px;margin-bottom:8px;}
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
-import { getFirestore, collection, query, orderBy, getDocs, getDoc, doc, setDoc, updateDoc, arrayUnion, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, query, orderBy, where, getDocs, getDoc, doc, setDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
@@ -516,84 +582,10 @@ const auth = getAuth(app);
 
 /* LOAD LEADERBOARD */
 
-async function loadLeaderboard(user){
-
-  const body = document.getElementById("leaderboard-body");
-
-  body.innerHTML = "Loading...";
-
-  const q = query(collection(db,"leaderboard"), orderBy("totalPoints","desc"));
-
-  const snap = await getDocs(q);
-
-  body.innerHTML="";
-
-  let rank=1;
-
-  snap.forEach(docSnap=>{
-
-    const data = docSnap.data();
-
-    const isYou = user && docSnap.id === user.uid;
-
-    let medalClass="";
-
-    let medalIcon=rank;
-
-    if(rank===1){medalClass="gold"; medalIcon="🥇";}
-
-    if(rank===2){medalClass="silver"; medalIcon="🥈";}
-
-    if(rank===3){medalClass="bronze"; medalIcon="🥉";}
-
-    const weekly = data.weeklyPoints || 0;
-    const season = data.seasonPoints || 0;
-
-    const changeClass = weekly>0 ? "up" : weekly<0 ? "down" : "same";
-
-    const arrow = weekly>0 ? "⬆️" : weekly<0 ? "⬇️" : "—";
-
-    const teamName = data.teamName || "Anonymous";
-    const isMobile = window.innerWidth <= 768;
-    const isTruncated = isMobile && teamName.length > 25;
-    const displayTeamName = isTruncated ? teamName.substring(0, 25) + "..." : teamName;
-    const escapedName = teamName.replace(/'/g, "\\'");
-
-    const row=document.createElement("div");    row.className = `leader-row ${isYou ? "you" : ""}`;
-
-    row.innerHTML=`
-
-      <div class="rank ${medalClass}">${medalIcon}</div>
-
-      <div class="team" ${isTruncated ? `onclick="alert('${escapedName}')" style="cursor:help;"` : ""}>
-        <span title="${teamName}">${displayTeamName}</span> ${isYou?"(You)":""}
-
-      </div>
-
-      <div class="points">${season}</div>
-
-      <div class="week ${changeClass}">
-
-        ${weekly>0?"+":""}${weekly} <span class="change-arrow">${arrow}</span>
-
-      </div>
-
-      <div class="points" style="font-weight: 900; color: #c7ff38;">${data.totalPoints || 0}</div>
-
-    `;
-
-    body.appendChild(row);
-
-    rank++;
-
-  });
-
-}
-
 let activeLeagueCode = "";
 let activeLeagueName = "";
 
-function showLeagueStatus(title, message, code) {
+function showLeagueStatus(title, message, code, leagueName = "") {
   const panel = document.getElementById("league-status");
   const titleEl = document.getElementById("league-status-title");
   const textEl = document.getElementById("league-status-text");
@@ -605,6 +597,120 @@ function showLeagueStatus(title, message, code) {
   panel.style.display = "block";
 
   activeLeagueCode = code || "";
+  activeLeagueName = leagueName || "";
+}
+
+function renderLeaderboardRows(entries, user) {
+  const body = document.getElementById("leaderboard-body");
+  body.innerHTML = "";
+
+  if (!entries.length) {
+    body.innerHTML = '<div class="leader-row"><div class="team" style="grid-column: 1 / -1;">No entries yet for this league.</div></div>';
+    return;
+  }
+
+  let rank = 1;
+  entries.forEach(entry => {
+    const data = entry.data;
+    const isYou = user && entry.uid === user.uid;
+
+    let medalClass = "";
+    let medalIcon = rank;
+    if (rank === 1) { medalClass = "gold"; medalIcon = "🥇"; }
+    if (rank === 2) { medalClass = "silver"; medalIcon = "🥈"; }
+    if (rank === 3) { medalClass = "bronze"; medalIcon = "🥉"; }
+
+    const weekly = data.weeklyPoints || 0;
+    const season = data.seasonPoints || 0;
+    const changeClass = weekly > 0 ? "up" : weekly < 0 ? "down" : "same";
+    const arrow = weekly > 0 ? "⬆️" : weekly < 0 ? "⬇️" : "—";
+    const teamName = data.teamName || "Anonymous";
+    const isMobile = window.innerWidth <= 768;
+    const isTruncated = isMobile && teamName.length > 25;
+    const displayTeamName = isTruncated ? teamName.substring(0, 25) + "..." : teamName;
+    const escapedName = teamName.replace(/'/g, "\\'");
+
+    const row = document.createElement("div");
+    row.className = `leader-row ${isYou ? "you" : ""}`;
+    row.innerHTML = `
+      <div class="rank ${medalClass}">${medalIcon}</div>
+      <div class="team" ${isTruncated ? `onclick="alert('${escapedName}')" style="cursor:help;"` : ""}>
+        <span title="${teamName}">${displayTeamName}</span> ${isYou ? "(You)" : ""}
+      </div>
+      <div class="points">${season}</div>
+      <div class="week ${changeClass}">${weekly > 0 ? "+" : ""}${weekly} <span class="change-arrow">${arrow}</span></div>
+      <div class="points" style="font-weight: 900; color: #c7ff38;">${data.totalPoints || 0}</div>
+    `;
+
+    body.appendChild(row);
+    rank++;
+  });
+}
+
+async function loadLeagueMemberships(user) {
+  const select = document.getElementById("league-select");
+  if (!select || !user) return;
+
+  const q = query(collection(db, "leagues"), where("members", "array-contains", user.uid));
+  const snap = await getDocs(q);
+  const leagues = snap.docs
+    .map(docSnap => ({ id: docSnap.id, ...docSnap.data() }))
+    .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+
+  const currentValue = select.value;
+  select.innerHTML = '<option value="">Global League</option>';
+
+  leagues.forEach(league => {
+    const option = document.createElement("option");
+    option.value = league.code;
+    option.textContent = league.name || `League ${league.code}`;
+    select.appendChild(option);
+  });
+
+  if (currentValue) {
+    select.value = currentValue;
+  }
+}
+
+async function loadLeaderboard(user, leagueCode = "") {
+  const body = document.getElementById("leaderboard-body");
+  const titleEl = document.getElementById("league-table-title");
+  body.innerHTML = "Loading...";
+
+  if (leagueCode) {
+    const leagueRef = doc(db, "leagues", "L-" + leagueCode);
+    const leagueSnap = await getDoc(leagueRef);
+
+    if (!leagueSnap.exists()) {
+      body.innerHTML = "This league could not be found.";
+      titleEl.innerText = "League Table";
+      return;
+    }
+
+    const leagueData = leagueSnap.data();
+    const members = (leagueData.members || []).filter(Boolean);
+    const entries = [];
+
+    for (const memberId of members) {
+      const memberSnap = await getDoc(doc(db, "leaderboard", memberId));
+      if (memberSnap.exists()) {
+        entries.push({ uid: memberId, data: memberSnap.data() });
+      }
+    }
+
+    entries.sort((a, b) => (b.data.totalPoints || 0) - (a.data.totalPoints || 0));
+    renderLeaderboardRows(entries, user);
+    titleEl.innerText = `${leagueData.name || "League"} Table`;
+    showLeagueStatus("Viewing league", `Showing standings for ${leagueData.name || "this league"}.`, leagueCode, leagueData.name || "");
+    return;
+  }
+
+  const q = query(collection(db, "leaderboard"), orderBy("totalPoints", "desc"));
+  const snap = await getDocs(q);
+  const entries = snap.docs.map(docSnap => ({ uid: docSnap.id, data: docSnap.data() }));
+  renderLeaderboardRows(entries, user);
+  titleEl.innerText = "Global League Table";
+  showLeagueStatus("League ready", "View your own league or stay on the global table.", "", "");
 }
 
 async function copyLeagueCode() {
@@ -683,7 +789,10 @@ window.createLeague = async ()=>{
   });
 
   nameInput.value = "";
-  showLeagueStatus("League created", `Share this code with your friends to join ${name}.`, code);
+  showLeagueStatus("League created", `Share this code with your friends to join ${name}.`, code, name);
+  await loadLeagueMemberships(auth.currentUser);
+  document.getElementById("league-select").value = code;
+  await loadLeaderboard(auth.currentUser, code);
 };
 
 window.joinLeague = async ()=>{
@@ -706,6 +815,9 @@ window.joinLeague = async ()=>{
   const leagueData = leagueSnap.data();
   if (leagueData.members && leagueData.members.includes(auth.currentUser.uid)) {
     alert("You are already in this league.");
+    await loadLeagueMemberships(auth.currentUser);
+    document.getElementById("league-select").value = code;
+    await loadLeaderboard(auth.currentUser, code);
     return;
   }
 
@@ -714,7 +826,18 @@ window.joinLeague = async ()=>{
   });
 
   input.value = "";
-  showLeagueStatus("Joined league", `You joined ${leagueData.name || "the league"}.`, code);
+  showLeagueStatus("Joined league", `You joined ${leagueData.name || "the league"}.`, code, leagueData.name || "");
+  await loadLeagueMemberships(auth.currentUser);
+  document.getElementById("league-select").value = code;
+  await loadLeaderboard(auth.currentUser, code);
+};
+
+window.viewLeague = async function(code) {
+  if (!code) {
+    await loadLeaderboard(auth.currentUser, "");
+    return;
+  }
+  await loadLeaderboard(auth.currentUser, code);
 };
 
 onAuthStateChanged(auth,(user)=>{
@@ -723,12 +846,20 @@ onAuthStateChanged(auth,(user)=>{
   if (user) {
     userLinks.forEach(l => l.style.display = 'inline-block');
     guestLinks.forEach(l => l.style.display = 'none');
+    loadLeagueMemberships(user);
   } else {
     userLinks.forEach(l => l.style.display = 'none');
     guestLinks.forEach(l => l.style.display = 'inline-block');
   }
   loadLeaderboard(user);
 });
+
+const leagueSelect = document.getElementById("league-select");
+if (leagueSelect) {
+  leagueSelect.addEventListener("change", () => {
+    window.viewLeague(leagueSelect.value);
+  });
+}
 
 window.handleLogout = () => {
   signOut(auth).then(() => {
