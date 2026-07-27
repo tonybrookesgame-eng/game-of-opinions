@@ -401,6 +401,35 @@ p {
 .point-item {
   text-align: center;
 }
+.point-total {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  border: 1px solid rgba(199, 255, 56, 0.55);
+  border-radius: 8px;
+  background: linear-gradient(90deg, rgba(199, 255, 56, 0.14), rgba(199, 255, 56, 0.04));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 4px 12px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.point-total:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(90deg, rgba(199, 255, 56, 0.22), rgba(199, 255, 56, 0.08));
+}
+.point-total label {
+  margin: 0;
+  color: #c7ff38;
+  font-size: 11px;
+  font-weight: 900;
+}
+.point-total span {
+  color: #c7ff38;
+  font-size: 20px;
+  font-weight: 900;
+  line-height: 1;
+}
 .team-name-ribbon span {
   font-weight: 800;
   color: #c7ff38;
@@ -758,7 +787,7 @@ ROWS + PLAYERS
   --kit-sleeves: #1d4ed8;
   --kit-trim: #eaf2ff;
   width: 86px;
-  height: 78px;
+  height: 88px;
   margin: auto;
   border-radius: 8px 8px 4px 4px;
   background: var(--kit-body);
@@ -821,7 +850,7 @@ ROWS + PLAYERS
 
 .shirt-name {
   position: absolute;
-  top: 7px;
+  top: 38px;
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 10px);
@@ -840,9 +869,8 @@ ROWS + PLAYERS
 
 .shirt-pts {
   position: absolute;
-  bottom: 26px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 5px;
+  right: 5px;
   background: #c7ff38;
   color: #041102;
   padding: 1px 4px;
@@ -869,7 +897,7 @@ select {
 .shirt .player-select {
   position: absolute;
   z-index: 6;
-  bottom: 5px;
+  top: 6px;
   left: 5px;
   width: calc(100% - 10px);
   padding: 4px 3px;
@@ -1174,6 +1202,19 @@ MOBILE
     border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
   }
 
+  .point-item.point-total {
+    border-left: 1px solid rgba(199, 255, 56, 0.45) !important;
+    padding: 7px 8px;
+  }
+
+  .point-total label {
+    font-size: 9px;
+  }
+
+  .point-total span {
+    font-size: 16px;
+  }
+
   .point-item label {
     margin-bottom: 0;
     font-size: 7.5px;
@@ -1258,7 +1299,7 @@ MOBILE
 
   .shirt {
     width: 58px;
-    height: 62px;
+    height: 68px;
   }
 
   .shirt::before, .shirt::after {
@@ -1268,12 +1309,12 @@ MOBILE
   }
 
   .shirt-name {
-    top: 5px;
+    top: 31px;
     font-size: 7px;
   }
 
   .shirt .player-select {
-    bottom: 3px;
+    top: 3px;
     left: 3px;
     width: calc(100% - 6px);
     padding: 3px 1px;
@@ -1281,7 +1322,8 @@ MOBILE
   }
 
   .shirt-pts {
-    bottom: 21px;
+    top: 3px;
+    right: 3px;
     font-size: 8px;
   }
 
@@ -1397,7 +1439,7 @@ MOBILE
   }
   .shirt {
     width: 56px;
-    height: 60px;
+    height: 66px;
   }
   .point-item {
     flex: 1 1 100%;
@@ -1449,9 +1491,9 @@ MOBILE
           <div class="point-item"><label>Picks</label><span id="pts-picks">0</span></div>
           <div class="point-item"><label>Bet</label><span id="pts-bet">0</span></div>
           <div class="point-item"><label>Season</label><span id="pts-season">0</span></div>
-          <div class="point-item" onclick="openGameweekSummary()" style="cursor: pointer;">
-            <label style="color: #c7ff38;">Total</label>
-            <span id="pts-total" style="color: #c7ff38; font-weight: 900;">0</span>
+          <div class="point-item point-total" onclick="openGameweekSummary()">
+            <label>Total points</label>
+            <span id="pts-total">0</span>
           </div>
         </div>
       </div>
@@ -1808,26 +1850,26 @@ function loadCurrentBet() {
 // Original Game of Opinions kit colourways. These use broad club-inspired colour
 // families only: no club crests, sponsors, manufacturer marks, or replica patterns.
 const teamKits = {
-  "Arsenal":        { body: "#c93a3a", sleeves: "#f0e9dc", trim: "#f7f1e8" },
-  "Aston Villa":    { body: "#6c2948", sleeves: "#83b8cc", trim: "#d9edf0" },
-  "Bournemouth":    { body: "#b8403d", sleeves: "#20242b", trim: "#f1ebe2" },
-  "Brentford":      { body: "#c84545", sleeves: "#f3eee4", trim: "#5a2028" },
-  "Brighton":       { body: "#2875a8", sleeves: "#edf3f2", trim: "#d7e9e7" },
-  "Chelsea":        { body: "#2856a6", sleeves: "#d9e4ed", trim: "#f4f0db" },
-  "Coventry":       { body: "#70aac6", sleeves: "#eef2ec", trim: "#ffffff" },
-  "Crystal Palace": { body: "#31568c", sleeves: "#bc4850", trim: "#e8ddcf" },
-  "Everton":        { body: "#315da0", sleeves: "#e9eee8", trim: "#edf3ed" },
-  "Fulham":         { body: "#e7e6de", sleeves: "#30343b", trim: "#9f2834" },
-  "Hull":           { body: "#d39a32", sleeves: "#24262c", trim: "#f2eadb" },
-  "Ipswich":        { body: "#3569a7", sleeves: "#edf0e8", trim: "#d8e0dd" },
-  "Leeds":          { body: "#e8e5da", sleeves: "#315d96", trim: "#d5af54" },
-  "Liverpool":      { body: "#b93642", sleeves: "#dbe6dc", trim: "#edf3e9" },
-  "Man City":       { body: "#74abc2", sleeves: "#eff1e8", trim: "#d8a947" },
-  "Man Utd":        { body: "#bd3d3c", sleeves: "#2c2d32", trim: "#e8c45a" },
-  "Newcastle":      { body: "#25282d", sleeves: "#e8e6dd", trim: "#c5a85b" },
-  "Nott'm Forest":  { body: "#bd3c3d", sleeves: "#eee9df", trim: "#e7d9bc" },
-  "Sunderland":     { body: "#be3f42", sleeves: "#eeece4", trim: "#30333a" },
-  "Spurs":          { body: "#e7e5dd", sleeves: "#2f486e", trim: "#c9aa62" },
+  "Arsenal":        { body: "#ef0107", sleeves: "#ffffff", trim: "#ffffff" },
+  "Aston Villa":    { body: "#670e36", sleeves: "#95bfe5", trim: "#95bfe5" },
+  "Bournemouth":    { body: "repeating-linear-gradient(90deg, #da291c 0 14px, #111111 14px 28px)", sleeves: "#111111", trim: "#ffffff" },
+  "Brentford":      { body: "repeating-linear-gradient(90deg, #e30613 0 13px, #ffffff 13px 26px)", sleeves: "#e30613", trim: "#222222" },
+  "Brighton":       { body: "repeating-linear-gradient(90deg, #0057b8 0 14px, #ffffff 14px 28px)", sleeves: "#0057b8", trim: "#ffffff" },
+  "Chelsea":        { body: "#034694", sleeves: "#034694", trim: "#ffffff" },
+  "Coventry":       { body: "#6cabdd", sleeves: "#6cabdd", trim: "#ffffff" },
+  "Crystal Palace": { body: "repeating-linear-gradient(90deg, #1b458f 0 14px, #c4122e 14px 28px)", sleeves: "#1b458f", trim: "#ffffff" },
+  "Everton":        { body: "#003399", sleeves: "#003399", trim: "#ffffff" },
+  "Fulham":         { body: "#ffffff", sleeves: "#111111", trim: "#111111" },
+  "Hull":           { body: "repeating-linear-gradient(90deg, #f5a623 0 14px, #111111 14px 28px)", sleeves: "#111111", trim: "#f5a623" },
+  "Ipswich":        { body: "#0055a5", sleeves: "#0055a5", trim: "#ffffff" },
+  "Leeds":          { body: "#ffffff", sleeves: "#1d428a", trim: "#ffcd00" },
+  "Liverpool":      { body: "#c8102e", sleeves: "#c8102e", trim: "#ffffff" },
+  "Man City":       { body: "#6cabdd", sleeves: "#6cabdd", trim: "#ffffff" },
+  "Man Utd":        { body: "#da291c", sleeves: "#da291c", trim: "#fbe122" },
+  "Newcastle":      { body: "repeating-linear-gradient(90deg, #111111 0 14px, #ffffff 14px 28px)", sleeves: "#111111", trim: "#d8b25b" },
+  "Nott'm Forest":  { body: "#dd0000", sleeves: "#dd0000", trim: "#ffffff" },
+  "Sunderland":     { body: "repeating-linear-gradient(90deg, #e30613 0 14px, #ffffff 14px 28px)", sleeves: "#e30613", trim: "#111111" },
+  "Spurs":          { body: "#ffffff", sleeves: "#132257", trim: "#132257" },
   default:           { body: "#2563eb", sleeves: "#1d4ed8", trim: "#eaf2ff" }
 };
 
