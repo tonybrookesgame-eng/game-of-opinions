@@ -731,7 +731,7 @@ ROWS + PLAYERS
 }
 
 .player{
-  width: 85px;
+  width: 100px;
   position: relative;
   text-align: center;
   background: rgba(255,255,255,0.04); /* Consistent with season.html .card */
@@ -754,11 +754,15 @@ ROWS + PLAYERS
 }
 
 .shirt{
-  width: 48px;
-  height: 48px;
+  --kit-body: #2563eb;
+  --kit-sleeves: #1d4ed8;
+  --kit-trim: #eaf2ff;
+  width: 86px;
+  height: 78px;
   margin: auto;
   border-radius: 8px 8px 4px 4px;
-  background: linear-gradient(#2563eb, #1d4ed8);
+  background: var(--kit-body);
+  border: 2px solid var(--kit-trim);
   position: relative;
   /* Generic fabric lighting effect */
   box-shadow: 
@@ -776,7 +780,7 @@ ROWS + PLAYERS
   transform: translateX(-50%);
   width: 16px;
   height: 8px;
-  background: rgba(0,0,0,0.2);
+  background: var(--kit-trim);
   clip-path: polygon(0 0, 100% 0, 50% 100%);
   z-index: 2;
 }
@@ -787,9 +791,9 @@ ROWS + PLAYERS
   position: absolute;
   top: 2px;
   left: -12px;
-  width: 72px; /* Wraps around both sides */
+  width: calc(100% + 24px); /* Wraps around both sides */
   height: 18px;
-  background: inherit;
+  background: var(--kit-sleeves);
   z-index: -1;
   /* Creates the T-shirt shoulder look */
   clip-path: polygon(0 40%, 15% 0, 85% 0, 100% 40%, 85% 100%, 15% 100%);
@@ -817,23 +821,26 @@ ROWS + PLAYERS
 
 .shirt-name {
   position: absolute;
-  top: 15px;
+  top: 7px;
   left: 50%;
   transform: translateX(-50%);
-  background: #000;
+  width: calc(100% - 10px);
+  background: rgba(0,0,0,0.72);
   color: #fff;
-  padding: 1px 4px;
+  padding: 2px 3px;
   border-radius: 3px;
-  font-size: 11px;
+  font-size: 9px;
+  line-height: 1.15;
   font-weight: 900;
   text-transform: uppercase;
+  overflow-wrap: anywhere;
   pointer-events: none;
   display: none;
 }
 
 .shirt-pts {
   position: absolute;
-  bottom: 5px;
+  bottom: 26px;
   left: 50%;
   transform: translateX(-50%);
   background: #c7ff38;
@@ -859,9 +866,17 @@ select {
   cursor: pointer;
 }
 
-.pitch .player select {
-  padding: 8px 6px;
-  font-size: 12px;
+.shirt .player-select {
+  position: absolute;
+  z-index: 6;
+  bottom: 5px;
+  left: 5px;
+  width: calc(100% - 10px);
+  padding: 4px 3px;
+  border-radius: 5px;
+  font-size: 9px;
+  line-height: 1.1;
+  background: rgba(4,17,2,0.88);
 }
 
 /* =========================
@@ -1242,8 +1257,8 @@ MOBILE
   }
 
   .shirt {
-    width: 38px;
-    height: 38px;
+    width: 58px;
+    height: 62px;
   }
 
   .shirt::before, .shirt::after {
@@ -1253,13 +1268,21 @@ MOBILE
   }
 
   .shirt-name {
-    top: 11px;
-    font-size: 9px;
+    top: 5px;
+    font-size: 7px;
   }
 
-  .pitch .player select {
-    font-size: 8px;
+  .shirt .player-select {
+    bottom: 3px;
+    left: 3px;
+    width: calc(100% - 6px);
     padding: 3px 1px;
+    font-size: 7px;
+  }
+
+  .shirt-pts {
+    bottom: 21px;
+    font-size: 8px;
   }
 
   .weekly-panel select {
@@ -1373,8 +1396,8 @@ MOBILE
     padding-top: 45px;
   }
   .shirt {
-    width: 32px;
-    height: 32px;
+    width: 56px;
+    height: 60px;
   }
   .point-item {
     flex: 1 1 100%;
@@ -1474,8 +1497,8 @@ MOBILE
     <div class="shirt">
       <div class="shirt-name"></div>
       <a href="admin.html" class="shirt-pts"></a>
+      <select class="player-select" data-pos="GK" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select>
     </div>
-    <select data-pos="GK" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select>
   </div>
 </div>
 
@@ -1782,55 +1805,42 @@ function loadCurrentBet() {
   });
 }
 
-const colors = {
-  "Arsenal": "linear-gradient(to bottom, #ef4444 0%, #ef4444 100%)", // Body red, CSS logic handles sleeves
-  "Aston Villa": "linear-gradient(#94bee5, #670e36)",
-  "Bournemouth": "linear-gradient(#da291c, #000000)",
-  "Brentford": "repeating-linear-gradient(90deg, #e30613, #e30613 8px, #ffffff 8px, #ffffff 16px)",
-  "Brighton": "linear-gradient(#0057b8, #ffffff)",
-  "Chelsea": "linear-gradient(#034694, #002d72)",
-  "Coventry": "linear-gradient(#6cb4ee, #ffffff)",
-  "Crystal Palace": "linear-gradient(90deg, #1b458f 50%, #c4122e 50%)",
-  "Everton": "linear-gradient(#003399, #002060)",
-  "Fulham": "linear-gradient(#ffffff, #000000)",
-  "Hull": "linear-gradient(#000000, #fdb913)",
-  "Ipswich": "linear-gradient(#0055a5, #ffffff)",
-  "Leicester": "linear-gradient(#003090, #ffffff)",
-  "Liverpool": "linear-gradient(#c8102e, #8d0514)",
-  "Man City": "linear-gradient(#6cabdd, #1c2c5b)",
-  "Man Utd": "linear-gradient(#da291c, #000000)",
-  "Newcastle": "repeating-linear-gradient(90deg, #000, #000 8px, #fff 8px, #fff 16px)",
-  "Nott'm Forest": "linear-gradient(#dd0000, #ffffff)",
-  "Southampton": "linear-gradient(#d71920, #ffffff)",
-  "Spurs": "linear-gradient(#ffffff, #132257)"
+// Original Game of Opinions kit colourways. These use broad club-inspired colour
+// families only: no club crests, sponsors, manufacturer marks, or replica patterns.
+const teamKits = {
+  "Arsenal":        { body: "#c93a3a", sleeves: "#f0e9dc", trim: "#f7f1e8" },
+  "Aston Villa":    { body: "#6c2948", sleeves: "#83b8cc", trim: "#d9edf0" },
+  "Bournemouth":    { body: "#b8403d", sleeves: "#20242b", trim: "#f1ebe2" },
+  "Brentford":      { body: "#c84545", sleeves: "#f3eee4", trim: "#5a2028" },
+  "Brighton":       { body: "#2875a8", sleeves: "#edf3f2", trim: "#d7e9e7" },
+  "Chelsea":        { body: "#2856a6", sleeves: "#d9e4ed", trim: "#f4f0db" },
+  "Coventry":       { body: "#70aac6", sleeves: "#eef2ec", trim: "#ffffff" },
+  "Crystal Palace": { body: "#31568c", sleeves: "#bc4850", trim: "#e8ddcf" },
+  "Everton":        { body: "#315da0", sleeves: "#e9eee8", trim: "#edf3ed" },
+  "Fulham":         { body: "#e7e6de", sleeves: "#30343b", trim: "#9f2834" },
+  "Hull":           { body: "#d39a32", sleeves: "#24262c", trim: "#f2eadb" },
+  "Ipswich":        { body: "#3569a7", sleeves: "#edf0e8", trim: "#d8e0dd" },
+  "Leeds":          { body: "#e8e5da", sleeves: "#315d96", trim: "#d5af54" },
+  "Liverpool":      { body: "#b93642", sleeves: "#dbe6dc", trim: "#edf3e9" },
+  "Man City":       { body: "#74abc2", sleeves: "#eff1e8", trim: "#d8a947" },
+  "Man Utd":        { body: "#bd3d3c", sleeves: "#2c2d32", trim: "#e8c45a" },
+  "Newcastle":      { body: "#25282d", sleeves: "#e8e6dd", trim: "#c5a85b" },
+  "Nott'm Forest":  { body: "#bd3c3d", sleeves: "#eee9df", trim: "#e7d9bc" },
+  "Sunderland":     { body: "#be3f42", sleeves: "#eeece4", trim: "#30333a" },
+  "Spurs":          { body: "#e7e5dd", sleeves: "#2f486e", trim: "#c9aa62" },
+  default:           { body: "#2563eb", sleeves: "#1d4ed8", trim: "#eaf2ff" }
 };
 
-const secondaryColors = {
-  "Arsenal": "#ffffff",
-  "Aston Villa": "#94bee5",
-  "Bournemouth": "#000000",
-  "Brentford": "#e30613",
-  "Brighton": "#ffffff",
-  "Chelsea": "#ffffff",
-  "Coventry": "#ffffff",
-  "Crystal Palace": "#1b458f",
-  "Everton": "#ffffff",
-  "Fulham": "#000000",
-  "Hull": "#fdb913",
-  "Ipswich": "#ffffff",
-  "Leicester": "#ffffff",
-  "Liverpool": "#00a398",
-  "Man City": "#ffffff",
-  "Man Utd": "#fbe122",
-  "Newcastle": "#ffffff",
-  "Nott'm Forest": "#ffffff",
-  "Southampton": "#000000",
-  "Spurs": "#132257"
-};
+function setShirtKit(shirt, team = "default") {
+  const kit = teamKits[team] || teamKits.default;
+  shirt.style.setProperty("--kit-body", kit.body);
+  shirt.style.setProperty("--kit-sleeves", kit.sleeves);
+  shirt.style.setProperty("--kit-trim", kit.trim);
+}
 
 window.currentDisplayedPlayerScores = {}; // Global variable for currently displayed player scores
 const updateShirt = function(select) {
-  const shirt = select.parentElement.querySelector('.shirt');
+  const shirt = select.closest('.shirt');
   const nameLabel = shirt.querySelector('.shirt-name');
   const ptsLabel = shirt.querySelector('.shirt-pts');
   const val = select.value;
@@ -1839,8 +1849,7 @@ const updateShirt = function(select) {
   const selectedGw = historySelect ? historySelect.value : "";
 
   if (val === "Select") {
-    shirt.style.background = "linear-gradient(#2563eb,#1d4ed8)";
-    shirt.style.background = "linear-gradient(#2563eb,#1d4ed8)";
+    setShirtKit(shirt);
     nameLabel.innerText = "";
     nameLabel.style.display = "none";
     ptsLabel.innerText = "";
@@ -1848,27 +1857,13 @@ const updateShirt = function(select) {
     return;
   }
 
-  let displayPlayerName;
   ptsLabel.style.display = "block"; // Get club for outfield player
-
-  if(pos === 'GK') { // If it's a GK, val is already the club name
-    team = val;
-    displayPlayerName = clubAbbr[val] || val.substring(0,3).toUpperCase(); // For GK, show club abbr
-  } else {
-    displayPlayerName = val; // Show player name for outfield player
-  }
-
-  let team = playerToClub[val]; // Get club for outfield player
-
-  if (pos === 'GK') { // If it's a GK, val is already the club name
-    team = val;
-    displayPlayerName = clubAbbr[val] || val.substring(0,3).toUpperCase(); // For GK, show club abbr
-  } else {
-    displayPlayerName = val; // Show player name for outfield player
-  }
+  // Goalkeeper choices currently identify the club; outfield choices identify a player.
+  const team = pos === "GK" ? val : playerToClub[val];
+  const displayPlayerName = val;
   
   nameLabel.innerText = displayPlayerName;
-  shirt.style.background = colors[team] || "linear-gradient(#2563eb,#1d4ed8)";
+  setShirtKit(shirt, team);
 
   // Show points if they exist in the current display buffer
   const points = window.currentDisplayedPlayerScores[val];
@@ -1947,7 +1942,7 @@ const updatePitchRow = function(row, pos, count) {
     const subAdvanced = document.createElement('div');
     subAdvanced.className = 'pitch-sub-row';
     
-    const playerHTML = `<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div>`;
+    const playerHTML = `<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a><select class="player-select" data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div></div>`;
     
     for(let i=0; i<4; i++) subBase.innerHTML += playerHTML;
     subAdvanced.innerHTML += playerHTML;
@@ -1957,7 +1952,7 @@ const updatePitchRow = function(row, pos, count) {
     row.appendChild(subAdvanced);
   } else {
     for(let i=0; i<count; i++) {
-      row.innerHTML += `<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a></div><select data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div>`;
+      row.innerHTML += `<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a><select class="player-select" data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div></div>`;
     }
   }
 }
