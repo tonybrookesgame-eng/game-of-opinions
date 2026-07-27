@@ -868,6 +868,27 @@ ROWS + PLAYERS
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
 }
 
+.shirt-acronym {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 3px 6px;
+  background: rgba(2, 6, 17, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 4px;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  z-index: 5;
+  display: none;
+  pointer-events: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+}
+
 .shirt-pts {
   position: absolute;
   top: 5px;
@@ -906,6 +927,18 @@ select {
   font-size: 9px;
   line-height: 1.1;
   background: rgba(4,17,2,0.88);
+}
+
+.shirt .player-select.has-value {
+  color: transparent !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.shirt .player-select option {
+  color: #ffffff !important;
+  background-color: #071320 !important;
 }
 
 /* =========================
@@ -1326,6 +1359,12 @@ MOBILE
     font-size: 7px;
   }
 
+  .shirt-acronym {
+    padding: 2px 4px;
+    font-size: 8px;
+    border-radius: 3px;
+  }
+
   .shirt-pts {
     top: 3px;
     right: 3px;
@@ -1544,6 +1583,7 @@ MOBILE
     <div class="shirt">
       <a href="admin.html" class="shirt-pts"></a>
       <select class="player-select" data-pos="GK" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select>
+      <div class="shirt-acronym"></div>
     </div>
     <div class="player-nameplate" aria-live="polite"></div>
   </div>
@@ -1890,6 +1930,13 @@ const updateShirt = function(select) {
   const shirt = select.closest('.shirt');
   const nameLabel = select.closest('.player').querySelector('.player-nameplate');
   const ptsLabel = shirt.querySelector('.shirt-pts');
+  let acronymLabel = shirt.querySelector('.shirt-acronym');
+  if (!acronymLabel) {
+    acronymLabel = document.createElement('div');
+    acronymLabel.className = 'shirt-acronym';
+    shirt.appendChild(acronymLabel);
+  }
+
   const val = select.value;
   const pos = select.dataset.pos;
   const historySelect = document.getElementById('gameweekHistorySelect');
@@ -1897,20 +1944,32 @@ const updateShirt = function(select) {
 
   if (val === "Select") {
     setShirtKit(shirt);
+    select.classList.remove('has-value');
     nameLabel.innerText = "";
     nameLabel.removeAttribute("title");
     select.removeAttribute("title");
     nameLabel.style.visibility = "hidden";
+    acronymLabel.innerText = "";
+    acronymLabel.style.display = "none";
     ptsLabel.innerText = "";
     ptsLabel.style.display = "none";
     return;
   }
 
-  ptsLabel.style.display = "block"; // Get club for outfield player
-  // Goalkeeper choices currently identify the club; outfield choices identify a player.
+  select.classList.add('has-value');
   const team = pos === "GK" ? val : playerToClub[val];
   const displayPlayerName = val;
   
+  // Show 3-letter Team Acronym on shirt
+  const acronym = clubAbbr[team] || (team ? team.substring(0, 3).toUpperCase() : "");
+  if (acronym) {
+    acronymLabel.innerText = acronym;
+    acronymLabel.style.display = "block";
+  } else {
+    acronymLabel.innerText = "";
+    acronymLabel.style.display = "none";
+  }
+
   nameLabel.innerText = displayPlayerName;
   nameLabel.title = displayPlayerName;
   const nameLength = displayPlayerName.length;
@@ -1919,101 +1978,6 @@ const updateShirt = function(select) {
   nameLabel.style.visibility = "visible";
   select.title = displayPlayerName;
   setShirtKit(shirt, team);
-
-  // Show points if they exist in the current display buffer
-  const points = window.currentDisplayedPlayerScores[val];
-  const hasPoints = points !== undefined;
-
-  ptsLabel.innerText = (hasPoints ? points : 0) + " PTS";
-  // Show points in history view or when gameweek is locked
-  const isHistoryView = selectedGw !== "";
-  ptsLabel.style.display = (isHistoryView || gameweekStatus === 'locked') ? "block" : "none";
-
-  refreshDropdowns();
-}
-window.updateShirt = updateShirt;
-
-const calculateAndSaveDeadlines = async () => {
-  const info = window.getGameweekDeadlineInfo ? window.getGameweekDeadlineInfo() : null;
-  if (!info) return;
-
-  const { deadline, reopenTime } = info;
-
-  try {
-    await updateDoc(doc(db, "settings", "gameweek"), {
-      deadline: deadline.toISOString(),
-      reopenTime: reopenTime.toISOString()
-    });
-    console.log(`✓ Deadline set to: ${deadline.toLocaleString('en-GB')}`);
-    console.log(`✓ Gameweek will reopen at: ${reopenTime.toLocaleString('en-GB')}`);
-  } catch (error) {
-    console.error('Error saving deadlines:', error);
-  }
-};
-
-const loadFixtures = () => {
-  const list = document.getElementById('fixtures-list');
-  const modalList = document.getElementById('modal-fixtures-list');
-  const fixtures = window.getGameweekFixtures ? window.getGameweekFixtures() : [];
-
-  if (typeof window.renderFixtureList === 'function') {
-    window.renderFixtureList(list, modalList, fixtures);
-  }
-};
-
-const changeFormation = function() {
-  const formation = document.getElementById('formationSelect').value;
-  const parts = formation.split('-').map(Number);
-  const pitch = document.querySelector('.pitch');
-  const rows = pitch.querySelectorAll('.row');
-  
-  // Rows: 0 is GK (always 1), 1 is DEF, 2 is MID, 3 is FWD
-  updatePitchRow(rows[1], 'DEF', parts[0]);
-  updatePitchRow(rows[2], 'MID', parts[1]);
-  updatePitchRow(rows[3], 'FWD', parts[2]);
-
-  // Reset GK
-  const gkSelect = document.querySelector('select[data-pos="GK"]');
-  if (gkSelect) {
-    gkSelect.value = "Select";
-    updateShirt(gkSelect);
-  }
-  
-  populatePlayers();
-  refreshDropdowns();
-}
-window.changeFormation = changeFormation;
-
-const updatePitchRow = function(row, pos, count) {
-  row.innerHTML = '';
-  row.style.flexDirection = 'row'; // Default
-
-  if (count === 5) {
-    row.style.flexDirection = 'column';
-    row.style.gap = '10px';
-    
-    const subBase = document.createElement('div');
-    subBase.className = 'pitch-sub-row';
-    const subAdvanced = document.createElement('div');
-    subAdvanced.className = 'pitch-sub-row';
-    
-    const playerHTML = `<div class="player"><div class="shirt"><a href="admin.html" class="shirt-pts"></a><select class="player-select" data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div><div class="player-nameplate" aria-live="polite"></div></div>`;
-    
-    for(let i=0; i<4; i++) subBase.innerHTML += playerHTML;
-    subAdvanced.innerHTML += playerHTML;
-
-    // For Midfielders, place the 1 advanced player closer to the strikers (after the row of 4)
-    row.appendChild(subBase);
-    row.appendChild(subAdvanced);
-  } else {
-    for(let i=0; i<count; i++) {
-      row.innerHTML += `<div class="player"><div class="shirt"><a href="admin.html" class="shirt-pts"></a><select class="player-select" data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div><div class="player-nameplate" aria-live="polite"></div></div>`;
-    }
-  }
-}
-window.updatePitchRow = updatePitchRow;
-
-const refreshDropdowns = function() {
   const selects = document.querySelectorAll('.pitch select');
   const selectedClubs = Array.from(selects)
     .map(s => playerToClub[s.value] || s.value)
@@ -2331,10 +2295,11 @@ const firebaseConfig = {
   storageBucket: "game-of-opinions-97b14.firebasestorage.app",
   appId: "1:863518863234:web:3a2c2378a2a358e0b2299b"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+
+
 
 let gameweekStatus = 'open'; // Default to open
 
@@ -2467,6 +2432,7 @@ const saveTeam = async function() {
 
   try {
     const teamDocRef = doc(db, "users", currentUser.uid, "myxi", "team");
+    const userDocRef = doc(db, "users", currentUser.uid);
     const leaderboardRef = doc(db, "leaderboard", currentUser.uid);
     
     await setDoc(teamDocRef, {
@@ -2475,11 +2441,17 @@ const saveTeam = async function() {
       teamName: teamName
     }, { merge: true });
 
+    await setDoc(userDocRef, {
+      teamName: teamName
+    }, { merge: true });
+
     await setDoc(leaderboardRef, {
       teamName: teamName,
       userId: currentUser.uid
     }, { merge: true });
+
     document.getElementById('teamNameInput').disabled = true;
+    selects.forEach(s => updateShirt(s));
     alert("Team XI Saved!");
   } catch (error) {
     console.error("Error saving team: ", error);
@@ -2563,13 +2535,18 @@ const clearTeam = async function() {
   if (confirm("Are you sure you want to clear your 11 players? Your team name and league progress will be saved.")) {
     try {
       const teamDocRef = doc(db, "users", currentUser.uid, "myxi", "team");
-      // Use updateDoc to only clear specific fields, preserving the teamName
-      await updateDoc(teamDocRef, { 
+      await setDoc(teamDocRef, { 
         players: [], 
         formation: "4-4-2" 
-      }); 
+      }, { merge: true }); 
       document.getElementById('formationSelect').value = "4-4-2";
       changeFormation(); // Reset formation
+      
+      // Explicitly reset all pitch select values and graphics
+      document.querySelectorAll('.pitch select').forEach(s => {
+        s.value = "Select";
+        updateShirt(s);
+      });
       alert("Players cleared! Your team name remains secured.");
     } catch (error) {
       console.error("Error clearing team: ", error);
