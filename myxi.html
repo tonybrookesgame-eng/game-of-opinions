@@ -1733,7 +1733,7 @@ MOBILE
   line-height: 1.05 !important;
   font-size: 9px !important;
   display: -webkit-box !important;
-  line-clamp: 2 unset !important;
+  line-clamp: 2 !important;
   -webkit-line-clamp: 2 !important;
   -webkit-box-orient: vertical !important;
   align-content: center !important;
@@ -1804,10 +1804,7 @@ MOBILE
   font-weight: 800 !important;
 }
 
-/* Make the actual shirt slightly wider too */
-.shirt {
-  width: 116px !important;
-}
+
 
 /* Keep four-player lines fitting across mobile */
 @media (max-width: 520px) {
@@ -1819,11 +1816,6 @@ MOBILE
     flex: 1 1 0 !important;
     width: 0 !important;
     min-width: 0 !important;
-  }
-
-  .shirt {
-    width: 108px !important;
-    max-width: 100% !important;
   }
 
   .player .shirt-name,
@@ -1840,9 +1832,6 @@ MOBILE
 }
 
 @media (max-width: 390px) {
-  .shirt {
-    width: 104px !important;
-  }
 
   .player .shirt-name,
   .shirt .shirt-name,
@@ -1851,6 +1840,55 @@ MOBILE
     min-width: 80px !important;
     max-width: 80px !important;
     font-size: 6.8px !important;
+  }
+}
+
+
+/* ===== FINAL PLAYER LABEL OVERRIDE ===== */
+.player .shirt-name,
+.shirt .shirt-name,
+.shirt.is-empty .shirt-name {
+  width: 82px !important;
+  min-width: 82px !important;
+  max-width: 82px !important;
+  height: 27px !important;
+  min-height: 27px !important;
+  padding: 5px 2px !important;
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  border-radius: 7px !important;
+  box-sizing: border-box !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: clip !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+  display: block !important;
+  line-clamp: unset !important;
+  -webkit-line-clamp: unset !important;
+  -webkit-box-orient: unset !important;
+  line-height: 15px !important;
+  font-size: 7px !important;
+  letter-spacing: -0.35px !important;
+  font-weight: 800 !important;
+  text-align: center !important;
+}
+@media (max-width: 520px) {
+  .pitch .row { gap: 2px !important; }
+  .pitch .row .player {
+    flex: 1 1 0 !important;
+    width: 0 !important;
+    min-width: 0 !important;
+  }
+  .player .shirt-name,
+  .shirt .shirt-name,
+  .shirt.is-empty .shirt-name {
+    width: 80px !important;
+    min-width: 80px !important;
+    max-width: 80px !important;
+    font-size: 6.35px !important;
+    letter-spacing: -0.42px !important;
   }
 }
 
@@ -2735,7 +2773,7 @@ const loadSelectedGameweekHistory = async () => {
         console.log('⚠ No players in teamData.players array');
       }
       refreshDropdowns(); // Refresh duplicate prevention
-    }, 100); // Increased delay to ensure DOM is fully ready
+    }, 250); // Allow mobile Safari time to rebuild/populate the formation before restoring Firebase values
   } else {
     // Default reset if no team data
     console.log('⚠ No team data found');
@@ -3007,8 +3045,21 @@ const saveTeam = async function() {
       teamName: teamName,
       userId: currentUser.uid
     }, { merge: true });
+    const verifySnap = await getDoc(teamDocRef);
+    if (!verifySnap.exists()) {
+      throw new Error("Saved team document could not be read back.");
+    }
+
+    const verifyData = verifySnap.data();
+    const verifiedPlayers = Array.isArray(verifyData.players) ? verifyData.players : [];
+    const verifiedCount = verifiedPlayers.filter(p => p && p !== "Select").length;
+
+    if (verifiedCount !== 11) {
+      throw new Error(`Firestore returned ${verifiedCount}/11 saved selections.`);
+    }
+
     document.getElementById('teamNameInput').disabled = true;
-    alert("Team XI Saved!");
+    alert("Team XI Saved & verified!");
   } catch (error) {
     console.error("Error saving team: ", error);
     alert(`Failed to save team${error?.code ? ` (${error.code})` : ""}. Please try again.`);
@@ -3186,11 +3237,15 @@ setTimeout(checkOnboarding, 800);
 
 const initializeDefaultFormation = () => {
   const formationSelect = document.getElementById('formationSelect');
-  if (formationSelect) {
+  if (!formationSelect) return;
+
+  // Only build the empty pitch before Firebase has authenticated a user.
+  // Once currentUser exists, loadUserData() owns formation/team restoration.
+  if (!currentUser) {
     formationSelect.value = '4-4-2';
-  }
-  if (typeof changeFormation === 'function') {
-    changeFormation();
+    if (typeof changeFormation === 'function') {
+      changeFormation({ preserve: false });
+    }
   }
 };
 initializeDefaultFormation();
