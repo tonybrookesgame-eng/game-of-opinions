@@ -895,6 +895,7 @@ select {
 }
 
 .shirt .player-select {
+  display: none !important;
   position: absolute;
   z-index: 6;
   top: 6px;
@@ -905,6 +906,132 @@ select {
   font-size: 9px;
   line-height: 1.1;
   background: rgba(4,17,2,0.88);
+}
+
+
+/* Homepage-style shirt picker */
+.shirt {
+  cursor: pointer;
+  transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+}
+.shirt:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.06);
+}
+.shirt.is-empty::before {
+  opacity: .78;
+}
+.shirt.is-empty .shirt-name {
+  display: block !important;
+  top: 34px;
+  background: rgba(0,0,0,.48);
+  color: #fff;
+}
+.shirt.is-disabled {
+  cursor: default;
+  opacity: .92;
+}
+.player-picker-modal {
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:2500;
+  background:rgba(0,0,0,.82);
+  backdrop-filter:blur(8px);
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+.player-picker-card {
+  width:min(680px, 96vw);
+  max-height:88vh;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  background:#071019;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:22px;
+  box-shadow:0 24px 70px rgba(0,0,0,.55);
+}
+.player-picker-head {
+  padding:18px 18px 12px;
+  border-bottom:1px solid rgba(255,255,255,.09);
+}
+.player-picker-head h2 {
+  margin:0 0 4px;
+  color:#c7ff38;
+  font-size:20px;
+}
+.player-picker-head p {
+  margin:0;
+  font-size:12px;
+  color:#94a3b8;
+}
+.player-picker-search {
+  margin:14px 18px 8px;
+  width:calc(100% - 36px);
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(0,0,0,.35);
+  color:#fff;
+  outline:none;
+}
+.player-picker-list {
+  padding:8px 18px 18px;
+  overflow:auto;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+.player-picker-option {
+  width:100%;
+  border-radius:12px;
+  padding:11px 12px;
+  background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.09);
+  color:#fff;
+  text-align:left;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+}
+.player-picker-option:hover {
+  transform:none;
+  box-shadow:none;
+  border-color:#c7ff38;
+}
+.player-picker-option:disabled {
+  opacity:.35;
+}
+.player-picker-option small {
+  color:#c7ff38;
+  font-weight:800;
+}
+.player-picker-actions {
+  padding:12px 18px 18px;
+  display:flex;
+  gap:10px;
+  border-top:1px solid rgba(255,255,255,.09);
+}
+.player-picker-actions button {
+  width:auto;
+  flex:1;
+  padding:11px;
+}
+.player-picker-actions .picker-remove {
+  background:#f87171;
+  color:#fff;
+}
+.player-picker-actions .picker-cancel {
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  border:1px solid rgba(255,255,255,.12);
+}
+@media(max-width:768px) {
+  .player-picker-list { grid-template-columns:1fr; }
+  .player-picker-card { max-height:84vh; }
 }
 
 /* =========================
@@ -1738,6 +1865,23 @@ MOBILE
     </div>
   </div>
 </div>
+
+<!-- Player Picker Modal -->
+<div id="playerPickerModal" class="player-picker-modal" aria-hidden="true">
+  <div class="player-picker-card">
+    <div class="player-picker-head">
+      <h2 id="playerPickerTitle">Pick Player</h2>
+      <p id="playerPickerSubtitle">One selection per club.</p>
+    </div>
+    <input id="playerPickerSearch" class="player-picker-search" type="search" placeholder="Search player or club..." autocomplete="off">
+    <div id="playerPickerList" class="player-picker-list"></div>
+    <div class="player-picker-actions">
+      <button type="button" class="picker-remove" id="playerPickerRemove">Clear Slot</button>
+      <button type="button" class="picker-cancel" id="playerPickerCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, orderBy, limit, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -1902,10 +2046,19 @@ const updateShirt = function(select) {
   const historySelect = document.getElementById('gameweekHistorySelect');
   const selectedGw = historySelect ? historySelect.value : "";
 
+  const badge = shirt.querySelector('.shirt-badge') || (() => {
+    const el = document.createElement('div');
+    el.className = 'shirt-badge';
+    shirt.appendChild(el);
+    return el;
+  })();
+
   if (val === "Select") {
     setShirtKit(shirt);
-    nameLabel.innerText = "";
-    nameLabel.style.display = "none";
+    shirt.classList.add('is-empty');
+    nameLabel.innerText = pos === "GK" ? "PICK CLUB" : "PICK PLAYER";
+    nameLabel.style.display = "block";
+    badge.innerText = "+";
     ptsLabel.innerText = "";
     ptsLabel.style.display = "none";
     return;
@@ -1916,7 +2069,10 @@ const updateShirt = function(select) {
   const team = pos === "GK" ? val : playerToClub[val];
   const displayPlayerName = val;
   
+  shirt.classList.remove('is-empty');
   nameLabel.innerText = displayPlayerName;
+  nameLabel.style.display = "block";
+  badge.innerText = clubAbbr[team] || (team ? team.substring(0, 3).toUpperCase() : "");
   setShirtKit(shirt, team);
 
   // Show points if they exist in the current display buffer
@@ -2055,6 +2211,98 @@ const populatePlayers = function() {
 }
 window.populatePlayers = populatePlayers;
 
+let activePlayerSelect = null;
+
+function getSelectedClubsExcept(selectToIgnore = null) {
+  return Array.from(document.querySelectorAll('.pitch .player select'))
+    .filter(s => s !== selectToIgnore)
+    .map(s => playerToClub[s.value] || s.value)
+    .filter(club => club && club !== "Select");
+}
+
+function closePlayerPicker() {
+  const modal = document.getElementById('playerPickerModal');
+  if (modal) {
+    modal.style.display = 'none';
+    modal.setAttribute('aria-hidden', 'true');
+  }
+  activePlayerSelect = null;
+}
+
+function renderPlayerPicker(filterText = "") {
+  if (!activePlayerSelect) return;
+  const list = document.getElementById('playerPickerList');
+  const pos = activePlayerSelect.dataset.pos;
+  const usedClubs = getSelectedClubsExcept(activePlayerSelect);
+  const needle = filterText.trim().toLowerCase();
+  list.innerHTML = '';
+
+  (playersByPos[pos] || []).forEach(item => {
+    const value = typeof item === 'string' ? item : item.name;
+    const club = typeof item === 'string' ? item : item.club;
+    const label = pos === 'GK' ? club : value;
+    const haystack = `${label} ${club}`.toLowerCase();
+    if (needle && !haystack.includes(needle)) return;
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'player-picker-option';
+    btn.disabled = usedClubs.includes(club);
+    btn.innerHTML = `<span>${label}</span><small>${clubAbbr[club] || club}</small>`;
+    btn.addEventListener('click', () => {
+      activePlayerSelect.value = value;
+      updateShirt(activePlayerSelect);
+      closePlayerPicker();
+    });
+    list.appendChild(btn);
+  });
+
+  if (!list.children.length) {
+    list.innerHTML = '<div style="grid-column:1/-1;color:#94a3b8;padding:18px;text-align:center;">No available players found.</div>';
+  }
+}
+
+function openPlayerPicker(select) {
+  if (!select || select.disabled) return;
+  activePlayerSelect = select;
+  const pos = select.dataset.pos;
+  document.getElementById('playerPickerTitle').innerText = pos === 'GK' ? 'Pick Goalkeeper Club' : `Pick ${pos === 'DEF' ? 'Defender' : pos === 'MID' ? 'Midfielder' : 'Forward'}`;
+  document.getElementById('playerPickerSubtitle').innerText = 'One player per club. Clubs already used in your XI are unavailable.';
+  const search = document.getElementById('playerPickerSearch');
+  search.value = '';
+  renderPlayerPicker();
+  const modal = document.getElementById('playerPickerModal');
+  modal.style.display = 'flex';
+  modal.setAttribute('aria-hidden', 'false');
+  setTimeout(() => search.focus(), 0);
+}
+
+function wireShirtPickers() {
+  document.querySelectorAll('.pitch .shirt').forEach(shirt => {
+    if (shirt.dataset.pickerWired === '1') return;
+    shirt.dataset.pickerWired = '1';
+    shirt.addEventListener('click', (event) => {
+      if (event.target.closest('.shirt-pts')) return;
+      const select = shirt.querySelector('.player-select');
+      openPlayerPicker(select);
+    });
+  });
+}
+
+document.getElementById('playerPickerSearch')?.addEventListener('input', e => renderPlayerPicker(e.target.value));
+document.getElementById('playerPickerCancel')?.addEventListener('click', closePlayerPicker);
+document.getElementById('playerPickerRemove')?.addEventListener('click', () => {
+  if (!activePlayerSelect) return;
+  activePlayerSelect.value = 'Select';
+  updateShirt(activePlayerSelect);
+  closePlayerPicker();
+});
+document.getElementById('playerPickerModal')?.addEventListener('click', e => {
+  if (e.target.id === 'playerPickerModal') closePlayerPicker();
+});
+window.openPlayerPicker = openPlayerPicker;
+window.wireShirtPickers = wireShirtPickers;
+
 const populateWeeklyOptions = function() {
   const clubSelect = document.getElementById('firstScorer');
   const minuteSelect = document.getElementById('goalMinute');
@@ -2163,13 +2411,13 @@ const loadSelectedGameweekHistory = async () => {
     const seasonTotal = leaderboardSnap.exists() ? (leaderboardSnap.data().totalPoints || 0) : 0;
     document.getElementById('pts-season').innerText = seasonTotal;
     
-    // PERSISTENCE: If there is no playable current team, fall back to the most recent archive
-    const hasPlayableTeam = teamData && Array.isArray(teamData.players) && teamData.players.some(player => player && player !== "Select");
-    if ((!teamData || !hasPlayableTeam) && allGameweekHistory.length > 0) {
-      const mostRecentArchive = allGameweekHistory[0]; // First item is most recent (ordered by desc)
+    // PERSISTENCE: Only fall back when the live team document does not exist at all.
+    // An existing document with players: [] is an intentional Clear Team state and must stay empty.
+    if (!teamSnap.exists() && allGameweekHistory.length > 0) {
+      const mostRecentArchive = allGameweekHistory[0];
       if (mostRecentArchive && mostRecentArchive.team) {
         teamData = mostRecentArchive.team;
-        console.log(`No current playable team found. Loading previous gameweek team from GW${mostRecentArchive.gw}`);
+        console.log(`No live team document found. Loading previous gameweek team from GW${mostRecentArchive.gw}`);
       }
     }
   }
@@ -2181,7 +2429,7 @@ const loadSelectedGameweekHistory = async () => {
     document.getElementById('teamNameInput').value = persistedTeamName;
     const selectedFormation = teamData.formation || "4-4-2";
     document.getElementById('formationSelect').value = selectedFormation;
-    changeFormation(); // Renders the slots and populates players
+    changeFormation({ preserve: false }); // Renders clean slots before restoring saved players
     
     // Load players after DOM has settled - use a delay to ensure options are populated
     setTimeout(() => {
@@ -2214,7 +2462,7 @@ const loadSelectedGameweekHistory = async () => {
     console.log('⚠ No team data found');
     document.getElementById('teamNameInput').value = "";
     document.getElementById('formationSelect').value = "4-4-2";
-    changeFormation();
+    changeFormation({ preserve: false });
   }
 
   // 4. Update UI - Points Display
@@ -2471,7 +2719,9 @@ const saveTeam = async function() {
     await setDoc(teamDocRef, {
       players: teamPlayers,
       formation: formation,
-      teamName: teamName
+      teamName: teamName,
+      intentionallyCleared: false,
+      updatedAt: new Date().toISOString()
     }, { merge: true });
 
     await setDoc(leaderboardRef, {
@@ -2563,12 +2813,15 @@ const clearTeam = async function() {
     try {
       const teamDocRef = doc(db, "users", currentUser.uid, "myxi", "team");
       // Use updateDoc to only clear specific fields, preserving the teamName
-      await setDoc(teamDocRef, { 
-        players: [], 
-        formation: "4-4-2" 
-      }, { merge: true }); 
+      await setDoc(teamDocRef, {
+        players: [],
+        formation: "4-4-2",
+        intentionallyCleared: true,
+        updatedAt: new Date().toISOString()
+      }, { merge: true });
       document.getElementById('formationSelect').value = "4-4-2";
-      changeFormation(); // Reset formation
+      changeFormation({ preserve: false });
+      refreshDropdowns();
       alert("Players cleared! Your team name remains secured.");
     } catch (error) {
       console.error("Error clearing team: ", error);
