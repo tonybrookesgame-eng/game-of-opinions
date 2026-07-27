@@ -661,31 +661,36 @@
             continue; 
           }
 
-          if (deltaTotal !== 0 || deltaWeeklyTotal !== 0 || deltaSeason !== 0) {
-            const leaderRef = doc(db, "leaderboard", userId);
-            await setDoc(leaderRef, {
-              weeklyPoints: userWeeklyTotal,
-              weeklySelection: userPlayerScore,
-              weeklyPicks: userPicksScore,
-              weeklyBet: userBetScore,
-              seasonPoints: userSeasonScore,
-              totalPoints: increment(deltaTotal)
-            }, { merge: true });
-            
-            // ARCHIVE FOR HISTORY: Save user's team, picks, and bet for this specific GW
-            const archiveRef = doc(db, `users/${userId}/history`, "GW" + gwNum);
-            await setDoc(archiveRef, {
-              gw: gwNum,
-              team: teamDoc ? teamDoc.data() : null,
-              picks: picksDoc ? picksDoc.data() : null,
-              bet: betDoc ? betDoc.data() : null,
-              processedAt: new Date(),
-              weeklyPoints: userWeeklyTotal,
-              selectionScore: userPlayerScore,
-              picksScore: userPicksScore,
-              betScore: userBetScore
-            });
+          // Keep the leaderboard's current weekly breakdown in sync.
+          // totalPoints changes only by deltaTotal, preserving re-process protection.
+          const leaderRef = doc(db, "leaderboard", userId);
+          await setDoc(leaderRef, {
+            weeklyPoints: userWeeklyTotal,
+            weeklySelection: userPlayerScore,
+            weeklyPicks: userPicksScore,
+            weeklyBet: userBetScore,
+            seasonPoints: userSeasonScore,
+            totalPoints: increment(deltaTotal)
+          }, { merge: true });
 
+          // ARCHIVE EVERY PROCESSED GAMEWEEK — INCLUDING 0-POINT WEEKS.
+          // Previously this archive only happened when a score changed, which
+          // meant MyXI could have no history record for a genuine zero-point GW.
+          const archiveRef = doc(db, `users/${userId}/history`, "GW" + gwNum);
+          await setDoc(archiveRef, {
+            gw: gwNum,
+            team: teamDoc ? teamDoc.data() : null,
+            picks: picksDoc ? picksDoc.data() : null,
+            bet: betDoc ? betDoc.data() : null,
+            processedAt: new Date(),
+            weeklyPoints: userWeeklyTotal,
+            selectionScore: userPlayerScore,
+            picksScore: userPicksScore,
+            betScore: userBetScore
+          }, { merge: true });
+
+          // Cumulative category stats only need writing when a delta exists.
+          if (deltaSel !== 0 || deltaPicks !== 0 || deltaBet !== 0 || deltaTotal !== 0) {
             const statsRef = doc(db, `users/${userId}/stats/points`);
             await setDoc(statsRef, {
               selectionPts: increment(deltaSel),

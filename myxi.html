@@ -1892,6 +1892,62 @@ MOBILE
   }
 }
 
+
+/* ===== FINAL MOBILE PLAYER CARD SIZING FIX =====
+   Keep GK, defenders, midfielders and strikers the same card width on mobile.
+   This overrides the earlier flex:1 / width:0 rule that stretched rows with
+   fewer players (especially GK and striker rows). */
+@media (max-width: 520px) {
+  .pitch .row {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    flex-wrap: nowrap !important;
+    gap: 2px !important;
+  }
+
+  .pitch .row .player {
+    flex: 0 0 80px !important;
+    width: 80px !important;
+    min-width: 80px !important;
+    max-width: 80px !important;
+    box-sizing: border-box !important;
+  }
+
+  .player .shirt-name,
+  .shirt .shirt-name,
+  .shirt.is-empty .shirt-name {
+    width: 78px !important;
+    min-width: 78px !important;
+    max-width: 78px !important;
+    font-size: 6.35px !important;
+    letter-spacing: -0.42px !important;
+  }
+}
+
+/* Extra safety for very narrow phones while still keeping four-player rows intact. */
+@media (max-width: 350px) {
+  .pitch .row {
+    gap: 1px !important;
+  }
+
+  .pitch .row .player {
+    flex-basis: 76px !important;
+    width: 76px !important;
+    min-width: 76px !important;
+    max-width: 76px !important;
+  }
+
+  .player .shirt-name,
+  .shirt .shirt-name,
+  .shirt.is-empty .shirt-name {
+    width: 74px !important;
+    min-width: 74px !important;
+    max-width: 74px !important;
+    font-size: 6px !important;
+  }
+}
+
 </style>
 
 </head>

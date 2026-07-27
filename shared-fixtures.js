@@ -1,7 +1,7 @@
 (function () {
   const fixtureData = [
     {
-      date: "Sunday 24th May",
+      date: "Saturday 15th August",
       games: [
         { home: "Brighton", away: "Man Utd", time: "16:00" },
         { home: "Coventry", away: "Ipswich", time: "16:00" },
