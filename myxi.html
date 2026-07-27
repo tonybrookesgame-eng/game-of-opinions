@@ -689,6 +689,20 @@ PITCH
 
 }
 
+.pitch::before,
+.pitch::after,
+.center-circle,
+.center-dot,
+.penalty-box,
+.six-yard-box {
+  pointer-events: none;
+}
+
+.player, .shirt {
+  pointer-events: auto;
+  z-index: 4;
+}
+
 /* =========================
 
 PITCH MARKINGS
@@ -2043,6 +2057,7 @@ const updateShirt = function(select) {
   const ptsLabel = shirt.querySelector('.shirt-pts');
   const val = select.value;
   const pos = select.dataset.pos;
+  shirt.title = select.disabled ? 'Selection locked' : (pos === 'GK' ? 'Click to pick goalkeeper club' : 'Click to pick player');
   const historySelect = document.getElementById('gameweekHistorySelect');
   const selectedGw = historySelect ? historySelect.value : "";
 
@@ -2278,14 +2293,18 @@ function openPlayerPicker(select) {
 }
 
 function wireShirtPickers() {
-  document.querySelectorAll('.pitch .shirt').forEach(shirt => {
-    if (shirt.dataset.pickerWired === '1') return;
-    shirt.dataset.pickerWired = '1';
-    shirt.addEventListener('click', (event) => {
-      if (event.target.closest('.shirt-pts')) return;
-      const select = shirt.querySelector('.player-select');
-      openPlayerPicker(select);
-    });
+  // Click handling is delegated to the pitch so newly-created formation slots work automatically.
+}
+
+const pitchPickerHost = document.querySelector('.pitch');
+if (pitchPickerHost && pitchPickerHost.dataset.pickerDelegated !== '1') {
+  pitchPickerHost.dataset.pickerDelegated = '1';
+  pitchPickerHost.addEventListener('click', (event) => {
+    if (event.target.closest('.formation-selector, .rules-btn-trigger, .fixtures-btn-trigger, .shirt-pts')) return;
+    const shirt = event.target.closest('.shirt');
+    if (!shirt || !pitchPickerHost.contains(shirt)) return;
+    const select = shirt.querySelector('.player-select');
+    openPlayerPicker(select);
   });
 }
 
@@ -2732,7 +2751,7 @@ const saveTeam = async function() {
     alert("Team XI Saved!");
   } catch (error) {
     console.error("Error saving team: ", error);
-    alert("Failed to save team. Please try again.");
+    alert(`Failed to save team${error?.code ? ` (${error.code})` : ""}. Please try again.`);
   }
 }
 window.saveTeam = saveTeam;
@@ -2825,7 +2844,7 @@ const clearTeam = async function() {
       alert("Players cleared! Your team name remains secured.");
     } catch (error) {
       console.error("Error clearing team: ", error);
-      alert("Failed to clear team. Please try again.");
+      alert(`Failed to clear team${error?.code ? ` (${error.code})` : ""}. Please try again.`);
     }
   }
 }
