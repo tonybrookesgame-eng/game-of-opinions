@@ -1709,6 +1709,151 @@ MOBILE
   color: #000000 !important;
 }
 
+
+/* ===== MOBILE PLAYER NAME FIX =====
+   Keep every player label inside its own shirt column with no overlap. */
+.player {
+  min-width: 0 !important;
+}
+
+.player .shirt-name,
+.shirt .shirt-name,
+.shirt.is-empty .shirt-name {
+  width: 88px !important;
+  min-width: 0 !important;
+  max-width: 88px !important;
+  height: auto !important;
+  min-height: 30px !important;
+  padding: 5px 4px !important;
+  white-space: normal !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+  line-height: 1.05 !important;
+  font-size: 9px !important;
+  display: -webkit-box !important;
+  line-clamp: 2 unset !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  align-content: center !important;
+}
+
+/* Four-player rows need slightly narrower labels on phones. */
+@media (max-width: 520px) {
+  .pitch .row {
+    gap: 4px !important;
+  }
+
+  .pitch .row .player {
+    flex: 1 1 0 !important;
+    width: 0 !important;
+    min-width: 0 !important;
+  }
+
+  .player .shirt-name,
+  .shirt .shirt-name,
+  .shirt.is-empty .shirt-name {
+    width: 78px !important;
+    max-width: 78px !important;
+    font-size: 8.5px !important;
+    padding: 5px 3px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .player .shirt-name,
+  .shirt .shirt-name,
+  .shirt.is-empty .shirt-name {
+    width: 70px !important;
+    max-width: 70px !important;
+    font-size: 8px !important;
+  }
+}
+
+
+/* ===== PREMIUM SINGLE-LINE PLAYER LABELS ===== */
+
+/* Override the previous mobile wrapping rules */
+.player .shirt-name,
+.shirt .shirt-name,
+.shirt.is-empty .shirt-name {
+  width: 96px !important;
+  min-width: 96px !important;
+  max-width: 96px !important;
+  min-height: 27px !important;
+  height: 27px !important;
+  padding: 5px 3px !important;
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  border-radius: 7px !important;
+  box-sizing: border-box !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+  display: block !important;
+  line-clamp: unset !important;
+  -webkit-line-clamp: unset !important;
+  -webkit-box-orient: unset !important;
+  line-height: 15px !important;
+  font-size: 8px !important;
+  letter-spacing: -0.15px !important;
+  font-weight: 800 !important;
+}
+
+/* Make the actual shirt slightly wider too */
+.shirt {
+  width: 116px !important;
+}
+
+/* Keep four-player lines fitting across mobile */
+@media (max-width: 520px) {
+  .pitch .row {
+    gap: 2px !important;
+  }
+
+  .pitch .row .player {
+    flex: 1 1 0 !important;
+    width: 0 !important;
+    min-width: 0 !important;
+  }
+
+  .shirt {
+    width: 108px !important;
+    max-width: 100% !important;
+  }
+
+  .player .shirt-name,
+  .shirt .shirt-name,
+  .shirt.is-empty .shirt-name {
+    width: 84px !important;
+    min-width: 84px !important;
+    max-width: 84px !important;
+    font-size: 7.2px !important;
+    letter-spacing: -0.25px !important;
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .shirt {
+    width: 104px !important;
+  }
+
+  .player .shirt-name,
+  .shirt .shirt-name,
+  .shirt.is-empty .shirt-name {
+    width: 80px !important;
+    min-width: 80px !important;
+    max-width: 80px !important;
+    font-size: 6.8px !important;
+  }
+}
+
 </style>
 
 </head>
