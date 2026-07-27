@@ -934,6 +934,13 @@ button:hover {
   box-shadow: 0 0 20px rgba(199, 255, 56, 0.6);
 }
 
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
 #weeklyStatus{
 
   margin-top:10px;
@@ -1821,6 +1828,11 @@ const playersByPos = {
 
 let currentBetChoice = null;
 
+// Default Bet Builder point values.
+// These are updated from Firestore settings when admin odds are available.
+let betPointsBig = 85;
+let betPointsSmall = 35;
+
 // Bet Builder Data - Add new weeks at the end of this array
 const weeklyBets = [
   {
@@ -2551,10 +2563,10 @@ const clearTeam = async function() {
     try {
       const teamDocRef = doc(db, "users", currentUser.uid, "myxi", "team");
       // Use updateDoc to only clear specific fields, preserving the teamName
-      await updateDoc(teamDocRef, { 
+      await setDoc(teamDocRef, { 
         players: [], 
         formation: "4-4-2" 
-      }); 
+      }, { merge: true }); 
       document.getElementById('formationSelect').value = "4-4-2";
       changeFormation(); // Reset formation
       alert("Players cleared! Your team name remains secured.");
