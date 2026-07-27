@@ -401,35 +401,6 @@ p {
 .point-item {
   text-align: center;
 }
-.point-total {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 9px 12px;
-  border: 1px solid rgba(199, 255, 56, 0.55);
-  border-radius: 8px;
-  background: linear-gradient(90deg, rgba(199, 255, 56, 0.14), rgba(199, 255, 56, 0.04));
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 4px 12px rgba(0,0,0,0.2);
-  cursor: pointer;
-  transition: transform 0.2s ease, background 0.2s ease;
-}
-.point-total:hover {
-  transform: translateY(-1px);
-  background: linear-gradient(90deg, rgba(199, 255, 56, 0.22), rgba(199, 255, 56, 0.08));
-}
-.point-total label {
-  margin: 0;
-  color: #c7ff38;
-  font-size: 11px;
-  font-weight: 900;
-}
-.point-total span {
-  color: #c7ff38;
-  font-size: 20px;
-  font-weight: 900;
-  line-height: 1;
-}
 .team-name-ribbon span {
   font-weight: 800;
   color: #c7ff38;
@@ -760,13 +731,13 @@ ROWS + PLAYERS
 }
 
 .player{
-  width: 104px;
+  width: 100px;
   position: relative;
   text-align: center;
   background: rgba(255,255,255,0.04); /* Consistent with season.html .card */
   border: 1px solid rgba(255,255,255,0.08); /* Consistent with season.html .card */
   border-radius: 18px; /* Consistent with season.html .card */
-  padding: 6px;
+  padding: 10px; /* Kept for player card size */
   box-shadow: 0 10px 30px rgba(0,0,0,0.14); /* Consistent with season.html .card */
   backdrop-filter: blur(12px); /* Consistent with season.html .card */
   transition: transform 0.2s ease; /* Consistent with season.html .card */
@@ -787,7 +758,7 @@ ROWS + PLAYERS
   --kit-sleeves: #1d4ed8;
   --kit-trim: #eaf2ff;
   width: 86px;
-  height: 68px;
+  height: 78px;
   margin: auto;
   border-radius: 8px 8px 4px 4px;
   background: var(--kit-body);
@@ -848,51 +819,30 @@ ROWS + PLAYERS
   box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
-.player-nameplate {
-  --name-size: 9px;
-  width: 100%;
-  min-height: 20px;
-  margin-top: 7px;
-  padding: 4px 3px;
-  border: 1px solid rgba(255,255,255,0.13);
-  border-radius: 6px;
-  background: rgba(2,6,17,0.82);
-  color: #fff;
-  font-size: var(--name-size);
-  line-height: 1;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: -0.02em;
-  white-space: nowrap;
-  visibility: hidden;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
-}
-
-.shirt-acronym {
+.shirt-name {
   position: absolute;
-  top: 50%;
+  top: 7px;
   left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 3px 6px;
-  background: rgba(2, 6, 17, 0.88);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  border-radius: 4px;
-  color: #ffffff;
-  font-size: 11px;
+  transform: translateX(-50%);
+  width: calc(100% - 10px);
+  background: rgba(0,0,0,0.72);
+  color: #fff;
+  padding: 2px 3px;
+  border-radius: 3px;
+  font-size: 9px;
+  line-height: 1.15;
   font-weight: 900;
-  letter-spacing: 0.5px;
   text-transform: uppercase;
-  z-index: 5;
-  display: none;
+  overflow-wrap: anywhere;
   pointer-events: none;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
-  white-space: nowrap;
+  display: none;
 }
 
 .shirt-pts {
   position: absolute;
-  top: 5px;
-  right: 5px;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
   background: #c7ff38;
   color: #041102;
   padding: 1px 4px;
@@ -919,7 +869,7 @@ select {
 .shirt .player-select {
   position: absolute;
   z-index: 6;
-  top: 6px;
+  bottom: 5px;
   left: 5px;
   width: calc(100% - 10px);
   padding: 4px 3px;
@@ -927,18 +877,6 @@ select {
   font-size: 9px;
   line-height: 1.1;
   background: rgba(4,17,2,0.88);
-}
-
-.shirt .player-select.has-value {
-  color: transparent !important;
-  background: transparent !important;
-  border-color: transparent !important;
-  box-shadow: none !important;
-}
-
-.shirt .player-select option {
-  color: #ffffff !important;
-  background-color: #071320 !important;
 }
 
 /* =========================
@@ -1236,19 +1174,6 @@ MOBILE
     border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
   }
 
-  .point-item.point-total {
-    border-left: 1px solid rgba(199, 255, 56, 0.45) !important;
-    padding: 7px 8px;
-  }
-
-  .point-total label {
-    font-size: 9px;
-  }
-
-  .point-total span {
-    font-size: 16px;
-  }
-
   .point-item label {
     margin-bottom: 0;
     font-size: 7.5px;
@@ -1333,7 +1258,7 @@ MOBILE
 
   .shirt {
     width: 58px;
-    height: 54px;
+    height: 62px;
   }
 
   .shirt::before, .shirt::after {
@@ -1342,32 +1267,21 @@ MOBILE
     top: 5px;
   }
 
-  .player-nameplate {
-    width: calc(100% + 12px);
-    min-height: 17px;
-    margin-top: 4px;
-    margin-left: -6px;
-    padding: 3px 1px;
-    font-size: min(var(--name-size), 6px);
+  .shirt-name {
+    top: 5px;
+    font-size: 7px;
   }
 
   .shirt .player-select {
-    top: 3px;
+    bottom: 3px;
     left: 3px;
     width: calc(100% - 6px);
     padding: 3px 1px;
     font-size: 7px;
   }
 
-  .shirt-acronym {
-    padding: 2px 4px;
-    font-size: 8px;
-    border-radius: 3px;
-  }
-
   .shirt-pts {
-    top: 3px;
-    right: 3px;
+    bottom: 21px;
     font-size: 8px;
   }
 
@@ -1483,7 +1397,7 @@ MOBILE
   }
   .shirt {
     width: 56px;
-    height: 52px;
+    height: 60px;
   }
   .point-item {
     flex: 1 1 100%;
@@ -1535,9 +1449,9 @@ MOBILE
           <div class="point-item"><label>Picks</label><span id="pts-picks">0</span></div>
           <div class="point-item"><label>Bet</label><span id="pts-bet">0</span></div>
           <div class="point-item"><label>Season</label><span id="pts-season">0</span></div>
-          <div class="point-item point-total" onclick="openGameweekSummary()">
-            <label>Total points</label>
-            <span id="pts-total">0</span>
+          <div class="point-item" onclick="openGameweekSummary()" style="cursor: pointer;">
+            <label style="color: #c7ff38;">Total</label>
+            <span id="pts-total" style="color: #c7ff38; font-weight: 900;">0</span>
           </div>
         </div>
       </div>
@@ -1581,11 +1495,10 @@ MOBILE
 <div class="row">
   <div class="player" style="position:relative;">
     <div class="shirt">
+      <div class="shirt-name"></div>
       <a href="admin.html" class="shirt-pts"></a>
       <select class="player-select" data-pos="GK" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select>
-      <div class="shirt-acronym"></div>
     </div>
-    <div class="player-nameplate" aria-live="polite"></div>
   </div>
 </div>
 
@@ -1895,26 +1808,26 @@ function loadCurrentBet() {
 // Original Game of Opinions kit colourways. These use broad club-inspired colour
 // families only: no club crests, sponsors, manufacturer marks, or replica patterns.
 const teamKits = {
-  "Arsenal":        { body: "#ef0107", sleeves: "#ffffff", trim: "#ffffff" },
-  "Aston Villa":    { body: "#670e36", sleeves: "#95bfe5", trim: "#95bfe5" },
-  "Bournemouth":    { body: "repeating-linear-gradient(90deg, #da291c 0 14px, #111111 14px 28px)", sleeves: "#111111", trim: "#ffffff" },
-  "Brentford":      { body: "repeating-linear-gradient(90deg, #e30613 0 13px, #ffffff 13px 26px)", sleeves: "#e30613", trim: "#222222" },
-  "Brighton":       { body: "repeating-linear-gradient(90deg, #0057b8 0 14px, #ffffff 14px 28px)", sleeves: "#0057b8", trim: "#ffffff" },
-  "Chelsea":        { body: "#034694", sleeves: "#034694", trim: "#ffffff" },
-  "Coventry":       { body: "#6cabdd", sleeves: "#6cabdd", trim: "#ffffff" },
-  "Crystal Palace": { body: "repeating-linear-gradient(90deg, #1b458f 0 14px, #c4122e 14px 28px)", sleeves: "#1b458f", trim: "#ffffff" },
-  "Everton":        { body: "#003399", sleeves: "#003399", trim: "#ffffff" },
-  "Fulham":         { body: "#ffffff", sleeves: "#111111", trim: "#111111" },
-  "Hull":           { body: "repeating-linear-gradient(90deg, #f5a623 0 14px, #111111 14px 28px)", sleeves: "#111111", trim: "#f5a623" },
-  "Ipswich":        { body: "#0055a5", sleeves: "#0055a5", trim: "#ffffff" },
-  "Leeds":          { body: "#ffffff", sleeves: "#1d428a", trim: "#ffcd00" },
-  "Liverpool":      { body: "#c8102e", sleeves: "#c8102e", trim: "#ffffff" },
-  "Man City":       { body: "#6cabdd", sleeves: "#6cabdd", trim: "#ffffff" },
-  "Man Utd":        { body: "#da291c", sleeves: "#da291c", trim: "#fbe122" },
-  "Newcastle":      { body: "repeating-linear-gradient(90deg, #111111 0 14px, #ffffff 14px 28px)", sleeves: "#111111", trim: "#d8b25b" },
-  "Nott'm Forest":  { body: "#dd0000", sleeves: "#dd0000", trim: "#ffffff" },
-  "Sunderland":     { body: "repeating-linear-gradient(90deg, #e30613 0 14px, #ffffff 14px 28px)", sleeves: "#e30613", trim: "#111111" },
-  "Spurs":          { body: "#ffffff", sleeves: "#132257", trim: "#132257" },
+  "Arsenal":        { body: "#c93a3a", sleeves: "#f0e9dc", trim: "#f7f1e8" },
+  "Aston Villa":    { body: "#6c2948", sleeves: "#83b8cc", trim: "#d9edf0" },
+  "Bournemouth":    { body: "#b8403d", sleeves: "#20242b", trim: "#f1ebe2" },
+  "Brentford":      { body: "#c84545", sleeves: "#f3eee4", trim: "#5a2028" },
+  "Brighton":       { body: "#2875a8", sleeves: "#edf3f2", trim: "#d7e9e7" },
+  "Chelsea":        { body: "#2856a6", sleeves: "#d9e4ed", trim: "#f4f0db" },
+  "Coventry":       { body: "#70aac6", sleeves: "#eef2ec", trim: "#ffffff" },
+  "Crystal Palace": { body: "#31568c", sleeves: "#bc4850", trim: "#e8ddcf" },
+  "Everton":        { body: "#315da0", sleeves: "#e9eee8", trim: "#edf3ed" },
+  "Fulham":         { body: "#e7e6de", sleeves: "#30343b", trim: "#9f2834" },
+  "Hull":           { body: "#d39a32", sleeves: "#24262c", trim: "#f2eadb" },
+  "Ipswich":        { body: "#3569a7", sleeves: "#edf0e8", trim: "#d8e0dd" },
+  "Leeds":          { body: "#e8e5da", sleeves: "#315d96", trim: "#d5af54" },
+  "Liverpool":      { body: "#b93642", sleeves: "#dbe6dc", trim: "#edf3e9" },
+  "Man City":       { body: "#74abc2", sleeves: "#eff1e8", trim: "#d8a947" },
+  "Man Utd":        { body: "#bd3d3c", sleeves: "#2c2d32", trim: "#e8c45a" },
+  "Newcastle":      { body: "#25282d", sleeves: "#e8e6dd", trim: "#c5a85b" },
+  "Nott'm Forest":  { body: "#bd3c3d", sleeves: "#eee9df", trim: "#e7d9bc" },
+  "Sunderland":     { body: "#be3f42", sleeves: "#eeece4", trim: "#30333a" },
+  "Spurs":          { body: "#e7e5dd", sleeves: "#2f486e", trim: "#c9aa62" },
   default:           { body: "#2563eb", sleeves: "#1d4ed8", trim: "#eaf2ff" }
 };
 
@@ -1928,15 +1841,8 @@ function setShirtKit(shirt, team = "default") {
 window.currentDisplayedPlayerScores = {}; // Global variable for currently displayed player scores
 const updateShirt = function(select) {
   const shirt = select.closest('.shirt');
-  const nameLabel = select.closest('.player').querySelector('.player-nameplate');
+  const nameLabel = shirt.querySelector('.shirt-name');
   const ptsLabel = shirt.querySelector('.shirt-pts');
-  let acronymLabel = shirt.querySelector('.shirt-acronym');
-  if (!acronymLabel) {
-    acronymLabel = document.createElement('div');
-    acronymLabel.className = 'shirt-acronym';
-    shirt.appendChild(acronymLabel);
-  }
-
   const val = select.value;
   const pos = select.dataset.pos;
   const historySelect = document.getElementById('gameweekHistorySelect');
@@ -1944,40 +1850,115 @@ const updateShirt = function(select) {
 
   if (val === "Select") {
     setShirtKit(shirt);
-    select.classList.remove('has-value');
     nameLabel.innerText = "";
-    nameLabel.removeAttribute("title");
-    select.removeAttribute("title");
-    nameLabel.style.visibility = "hidden";
-    acronymLabel.innerText = "";
-    acronymLabel.style.display = "none";
+    nameLabel.style.display = "none";
     ptsLabel.innerText = "";
     ptsLabel.style.display = "none";
     return;
   }
 
-  select.classList.add('has-value');
+  ptsLabel.style.display = "block"; // Get club for outfield player
+  // Goalkeeper choices currently identify the club; outfield choices identify a player.
   const team = pos === "GK" ? val : playerToClub[val];
   const displayPlayerName = val;
   
-  // Show 3-letter Team Acronym on shirt
-  const acronym = clubAbbr[team] || (team ? team.substring(0, 3).toUpperCase() : "");
-  if (acronym) {
-    acronymLabel.innerText = acronym;
-    acronymLabel.style.display = "block";
-  } else {
-    acronymLabel.innerText = "";
-    acronymLabel.style.display = "none";
-  }
-
   nameLabel.innerText = displayPlayerName;
-  nameLabel.title = displayPlayerName;
-  const nameLength = displayPlayerName.length;
-  const nameSize = nameLength > 22 ? 6 : nameLength > 18 ? 7 : nameLength > 14 ? 8 : 9;
-  nameLabel.style.setProperty("--name-size", `${nameSize}px`);
-  nameLabel.style.visibility = "visible";
-  select.title = displayPlayerName;
   setShirtKit(shirt, team);
+
+  // Show points if they exist in the current display buffer
+  const points = window.currentDisplayedPlayerScores[val];
+  const hasPoints = points !== undefined;
+
+  ptsLabel.innerText = (hasPoints ? points : 0) + " PTS";
+  // Show points in history view or when gameweek is locked
+  const isHistoryView = selectedGw !== "";
+  ptsLabel.style.display = (isHistoryView || gameweekStatus === 'locked') ? "block" : "none";
+
+  refreshDropdowns();
+}
+window.updateShirt = updateShirt;
+
+const calculateAndSaveDeadlines = async () => {
+  const info = window.getGameweekDeadlineInfo ? window.getGameweekDeadlineInfo() : null;
+  if (!info) return;
+
+  const { deadline, reopenTime } = info;
+
+  try {
+    await updateDoc(doc(db, "settings", "gameweek"), {
+      deadline: deadline.toISOString(),
+      reopenTime: reopenTime.toISOString()
+    });
+    console.log(`✓ Deadline set to: ${deadline.toLocaleString('en-GB')}`);
+    console.log(`✓ Gameweek will reopen at: ${reopenTime.toLocaleString('en-GB')}`);
+  } catch (error) {
+    console.error('Error saving deadlines:', error);
+  }
+};
+
+const loadFixtures = () => {
+  const list = document.getElementById('fixtures-list');
+  const modalList = document.getElementById('modal-fixtures-list');
+  const fixtures = window.getGameweekFixtures ? window.getGameweekFixtures() : [];
+
+  if (typeof window.renderFixtureList === 'function') {
+    window.renderFixtureList(list, modalList, fixtures);
+  }
+};
+
+const changeFormation = function() {
+  const formation = document.getElementById('formationSelect').value;
+  const parts = formation.split('-').map(Number);
+  const pitch = document.querySelector('.pitch');
+  const rows = pitch.querySelectorAll('.row');
+  
+  // Rows: 0 is GK (always 1), 1 is DEF, 2 is MID, 3 is FWD
+  updatePitchRow(rows[1], 'DEF', parts[0]);
+  updatePitchRow(rows[2], 'MID', parts[1]);
+  updatePitchRow(rows[3], 'FWD', parts[2]);
+
+  // Reset GK
+  const gkSelect = document.querySelector('select[data-pos="GK"]');
+  if (gkSelect) {
+    gkSelect.value = "Select";
+    updateShirt(gkSelect);
+  }
+  
+  populatePlayers();
+  refreshDropdowns();
+}
+window.changeFormation = changeFormation;
+
+const updatePitchRow = function(row, pos, count) {
+  row.innerHTML = '';
+  row.style.flexDirection = 'row'; // Default
+
+  if (count === 5) {
+    row.style.flexDirection = 'column';
+    row.style.gap = '10px';
+    
+    const subBase = document.createElement('div');
+    subBase.className = 'pitch-sub-row';
+    const subAdvanced = document.createElement('div');
+    subAdvanced.className = 'pitch-sub-row';
+    
+    const playerHTML = `<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a><select class="player-select" data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div></div>`;
+    
+    for(let i=0; i<4; i++) subBase.innerHTML += playerHTML;
+    subAdvanced.innerHTML += playerHTML;
+
+    // For Midfielders, place the 1 advanced player closer to the strikers (after the row of 4)
+    row.appendChild(subBase);
+    row.appendChild(subAdvanced);
+  } else {
+    for(let i=0; i<count; i++) {
+      row.innerHTML += `<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a><select class="player-select" data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div></div>`;
+    }
+  }
+}
+window.updatePitchRow = updatePitchRow;
+
+const refreshDropdowns = function() {
   const selects = document.querySelectorAll('.pitch select');
   const selectedClubs = Array.from(selects)
     .map(s => playerToClub[s.value] || s.value)
@@ -2295,11 +2276,10 @@ const firebaseConfig = {
   storageBucket: "game-of-opinions-97b14.firebasestorage.app",
   appId: "1:863518863234:web:3a2c2378a2a358e0b2299b"
 };
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
-
-
 
 let gameweekStatus = 'open'; // Default to open
 
@@ -2432,7 +2412,6 @@ const saveTeam = async function() {
 
   try {
     const teamDocRef = doc(db, "users", currentUser.uid, "myxi", "team");
-    const userDocRef = doc(db, "users", currentUser.uid);
     const leaderboardRef = doc(db, "leaderboard", currentUser.uid);
     
     await setDoc(teamDocRef, {
@@ -2441,17 +2420,11 @@ const saveTeam = async function() {
       teamName: teamName
     }, { merge: true });
 
-    await setDoc(userDocRef, {
-      teamName: teamName
-    }, { merge: true });
-
     await setDoc(leaderboardRef, {
       teamName: teamName,
       userId: currentUser.uid
     }, { merge: true });
-
     document.getElementById('teamNameInput').disabled = true;
-    selects.forEach(s => updateShirt(s));
     alert("Team XI Saved!");
   } catch (error) {
     console.error("Error saving team: ", error);
@@ -2535,18 +2508,13 @@ const clearTeam = async function() {
   if (confirm("Are you sure you want to clear your 11 players? Your team name and league progress will be saved.")) {
     try {
       const teamDocRef = doc(db, "users", currentUser.uid, "myxi", "team");
-      await setDoc(teamDocRef, { 
+      // Use updateDoc to only clear specific fields, preserving the teamName
+      await updateDoc(teamDocRef, { 
         players: [], 
         formation: "4-4-2" 
-      }, { merge: true }); 
+      }); 
       document.getElementById('formationSelect').value = "4-4-2";
       changeFormation(); // Reset formation
-      
-      // Explicitly reset all pitch select values and graphics
-      document.querySelectorAll('.pitch select').forEach(s => {
-        s.value = "Select";
-        updateShirt(s);
-      });
       alert("Players cleared! Your team name remains secured.");
     } catch (error) {
       console.error("Error clearing team: ", error);
