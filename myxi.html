@@ -760,13 +760,13 @@ ROWS + PLAYERS
 }
 
 .player{
-  width: 100px;
+  width: 104px;
   position: relative;
   text-align: center;
   background: rgba(255,255,255,0.04); /* Consistent with season.html .card */
   border: 1px solid rgba(255,255,255,0.08); /* Consistent with season.html .card */
   border-radius: 18px; /* Consistent with season.html .card */
-  padding: 10px; /* Kept for player card size */
+  padding: 6px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.14); /* Consistent with season.html .card */
   backdrop-filter: blur(12px); /* Consistent with season.html .card */
   transition: transform 0.2s ease; /* Consistent with season.html .card */
@@ -787,7 +787,7 @@ ROWS + PLAYERS
   --kit-sleeves: #1d4ed8;
   --kit-trim: #eaf2ff;
   width: 86px;
-  height: 88px;
+  height: 68px;
   margin: auto;
   border-radius: 8px 8px 4px 4px;
   background: var(--kit-body);
@@ -848,23 +848,24 @@ ROWS + PLAYERS
   box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
-.shirt-name {
-  position: absolute;
-  top: 38px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 10px);
-  background: rgba(0,0,0,0.72);
+.player-nameplate {
+  --name-size: 9px;
+  width: 100%;
+  min-height: 20px;
+  margin-top: 7px;
+  padding: 4px 3px;
+  border: 1px solid rgba(255,255,255,0.13);
+  border-radius: 6px;
+  background: rgba(2,6,17,0.82);
   color: #fff;
-  padding: 2px 3px;
-  border-radius: 3px;
-  font-size: 9px;
-  line-height: 1.15;
+  font-size: var(--name-size);
+  line-height: 1;
   font-weight: 900;
   text-transform: uppercase;
-  overflow-wrap: anywhere;
-  pointer-events: none;
-  display: none;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  visibility: hidden;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
 }
 
 .shirt-pts {
@@ -1299,7 +1300,7 @@ MOBILE
 
   .shirt {
     width: 58px;
-    height: 68px;
+    height: 54px;
   }
 
   .shirt::before, .shirt::after {
@@ -1308,9 +1309,13 @@ MOBILE
     top: 5px;
   }
 
-  .shirt-name {
-    top: 31px;
-    font-size: 7px;
+  .player-nameplate {
+    width: calc(100% + 12px);
+    min-height: 17px;
+    margin-top: 4px;
+    margin-left: -6px;
+    padding: 3px 1px;
+    font-size: min(var(--name-size), 6px);
   }
 
   .shirt .player-select {
@@ -1439,7 +1444,7 @@ MOBILE
   }
   .shirt {
     width: 56px;
-    height: 66px;
+    height: 52px;
   }
   .point-item {
     flex: 1 1 100%;
@@ -1537,10 +1542,10 @@ MOBILE
 <div class="row">
   <div class="player" style="position:relative;">
     <div class="shirt">
-      <div class="shirt-name"></div>
       <a href="admin.html" class="shirt-pts"></a>
       <select class="player-select" data-pos="GK" onchange="updateShirt(this)"><option value="Select" selected>Select</option></select>
     </div>
+    <div class="player-nameplate" aria-live="polite"></div>
   </div>
 </div>
 
@@ -1883,7 +1888,7 @@ function setShirtKit(shirt, team = "default") {
 window.currentDisplayedPlayerScores = {}; // Global variable for currently displayed player scores
 const updateShirt = function(select) {
   const shirt = select.closest('.shirt');
-  const nameLabel = shirt.querySelector('.shirt-name');
+  const nameLabel = select.closest('.player').querySelector('.player-nameplate');
   const ptsLabel = shirt.querySelector('.shirt-pts');
   const val = select.value;
   const pos = select.dataset.pos;
@@ -1893,7 +1898,9 @@ const updateShirt = function(select) {
   if (val === "Select") {
     setShirtKit(shirt);
     nameLabel.innerText = "";
-    nameLabel.style.display = "none";
+    nameLabel.removeAttribute("title");
+    select.removeAttribute("title");
+    nameLabel.style.visibility = "hidden";
     ptsLabel.innerText = "";
     ptsLabel.style.display = "none";
     return;
@@ -1905,6 +1912,12 @@ const updateShirt = function(select) {
   const displayPlayerName = val;
   
   nameLabel.innerText = displayPlayerName;
+  nameLabel.title = displayPlayerName;
+  const nameLength = displayPlayerName.length;
+  const nameSize = nameLength > 22 ? 6 : nameLength > 18 ? 7 : nameLength > 14 ? 8 : 9;
+  nameLabel.style.setProperty("--name-size", `${nameSize}px`);
+  nameLabel.style.visibility = "visible";
+  select.title = displayPlayerName;
   setShirtKit(shirt, team);
 
   // Show points if they exist in the current display buffer
@@ -1984,7 +1997,7 @@ const updatePitchRow = function(row, pos, count) {
     const subAdvanced = document.createElement('div');
     subAdvanced.className = 'pitch-sub-row';
     
-    const playerHTML = `<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a><select class="player-select" data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div></div>`;
+    const playerHTML = `<div class="player"><div class="shirt"><a href="admin.html" class="shirt-pts"></a><select class="player-select" data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div><div class="player-nameplate" aria-live="polite"></div></div>`;
     
     for(let i=0; i<4; i++) subBase.innerHTML += playerHTML;
     subAdvanced.innerHTML += playerHTML;
@@ -1994,7 +2007,7 @@ const updatePitchRow = function(row, pos, count) {
     row.appendChild(subAdvanced);
   } else {
     for(let i=0; i<count; i++) {
-      row.innerHTML += `<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a><select class="player-select" data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div></div>`;
+      row.innerHTML += `<div class="player"><div class="shirt"><a href="admin.html" class="shirt-pts"></a><select class="player-select" data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div><div class="player-nameplate" aria-live="polite"></div></div>`;
     }
   }
 }
