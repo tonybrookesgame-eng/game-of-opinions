@@ -929,7 +929,7 @@
     <p id="aiContent">Initializing The Oracle...</p>
     <div id="aiStats"></div>
     <div style="display: flex; justify-content: center; margin-top: 20px;">
-      <button id="aiActionBtn" type="button" onclick="window.loadAiReport()" style="width: 100%; max-width: 240px; background: #c7ff38; color: #041102; font-weight:800; border-radius:999px; border:none; padding:10px 14px; cursor:pointer; touch-action: manipulation;">View Top Picks</button>
+      <button id="aiActionBtn" type="button" onclick="window.loadAiReport()" style="width: 100%; max-width: 240px; background: #c7ff38; color: #041102; font-weight:800; border-radius:999px; border:none; padding:10px 14px; cursor:pointer; touch-action: manipulation;">View Recommendation</button>
     </div>
   </div>
 </div>
@@ -1584,7 +1584,7 @@ window.showAiScout = function(scoutKey, category) {
   title.innerText = `⚠️ Scout Warning`;
   content.innerText = `${scout.name} is ready to analyze.\n\nRisk Profile: ${scout.risk}\n\n"${scout.blurb}"`;
   stats.innerHTML = "";
-  actionBtn.innerText = "View Top Picks";
+  actionBtn.innerText = "View Recommendation";
   actionBtn.onclick = () => window.loadAiReport();
 }
 
