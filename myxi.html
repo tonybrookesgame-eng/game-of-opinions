@@ -2437,6 +2437,21 @@ function setShirtKit(shirt, team = "default") {
 }
 
 window.currentDisplayedPlayerScores = {}; // Global variable for currently displayed player scores
+let isProgrammaticallyUpdatingShirts = false;
+const resetTeamSaveButton = () => {
+  const saveBtn = document.getElementById('saveTeamBottomBtn');
+  if (!saveBtn) return;
+  saveBtn.disabled = false;
+  saveBtn.innerText = 'Save Team';
+};
+
+const markTeamAsSaved = () => {
+  const saveBtn = document.getElementById('saveTeamBottomBtn');
+  if (!saveBtn) return;
+  saveBtn.disabled = true;
+  saveBtn.innerText = 'Team Saved';
+};
+
 const updateShirt = function(select) {
   const shirt = select.closest('.shirt');
   const nameLabel = shirt.querySelector('.shirt-name');
@@ -2490,6 +2505,9 @@ const updateShirt = function(select) {
   ptsLabel.style.display = (isHistoryView || gameweekStatus === 'locked') ? "block" : "none";
 
   refreshDropdowns();
+  if (!isProgrammaticallyUpdatingShirts && document.getElementById('saveTeamBottomBtn')?.innerText !== 'Save Team') {
+    resetTeamSaveButton();
+  }
 }
 window.updateShirt = updateShirt;
 
@@ -2621,6 +2639,11 @@ const populatePlayers = function() {
     const normalizedValue = normalizePlayerValue(currentVal);
     s.value = Array.from(s.options).some(opt => opt.value === normalizedValue) ? normalizedValue : "Select";
   });
+
+  // Ensure every shirt shows the correct placeholder or selected player immediately.
+  isProgrammaticallyUpdatingShirts = true;
+  document.querySelectorAll('.pitch .player select').forEach(s => updateShirt(s));
+  isProgrammaticallyUpdatingShirts = false;
 }
 window.populatePlayers = populatePlayers;
 
@@ -2840,6 +2863,9 @@ const loadSelectedGameweekHistory = async () => {
     const selectedFormation = teamData.formation || "4-4-2";
     document.getElementById('formationSelect').value = selectedFormation;
     changeFormation({ preserve: false }); // Renders clean slots before restoring saved players
+    if (teamData.players && teamData.players.length > 0) {
+      markTeamAsSaved();
+    }
     
     // Load players after DOM has settled - use a delay to ensure options are populated
     setTimeout(() => {
@@ -2850,7 +2876,8 @@ const loadSelectedGameweekHistory = async () => {
       if (teamData.players && teamData.players.length > 0) {
         // Load exactly as many players as there are slots for this formation
         let loadedCount = 0;
-        for (let i = 0; i < selects.length && i < teamData.players.length; i++) {
+        isProgrammaticallyUpdatingShirts = true;
+      for (let i = 0; i < selects.length && i < teamData.players.length; i++) {
           const playerValue = normalizePlayerValue(teamData.players[i]);
           if (playerValue && playerValue !== "Select") {
             selects[i].value = playerValue;
@@ -2866,6 +2893,7 @@ const loadSelectedGameweekHistory = async () => {
         console.log('⚠ No players in teamData.players array');
       }
       refreshDropdowns(); // Refresh duplicate prevention
+      isProgrammaticallyUpdatingShirts = false;
     }, 250); // Allow mobile Safari time to rebuild/populate the formation before restoring Firebase values
   } else {
     // Default reset if no team data
@@ -3152,12 +3180,19 @@ const saveTeam = async function() {
       userId: currentUser.uid
     }, { merge: true });
 
+    await setDoc(doc(db, "users", currentUser.uid), {
+      hasSavedTeam: true,
+      lastTeamSavedAt: new Date().toISOString()
+    }, { merge: true });
+
     const verifySnap = await getDoc(teamDocRef);
     if (!verifySnap.exists()) {
       throw new Error("Saved team document could not be read back.");
     }
 
+    console.debug("Verified team data:", verifySnap.data());
     document.getElementById('teamNameInput').disabled = true;
+    markTeamAsSaved();
     alert("Team XI Saved & verified!");
   } catch (error) {
     console.error("Error saving team: ", error);
@@ -3168,6 +3203,7 @@ const saveTeam = async function() {
   }
 }
 window.saveTeam = saveTeam;
+document.getElementById('teamNameInput')?.addEventListener('input', resetTeamSaveButton);
 
 const saveWeekly = async function() {
   if (!currentUser) {
