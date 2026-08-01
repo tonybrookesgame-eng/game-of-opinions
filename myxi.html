@@ -2457,7 +2457,7 @@ const updateShirt = function(select) {
   if (val === "Select") {
     setShirtKit(shirt);
     shirt.classList.add('is-empty');
-    nameLabel.innerText = pos === "GK" ? "PICK CLUB" : "PICK PLAYER";
+    nameLabel.innerText = pos === "GK" ? "SELECT CLUB" : "SELECT PLAYER";
     nameLabel.style.display = "block";
     badge.innerText = "SELECT";
     ptsLabel.innerText = "";
@@ -2465,11 +2465,14 @@ const updateShirt = function(select) {
     return;
   }
 
-  ptsLabel.style.display = "block"; // Get club for outfield player
-  // Goalkeeper choices currently identify the club; outfield choices identify a player.
+  ptsLabel.style.display = "block";
   const parsed = decodePlayerValue(val);
-  const team = pos === "GK" ? parsed.club : parsed.club;
-  const displayPlayerName = pos === "GK" ? parsed.club : parsed.name || val;
+  const team = pos === "GK"
+    ? (parsed.club || val || "")
+    : (parsed.club || getPlayerClub(val) || val || "");
+  const displayPlayerName = pos === "GK"
+    ? (parsed.club || val || "")
+    : (parsed.name || val || "");
   
   shirt.classList.remove('is-empty');
   nameLabel.innerText = displayPlayerName;
