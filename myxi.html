@@ -2348,8 +2348,8 @@ let betPointsSmall = 35;
 // Bet Builder Data - Add new weeks at the end of this array
 const weeklyBets = [
   {
-    match: "Hull Vs Leeds",
-    picks: ["Hull to win", "Over 2.5 Goals", "Over 10 Corners", "Ampadu To Be carded"],
+    match: "Newcastle Vs Liverpool",
+    picks: ["Liverpool to win", "Over 2.5 Goals", "Over 10 Corners", "Thiaw To Be carded"],
     odds: "16/1"
   }
 ];
@@ -3085,10 +3085,17 @@ const saveTeam = async function() {
     return;
   }
 
+  const incompleteSlots = teamPlayers.filter(p => !p || p === "Select").length;
+  if (incompleteSlots > 0) {
+    alert(`Please select all 11 players before saving. ${incompleteSlots} position(s) are still empty.`);
+    return;
+  }
+
   try {
     const teamDocRef = doc(db, "users", currentUser.uid, "myxi", "team");
     const leaderboardRef = doc(db, "leaderboard", currentUser.uid);
-    
+
+    console.debug("Saving team to Firestore", { teamPlayers, formation, teamName, uid: currentUser.uid });
     await setDoc(teamDocRef, {
       players: teamPlayers,
       formation: formation,
@@ -3101,17 +3108,10 @@ const saveTeam = async function() {
       teamName: teamName,
       userId: currentUser.uid
     }, { merge: true });
+
     const verifySnap = await getDoc(teamDocRef);
     if (!verifySnap.exists()) {
       throw new Error("Saved team document could not be read back.");
-    }
-
-    const verifyData = verifySnap.data();
-    const verifiedPlayers = Array.isArray(verifyData.players) ? verifyData.players : [];
-    const verifiedCount = verifiedPlayers.filter(p => p && p !== "Select").length;
-
-    if (verifiedCount !== 11) {
-      throw new Error(`Firestore returned ${verifiedCount}/11 saved selections.`);
     }
 
     document.getElementById('teamNameInput').disabled = true;
