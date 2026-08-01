@@ -450,7 +450,14 @@ h1 {font-size:34px;margin-bottom:8px;}
 
 @media (max-width: 600px) {
   .league-actions {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .league-action-btn {
+    padding: 9px 10px;
+    font-size: 13px;
+    min-height: 42px;
   }
 }
 

@@ -2338,8 +2338,15 @@ const playersByPos = {
   ]
 };
 
-// Debug panel utilities (visible on-page in deployed builds for quick troubleshooting)
+// Debug panel utilities. Hidden by default for normal users and only shown when explicitly enabled.
+function isDebugEnabled() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('debug') === '1' || localStorage.getItem('debugMode') === '1';
+}
+
 function ensureDebugPanel() {
+  if (!isDebugEnabled()) return null;
+
   let panel = document.getElementById('debugPanel');
   if (!panel) {
     panel = document.createElement('div');
@@ -2365,7 +2372,13 @@ function ensureDebugPanel() {
 }
 
 function showDebug(msg, isError = false) {
+  if (!isDebugEnabled()) {
+    console.log(isError ? '[DEBUG ERROR]' : '[DEBUG]', msg);
+    return;
+  }
+
   const p = ensureDebugPanel();
+  if (!p) return;
   p.style.display = 'block';
   p.style.background = isError ? 'rgba(128,0,0,0.9)' : 'rgba(0,0,0,0.85)';
   p.innerText = (isError ? 'ERROR: ' : '') + msg;
