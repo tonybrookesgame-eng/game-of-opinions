@@ -2767,14 +2767,13 @@ function openPlayerPicker(select) {
   document.getElementById('playerPickerTitle').innerText = pos === 'GK' ? 'Pick Goalkeeper Club' : `Pick ${pos === 'DEF' ? 'Defender' : pos === 'MID' ? 'Midfielder' : 'Forward'}`;
   document.getElementById('playerPickerSubtitle').innerText = 'One player per club. Clubs already used in your XI are unavailable.';
   const search = document.getElementById('playerPickerSearch');
-  search.value = 'A';
-  renderPlayerPicker('A');
+  search.value = '';
+  renderPlayerPicker('');
   const modal = document.getElementById('playerPickerModal');
   modal.style.display = 'flex';
   modal.setAttribute('aria-hidden', 'false');
   setTimeout(() => {
     search.focus();
-    search.setSelectionRange(search.value.length, search.value.length);
   }, 0);
 }
 

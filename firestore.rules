@@ -1,0 +1,53 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    match /users/{uid} {
+      allow read: if isSignedIn() && (isOwner(uid) || resource.data.public == true);
+      allow create, update: if isSignedIn() && isOwner(uid);
+      allow delete: if false;
+
+      match /myxi/{doc} {
+        allow read, write: if isSignedIn() && isOwner(uid);
+      }
+
+      match /stats/{doc} {
+        allow read, write: if isSignedIn() && isOwner(uid);
+      }
+
+      match /history/{doc} {
+        allow read, write: if isSignedIn() && isOwner(uid);
+      }
+    }
+
+    match /leaderboard/{uid} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && request.auth.uid == uid;
+      allow delete: if false;
+    }
+
+    match /leagues/{leagueId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update: if isSignedIn();
+      allow delete: if false;
+    }
+
+    match /settings/{doc} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    match /gameweekHistory/{doc} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+  }
+}
