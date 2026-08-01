@@ -2374,6 +2374,29 @@ const decodePlayerValue = (value) => {
 const getPlayerClub = (value) => decodePlayerValue(value).club;
 const getPlayerName = (value) => decodePlayerValue(value).name;
 const normalizePlayerValue = (value) => decodePlayerValue(value).value || "Select";
+const resolvePlayerValueForSelect = (select, value) => {
+  if (!select) return "Select";
+  const normalized = normalizePlayerValue(value);
+  const exactOption = Array.from(select.options).find(opt => opt.value === normalized);
+  if (exactOption) return normalized;
+
+  const rawName = decodePlayerValue(value).name || value;
+  if (!rawName || rawName === "Select") return "Select";
+
+  const nameMatch = Array.from(select.options).find(opt => {
+    const decoded = decodePlayerValue(opt.value);
+    return decoded.name === rawName;
+  });
+  if (nameMatch) return nameMatch.value;
+
+  const textMatch = Array.from(select.options).find(opt => {
+    const label = opt.textContent || opt.innerText || "";
+    return label.toLowerCase().startsWith(rawName.toLowerCase());
+  });
+  if (textMatch) return textMatch.value;
+
+  return "Select";
+};
 Object.values(playersByPos).flat().forEach(item => {
   if (typeof item === 'object') {
     const uniqueValue = encodePlayerValue(item.name, item.club);
@@ -2636,8 +2659,7 @@ const populatePlayers = function() {
         s.appendChild(opt);
       });
     }
-    const normalizedValue = normalizePlayerValue(currentVal);
-    s.value = Array.from(s.options).some(opt => opt.value === normalizedValue) ? normalizedValue : "Select";
+    s.value = resolvePlayerValueForSelect(s, currentVal);
   });
 
   // Ensure every shirt shows the correct placeholder or selected player immediately.
@@ -2806,7 +2828,7 @@ const loadSelectedGameweekHistory = async () => {
   let teamData = null, picksData = null, betData = null, statsData = { selectionPts: 0, picksPts: 0, betPts: 0, totalPts: 0 };
 
   if (isHistory) {
-    const archiveSnap = await getDoc(doc(db, `users/${currentUser.uid}/history`, "GW" + selectedGw));
+    const archiveSnap = await getDoc(doc(db, "users", currentUser.uid, "history", "GW" + selectedGw));
     if (archiveSnap.exists()) {
       const arch = archiveSnap.data();
       teamData = arch.team || null;
@@ -2822,10 +2844,10 @@ const loadSelectedGameweekHistory = async () => {
   } else {
     // Load current live data
     const [teamSnap, picksSnap, betSnap, statsSnap, leaderboardSnap] = await Promise.all([
-      getDoc(doc(db, `users/${currentUser.uid}/myxi`, "team")),
-      getDoc(doc(db, `users/${currentUser.uid}/myxi`, "weeklyPicks")),
-      getDoc(doc(db, `users/${currentUser.uid}/myxi`, "betBuilder")),
-      getDoc(doc(db, `users/${currentUser.uid}/stats`, "points")),
+      getDoc(doc(db, "users", currentUser.uid, "myxi", "team")),
+      getDoc(doc(db, "users", currentUser.uid, "myxi", "weeklyPicks")),
+      getDoc(doc(db, "users", currentUser.uid, "myxi", "betBuilder")),
+      getDoc(doc(db, "users", currentUser.uid, "stats", "points")),
       getDoc(doc(db, "leaderboard", currentUser.uid))
     ]);
     if (teamSnap.exists()) teamData = teamSnap.data();
@@ -2877,15 +2899,16 @@ const loadSelectedGameweekHistory = async () => {
         // Load exactly as many players as there are slots for this formation
         let loadedCount = 0;
         isProgrammaticallyUpdatingShirts = true;
-      for (let i = 0; i < selects.length && i < teamData.players.length; i++) {
-          const playerValue = normalizePlayerValue(teamData.players[i]);
+        for (let i = 0; i < selects.length && i < teamData.players.length; i++) {
+          const rawPlayerValue = teamData.players[i];
+          const playerValue = resolvePlayerValueForSelect(selects[i], rawPlayerValue);
           if (playerValue && playerValue !== "Select") {
             selects[i].value = playerValue;
             updateShirt(selects[i]);
             loadedCount++;
-            console.log(`Slot ${i}: Set to ${playerValue}`);
+            console.log(`Slot ${i}: Set to ${playerValue} (from saved ${rawPlayerValue})`);
           } else {
-            console.log(`Slot ${i}: Skipped (value: "${teamData.players[i]}")`);
+            console.log(`Slot ${i}: Skipped (saved value: "${rawPlayerValue}")`);
           }
         }
         console.log(`✓ Loaded ${loadedCount} players for ${selectedFormation} formation`);
