@@ -2252,7 +2252,7 @@ MOBILE
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, orderBy, limit, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, orderBy, limit, onSnapshot, getDocs, arrayUnion } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const clubAbbr = {
@@ -2337,6 +2337,40 @@ const playersByPos = {
     { name: "Richarlison", club: "Spurs" }, { name: "Solanke", club: "Spurs" }, { name: "Tel", club: "Spurs" }, { name: "Soloman", club: "Spurs" },
   ]
 };
+
+// Debug panel utilities (visible on-page in deployed builds for quick troubleshooting)
+function ensureDebugPanel() {
+  let panel = document.getElementById('debugPanel');
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = 'debugPanel';
+    Object.assign(panel.style, {
+      position: 'fixed',
+      bottom: '12px',
+      right: '12px',
+      maxWidth: '420px',
+      background: 'rgba(0,0,0,0.85)',
+      color: '#fff',
+      padding: '10px 12px',
+      borderRadius: '6px',
+      border: '1px solid rgba(255,255,255,0.06)',
+      zIndex: 999999,
+      fontSize: '13px',
+      display: 'none',
+      whiteSpace: 'pre-wrap'
+    });
+    document.body.appendChild(panel);
+  }
+  return panel;
+}
+
+function showDebug(msg, isError = false) {
+  const p = ensureDebugPanel();
+  p.style.display = 'block';
+  p.style.background = isError ? 'rgba(128,0,0,0.9)' : 'rgba(0,0,0,0.85)';
+  p.innerText = (isError ? 'ERROR: ' : '') + msg;
+}
+
 
 let currentBetChoice = null;
 
@@ -3122,10 +3156,12 @@ onAuthStateChanged(auth, (user) => {
   if (user) {
     if (authRedirectTimer) clearTimeout(authRedirectTimer);
     currentUser = user;
+    try { showDebug(`Auth: signed in as ${user.uid}\nOnline: ${navigator.onLine}`); } catch(e){}
     loadUserData(user.uid); // This will call populateWeeklyOptions, loadCurrentBet, changeFormation
     userLinks.forEach(l => l.style.display = 'inline-block');
     guestLinks.forEach(l => l.style.display = 'none');
   } else {
+    try { showDebug(`Auth: not signed in\nOnline: ${navigator.onLine}`); } catch(e){}
     userLinks.forEach(l => l.style.display = 'none');
     guestLinks.forEach(l => l.style.display = 'inline-block');
     authRedirectTimer = setTimeout(() => {
@@ -3190,8 +3226,19 @@ const saveTeam = async function() {
     const leaderboardRef = doc(db, "leaderboard", currentUser.uid);
 
     console.debug("Saving team to Firestore", { teamPlayers, formation, teamName, uid: currentUser.uid });
+    // Normalize saved player values to canonical `name|club` when possible
+    const normalizeForSave = (val) => {
+      if (!val || val === 'Select') return val;
+      if (val.includes('|')) return val;
+      const dec = decodePlayerValue(val);
+      if (dec && dec.name && dec.club) return encodePlayerValue(dec.name, dec.club);
+      if (playerToClub[val]) return encodePlayerValue(val, playerToClub[val]);
+      return val;
+    };
+    const canonicalPlayers = teamPlayers.map(normalizeForSave);
+
     await setDoc(teamDocRef, {
-      players: teamPlayers,
+      players: canonicalPlayers,
       formation: formation,
       teamName: teamName,
       intentionallyCleared: false,
@@ -3200,7 +3247,18 @@ const saveTeam = async function() {
 
     await setDoc(leaderboardRef, {
       teamName: teamName,
-      userId: currentUser.uid
+      userId: currentUser.uid,
+      inGlobalLeague: true,
+      joinedGlobalLeagueAt: new Date().toISOString()
+    }, { merge: true });
+
+    await setDoc(doc(db, "leagues", "L-GLOBAL"), {
+      name: "Global League",
+      code: "GLOBAL",
+      creator: "system",
+      members: arrayUnion(currentUser.uid),
+      isGlobal: true,
+      updatedAt: new Date().toISOString()
     }, { merge: true });
 
     await setDoc(doc(db, "users", currentUser.uid), {
@@ -3212,8 +3270,8 @@ const saveTeam = async function() {
     if (!verifySnap.exists()) {
       throw new Error("Saved team document could not be read back.");
     }
-
     console.debug("Verified team data:", verifySnap.data());
+    try { showDebug(`Saved team verified:\n${JSON.stringify(verifySnap.data(), null, 2)}`); } catch(e){}
     document.getElementById('teamNameInput').disabled = true;
     markTeamAsSaved();
     alert("Team XI Saved & verified!");
@@ -3223,6 +3281,7 @@ const saveTeam = async function() {
       ? 'Firestore permission denied. Please update your Firestore rules to allow writes for your signed-in user.'
       : `Failed to save team${error?.code ? ` (${error.code})` : ""}. Please try again.`;
     alert(`${summary}${error?.message ? `\n\n${error.message}` : ""}`);
+    try { showDebug(`${summary}\n\n${error?.message || ''}\ncode: ${error?.code || 'n/a'}\nstack: ${error?.stack || 'n/a'}`, true); } catch(e){}
   }
 }
 window.saveTeam = saveTeam;

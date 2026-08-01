@@ -251,58 +251,47 @@ h1 {font-size:34px;margin-bottom:8px;}
 
 .league-management {
   display:grid;
-  gap:18px;
-  margin: 24px 0 28px;
+  gap:12px;
+  margin: 12px 0 16px;
 }
 
 .league-card {
   background: rgba(255,255,255,0.05);
   border: 1px solid rgba(255,255,255,0.09);
-  border-radius: 20px;
-  padding: 20px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.16);
-}
-
-.league-card h2 {
-  margin: 0 0 6px;
-  font-size: 20px;
-}
-
-.league-card p {
-  margin: 0 0 16px;
-  color: #9ca3af;
-  line-height: 1.5;
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.16);
 }
 
 .league-control-grid {
   display:grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  gap: 12px;
 }
 
 .league-panel {
   background: rgba(0,0,0,0.2);
   border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 16px;
-  padding: 16px;
+  border-radius: 12px;
+  padding: 12px;
 }
 
 .league-label {
   display:block;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #c7ff38;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .league-input-row {
   display:flex;
-  gap:10px;
+  gap:8px;
   flex-wrap:wrap;
   align-items:center;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .league-input {
@@ -310,8 +299,8 @@ h1 {font-size:34px;margin-bottom:8px;}
   border: 1px solid rgba(255,255,255,0.12);
   color: white;
   border-radius: 999px;
-  padding: 10px 14px;
-  min-width: 220px;
+  padding: 8px 12px;
+  min-width: 200px;
   outline: none;
 }
 
@@ -380,6 +369,12 @@ h1 {font-size:34px;margin-bottom:8px;}
 
 .mobile-nav {
   display: none;
+}
+
+@media (max-width: 900px) {
+  .league-control-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 768px) {
@@ -513,8 +508,6 @@ h1 {font-size:34px;margin-bottom:8px;}
 
   <div class="league-management user-only">
     <div class="league-card">
-      <h2>League manager</h2>
-      <p>Create your own league, join a friend’s code, or switch between the leagues you are already in.</p>
       <div class="league-control-grid">
         <div class="league-panel">
           <label class="league-label" for="league-name-input">Create a league</label>
@@ -541,8 +534,8 @@ h1 {font-size:34px;margin-bottom:8px;}
   </div>
 
   <div id="league-status" class="league-status">
-    <h3 id="league-status-title">League ready</h3>
-    <p id="league-status-text">Share this code with friends.</p>
+    <h3 id="league-status-title">League ready to share</h3>
+    <p id="league-status-text">Send this code to friends and they can join.</p>
     <div class="league-code-pill">
       <span id="league-code-display">--</span>
     </div>
@@ -732,7 +725,7 @@ async function loadLeaderboard(user, leagueCode = "") {
   const entries = snap.docs.map(docSnap => ({ uid: docSnap.id, data: docSnap.data() }));
   renderLeaderboardRows(entries, user);
   titleEl.innerText = "Global League Table";
-  showLeagueStatus("League ready", "View your own league or stay on the global table.", "", "");
+  showLeagueStatus("League ready to share", "Send this code to friends and they can join.", "", "");
 }
 
 async function copyLeagueCode() {

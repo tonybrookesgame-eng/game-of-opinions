@@ -172,6 +172,40 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
 
+    // Admin debug panel (visible overlay for deployed troubleshooting)
+    function ensureDebugPanelAdmin() {
+      let panel = document.getElementById('debugPanelAdmin');
+      if (!panel) {
+        panel = document.createElement('div');
+        panel.id = 'debugPanelAdmin';
+        Object.assign(panel.style, {
+          position: 'fixed',
+          bottom: '12px',
+          left: '12px',
+          maxWidth: '520px',
+          background: 'rgba(0,0,0,0.85)',
+          color: '#fff',
+          padding: '10px 12px',
+          borderRadius: '6px',
+          border: '1px solid rgba(255,255,255,0.06)',
+          zIndex: 999999,
+          fontSize: '13px',
+          display: 'none',
+          whiteSpace: 'pre-wrap'
+        });
+        document.body.appendChild(panel);
+      }
+      return panel;
+    }
+
+    function showDebugAdmin(msg, isError = false) {
+      const p = ensureDebugPanelAdmin();
+      p.style.display = 'block';
+      p.style.background = isError ? 'rgba(128,0,0,0.9)' : 'rgba(0,0,0,0.85)';
+      p.innerText = (isError ? 'ADMIN ERROR: ' : 'ADMIN: ') + msg;
+      console.log(p.innerText);
+    }
+
     const clubAbbr = {
       "Arsenal": "ARS", "Aston Villa": "AVL", "Bournemouth": "BOU", "Brentford": "BRE",
       "Brighton": "BHA", "Chelsea": "CHE", "Coventry": "COV", "Crystal Palace": "CRY",
@@ -376,6 +410,7 @@
         alert(`✓ Deadline synced: ${deadline.toLocaleString('en-GB')}\nThe game will lock automatically 2 hours before first kickoff and re-open after scores are published.`);
       } catch (e) {
         console.error(e);
+        showDebugAdmin(`Error syncing deadline from fixtures: ${e?.message || e}`, true);
         alert("Error syncing deadline from fixtures.");
       }
     };
@@ -443,10 +478,13 @@
       });
 
       try {
+        showDebugAdmin('Attempting to save adminDraft');
         await setDoc(doc(db, "settings", "adminDraft"), draft);
+        showDebugAdmin('Saved adminDraft successfully');
         alert("Progress draft saved successfully!");
       } catch (e) {
         console.error(e);
+        showDebugAdmin(`Failed to save adminDraft: ${e?.message || e}`, true);
         alert("Error saving draft.");
       }
     };
@@ -514,7 +552,7 @@
       }
 
       if (isDryRun) {
-        console.log("--- STARTING DRY RUN SIMULATION ---");
+        showDebugAdmin('--- STARTING DRY RUN SIMULATION ---');
       }
 
       if (!confirm(`This will update points for ALL users for Gameweek ${gwNum}. Proceed?`)) return;
@@ -557,6 +595,7 @@
       const resRel = [document.getElementById('res-rel1')?.value.trim(), document.getElementById('res-rel2')?.value.trim(), document.getElementById('res-rel3')?.value.trim()].filter(x => x);
 
       try {
+        showDebugAdmin(`Beginning processing for GW${gwNum} (dryRun: ${isDryRun})`);
         // 2. Fetch every user's team from the leaderboard
         const leaderboardSnap = await getDocs(collection(db, "leaderboard"));
         
@@ -654,16 +693,14 @@
           const deltaTotal = deltaWeeklyTotal + deltaSeason;
 
           if (isDryRun) {
-            console.log(`User: ${userData.teamName || userId}`);
-            console.log(`- Weekly (Players+Picks+Bet): ${userWeeklyTotal} (Delta: ${deltaWeeklyTotal})`);
-            console.log(`- Season Total: ${userSeasonScore} (Delta: ${deltaSeason})`);
-            console.log(`- Final Points Increment: ${deltaTotal}`);
+            showDebugAdmin(`DryRun - User: ${userData.teamName || userId} | Weekly: ${userWeeklyTotal} (Delta: ${deltaWeeklyTotal}) | Season: ${userSeasonScore} (Delta: ${deltaSeason}) | DeltaTotal: ${deltaTotal}`);
             continue; 
           }
 
           // Keep the leaderboard's current weekly breakdown in sync.
           // totalPoints changes only by deltaTotal, preserving re-process protection.
           const leaderRef = doc(db, "leaderboard", userId);
+          showDebugAdmin(`Writing leaderboard for user ${userId}: weeklyPoints=${userWeeklyTotal}, totalPointsDelta=${deltaTotal}`);
           await setDoc(leaderRef, {
             weeklyPoints: userWeeklyTotal,
             weeklySelection: userPlayerScore,
@@ -677,6 +714,7 @@
           // Previously this archive only happened when a score changed, which
           // meant MyXI could have no history record for a genuine zero-point GW.
           const archiveRef = doc(db, `users/${userId}/history`, "GW" + gwNum);
+          showDebugAdmin(`Archiving GW${gwNum} for user ${userId}`);
           await setDoc(archiveRef, {
             gw: gwNum,
             team: teamDoc ? teamDoc.data() : null,
@@ -702,6 +740,7 @@
         }
 
         // 8. Save to History
+        showDebugAdmin(`Saving gameweekHistory GW${gwNum}`);
         await setDoc(doc(db, "gameweekHistory", "GW" + gwNum), {
           gw: gwNum,
           processedAt: new Date(),
@@ -711,6 +750,7 @@
           playerScores: currentScores
         });
 
+        showDebugAdmin('Updating settings.gameweek reopenTime/status');
         await setDoc(doc(db, "settings", "gameweek"), {
           reopenTime: new Date().toISOString(),
           status: "open"
@@ -720,6 +760,7 @@
         loadHistory();
       } catch (err) {
         console.error(err);
+        showDebugAdmin(`Error processing GW${gwNum}: ${err?.message || err}`, true);
         alert("Error processing scores.");
       }
     }
@@ -730,6 +771,7 @@
       }
 
       try {
+        showDebugAdmin('Attempting bulk reset of Weekly Points for all users');
         const leaderboardSnap = await getDocs(collection(db, "leaderboard"));
         const batch = writeBatch(db); // Use a batch write for efficiency
 
@@ -744,9 +786,11 @@
         });
 
         await batch.commit();
+        showDebugAdmin('Bulk reset committed successfully');
         alert("Weekly Points reset to 0 for all users!");
       } catch (err) {
         console.error("Error resetting weekly points:", err);
+        showDebugAdmin(`Error resetting weekly points: ${err?.message || err}`, true);
         alert("Failed to reset weekly points. Please try again.");
       }
     };
@@ -774,13 +818,16 @@
       
       try {
         const batch = writeBatch(db);
+        showDebugAdmin('Starting nuclear season reset - building batch operations');
         batch.update(doc(db, "users", uid, "myxi", "team"), { teamName: newName });
         batch.update(doc(db, "leaderboard", uid), { teamName: newName });
-        
+        showDebugAdmin(`Updating teamName for ${uid} -> ${newName}`);
         await batch.commit();
+        showDebugAdmin(`Updated teamName for ${uid}`);
         alert("Team Name updated successfully in both user profile and leaderboard.");
       } catch (e) {
         console.error(e);
+        showDebugAdmin(`Error updating team name for ${uid}: ${e?.message || e}`, true);
         alert("Error updating team name. Ensure the UID is correct.");
       }
     };
@@ -825,12 +872,13 @@
           const userHistSnap = await getDocs(collection(db, "users", uid, "history"));
           userHistSnap.forEach(h => batch.delete(h.ref));
         }
-
         await batch.commit();
+        showDebugAdmin('Nuclear reset batch committed successfully');
         alert("Server Cleared! Accounts kept, game data wiped. Ready for August.");
         window.location.reload();
       } catch (err) {
         console.error(err);
+        showDebugAdmin(`Error during nuclear reset: ${err?.message || err}`, true);
         alert("Error during reset. Check console.");
       }
     };
