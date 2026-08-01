@@ -443,7 +443,13 @@ h1 {font-size:34px;margin-bottom:8px;}
 }
 
 @media (max-width: 900px) {
-  .league-control-grid {
+  .league-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .league-actions {
     grid-template-columns: 1fr;
   }
 }
@@ -583,16 +589,9 @@ h1 {font-size:34px;margin-bottom:8px;}
         <button class="league-action-btn" onclick="openLeagueModal('create')">Create a league</button>
         <button class="league-action-btn" onclick="openLeagueModal('join')">Join a league</button>
         <button class="league-action-btn" onclick="openLeagueModal('view')">View a league</button>
+        <button class="league-action-btn" onclick="openLeagueModal('share')">Share League</button>
       </div>
     </div>
-  </div>
-
-  <div id="league-status" class="league-status user-only">
-    <div class="status-copy">
-      <h3 id="league-status-title">Share League</h3>
-      <p id="league-status-text">Open this panel to share your league code with friends.</p>
-    </div>
-    <button class="league-btn secondary" onclick="openShareModal()">Open</button>
   </div>
 
   <h2 id="league-table-title" style="margin: 8px 0 12px; font-size: 22px;">Global League Table</h2>
@@ -964,6 +963,11 @@ async function ensureGlobalLeagueMembership(user) {
 }
 
 window.createLeague = async ()=>{
+  if (!auth.currentUser) {
+    alert("Please log in before creating a league.");
+    return;
+  }
+
   const nameInput = document.getElementById("league-modal-name") || document.getElementById("league-name-input");
   const name = (nameInput?.value || "").trim();
 
@@ -987,23 +991,33 @@ window.createLeague = async ()=>{
     return;
   }
 
-  await setDoc(doc(db, "leagues", "L-" + code), {
-    name,
-    code,
-    creator: auth.currentUser.uid,
-    members: [auth.currentUser.uid]
-  });
+  try {
+    await setDoc(doc(db, "leagues", "L-" + code), {
+      name,
+      code,
+      creator: auth.currentUser.uid,
+      members: [auth.currentUser.uid]
+    });
 
-  if (nameInput) nameInput.value = "";
-  closeLeagueModal();
-  showLeagueStatus("League created", `Share this code with your friends to join ${name}.`, code, name);
-  await loadLeagueMemberships(auth.currentUser);
-  const mainSelect = document.getElementById("league-select");
-  if (mainSelect) mainSelect.value = code;
-  await loadLeaderboard(auth.currentUser, code);
+    if (nameInput) nameInput.value = "";
+    closeLeagueModal();
+    showLeagueStatus("Share League", `Use this code to invite friends to ${name}.`, code, name);
+    await loadLeagueMemberships(auth.currentUser);
+    const mainSelect = document.getElementById("league-select");
+    if (mainSelect) mainSelect.value = code;
+    await loadLeaderboard(auth.currentUser, code);
+  } catch (error) {
+    console.error("Create league failed", error);
+    alert(`Unable to create the league right now. ${error?.message || ""}`.trim());
+  }
 };
 
 window.joinLeague = async ()=>{
+  if (!auth.currentUser) {
+    alert("Please log in before joining a league.");
+    return;
+  }
+
   const input = document.getElementById("league-modal-code") || document.getElementById("join-code-input");
   const code = (input?.value || "").trim().toUpperCase();
 
@@ -1013,33 +1027,40 @@ window.joinLeague = async ()=>{
   }
 
   const leagueRef = doc(db, "leagues", "L-" + code);
-  const leagueSnap = await getDoc(leagueRef);
 
-  if (!leagueSnap.exists()) {
-    alert("League code not found. Please check the code and try again.");
-    return;
-  }
+  try {
+    const leagueSnap = await getDoc(leagueRef);
 
-  const leagueData = leagueSnap.data();
-  if (leagueData.members && leagueData.members.includes(auth.currentUser.uid)) {
-    alert("You are already in this league.");
+    if (!leagueSnap.exists()) {
+      alert("League code not found. Please check the code and try again.");
+      return;
+    }
+
+    const leagueData = leagueSnap.data();
+    if (leagueData.members && leagueData.members.includes(auth.currentUser.uid)) {
+      alert("You are already in this league.");
+      await loadLeagueMemberships(auth.currentUser);
+      const mainSelect = document.getElementById("league-select");
+      if (mainSelect) mainSelect.value = code;
+      await loadLeaderboard(auth.currentUser, code);
+      return;
+    }
+
+    await updateDoc(leagueRef, {
+      members: arrayUnion(auth.currentUser.uid)
+    });
+
+    if (input) input.value = "";
+    closeLeagueModal();
+    showLeagueStatus("Share League", `You joined ${leagueData.name || "the league"}.`, code, leagueData.name || "");
     await loadLeagueMemberships(auth.currentUser);
-    document.getElementById("league-select").value = code;
+    const mainSelect = document.getElementById("league-select");
+    if (mainSelect) mainSelect.value = code;
     await loadLeaderboard(auth.currentUser, code);
-    return;
+  } catch (error) {
+    console.error("Join league failed", error);
+    alert(`Unable to join the league right now. ${error?.message || ""}`.trim());
   }
-
-  await updateDoc(leagueRef, {
-    members: arrayUnion(auth.currentUser.uid)
-  });
-
-  if (input) input.value = "";
-  closeLeagueModal();
-  showLeagueStatus("Joined league", `You joined ${leagueData.name || "the league"}.`, code, leagueData.name || "");
-  await loadLeagueMemberships(auth.currentUser);
-  const mainSelect = document.getElementById("league-select");
-  if (mainSelect) mainSelect.value = code;
-  await loadLeaderboard(auth.currentUser, code);
 };
 
 window.viewLeagueFromModal = async function() {

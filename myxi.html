@@ -2754,12 +2754,15 @@ function openPlayerPicker(select) {
   document.getElementById('playerPickerTitle').innerText = pos === 'GK' ? 'Pick Goalkeeper Club' : `Pick ${pos === 'DEF' ? 'Defender' : pos === 'MID' ? 'Midfielder' : 'Forward'}`;
   document.getElementById('playerPickerSubtitle').innerText = 'One player per club. Clubs already used in your XI are unavailable.';
   const search = document.getElementById('playerPickerSearch');
-  search.value = '';
-  renderPlayerPicker();
+  search.value = 'A';
+  renderPlayerPicker('A');
   const modal = document.getElementById('playerPickerModal');
   modal.style.display = 'flex';
   modal.setAttribute('aria-hidden', 'false');
-  setTimeout(() => search.focus(), 0);
+  setTimeout(() => {
+    search.focus();
+    search.setSelectionRange(search.value.length, search.value.length);
+  }, 0);
 }
 
 function wireShirtPickers() {
@@ -2923,14 +2926,19 @@ const loadSelectedGameweekHistory = async () => {
       markTeamAsSaved();
     }
     
-    // Load players after DOM has settled - use a delay to ensure options are populated
-    setTimeout(() => {
+    // Load players after the pitch DOM has fully settled.
+    // Mobile Safari can be slower to build the select elements, so retry briefly until they exist.
+    const restoreSavedPlayers = (attempt = 0) => {
       const selects = document.querySelectorAll('.pitch .player select');
+      if (!selects.length && attempt < 8) {
+        setTimeout(() => restoreSavedPlayers(attempt + 1), 120);
+        return;
+      }
+
       console.log(`Loading team for ${selectedFormation}. Slots: ${selects.length}, Players in data: ${teamData.players ? teamData.players.length : 0}`);
       console.log('Players array:', teamData.players);
-      
+
       if (teamData.players && teamData.players.length > 0) {
-        // Load exactly as many players as there are slots for this formation
         let loadedCount = 0;
         isProgrammaticallyUpdatingShirts = true;
         for (let i = 0; i < selects.length && i < teamData.players.length; i++) {
@@ -2949,9 +2957,11 @@ const loadSelectedGameweekHistory = async () => {
       } else {
         console.log('⚠ No players in teamData.players array');
       }
-      refreshDropdowns(); // Refresh duplicate prevention
+      refreshDropdowns();
       isProgrammaticallyUpdatingShirts = false;
-    }, 250); // Allow mobile Safari time to rebuild/populate the formation before restoring Firebase values
+    };
+
+    setTimeout(() => restoreSavedPlayers(), 120);
   } else {
     // Default reset if no team data
     console.log('⚠ No team data found');
