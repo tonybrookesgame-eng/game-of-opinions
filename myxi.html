@@ -2354,8 +2354,40 @@ const weeklyBets = [
   }
 ];
 
+const legacyNameToClubs = {};
 const playerToClub = {};
-Object.values(playersByPos).flat().forEach(p => { if(typeof p === 'object') playerToClub[p.name] = p.club; });
+const playerToName = {};
+const encodePlayerValue = (name, club) => `${name}|${club}`;
+const decodePlayerValue = (value) => {
+  if (!value || value === "Select") return { name: null, club: null, value };
+  if (value.includes("|")) {
+    const [name, club] = value.split("|");
+    return { name, club, value };
+  }
+  const clubs = legacyNameToClubs[value] || [];
+  if (clubs.length === 1) {
+    const club = clubs[0];
+    return { name: value, club, value: encodePlayerValue(value, club) };
+  }
+  return { name: value, club: null, value };
+};
+const getPlayerClub = (value) => decodePlayerValue(value).club;
+const getPlayerName = (value) => decodePlayerValue(value).name;
+const normalizePlayerValue = (value) => decodePlayerValue(value).value || "Select";
+Object.values(playersByPos).flat().forEach(item => {
+  if (typeof item === 'object') {
+    const uniqueValue = encodePlayerValue(item.name, item.club);
+    playerToClub[uniqueValue] = item.club;
+    playerToName[uniqueValue] = item.name;
+    legacyNameToClubs[item.name] = legacyNameToClubs[item.name] || [];
+    if (!legacyNameToClubs[item.name].includes(item.club)) {
+      legacyNameToClubs[item.name].push(item.club);
+    }
+  } else {
+    playerToClub[item] = item;
+    playerToName[item] = item;
+  }
+});
 
 function loadCurrentBet() {
   const currentBet = weeklyBets[weeklyBets.length - 1]; // Always load the latest bet
@@ -2435,8 +2467,9 @@ const updateShirt = function(select) {
 
   ptsLabel.style.display = "block"; // Get club for outfield player
   // Goalkeeper choices currently identify the club; outfield choices identify a player.
-  const team = pos === "GK" ? val : playerToClub[val];
-  const displayPlayerName = val;
+  const parsed = decodePlayerValue(val);
+  const team = pos === "GK" ? parsed.club : parsed.club;
+  const displayPlayerName = pos === "GK" ? parsed.club : parsed.name || val;
   
   shirt.classList.remove('is-empty');
   nameLabel.innerText = displayPlayerName;
@@ -2445,7 +2478,7 @@ const updateShirt = function(select) {
   setShirtKit(shirt, team);
 
   // Show points if they exist in the current display buffer
-  const points = window.currentDisplayedPlayerScores[val];
+  const points = window.currentDisplayedPlayerScores[val] ?? window.currentDisplayedPlayerScores[parsed.name];
   const hasPoints = points !== undefined;
 
   ptsLabel.innerText = (hasPoints ? points : 0) + " PTS";
@@ -2540,19 +2573,26 @@ window.updatePitchRow = updatePitchRow;
 const refreshDropdowns = function() {
   const selects = document.querySelectorAll('.pitch select');
   const selectedClubs = Array.from(selects)
-    .map(s => playerToClub[s.value] || s.value)
+    .map(s => getPlayerClub(s.value) || s.value)
     .filter(club => club && club !== "Select");
 
   selects.forEach(select => {
-    const currentClub = playerToClub[select.value] || select.value;
+    const currentClub = getPlayerClub(select.value) || select.value;
     Array.from(select.options).forEach(opt => {
       if (opt.value === "Select") return;
-      const optClub = playerToClub[opt.value] || opt.value;
+      const optClub = getPlayerClub(opt.value) || opt.value;
       opt.disabled = selectedClubs.includes(optClub) && optClub !== currentClub;
     });
   });
 }
 window.refreshDropdowns = refreshDropdowns;
+
+function getSelectedClubsExcept(selectToIgnore = null) {
+  return Array.from(document.querySelectorAll('.pitch .player select'))
+    .filter(s => s !== selectToIgnore)
+    .map(s => getPlayerClub(s.value) || s.value)
+    .filter(club => club && club !== "Select");
+}
 
 const populatePlayers = function() {
   const selects = document.querySelectorAll('.pitch .player select');
@@ -2569,25 +2609,19 @@ const populatePlayers = function() {
           opt.innerHTML = `${p} (${abbr})`;
         } else {
           const abbr = clubAbbr[p.club] || p.club.substring(0, 3).toUpperCase();
-          opt.value = p.name;
+          opt.value = encodePlayerValue(p.name, p.club);
           opt.innerHTML = `${p.name} (${abbr})`;
         }
         s.appendChild(opt);
       });
     }
-    s.value = currentVal;
+    const normalizedValue = normalizePlayerValue(currentVal);
+    s.value = Array.from(s.options).some(opt => opt.value === normalizedValue) ? normalizedValue : "Select";
   });
 }
 window.populatePlayers = populatePlayers;
 
 let activePlayerSelect = null;
-
-function getSelectedClubsExcept(selectToIgnore = null) {
-  return Array.from(document.querySelectorAll('.pitch .player select'))
-    .filter(s => s !== selectToIgnore)
-    .map(s => playerToClub[s.value] || s.value)
-    .filter(club => club && club !== "Select");
-}
 
 function closePlayerPicker() {
   const modal = document.getElementById('playerPickerModal');
@@ -2607,9 +2641,9 @@ function renderPlayerPicker(filterText = "") {
   list.innerHTML = '';
 
   (playersByPos[pos] || []).forEach(item => {
-    const value = typeof item === 'string' ? item : item.name;
     const club = typeof item === 'string' ? item : item.club;
-    const label = pos === 'GK' ? club : value;
+    const value = typeof item === 'string' ? item : encodePlayerValue(item.name, item.club);
+    const label = pos === 'GK' ? club : (typeof item === 'string' ? item : item.name);
     const haystack = `${label} ${club}`.toLowerCase();
     if (needle && !haystack.includes(needle)) return;
 
@@ -2814,14 +2848,14 @@ const loadSelectedGameweekHistory = async () => {
         // Load exactly as many players as there are slots for this formation
         let loadedCount = 0;
         for (let i = 0; i < selects.length && i < teamData.players.length; i++) {
-          const playerValue = teamData.players[i];
+          const playerValue = normalizePlayerValue(teamData.players[i]);
           if (playerValue && playerValue !== "Select") {
             selects[i].value = playerValue;
             updateShirt(selects[i]);
             loadedCount++;
             console.log(`Slot ${i}: Set to ${playerValue}`);
           } else {
-            console.log(`Slot ${i}: Skipped (value: "${playerValue}")`);
+            console.log(`Slot ${i}: Skipped (value: "${teamData.players[i]}")`);
           }
         }
         console.log(`✓ Loaded ${loadedCount} players for ${selectedFormation} formation`);
@@ -3091,6 +3125,12 @@ const saveTeam = async function() {
     return;
   }
 
+  const duplicatePlayers = teamPlayers.filter((value, index, arr) => value !== "Select" && arr.indexOf(value) !== index);
+  if (duplicatePlayers.length > 0) {
+    alert("Please remove duplicate player selections. Each player must be unique by name and team.");
+    return;
+  }
+
   try {
     const teamDocRef = doc(db, "users", currentUser.uid, "myxi", "team");
     const leaderboardRef = doc(db, "leaderboard", currentUser.uid);
@@ -3118,7 +3158,10 @@ const saveTeam = async function() {
     alert("Team XI Saved & verified!");
   } catch (error) {
     console.error("Error saving team: ", error);
-    alert(`Failed to save team${error?.code ? ` (${error.code})` : ""}. Please try again.`);
+    const summary = error?.code === 'permission-denied'
+      ? 'Firestore permission denied. Please update your Firestore rules to allow writes for your signed-in user.'
+      : `Failed to save team${error?.code ? ` (${error.code})` : ""}. Please try again.`;
+    alert(`${summary}${error?.message ? `\n\n${error.message}` : ""}`);
   }
 }
 window.saveTeam = saveTeam;
