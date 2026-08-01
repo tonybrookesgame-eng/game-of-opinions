@@ -263,17 +263,25 @@ h1 {font-size:34px;margin-bottom:8px;}
   box-shadow: 0 10px 30px rgba(0,0,0,0.16);
 }
 
-.league-control-grid {
+.league-actions {
   display:grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
 }
 
-.league-panel {
-  background: rgba(0,0,0,0.2);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 12px;
-  padding: 12px;
+.league-action-btn {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: white;
+  border-radius: 999px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.league-action-btn:hover {
+  border-color: #c7ff38;
+  color: #c7ff38;
 }
 
 .league-label {
@@ -327,6 +335,9 @@ h1 {font-size:34px;margin-bottom:8px;}
 
 .league-status {
   display:none;
+  align-items:center;
+  justify-content:space-between;
+  gap: 14px;
   margin: 0 0 24px;
   padding: 16px;
   border-radius: 16px;
@@ -341,7 +352,7 @@ h1 {font-size:34px;margin-bottom:8px;}
 }
 
 .league-status p {
-  margin: 0 0 10px;
+  margin: 0;
   color: #cbd5e1;
   font-size: 14px;
 }
@@ -359,10 +370,70 @@ h1 {font-size:34px;margin-bottom:8px;}
   margin-bottom: 10px;
 }
 
+.league-code-pill.large {
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  font-size: 14px;
+}
+
 .league-status-actions {
   display:flex;
   gap:10px;
   flex-wrap:wrap;
+}
+
+.league-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2,6,17,0.8);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 2000;
+}
+
+.league-modal-card {
+  width: min(460px, 100%);
+  background: rgba(7,19,32,0.96);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  padding: 22px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+  position: relative;
+}
+
+.league-modal-close {
+  position:absolute;
+  top: 10px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor:pointer;
+}
+
+.league-modal-card h3 {
+  margin: 0 0 6px;
+  font-size: 20px;
+}
+
+.league-modal-card p {
+  margin: 0 0 16px;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+.league-modal-panel {
+  display:grid;
+  gap:10px;
+}
+
+.league-modal-actions {
+  display:flex;
+  justify-content:flex-end;
+  margin-top: 4px;
 }
 
 /* ========================= MOBILE ========================= */
@@ -508,41 +579,20 @@ h1 {font-size:34px;margin-bottom:8px;}
 
   <div class="league-management user-only">
     <div class="league-card">
-      <div class="league-control-grid">
-        <div class="league-panel">
-          <label class="league-label" for="league-name-input">Create a league</label>
-          <div class="league-input-row">
-            <input id="league-name-input" class="league-input" placeholder="League name" />
-            <button class="league-btn" onclick="createLeague()">Create</button>
-          </div>
-        </div>
-        <div class="league-panel">
-          <label class="league-label" for="join-code-input">Join a league</label>
-          <div class="league-input-row">
-            <input id="join-code-input" class="league-input" placeholder="Enter league code" />
-            <button class="league-btn" onclick="joinLeague()">Join</button>
-          </div>
-        </div>
-        <div class="league-panel" style="grid-column: 1 / -1;">
-          <label class="league-label" for="league-select">View a league</label>
-          <select id="league-select" class="league-input league-select">
-            <option value="">Global League</option>
-          </select>
-        </div>
+      <div class="league-actions">
+        <button class="league-action-btn" onclick="openLeagueModal('create')">Create a league</button>
+        <button class="league-action-btn" onclick="openLeagueModal('join')">Join a league</button>
+        <button class="league-action-btn" onclick="openLeagueModal('view')">View a league</button>
       </div>
     </div>
   </div>
 
-  <div id="league-status" class="league-status">
-    <h3 id="league-status-title">League ready to share</h3>
-    <p id="league-status-text">Send this code to friends and they can join.</p>
-    <div class="league-code-pill">
-      <span id="league-code-display">--</span>
+  <div id="league-status" class="league-status user-only">
+    <div class="status-copy">
+      <h3 id="league-status-title">Share League</h3>
+      <p id="league-status-text">Open this panel to share your league code with friends.</p>
     </div>
-    <div class="league-status-actions">
-      <button class="league-btn secondary" onclick="copyLeagueCode()">Copy Code</button>
-      <button class="league-btn secondary" onclick="shareLeagueCode()">Share</button>
-    </div>
+    <button class="league-btn secondary" onclick="openShareModal()">Open</button>
   </div>
 
   <h2 id="league-table-title" style="margin: 8px 0 12px; font-size: 22px;">Global League Table</h2>
@@ -567,6 +617,49 @@ h1 {font-size:34px;margin-bottom:8px;}
 
   </div>
 
+</div>
+
+<div id="league-action-modal" class="league-modal-overlay" style="display:none;">
+  <div class="league-modal-card">
+    <button class="league-modal-close" onclick="closeLeagueModal()" aria-label="Close">×</button>
+    <h3 id="league-modal-title">Create a league</h3>
+    <p id="league-modal-subtitle">Set up a private league for your friends.</p>
+
+    <div id="league-modal-create" class="league-modal-panel">
+      <label class="league-label" for="league-modal-name">League name</label>
+      <input id="league-modal-name" class="league-input" placeholder="League name" />
+      <div class="league-modal-actions">
+        <button class="league-btn" onclick="createLeague()">Create</button>
+      </div>
+    </div>
+
+    <div id="league-modal-join" class="league-modal-panel" style="display:none;">
+      <label class="league-label" for="league-modal-code">League code</label>
+      <input id="league-modal-code" class="league-input" placeholder="Enter league code" />
+      <div class="league-modal-actions">
+        <button class="league-btn" onclick="joinLeague()">Join</button>
+      </div>
+    </div>
+
+    <div id="league-modal-view" class="league-modal-panel" style="display:none;">
+      <label class="league-label" for="league-modal-view-select">Choose a league</label>
+      <select id="league-modal-view-select" class="league-input league-select"></select>
+      <div class="league-modal-actions">
+        <button class="league-btn" onclick="viewLeagueFromModal()">View</button>
+      </div>
+    </div>
+
+    <div id="league-modal-share" class="league-modal-panel" style="display:none;">
+      <div class="league-code-pill large">
+        <span id="league-share-code-display">--</span>
+      </div>
+      <p id="league-share-message">Share your code with friends to join.</p>
+      <div class="league-status-actions">
+        <button class="league-btn secondary" onclick="copyLeagueCode()">Copy Code</button>
+        <button class="league-btn secondary" onclick="shareLeagueCode()">Share</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script type="module">
@@ -604,16 +697,65 @@ function showLeagueStatus(title, message, code, leagueName = "") {
   const panel = document.getElementById("league-status");
   const titleEl = document.getElementById("league-status-title");
   const textEl = document.getElementById("league-status-text");
-  const codeEl = document.getElementById("league-code-display");
+  const shareCodeEl = document.getElementById("league-share-code-display");
 
-  titleEl.innerText = title;
-  textEl.innerText = message;
-  codeEl.innerText = code || "--";
-  panel.style.display = "block";
+  if (titleEl) titleEl.innerText = title;
+  if (textEl) textEl.innerText = message;
+  if (shareCodeEl) shareCodeEl.innerText = code || "--";
+  if (panel) panel.style.display = "flex";
 
   activeLeagueCode = code || "";
   activeLeagueName = leagueName || "";
 }
+
+function openLeagueModal(mode) {
+  const overlay = document.getElementById("league-action-modal");
+  if (!overlay) return;
+
+  const titleEl = document.getElementById("league-modal-title");
+  const subtitleEl = document.getElementById("league-modal-subtitle");
+  const createPanel = document.getElementById("league-modal-create");
+  const joinPanel = document.getElementById("league-modal-join");
+  const viewPanel = document.getElementById("league-modal-view");
+  const sharePanel = document.getElementById("league-modal-share");
+
+  const panels = [createPanel, joinPanel, viewPanel, sharePanel];
+  panels.forEach(panel => { if (panel) panel.style.display = "none"; });
+
+  if (mode === "create") {
+    if (titleEl) titleEl.innerText = "Create a league";
+    if (subtitleEl) subtitleEl.innerText = "Set up a private league for your friends.";
+    if (createPanel) createPanel.style.display = "grid";
+  } else if (mode === "join") {
+    if (titleEl) titleEl.innerText = "Join a league";
+    if (subtitleEl) subtitleEl.innerText = "Enter a code and jump into a league.";
+    if (joinPanel) joinPanel.style.display = "grid";
+  } else if (mode === "view") {
+    if (titleEl) titleEl.innerText = "View a league";
+    if (subtitleEl) subtitleEl.innerText = "Pick an existing league to view its standings.";
+    if (viewPanel) viewPanel.style.display = "grid";
+    loadLeagueMemberships(auth.currentUser);
+  } else if (mode === "share") {
+    if (titleEl) titleEl.innerText = "Share League";
+    if (subtitleEl) subtitleEl.innerText = "Copy the code or share it directly.";
+    if (sharePanel) sharePanel.style.display = "grid";
+  }
+
+  overlay.style.display = "flex";
+}
+
+function closeLeagueModal() {
+  const overlay = document.getElementById("league-action-modal");
+  if (overlay) overlay.style.display = "none";
+}
+
+function openShareModal() {
+  openLeagueModal("share");
+}
+
+window.openLeagueModal = openLeagueModal;
+window.closeLeagueModal = closeLeagueModal;
+window.openShareModal = openShareModal;
 
 function renderLeaderboardRows(entries, user) {
   const body = document.getElementById("leaderboard-body");
@@ -663,8 +805,17 @@ function renderLeaderboardRows(entries, user) {
 }
 
 async function loadLeagueMemberships(user) {
-  const select = document.getElementById("league-select");
-  if (!select || !user) return;
+  const selects = [
+    document.getElementById("league-select"),
+    document.getElementById("league-modal-view-select")
+  ].filter(Boolean);
+
+  if (!user) {
+    selects.forEach(select => {
+      select.innerHTML = '<option value="">Global League</option>';
+    });
+    return;
+  }
 
   const q = query(collection(db, "leagues"), where("members", "array-contains", user.uid));
   const snap = await getDocs(q);
@@ -672,19 +823,21 @@ async function loadLeagueMemberships(user) {
     .map(docSnap => ({ id: docSnap.id, ...docSnap.data() }))
     .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
 
-  const currentValue = select.value;
-  select.innerHTML = '<option value="">Global League</option>';
+  selects.forEach(select => {
+    const currentValue = select.value;
+    select.innerHTML = '<option value="">Global League</option>';
 
-  leagues.forEach(league => {
-    const option = document.createElement("option");
-    option.value = league.code;
-    option.textContent = league.name || `League ${league.code}`;
-    select.appendChild(option);
+    leagues.forEach(league => {
+      const option = document.createElement("option");
+      option.value = league.code;
+      option.textContent = league.name || `League ${league.code}`;
+      select.appendChild(option);
+    });
+
+    if (currentValue) {
+      select.value = currentValue;
+    }
   });
-
-  if (currentValue) {
-    select.value = currentValue;
-  }
 }
 
 async function loadLeaderboard(user, leagueCode = "") {
@@ -772,8 +925,46 @@ async function shareLeagueCode() {
 window.copyLeagueCode = copyLeagueCode;
 window.shareLeagueCode = shareLeagueCode;
 
+async function ensureGlobalLeagueMembership(user) {
+  if (!user) return false;
+
+  try {
+    const teamRef = doc(db, "users", user.uid, "myxi", "team");
+    const teamSnap = await getDoc(teamRef);
+
+    if (!teamSnap.exists()) {
+      return false;
+    }
+
+    const leaderboardRef = doc(db, "leaderboard", user.uid);
+    const leaderboardSnap = await getDoc(leaderboardRef);
+    const leaderboardData = leaderboardSnap.exists() ? leaderboardSnap.data() : {};
+
+    await setDoc(doc(db, "leagues", "L-GLOBAL"), {
+      name: "Global League",
+      code: "GLOBAL",
+      creator: "system",
+      members: arrayUnion(user.uid),
+      isGlobal: true,
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+
+    await setDoc(leaderboardRef, {
+      teamName: leaderboardData.teamName || teamSnap.data().teamName || "",
+      userId: user.uid,
+      inGlobalLeague: true,
+      joinedGlobalLeagueAt: leaderboardData.joinedGlobalLeagueAt || new Date().toISOString()
+    }, { merge: true });
+
+    return true;
+  } catch (error) {
+    console.error("Unable to ensure global league membership", error);
+    return false;
+  }
+}
+
 window.createLeague = async ()=>{
-  const nameInput = document.getElementById("league-name-input");
+  const nameInput = document.getElementById("league-modal-name") || document.getElementById("league-name-input");
   const name = (nameInput?.value || "").trim();
 
   if (!name) {
@@ -803,15 +994,17 @@ window.createLeague = async ()=>{
     members: [auth.currentUser.uid]
   });
 
-  nameInput.value = "";
+  if (nameInput) nameInput.value = "";
+  closeLeagueModal();
   showLeagueStatus("League created", `Share this code with your friends to join ${name}.`, code, name);
   await loadLeagueMemberships(auth.currentUser);
-  document.getElementById("league-select").value = code;
+  const mainSelect = document.getElementById("league-select");
+  if (mainSelect) mainSelect.value = code;
   await loadLeaderboard(auth.currentUser, code);
 };
 
 window.joinLeague = async ()=>{
-  const input = document.getElementById("join-code-input");
+  const input = document.getElementById("league-modal-code") || document.getElementById("join-code-input");
   const code = (input?.value || "").trim().toUpperCase();
 
   if (!code) {
@@ -840,11 +1033,24 @@ window.joinLeague = async ()=>{
     members: arrayUnion(auth.currentUser.uid)
   });
 
-  input.value = "";
+  if (input) input.value = "";
+  closeLeagueModal();
   showLeagueStatus("Joined league", `You joined ${leagueData.name || "the league"}.`, code, leagueData.name || "");
   await loadLeagueMemberships(auth.currentUser);
-  document.getElementById("league-select").value = code;
+  const mainSelect = document.getElementById("league-select");
+  if (mainSelect) mainSelect.value = code;
   await loadLeaderboard(auth.currentUser, code);
+};
+
+window.viewLeagueFromModal = async function() {
+  const select = document.getElementById("league-modal-view-select");
+  const code = select?.value || "";
+  if (!code) {
+    alert("Please choose a league first.");
+    return;
+  }
+  closeLeagueModal();
+  await window.viewLeague(code);
 };
 
 window.viewLeague = async function(code) {
@@ -862,6 +1068,7 @@ onAuthStateChanged(auth,(user)=>{
     userLinks.forEach(l => l.style.display = 'inline-block');
     guestLinks.forEach(l => l.style.display = 'none');
     loadLeagueMemberships(user);
+    ensureGlobalLeagueMembership(user);
   } else {
     userLinks.forEach(l => l.style.display = 'none');
     guestLinks.forEach(l => l.style.display = 'inline-block');
