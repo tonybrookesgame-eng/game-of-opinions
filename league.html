@@ -109,19 +109,22 @@ nav a:hover {
 /* ========================= CONTAINER ========================= */
 
 .container {
-
   max-width:1080px;
-
   margin:auto;
-
-  padding: 90px 30px 100px;
-
+  padding: 70px 30px 100px;
 }
 
+h1 {
+  font-size:34px;
+  margin-bottom:8px;
+  text-align:center;
+}
 
-h1 {font-size:34px;margin-bottom:8px;}
-
-.subtitle {color:#9ca3af;margin-bottom:25px;}
+.subtitle {
+  color:#9ca3af;
+  margin-bottom:20px;
+  text-align:center;
+}
 
 /* ========================= LEADERBOARD ========================= */
 
@@ -252,7 +255,7 @@ h1 {font-size:34px;margin-bottom:8px;}
 .league-management {
   display:grid;
   gap:12px;
-  margin: 12px 0 16px;
+  margin: 8px 0 16px;
 }
 
 .league-card {
@@ -265,8 +268,10 @@ h1 {font-size:34px;margin-bottom:8px;}
 
 .league-actions {
   display:grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
+  max-width: 760px;
+  margin: 0 auto;
 }
 
 .league-action-btn {
@@ -482,6 +487,7 @@ h1 {font-size:34px;margin-bottom:8px;}
   .container {
     padding-left: 10px;
     padding-right: 10px;
+    padding-top: 62px;
   }
 
   .league-control-grid {
@@ -504,6 +510,10 @@ h1 {font-size:34px;margin-bottom:8px;}
 
   .league-btn {
     width: 100%;
+  }
+
+  h1, .subtitle, #league-table-title {
+    text-align: center;
   }
   .leader-header, .leader-row {
     grid-template-columns: 25px 85px 50px 50px 70px;
@@ -601,7 +611,7 @@ h1 {font-size:34px;margin-bottom:8px;}
     </div>
   </div>
 
-  <h2 id="league-table-title" style="margin: 8px 0 12px; font-size: 22px;">Global League Table</h2>
+  <h2 id="league-table-title" style="margin: 8px 0 12px; font-size: 22px; text-align: center;">Global League Table</h2>
 
   <div class="leaderboard">
 
