@@ -866,7 +866,7 @@
         </div>
       </div>
       <select id="redCardsSelect">
-        <option>Select team</option>
+        <option>Select player</option>
       </select>
       <div class="points">75 points</div>
     </div>
@@ -1294,6 +1294,10 @@ const MANAGER_CANDIDATES = [
   "David Moyes", "Vincent Kompany", "Gary O'Neil", "Marco Silva", "Stuart Pearce", "Steve Bruce"
 ];
 
+const RED_CARD_CANDIDATES = [
+  "Declan Rice", "Bruno Fernandes", "Palhinha", "Edson Alvarez", "Jorginho", "Casemiro"
+];
+
 const YELLOW_CANDIDATES = [
   "Palhinha", "Edson Alvarez", "Christian Norgaard", "Bruno Guimaraes", 
   "Douglas Luiz", "Joelinton", "Nicolas Jackson", "Mario Lemina", 
@@ -1330,7 +1334,7 @@ function populateAllSelects() {
     if (!h3) return;
     const title = h3.innerText;
     
-    if (title.includes("Winner") || title.includes("Red Cards") || title.includes("Bottom 3")) {
+    if (title.includes("Winner") || title.includes("Bottom 3")) {
       PL_CLUBS.forEach(club => {
         let opt = document.createElement('option');
         opt.value = club;
@@ -1347,6 +1351,8 @@ function populateAllSelects() {
       addOptionsToSelect(select, CLEAN_SHEET_CANDIDATES);
     } else if (title.includes("Manager Sacked")) {
       addOptionsToSelect(select, MANAGER_CANDIDATES);
+    } else if (title.includes("Red Cards")) {
+      addOptionsToSelect(select, RED_CARD_CANDIDATES);
     } else if (title.includes("Yellow Cards")) {
       addOptionsToSelect(select, YELLOW_CANDIDATES);
     }
@@ -1391,8 +1397,11 @@ if (aiModal) {
   });
 }
 
-const getScoutPredictions = function(scoutKey, category) {
+const getScoutRecommendations = function(scoutKey, category) {
   const scout = scoutData[scoutKey];
+  const advice = scout.advice[category] || [];
+  if (!advice.length) return [];
+
   const categoryKey = {
     winner: 'titleThreat',
     facup: 'cupPotential',
@@ -1484,12 +1493,6 @@ const getScoutPredictions = function(scoutKey, category) {
     }
   };
 
-  const toneList = {
-    striker: ['clinical', 'steady', 'disciplined', 'measured', 'pragmatic'],
-    scout: ['tactical', 'structured', 'shape-based', 'adaptive', 'systemic'],
-    analyst: ['volatile', 'outlier', 'value-driven', 'swing', 'high-upside']
-  }[scoutKey] || ['balanced'];
-
   const categoryLabels = {
     winner: 'title threat',
     facup: 'cup contender',
@@ -1503,70 +1506,89 @@ const getScoutPredictions = function(scoutKey, category) {
     yellows: 'booking risk'
   };
 
-  const supportPhrases = {
-    striker: {
-      winner: ['their balance and depth make them a safer title bet', 'their consistency gives them a strong long-season profile', 'their quality is reliable even when the fixtures stack up'],
-      facup: ['their squad depth suits knockout football', 'their rotation options make cup football easier to manage', 'their bench strength helps them survive congestion'],
-      scorer: ['their attacking role gives them a dependable route to goals', 'their finishing profile points to reliable output', 'their movement and service should generate consistent chances'],
-      assists: ['their chance creation keeps them involved in a lot of attacks', 'their off-the-ball movement should create regular service', 'their playmaking profile is strong enough to drive chances'],
-      cleansheets: ['their defensive shape is difficult to break down', 'their back line and keeper look well organized', 'their structure limits the quality of opposition chances'],
-      hattrick: ['their attacking role gives them a high ceiling in a big game', 'their finishing quality makes a one-off explosion realistic', 'their side should create enough space for a burst of goals'],
-      sacked: ['the pressure points are already visible and the margin for error is small', 'the current setup is giving off signs of strain', 'their form has not yet looked convincing enough to settle the nerves'],
-      redcards: ['their defensive role brings real discipline risk', 'their aggressive habits can turn a good game into a costly one', 'their style naturally creates more foul pressure'],
-      relegated: ['the balance looks too fragile to survive a long run of tight games', 'they do not look robust enough to weather pressure', 'their structure is exposed when results start turning'],
-      yellows: ['their defensive positioning leaves them exposed to cards', 'their midfield role means they are often in the middle of the chaos', 'their style naturally creates more booking opportunities']
-    },
-    scout: {
-      winner: ['their structure and balance make them a proper title threat', 'their tactical identity gives them a solid platform for a long campaign', 'their shape and game-plan look sustainable over time'],
-      facup: ['their tactical flexibility is ideal for cup football', 'their shape can change without losing control', 'their game plan adapts well to knockout pressure'],
-      scorer: ['their role in the system gives them a clear route to goals', 'their positioning and timing should keep them in the right places', 'their tactical role suits a regular goal threat'],
-      assists: ['their role in possession should keep them feeding the attack', 'their positioning gives them plenty of final-third passes', 'their system naturally creates chances for them to supply'],
-      cleansheets: ['their defensive structure is well drilled', 'their press and shape limit the quality of opposition chances', 'their back line looks compact and difficult to break'],
-      hattrick: ['their role gives them real upside in a high-scoring match', 'their movement patterns create space for a big individual haul', 'their tactical freedom should produce a burst of output'],
-      sacked: ['their tactical identity is currently looking too rigid', 'their setup does not yet look robust enough under pressure', 'their style is leaving too little room for error'],
-      redcards: ['their role in transition creates clear disciplinary risk', 'their aggressive positioning can produce cheap fouls', 'their system involves repeated defensive duels'],
-      relegated: ['their tactical balance looks too thin for a survival fight', 'their structure can be exposed when the pressure rises', 'they look vulnerable when games become tight and reactive'],
-      yellows: ['their defensive role places them in the middle of the foul pattern', 'their tactical style naturally produces more card-risk moments', 'their role in the team creates repeated booking opportunities']
-    },
-    analyst: {
-      winner: ['their ceiling is high enough to still look like a real outlier', 'their upside makes them a fascinating title candidate', 'their peak performance level is strong enough to swing the season'],
-      facup: ['their swing potential makes them dangerous in knockout football', 'their squad can produce a big cup run if the pattern clicks', 'their upside makes them more dangerous than their baseline suggests'],
-      scorer: ['their ceiling is high enough to deliver a big scoring season', 'their role could produce a breakout goal haul', 'their output can spike quickly when the chemistry clicks'],
-      assists: ['their creative upside is good enough to make them a real difference-maker', 'their chance creation can explode if the pattern turns', 'their role is volatile but capable of huge weeks'],
-      cleansheets: ['their defensive ceiling is strong enough to produce surprise shutouts', 'their structure can turn a match on its head with clean-sheet runs', 'their upside is there even if the base is not perfectly stable'],
-      hattrick: ['their ceiling is high enough to produce a huge match-winning burst', 'their explosive profile makes a big game very possible', 'their upside can turn one match into a monster game'],
-      sacked: ['their pressure profile is rising and the risk is becoming very real', 'their current balance is too unstable to ignore', 'the underlying numbers are now pointing toward a difficult spell'],
-      redcards: ['their disciplinary volatility is high enough to make this a very real risk', 'their style can quickly become expensive in a tight match', 'their role leaves them exposed to card-heavy games'],
-      relegated: ['their margin for error is so small that a slide becomes plausible', 'their profile has enough fragility to threaten a drop-zone run', 'their upside is not enough to offset the underlying risk'],
-      yellows: ['their card risk is uncomfortable enough to be worth watching', 'their aggressive role could easily turn week to week', 'their style leaves them exposed to bookings when the game gets physical']
-    }
-  };
+  const teamBased = ['winner', 'facup', 'relegated'].includes(category);
 
-  const ranked = PL_CLUBS.map((club) => {
-    const profile = clubProfiles[club];
-    const baseScore = Number(profile[categoryKey] || 0);
-    const personalityMultiplier = personalityWeights[scoutKey][categoryKey] || 1;
-    const bias = riskBias[scoutKey][categoryKey] || 0;
-    const adjustedScore = Math.max(0.02, baseScore * personalityMultiplier + bias);
-    return { club, score: adjustedScore };
-  }).sort((a, b) => b.score - a.score);
+  if (teamBased) {
+    const ranked = PL_CLUBS.map((club) => {
+      const profile = clubProfiles[club];
+      const baseScore = Number(profile[categoryKey] || 0);
+      const personalityMultiplier = personalityWeights[scoutKey][categoryKey] || 1;
+      const bias = riskBias[scoutKey][categoryKey] || 0;
+      const adjustedScore = Math.max(0.02, baseScore * personalityMultiplier + bias);
+      return { club, score: adjustedScore };
+    }).sort((a, b) => b.score - a.score);
+
+    const pickCount = category === 'relegated' ? 3 : 1;
+    const picks = [];
+    const seen = new Set();
+
+    for (let i = 0; i < pickCount; i++) {
+      const nextPick = ranked.find((entry) => !seen.has(entry.club));
+      if (!nextPick) break;
+      seen.add(nextPick.club);
+      const reason = advice.find((entry) => entry.pick === nextPick.club)?.reasoning || `${scout.name} is backing ${nextPick.club} because it fits the current risk profile.`;
+      picks.push({ pick: nextPick.club, reasoning: reason });
+    }
+
+    return picks;
+  }
 
   const picks = [];
-  const seen = new Set();
-  const vibe = supportPhrases[scoutKey][category] || supportPhrases[scoutKey].winner;
+  const orderedAdvice = advice.slice().sort((a, b) => {
+    const scoreA = Number(a.score || 0);
+    const scoreB = Number(b.score || 0);
+    return scoreB - scoreA;
+  });
 
-  for (let i = 0; i < 5; i++) {
-    const nextPick = ranked.find((entry) => !seen.has(entry.club));
-    if (!nextPick) break;
-    seen.add(nextPick.club);
-    picks.push({
-      pick: nextPick.club,
-      reasoning: `${scout.name} sees ${nextPick.club} as a ${toneList[i % toneList.length]} ${categoryLabels[category] || 'title threat'} because ${vibe[i % vibe.length]}.`
-    });
-  }
+  const pickCount = category === 'relegated' ? 3 : 1;
+  orderedAdvice.slice(0, pickCount).forEach((entry, index) => {
+    const reason = entry.reasoning || `${scout.name} likes ${entry.pick} because it fits the ${categoryLabels[category] || 'season'} profile.`;
+    picks.push({ pick: entry.pick, reasoning: reason });
+  });
 
   return picks;
 };
+
+function getCategoryConfig(category) {
+  return {
+    winner: { title: 'Premier League Winner', inputType: 'team' },
+    facup: { title: 'FA Cup Winner', inputType: 'team' },
+    scorer: { title: 'Top Scorer', inputType: 'player' },
+    assists: { title: 'Top Assists', inputType: 'player' },
+    cleansheets: { title: 'Most Clean Sheets', inputType: 'player' },
+    hattrick: { title: 'First Hat-Trick', inputType: 'player' },
+    sacked: { title: 'First Manager Sacked', inputType: 'person' },
+    redcards: { title: 'Most Red Cards', inputType: 'player' },
+    relegated: { title: 'Bottom 3 Finishers (Relegation)', inputType: 'team' },
+    yellows: { title: 'Most Yellow Cards', inputType: 'player' }
+  }[category] || { title: 'Season Pick', inputType: 'team' };
+}
+
+function getCategorySelects(category) {
+  const config = getCategoryConfig(category);
+  const cards = Array.from(document.querySelectorAll('.card'));
+  const targetCard = cards.find((card) => card.querySelector('h3')?.innerText.trim() === config.title);
+  return targetCard ? Array.from(targetCard.querySelectorAll('select')) : [];
+}
+
+function applyScoutRecommendation(category, picks) {
+  const selects = getCategorySelects(category);
+  if (!selects.length) return;
+
+  if (category === 'relegated') {
+    picks.forEach((item, index) => {
+      if (selects[index]) {
+        selects[index].value = item.pick;
+        updateCardStatus(selects[index]);
+      }
+    });
+  } else if (picks[0]) {
+    selects[0].value = picks[0].pick;
+    updateCardStatus(selects[0]);
+  }
+
+  refreshRelegated();
+}
 
 window.showAiScout = function(scoutKey, category) {
   currentScoutKey = scoutKey;
@@ -1581,7 +1603,7 @@ window.showAiScout = function(scoutKey, category) {
   
   aiPage = 0;
   modal.style.display = 'flex';
-  title.innerText = `⚠️ Scout Warning`;
+  title.innerText = `🤖 ${scout.name} Scout Report`;
   content.innerText = `${scout.name} is ready to analyze.\n\nRisk Profile: ${scout.risk}\n\n"${scout.blurb}"`;
   stats.innerHTML = "";
   actionBtn.innerText = "View Recommendation";
@@ -1590,30 +1612,35 @@ window.showAiScout = function(scoutKey, category) {
 
 window.loadAiReport = function() {
   const scout = scoutData[currentScoutKey];
-  const predictions = getScoutPredictions(currentScoutKey, currentCategory);
+  const config = getCategoryConfig(currentCategory);
+  const predictions = getScoutRecommendations(currentScoutKey, currentCategory);
   const content = document.getElementById('aiContent');
   const stats = document.getElementById('aiStats');
   const actionBtn = document.getElementById('aiActionBtn');
   const title = document.getElementById('aiModal').querySelector('h2');
 
   aiPage = 1;
-  title.innerText = `🤖 ${scout.name} - Top Picks`;
-  content.innerText = `${scout.flavor} Analysis for ${currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1)}:`;
+  title.innerText = `🤖 ${scout.name} - ${config.title}`;
+  content.innerText = `${scout.flavor} analysis for ${config.title}:`;
   
   let pickHtml = '<div style="text-align: left; padding: 10px 0;">';
   predictions.forEach((pred, idx) => {
+    const label = currentCategory === 'relegated' ? `Relegation pick ${idx + 1}` : 'Primary pick';
     pickHtml += `
       <div style="padding: 12px; margin: 8px 0; background: rgba(199,255,56,0.08); border-left: 3px solid #c7ff38; border-radius: 6px;">
-        <div style="color: #c7ff38; font-weight: bold; margin-bottom: 4px;">#${idx + 1} - ${pred.pick}</div>
-        <div style="font-size: 12px; color: #cbd5e1; font-style: italic;">"${pred.reasoning}"</div>
+        <div style="color: #c7ff38; font-weight: bold; margin-bottom: 4px;">${label} - ${pred.pick}</div>
+        <div style="font-size: 12px; color: #cbd5e1; line-height: 1.5;">${pred.reasoning}</div>
       </div>
     `;
   });
   pickHtml += '</div>';
   
   stats.innerHTML = pickHtml;
-  actionBtn.innerText = "Close";
-  actionBtn.onclick = () => closeAiModal();
+  actionBtn.innerText = currentCategory === 'relegated' ? 'Apply all three picks' : 'Apply this pick';
+  actionBtn.onclick = () => {
+    applyScoutRecommendation(currentCategory, predictions);
+    closeAiModal();
+  };
 }
 
 window.nextAiPage = function() {
