@@ -111,24 +111,35 @@ nav a.active {
 }
 .quick-actions {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0,1fr));
-  gap: 10px;
-  margin-bottom: 14px;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.section-label {
+  margin: 18px 0 10px;
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 800;
 }
 .quick-actions a {
   text-decoration: none;
   color: #f8fafc;
   font-weight: 800;
-  text-align: left;
-  padding: 10px;
-  border-radius: 12px;
+  text-align: center;
+  padding: 14px 12px;
+  border-radius: 16px;
   background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
   border: 1px solid rgba(255,255,255,0.15);
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.2;
   display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  min-height: 92px;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 .quick-actions a:hover {
@@ -137,9 +148,9 @@ nav a.active {
   box-shadow: 0 10px 18px rgba(0,0,0,0.28);
 }
 .quick-actions .icon {
-  width: 24px;
-  height: 24px;
-  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -273,7 +284,6 @@ canvas { width: 100%; height: 100%; }
 @media (max-width: 980px) {
   .kpi { grid-column: span 6; }
   .trend, .mix { grid-column: span 12; }
-  .quick-actions { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .insight-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 768px) {
@@ -304,18 +314,20 @@ canvas { width: 100%; height: 100%; }
     left: auto !important;
     right: auto !important;
     transform: none !important;
-    gap: 6px;
+    gap: 8px;
+    margin-bottom: 16px;
   }
   .quick-actions a {
-    padding: 8px 4px;
-    font-size: 10px;
-    border-radius: 8px;
-    gap: 5px;
+    min-height: 84px;
+    padding: 12px 8px;
+    font-size: 11px;
+    border-radius: 14px;
+    gap: 6px;
   }
   .quick-actions .icon {
-    width: 20px;
-    height: 20px;
-    font-size: 10px;
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
   }
   .kpi { grid-column: span 12; }
 }
@@ -334,19 +346,20 @@ canvas { width: 100%; height: 100%; }
 </header>
 
 <div class="container">
-  <div class="quick-actions">
-    <a href="myxi.html"><span class="icon">XI</span> Update Team</a>
-    <a href="season.html"><span class="icon">SP</span> Season Picks</a>
-    <a href="league.html"><span class="icon">LG</span> League Table</a>
-    <a href="rules.html"><span class="icon">RL</span> Rules</a>
-  </div>
-
   <div class="hero">
     <div>
       <h1>Performance Dashboard</h1>
       <p>Track your trend, rank momentum, and prediction mix in one place.</p>
     </div>
     <div id="deadlineChip" class="deadline-chip">Loading deadline...</div>
+  </div>
+
+  <div class="section-label">Quick actions</div>
+  <div class="quick-actions">
+    <a href="myxi.html"><span class="icon">XI</span> Update Team</a>
+    <a href="season.html"><span class="icon">SP</span> Season Picks</a>
+    <a href="league.html"><span class="icon">LG</span> League Table</a>
+    <a href="rules.html"><span class="icon">RL</span> Rules</a>
   </div>
 
   <div class="grid">
@@ -678,12 +691,20 @@ onAuthStateChanged(auth, async (user) => {
 
   try {
     await loadDashboard(user);
-  } catch (error) {
-    console.error(error);
-    document.getElementById('trendStatus').innerText = 'Unable to load dashboard data.';
-    document.getElementById('mixStatus').innerText = 'Please refresh and try again.';
-  }
-});
+    position: static !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+    transform: none !important;
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap: 8px;
+    margin: 12px 0 16px;
 </script>
 </body>
-</html>
+    min-height: 52px;
+    justify-content: center;
+    text-align: center;
+    padding: 10px 8px;
+    font-size: 11px;
+    border-radius: 12px;
+    gap: 6px;

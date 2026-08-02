@@ -113,15 +113,16 @@
 
     .quick-start-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
-      margin: 24px 0 12px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin: 24px 0 18px;
     }
     .quick-start-card {
-      background: rgba(255, 255, 255, 0.04);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03));
       border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 16px;
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 10px 22px rgba(0,0,0,0.18);
     }
     .quick-start-card strong {
       display: block;
@@ -136,6 +137,58 @@
       font-size: 14px;
       line-height: 1.55;
       color: #cbd5e1;
+    }
+
+    .rule-section {
+      margin: 18px 0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.03);
+      overflow: hidden;
+    }
+    .rule-section summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 16px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.2s ease;
+    }
+    .rule-section summary::-webkit-details-marker { display: none; }
+    .rule-section summary:hover { background: rgba(255, 255, 255, 0.03); }
+    .rule-section summary strong {
+      font-size: 18px;
+      color: #c7ff38;
+      font-weight: 800;
+    }
+    .rule-section summary span {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #f8fafc;
+      font-weight: 800;
+    }
+    .rule-section summary small {
+      color: #9ca3af;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .rule-section-body {
+      padding: 0 18px 18px;
+    }
+    .rule-section-body h3 {
+      margin-top: 20px;
+    }
+    .rule-section[open] summary {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .rule-section[open] summary strong::after {
+      content: "•";
+      margin-left: 10px;
+      color: #9ca3af;
     }
 
     .rules-table {
@@ -217,6 +270,9 @@
       nav { /* Hide the entire header navigation on mobile */
         display: none;
       }
+      .quick-start-grid {
+        grid-template-columns: 1fr;
+      }
       .mobile-nav {
         display: flex;
         justify-content: space-around;
@@ -291,119 +347,168 @@
     <strong>No Real Money:</strong> This is a virtual points game for fun. The Bet Builder uses in-game points only and does not involve real-world gambling or cash prizes.
   </div>
 
-  <h2>1. Building Your XI</h2>
-  <ul>
-    <li><strong>One player per club:</strong> You must pick 11 players from 11 different clubs.</li>
-    <li><strong>Goalkeeper rule:</strong> Goalkeeper picks are made at club level, so your keeper selection counts as that club’s entry for the week.</li>
-    <li><strong>No budget:</strong> There is no transfer market or price tag. You can pick any player you like, but that usually means sacrificing another player from the same club.</li>
-    <li><strong>Formations:</strong> You can switch between standard shapes before the deadline, with 4-4-2 as the default starting point.</li>
-    <li><strong>Team name:</strong> Once you save a team name, it is kept for that manager and remains part of your profile.</li>
-  </ul>
+  <details class="rule-section" open>
+    <summary>
+      <span><strong>1.</strong> Building Your XI</span>
+      <small>One player per club, flexible formations, no budget.</small>
+    </summary>
+    <div class="rule-section-body">
+      <ul>
+        <li><strong>One player per club:</strong> You must pick 11 players from 11 different clubs.</li>
+        <li><strong>Goalkeeper rule:</strong> Goalkeeper picks are made at club level, so your keeper selection counts as that club’s entry for the week.</li>
+        <li><strong>No budget:</strong> There is no transfer market or price tag. You can pick any player you like, but that usually means sacrificing another player from the same club.</li>
+        <li><strong>Formations:</strong> You can switch between standard shapes before the deadline, with 4-4-2 as the default starting point.</li>
+        <li><strong>Team name:</strong> Once you save a team name, it is kept for that manager and remains part of your profile.</li>
+      </ul>
+    </div>
+  </details>
 
-  <h2>2. Weekly Picks & The Bet Builder</h2>
-  <p>Every gameweek has three ways to score points: your selected XI, your weekly picks, and your Bet Builder prediction.</p>
+  <details class="rule-section" open>
+    <summary>
+      <span><strong>2.</strong> Weekly Picks & The Bet Builder</span>
+      <small>Two picks plus a risk/reward market each gameweek.</small>
+    </summary>
+    <div class="rule-section-body">
+      <p>Every gameweek has three ways to score points: your selected XI, your weekly picks, and your Bet Builder prediction.</p>
 
-  <h3>Weekly Picks</h3>
-  <ul>
-    <li><strong>Club to score first:</strong> Pick the club you think will open the scoring. <span class="point-tag">10 PTS</span></li>
-    <li><strong>Minute of first goal:</strong> Predict the minute the first goal of the weekend will arrive. Minutes 1-90 are selectable; 90+ is grouped as <strong>Other</strong>. <span class="point-tag">40 PTS</span></li>
-  </ul>
+      <h3>Weekly Picks</h3>
+      <ul>
+        <li><strong>Club to score first:</strong> Pick the club you think will open the scoring. <span class="point-tag">10 PTS</span></li>
+        <li><strong>Minute of first goal:</strong> Predict the minute the first goal of the weekend will arrive. Minutes 1-90 are selectable; 90+ is grouped as <strong>Other</strong>. <span class="point-tag">40 PTS</span></li>
+      </ul>
 
-  <h3>The Bet Builder</h3>
-  <p>The Bet Builder is a weekly risk/reward call. The admin sets the odds for the market each week, and the current live UI shows them as an odds value such as 16/1 or 30/1.</p>
-  <ul>
-    <li><strong>Stake:</strong> It costs <span class="point-tag">5 PTS</span> to play.</li>
-    <li><strong>YES pick:</strong> If the bet lands, you win <strong>5 × odds</strong> points. If it fails, you lose <strong>30</strong> points.</li>
-    <li><strong>NO pick:</strong> If the bet fails, you win <strong>30</strong> points. If it lands, you lose <strong>5 × odds</strong> points.</li>
-  </ul>
+      <h3>The Bet Builder</h3>
+      <p>The Bet Builder is a weekly risk/reward call. The admin sets the odds for the market each week, and the current live UI shows them as an odds value such as 16/1 or 30/1.</p>
+      <ul>
+        <li><strong>Stake:</strong> It costs <span class="point-tag">5 PTS</span> to play.</li>
+        <li><strong>YES pick:</strong> If the bet lands, you win <strong>5 × odds</strong> points. If it fails, you lose <strong>30</strong> points.</li>
+        <li><strong>NO pick:</strong> If the bet fails, you win <strong>30</strong> points. If it lands, you lose <strong>5 × odds</strong> points.</li>
+      </ul>
 
-  <div style="overflow-x: auto;">
-    <table class="rules-table">
-      <thead>
-        <tr>
-          <th>Outcome</th>
-          <th>YES Choice</th>
-          <th>NO Choice</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Bet Lands</strong></td>
-          <td class="win">+5 × odds</td>
-          <td class="loss">-5 × odds</td>
-        </tr>
-        <tr>
-          <td><strong>Bet Fails</strong></td>
-          <td class="loss">-30</td>
-          <td class="win">+30</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+      <div style="overflow-x: auto;">
+        <table class="rules-table">
+          <thead>
+            <tr>
+              <th>Outcome</th>
+              <th>YES Choice</th>
+              <th>NO Choice</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Bet Lands</strong></td>
+              <td class="win">+5 × odds</td>
+              <td class="loss">-5 × odds</td>
+            </tr>
+            <tr>
+              <td><strong>Bet Fails</strong></td>
+              <td class="loss">-30</td>
+              <td class="win">+30</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </details>
 
-  <h2>3. Weekly Scoring</h2>
-  <p>Your selected XI earns points from real-life match events. The current scoring values are:</p>
+  <details class="rule-section">
+    <summary>
+      <span><strong>3.</strong> Weekly Scoring</span>
+      <small>How each position earns points from live match events.</small>
+    </summary>
+    <div class="rule-section-body">
+      <p>Your selected XI earns points from real-life match events. The current scoring values are:</p>
 
-  <div style="overflow-x: auto;">
-    <table class="rules-table">
-      <thead>
-        <tr>
-          <th>Position</th>
-          <th>Scoring</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Goalkeepers</strong></td>
-          <td>Appearance 1 • Clean Sheet 5 • Penalty Save 5 • Goal 20 • Assist 10 • Yellow -2 • Red -6</td>
-        </tr>
-        <tr>
-          <td><strong>Defenders</strong></td>
-          <td>Appearance 1 • Clean Sheet 5 • Goal 6 • Assist 6 • Yellow -1 • Red -5</td>
-        </tr>
-        <tr>
-          <td><strong>Midfielders</strong></td>
-          <td>Appearance 1 • Clean Sheet 2 • Goal 5 • Assist 5 • Yellow -1 • Red -5</td>
-        </tr>
-        <tr>
-          <td><strong>Strikers</strong></td>
-          <td>Appearance 1 • Goal 4 • Assist 5 • Yellow -1 • Red -5</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+      <div style="overflow-x: auto;">
+        <table class="rules-table">
+          <thead>
+            <tr>
+              <th>Position</th>
+              <th>Scoring</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Goalkeepers</strong></td>
+              <td>Appearance 1 • Clean Sheet 5 • Penalty Save 5 • Goal 20 • Assist 10 • Yellow -2 • Red -6</td>
+            </tr>
+            <tr>
+              <td><strong>Defenders</strong></td>
+              <td>Appearance 1 • Clean Sheet 5 • Goal 6 • Assist 6 • Yellow -1 • Red -5</td>
+            </tr>
+            <tr>
+              <td><strong>Midfielders</strong></td>
+              <td>Appearance 1 • Clean Sheet 2 • Goal 5 • Assist 5 • Yellow -1 • Red -5</td>
+            </tr>
+            <tr>
+              <td><strong>Strikers</strong></td>
+              <td>Appearance 1 • Goal 4 • Assist 5 • Yellow -1 • Red -5</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-  <p><em>Clean sheets are a big differentiator, but the scoring is still designed to reward participation and attacking output rather than only defensive clean sheets.</em></p>
+      <p><em>Clean sheets are a big differentiator, but the scoring is still designed to reward participation and attacking output rather than only defensive clean sheets.</em></p>
+    </div>
+  </details>
 
-  <h2>4. Season Picks</h2>
-  <p>Season picks are long-term calls that are submitted once and then scored at the end of the campaign.</p>
-  <ul>
-    <li>Premier League Winner <span class="point-tag">25 PTS</span></li>
-    <li>FA Cup Winner <span class="point-tag">50 PTS</span></li>
-    <li>Top Scorer <span class="point-tag">25 PTS</span></li>
-    <li>Top Assists <span class="point-tag">50 PTS</span></li>
-    <li>Most Clean Sheets <span class="point-tag">50 PTS</span></li>
-    <li>First Hat-Trick <span class="point-tag">50 PTS</span></li>
-    <li>First Manager Sacked <span class="point-tag">50 PTS</span></li>
-    <li>Most Yellow Cards <span class="point-tag">50 PTS</span></li>
-    <li>Most Red Cards <span class="point-tag">75 PTS</span></li>
-    <li>Bottom 3 Finishers (Relegation) <span class="point-tag">40 PTS</span> each correct team</li>
-  </ul>
+  <details class="rule-section">
+    <summary>
+      <span><strong>4.</strong> Season Picks</span>
+      <small>Long-term predictions scored at the end of the campaign.</small>
+    </summary>
+    <div class="rule-section-body">
+      <p>Season picks are long-term calls that are submitted once and then scored at the end of the campaign.</p>
+      <ul>
+        <li>Premier League Winner <span class="point-tag">25 PTS</span></li>
+        <li>FA Cup Winner <span class="point-tag">50 PTS</span></li>
+        <li>Top Scorer <span class="point-tag">25 PTS</span></li>
+        <li>Top Assists <span class="point-tag">50 PTS</span></li>
+        <li>Most Clean Sheets <span class="point-tag">50 PTS</span></li>
+        <li>First Hat-Trick <span class="point-tag">50 PTS</span></li>
+        <li>First Manager Sacked <span class="point-tag">50 PTS</span></li>
+        <li>Most Yellow Cards <span class="point-tag">50 PTS</span></li>
+        <li>Most Red Cards <span class="point-tag">75 PTS</span></li>
+        <li>Bottom 3 Finishers (Relegation) <span class="point-tag">40 PTS</span> each correct team</li>
+      </ul>
+    </div>
+  </details>
 
-  <h2>5. League Position & Deadlines</h2>
-  <p>The leaderboard is built from your total points across the season. A gameweek is processed once the admin publishes the scores, and the game then reopens for the next cycle.</p>
-  <ul>
-    <li><strong>Locking:</strong> The gameweek locks automatically two hours before the first kickoff of the fixture list.</li>
-    <li><strong>Editing:</strong> You can still adjust your XI, weekly picks, and Bet Builder before the lock.</li>
-    <li><strong>After scoring:</strong> Once results are published, the game reopens for the next week.</li>
-    <li><strong>Season picks:</strong> These are treated as long-term predictions and are not changed on a weekly basis.</li>
-  </ul>
+  <details class="rule-section">
+    <summary>
+      <span><strong>5.</strong> League Position & Deadlines</span>
+      <small>How the leaderboard updates and when the game locks.</small>
+    </summary>
+    <div class="rule-section-body">
+      <p>The leaderboard is built from your total points across the season. A gameweek is processed once the admin publishes the scores, and the game then reopens for the next cycle.</p>
+      <ul>
+        <li><strong>Locking:</strong> The gameweek locks automatically two hours before the first kickoff of the fixture list.</li>
+        <li><strong>Editing:</strong> You can still adjust your XI, weekly picks, and Bet Builder before the lock.</li>
+        <li><strong>After scoring:</strong> Once results are published, the game reopens for the next week.</li>
+        <li><strong>Season picks:</strong> These are treated as long-term predictions and are not changed on a weekly basis.</li>
+      </ul>
+    </div>
+  </details>
 
-  <h2>6. AI Scout Integration</h2>
-  <p>The AI Scout opinions are there to spark debate and give you a second lens on your picks. They are useful for context, but they are still just opinions and should be weighed alongside your own judgment.</p>
+  <details class="rule-section">
+    <summary>
+      <span><strong>6.</strong> AI Scout Integration</span>
+      <small>Helpful context, not a substitute for your own judgment.</small>
+    </summary>
+    <div class="rule-section-body">
+      <p>The AI Scout opinions are there to spark debate and give you a second lens on your picks. They are useful for context, but they are still just opinions and should be weighed alongside your own judgment.</p>
+    </div>
+  </details>
 
-  <h2>7. Fair Play</h2>
-  <p>Integrity matters. Any attempt to exploit system bugs, create duplicate accounts, or game the scoring flow will result in removal from the league.</p>
+  <details class="rule-section">
+    <summary>
+      <span><strong>7.</strong> Fair Play</span>
+      <small>Keep the league clean and the scoring flow honest.</small>
+    </summary>
+    <div class="rule-section-body">
+      <p>Integrity matters. Any attempt to exploit system bugs, create duplicate accounts, or game the scoring flow will result in removal from the league.</p>
+    </div>
+  </details>
 </div>
 
 <div class="mobile-nav">
