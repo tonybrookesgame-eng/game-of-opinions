@@ -645,8 +645,7 @@ h1 {
         <button class="league-action-btn" onclick="openLeagueModal('create')">Create a league</button>
         <button class="league-action-btn" onclick="openLeagueModal('join')">Join a league</button>
         <button class="league-action-btn" onclick="openLeagueModal('view')">View a league</button>
-        <button class="league-action-btn" onclick="openLeagueModal('share')">Share League Central</button>
-        <button class="league-action-btn" id="sync-global-btn" onclick="syncGlobalLeagueNow()">Sync Global League</button>
+        <button class="league-action-btn" id="share-league-btn" onclick="openLeagueModal('share')">Share League Code</button>
       </div>
     </div>
   </div>
@@ -749,6 +748,15 @@ const auth = getAuth(app);
 let activeLeagueCode = "";
 let activeLeagueName = "";
 
+function updateLeagueActionButtons() {
+  const shareBtn = document.getElementById("share-league-btn");
+  if (!shareBtn) return;
+
+  const isPrivateLeague = !!activeLeagueCode;
+  shareBtn.style.display = isPrivateLeague ? "inline-flex" : "none";
+  shareBtn.disabled = !isPrivateLeague;
+}
+
 function showLeagueStatus(title, message, code, leagueName = "") {
   const panel = document.getElementById("league-status");
   const titleEl = document.getElementById("league-status-title");
@@ -762,6 +770,7 @@ function showLeagueStatus(title, message, code, leagueName = "") {
 
   activeLeagueCode = code || "";
   activeLeagueName = leagueName || "";
+  updateLeagueActionButtons();
 }
 
 function openLeagueModal(mode) {
@@ -792,6 +801,10 @@ function openLeagueModal(mode) {
     if (viewPanel) viewPanel.style.display = "grid";
     loadLeagueMemberships(auth.currentUser);
   } else if (mode === "share") {
+    if (!activeLeagueCode) {
+      alert("Share League Code is only available for private leagues.");
+      return;
+    }
     if (titleEl) titleEl.innerText = "Share League";
     if (subtitleEl) subtitleEl.innerText = "Copy the code or share it directly.";
     if (sharePanel) sharePanel.style.display = "grid";
@@ -812,6 +825,7 @@ function openShareModal() {
 window.openLeagueModal = openLeagueModal;
 window.closeLeagueModal = closeLeagueModal;
 window.openShareModal = openShareModal;
+updateLeagueActionButtons();
 
 function renderLeaderboardRows(entries, user) {
   const body = document.getElementById("leaderboard-body");
@@ -1068,42 +1082,6 @@ async function ensureGlobalLeagueMembership(user) {
     return false;
   }
 }
-
-window.syncGlobalLeagueNow = async function() {
-  const user = auth.currentUser;
-  if (!user) {
-    alert("Please log in first.");
-    return;
-  }
-
-  const btn = document.getElementById("sync-global-btn");
-  const originalLabel = btn ? btn.innerText : "";
-  if (btn) {
-    btn.disabled = true;
-    btn.innerText = "Syncing...";
-  }
-
-  try {
-    const synced = await ensureGlobalLeagueMembership(user);
-    await loadLeagueMemberships(user);
-    await loadLeaderboard(user, "");
-
-    if (!synced) {
-      alert("Sync could not complete fully. Please check your connection and try again.");
-      return;
-    }
-
-    alert("Global league synced. Your team should now appear in Global League.");
-  } catch (error) {
-    console.error("Global sync failed", error);
-    alert(`Global sync failed. ${error?.message || "Please try again."}`);
-  } finally {
-    if (btn) {
-      btn.disabled = false;
-      btn.innerText = originalLabel || "Sync Global League";
-    }
-  }
-};
 
 window.createLeague = async ()=>{
   if (!auth.currentUser) {
