@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="description" content="Game of Opinions dashboard with trends, league rank, and weekly performance analytics." />
 <meta name="theme-color" content="#020611" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="icon" href="icon-192.svg" type="image/svg+xml" />
 <title>Dashboard - Game of Opinions</title>
 <script src="shared-fixtures.js"></script>
 <style>
@@ -367,6 +369,37 @@ canvas { width: 100%; height: 100%; }
   font-size: 12px;
   line-height: 1.55;
 }
+.install-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 18px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(199,255,56,0.18);
+  background: rgba(199,255,56,0.06);
+}
+.install-banner strong {
+  display: block;
+  color: #c7ff38;
+  font-size: 14px;
+}
+.install-banner p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+.install-banner button {
+  margin-top: 0;
+  padding: 10px 14px;
+  width: auto;
+  white-space: nowrap;
+  background: #c7ff38;
+  color: #041102;
+  font-size: 13px;
+}
 @media (max-width: 980px) {
   .kpi { grid-column: span 6; }
   .trend, .mix { grid-column: span 12; }
@@ -457,6 +490,14 @@ canvas { width: 100%; height: 100%; }
     <a href="season.html"><span class="icon">SP</span> Season Picks</a>
     <a href="league.html"><span class="icon">LG</span> League Table</a>
     <a href="rules.html"><span class="icon">RL</span> Rules</a>
+  </div>
+
+  <div class="install-banner">
+    <div>
+      <strong>Install the app</strong>
+      <p>Add Game of Opinions to your home screen or desktop for a faster, app-like experience.</p>
+    </div>
+    <button id="installDashboardBtn" type="button">Install app</button>
   </div>
 
   <div class="section-label">New week checklist</div>
@@ -562,7 +603,7 @@ canvas { width: 100%; height: 100%; }
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, collection, getDocs, query, orderBy, setDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -577,11 +618,65 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
+let deferredInstallPrompt = null;
+const installDashboardBtn = document.getElementById('installDashboardBtn');
+
+window.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault();
+  deferredInstallPrompt = event;
+  if (installDashboardBtn) installDashboardBtn.disabled = false;
+});
+
+window.addEventListener('appinstalled', () => {
+  deferredInstallPrompt = null;
+  if (installDashboardBtn) {
+    installDashboardBtn.innerText = 'Installed';
+    installDashboardBtn.disabled = true;
+  }
+});
+
+if (installDashboardBtn) {
+  installDashboardBtn.addEventListener('click', async () => {
+    if (!deferredInstallPrompt) {
+      alert('Use your browser install menu if the prompt does not appear yet.');
+      return;
+    }
+
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+  });
+}
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js').catch((error) => {
+      console.warn('Service worker registration failed:', error);
+    });
+  });
+}
+
 window.handleLogout = () => {
   signOut(auth).then(() => {
     window.location.href = "index.html";
   });
 };
+
+async function recordPwaVisit(user) {
+  const sessionKey = `gop-pwa-session-${user.uid}`;
+  if (sessionStorage.getItem(sessionKey) === '1') return;
+  sessionStorage.setItem(sessionKey, '1');
+
+  try {
+    await setDoc(doc(db, 'users', user.uid, 'analytics', 'pwa'), {
+      visits: increment(1),
+      lastSeenAt: new Date().toISOString(),
+      lastPage: 'dashboard'
+    }, { merge: true });
+  } catch (error) {
+    console.warn('PWA usage tracking failed:', error);
+  }
+}
 
 function formatDeadlineChip(settings) {
   const fallbackInfo = typeof window.getGameweekDeadlineInfo === 'function' ? window.getGameweekDeadlineInfo() : null;
@@ -765,6 +860,7 @@ function bindWeeklyChecklist(userId) {
 }
 
 async function loadDashboard(user) {
+  await recordPwaVisit(user);
   formatDeadlineChip(typeof window.getGameweekDeadlineInfo === 'function' ? window.getGameweekDeadlineInfo() : {});
 
   const [settingsSnap, statsSnap, leaderboardSnap, historySnap, lbSnap] = await Promise.all([
@@ -864,7 +960,7 @@ async function loadDashboard(user) {
     document.getElementById('insightPercentileSub').innerText = 'Ranking not available yet.';
   }
 
-    bindWeeklyChecklist(user.uid);
+  bindWeeklyChecklist(user.uid);
 }
 
 onAuthStateChanged(auth, async (user) => {

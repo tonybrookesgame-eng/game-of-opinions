@@ -43,6 +43,10 @@ service cloud.firestore {
       match /history/{doc} {
         allow read, write: if (isSignedIn() && isOwner(uid)) || isAdmin();
       }
+
+      match /analytics/{doc} {
+        allow read, write: if (isSignedIn() && isOwner(uid)) || isAdmin();
+      }
     }
 
     match /leaderboard/{uid} {

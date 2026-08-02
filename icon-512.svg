@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Game of Opinions">
+  <defs>
+    <linearGradient id="bg512" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#071320"/>
+      <stop offset="100%" stop-color="#020611"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg512)"/>
+  <circle cx="256" cy="256" r="176" fill="none" stroke="#c7ff38" stroke-width="28"/>
+  <path d="M120 156h272v52H120z" fill="#c7ff38" opacity="0.95"/>
+  <path d="M120 304h272v52H120z" fill="#c7ff38" opacity="0.18"/>
+  <text x="256" y="286" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="128" font-weight="800" fill="#ffffff">GO</text>
+</svg>
