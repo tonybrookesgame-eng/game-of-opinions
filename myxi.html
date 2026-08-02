@@ -39,6 +39,19 @@ body{
 
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Reduce accidental double-tap zoom on interactive controls. */
+button,
+a,
+.shirt,
+.player-picker-option,
+.tutorial-trigger-btn {
+  touch-action: manipulation;
+}
+
 /* stadium glow layers */
 
 body::before{
@@ -1219,6 +1232,19 @@ MOBILE
 ========================= */
 
 @media(max-width:768px){ /* Consistent with season.html and league.html */
+
+  /* iOS Safari zooms focused controls when font-size is below 16px. */
+  input,
+  select,
+  textarea,
+  .player-picker-search,
+  #teamNameInput,
+  #formationSelect,
+  #gameweekHistorySelect,
+  #firstScorer,
+  #goalMinute {
+    font-size: 16px !important;
+  }
 
   header {
     background: rgba(0,0,0,0.9) !important;
