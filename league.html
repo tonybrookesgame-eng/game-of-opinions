@@ -753,7 +753,7 @@ function updateLeagueActionButtons() {
   if (!shareBtn) return;
 
   const isPrivateLeague = !!activeLeagueCode;
-  shareBtn.style.display = isPrivateLeague ? "inline-flex" : "none";
+  shareBtn.style.display = isPrivateLeague ? "" : "none";
   shareBtn.disabled = !isPrivateLeague;
 }
 
