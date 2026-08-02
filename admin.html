@@ -33,6 +33,36 @@
       70% { box-shadow: 0 0 0 15px rgba(220, 38, 38, 0); }
       100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
     }
+    .simple-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 10px 0 20px;
+      padding: 12px;
+      border: 1px solid rgba(199,255,56,0.4);
+      border-radius: 10px;
+      background: rgba(199,255,56,0.08);
+    }
+    .simple-toolbar p {
+      margin: 0;
+      color: #d9f99d;
+      font-size: 13px;
+    }
+    .simple-toolbar button {
+      margin-top: 0;
+      width: auto;
+      padding: 8px 16px;
+      background: #0ea5e9;
+      color: #021018;
+      font-size: 13px;
+    }
+    .quick-status {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #93c5fd;
+    }
   </style>
 </head>
 <body>
@@ -44,6 +74,11 @@
 
   <div id="admin-content" class="admin-card">
     <h1>Gameweek Admin</h1>
+    <div class="simple-toolbar">
+      <p>Simple mode is ON. Deadline controls and core actions are shown first.</p>
+      <button id="toggle-simple-mode" type="button">Show Advanced Sections</button>
+    </div>
+    <div id="quick-status" class="quick-status"></div>
 
     <div class="admin-section" style="background: rgba(199,255,56,0.05); border: 1px solid #c7ff38; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
       <p style="margin-top: 0; font-weight: bold; color: #c7ff38;">Gameweek Status</p>
@@ -205,6 +240,66 @@
       p.style.background = isError ? 'rgba(128,0,0,0.9)' : 'rgba(0,0,0,0.85)';
       p.innerText = (isError ? 'ADMIN ERROR: ' : 'ADMIN: ') + msg;
       console.log(p.innerText);
+    }
+
+    let simpleModeEnabled = true;
+    let advancedViewInitialized = false;
+
+    function getAdvancedSections() {
+      const selectors = [
+        '#player-inputs',
+        '#bet-result',
+        '#winning-club',
+        '#res-winner',
+        '#admin-user-uid',
+        '#history-list'
+      ];
+      const sections = selectors
+        .map(selector => document.querySelector(selector))
+        .filter(Boolean)
+        .map(el => el.closest('.admin-section'))
+        .filter(Boolean);
+      return [...new Set(sections)];
+    }
+
+    function updateSimpleModeUI() {
+      const advancedSections = getAdvancedSections();
+      advancedSections.forEach(section => {
+        section.style.display = simpleModeEnabled ? 'none' : '';
+      });
+
+      if (!simpleModeEnabled && !advancedViewInitialized) {
+        initializeAdvancedView();
+      }
+
+      const toggleBtn = document.getElementById('toggle-simple-mode');
+      const status = document.getElementById('quick-status');
+      if (toggleBtn) {
+        toggleBtn.innerText = simpleModeEnabled ? 'Show Advanced Sections' : 'Hide Advanced Sections';
+      }
+      if (status) {
+        status.innerText = simpleModeEnabled
+          ? 'Simple mode active: deadline sync and core processing actions are prioritized.'
+          : 'Advanced mode active: full admin controls are visible.';
+      }
+    }
+
+    function wireSimpleModeToggle() {
+      const toggleBtn = document.getElementById('toggle-simple-mode');
+      if (!toggleBtn || toggleBtn.dataset.wired === '1') return;
+      toggleBtn.dataset.wired = '1';
+      toggleBtn.addEventListener('click', () => {
+        simpleModeEnabled = !simpleModeEnabled;
+        updateSimpleModeUI();
+      });
+      updateSimpleModeUI();
+    }
+
+    function initializeAdvancedView() {
+      if (advancedViewInitialized) return;
+      advancedViewInitialized = true;
+      syncPoolsFromMyxi();
+      loadHistory();
     }
 
     const clubAbbr = {
@@ -459,8 +554,6 @@
     renderPlayerInputs();
     setSeasonResultOptions();
 
-    syncPoolsFromMyxi();
-
     // SECURITY
     const ADMIN_EMAIL = "tonybrookes.game@gmail.com"; 
 
@@ -471,8 +564,8 @@
         if (userEmail === ADMIN_EMAIL.toLowerCase().trim()) {
           status.style.display = 'none';
           document.getElementById('admin-content').style.display = 'block';
-          loadHistory();
           loadCurrentSettings();
+          wireSimpleModeToggle();
         } else {
           status.innerHTML = `<h2 style="color: #f87171;">Access Denied</h2>
             <p>You are logged in as: <strong>${user.email}</strong></p>
@@ -497,8 +590,14 @@
     }
 
     async function loadCurrentSettings() {
-      const snap = await getDoc(doc(db, "settings", "gameweek"));
-      if (snap.exists()) {
+      try {
+        const snap = await getDoc(doc(db, "settings", "gameweek"));
+        if (!snap.exists()) {
+          document.getElementById('current-status').innerText = 'OPEN';
+          document.getElementById('current-deadline').innerText = 'Not set';
+          return;
+        }
+
         const data = snap.data();
         let deadlineText = 'Not set';
         let statusText = 'OPEN';
@@ -506,7 +605,7 @@
         const deadlineDate = data.deadline ? new Date(data.deadline) : null;
         const reopenDate = data.reopenTime ? new Date(data.reopenTime) : null;
 
-        if (deadlineDate) {
+        if (deadlineDate && !Number.isNaN(deadlineDate.getTime())) {
           deadlineText = deadlineDate.toLocaleString('en-GB');
         }
 
@@ -515,31 +614,58 @@
         document.getElementById('current-status').innerText = statusText;
         document.getElementById('current-deadline').innerText = deadlineText;
         if (data.odds) document.getElementById('bet-odds').value = data.odds;
+      } catch (e) {
+        console.error(e);
+        showDebugAdmin(`Failed to load current settings: ${e?.message || e}`, true);
+        document.getElementById('current-status').innerText = 'ERROR';
       }
     }
 
     window.syncDeadlineFromFixtures = async function() {
       const info = window.getGameweekDeadlineInfo ? window.getGameweekDeadlineInfo() : null;
-      if (!info) {
-        alert("Could not parse fixture times.");
+      if (!info || !info.deadline || !info.firstKickOff) {
+        alert("Could not parse fixture times. Check shared-fixtures.js date/time format.");
         return;
       }
 
       const deadline = info.deadline;
+      const firstKickOff = info.firstKickOff;
+
+      if (Number.isNaN(deadline.getTime()) || Number.isNaN(firstKickOff.getTime())) {
+        alert("Fixture dates are invalid. Please check date labels and kickoff times.");
+        return;
+      }
+
       try {
-        await setDoc(doc(db, "settings", "gameweek"), {
+        const payload = {
           deadline: deadline.toISOString(),
           reopenTime: null,
-          status: "open"
-        }, { merge: true });
+          status: "open",
+          updatedAt: new Date().toISOString(),
+          source: "admin-sync-fixtures"
+        };
+
+        showDebugAdmin(`Writing deadline to settings/gameweek:\nfirstKickOff=${firstKickOff.toISOString()}\ndeadline=${deadline.toISOString()}`);
+        await setDoc(doc(db, "settings", "gameweek"), payload, { merge: true });
+
+        // Read back immediately to confirm persistence, not just console success.
+        const verify = await getDoc(doc(db, "settings", "gameweek"));
+        const saved = verify.exists() ? verify.data() : null;
+        if (!saved || saved.deadline !== payload.deadline) {
+          throw new Error("Deadline write verification failed. Firestore did not return the expected value.");
+        }
 
         document.getElementById('current-deadline').innerText = deadline.toLocaleString('en-GB');
         document.getElementById('current-status').innerText = getEffectiveGameweekStatus(deadline, null);
-        alert(`✓ Deadline synced: ${deadline.toLocaleString('en-GB')}\nThe game will lock automatically 2 hours before first kickoff and re-open after scores are published.`);
+        alert(
+          `Deadline saved to database.\n\n` +
+          `First kickoff: ${firstKickOff.toLocaleString('en-GB')}\n` +
+          `Lock deadline (2h before): ${deadline.toLocaleString('en-GB')}`
+        );
       } catch (e) {
         console.error(e);
         showDebugAdmin(`Error syncing deadline from fixtures: ${e?.message || e}`, true);
-        alert("Error syncing deadline from fixtures.");
+        alert(`Error syncing deadline from fixtures.\n\n${e?.message || e}`);
       }
     };
 

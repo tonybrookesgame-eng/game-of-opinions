@@ -32,6 +32,7 @@
   }
 
   function getGameweekDeadlineInfo(fixtures = fixtureData) {
+    const now = new Date();
     const allTimes = [];
 
     fixtures.forEach((day) => {
@@ -41,7 +42,14 @@
       const dayOfMonth = parseInt(dateMatch[1], 10);
       const monthName = dateMatch[2];
       const monthIndex = new Date(Date.parse(`${monthName} 1`)).getMonth();
-      const year = new Date().getFullYear();
+      if (Number.isNaN(monthIndex)) return;
+
+      let year = now.getFullYear();
+      // If fixture month/day already passed this year, treat it as next season year.
+      const candidateThisYear = new Date(year, monthIndex, dayOfMonth, 23, 59, 59, 999);
+      if (candidateThisYear < now) {
+        year += 1;
+      }
 
       day.games.forEach((game) => {
         const [hours, minutes] = (game.time || "00:00").split(':').map(Number);
@@ -53,7 +61,9 @@
 
     if (allTimes.length === 0) return null;
 
-    const firstKickOff = new Date(Math.min(...allTimes));
+  const sortedTimes = [...allTimes].sort((a, b) => a - b);
+  const nextKickOff = sortedTimes.find(kickOff => kickOff > now) || sortedTimes[0];
+  const firstKickOff = new Date(nextKickOff);
     const lastKickOff = new Date(Math.max(...allTimes));
 
     const deadline = new Date(firstKickOff);

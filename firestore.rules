@@ -9,45 +9,49 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == uid;
     }
 
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.email == "tonybrookes.game@gmail.com";
+    }
+
     match /users/{uid} {
       allow read: if isSignedIn() && (isOwner(uid) || resource.data.public == true);
-      allow create, update: if isSignedIn() && isOwner(uid);
-      allow delete: if false;
+      allow create, update: if (isSignedIn() && isOwner(uid)) || isAdmin();
+      allow delete: if isAdmin();
 
       match /myxi/{doc} {
-        allow read, write: if isSignedIn() && isOwner(uid);
+        allow read, write: if (isSignedIn() && isOwner(uid)) || isAdmin();
       }
 
       match /stats/{doc} {
-        allow read, write: if isSignedIn() && isOwner(uid);
+        allow read, write: if (isSignedIn() && isOwner(uid)) || isAdmin();
       }
 
       match /history/{doc} {
-        allow read, write: if isSignedIn() && isOwner(uid);
+        allow read, write: if (isSignedIn() && isOwner(uid)) || isAdmin();
       }
     }
 
     match /leaderboard/{uid} {
       allow read: if isSignedIn();
-      allow create, update: if isSignedIn() && request.auth.uid == uid;
-      allow delete: if false;
+      allow create, update: if (isSignedIn() && request.auth.uid == uid) || isAdmin();
+      allow delete: if isAdmin();
     }
 
     match /leagues/{leagueId} {
       allow read: if isSignedIn();
-      allow create: if isSignedIn();
-      allow update: if isSignedIn();
-      allow delete: if false;
+      allow create: if isSignedIn() || isAdmin();
+      allow update: if isSignedIn() || isAdmin();
+      allow delete: if isAdmin();
     }
 
     match /settings/{doc} {
       allow read: if isSignedIn();
-      allow write: if false;
+      allow write: if isAdmin();
     }
 
     match /gameweekHistory/{doc} {
       allow read: if isSignedIn();
-      allow write: if false;
+      allow write: if isAdmin();
     }
   }
 }
