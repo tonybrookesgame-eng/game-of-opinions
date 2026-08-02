@@ -922,6 +922,22 @@ async function loadLeaderboard(user, leagueCode = "") {
       const memberSnap = await getDoc(doc(db, "leaderboard", memberId));
       if (memberSnap.exists()) {
         entries.push({ uid: memberId, data: memberSnap.data() });
+        continue;
+      }
+
+      // Backfill league rows for members who have a saved team but no leaderboard doc yet.
+      const teamSnap = await getDoc(doc(db, "users", memberId, "myxi", "team"));
+      if (teamSnap.exists()) {
+        const teamData = teamSnap.data() || {};
+        entries.push({
+          uid: memberId,
+          data: {
+            teamName: teamData.teamName || "Anonymous",
+            weeklyPoints: 0,
+            seasonPoints: 0,
+            totalPoints: 0
+          }
+        });
       }
     }
 
@@ -1142,7 +1158,7 @@ window.viewLeague = async function(code) {
   await loadLeaderboard(auth.currentUser, code);
 };
 
-onAuthStateChanged(auth,(user)=>{
+onAuthStateChanged(auth, async (user) => {
   const userLinks = document.querySelectorAll('.user-only');
   const guestLinks = document.querySelectorAll('.guest-only');
   if (user) {
@@ -1150,13 +1166,15 @@ onAuthStateChanged(auth,(user)=>{
       l.style.display = l.classList.contains('league-management') ? 'flex' : 'inline-block';
     });
     guestLinks.forEach(l => l.style.display = 'none');
-    loadLeagueMemberships(user);
-    ensureGlobalLeagueMembership(user);
+
+    // Ensure the user is in the global league before any first render or league dropdown load.
+    await ensureGlobalLeagueMembership(user);
+    await loadLeagueMemberships(user);
   } else {
     userLinks.forEach(l => l.style.display = 'none');
     guestLinks.forEach(l => l.style.display = 'inline-block');
   }
-  loadLeaderboard(user);
+  await loadLeaderboard(user);
 });
 
 const leagueSelect = document.getElementById("league-select");
