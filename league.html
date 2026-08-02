@@ -697,7 +697,7 @@ h1 {
     </div>
 
     <div id="league-modal-view" class="league-modal-panel" style="display:none;">
-      <label class="league-label" for="league-modal-view-select">Choose a league</label>
+      <label class="league-label" for="league-modal-view-select">Choose a league (Global is default)</label>
       <select id="league-modal-view-select" class="league-input league-select"></select>
       <div class="league-modal-actions">
         <button class="league-btn" onclick="viewLeagueFromModal()">View</button>
@@ -1142,10 +1142,6 @@ window.joinLeague = async ()=>{
 window.viewLeagueFromModal = async function() {
   const select = document.getElementById("league-modal-view-select");
   const code = select?.value || "";
-  if (!code) {
-    alert("Please choose a league first.");
-    return;
-  }
   closeLeagueModal();
   await window.viewLeague(code);
 };
