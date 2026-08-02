@@ -1,65 +1,57 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
   <meta charset="UTF-8">
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Explore the weekly picks, bet builder, and season-long predictions in Game of Opinions.">
+  <meta name="description" content="Season predictions powered by your AI staff and synced to your MyXI player pool.">
   <meta name="theme-color" content="#020611">
   <title>Season Picks - Game of Opinions</title>
-
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;800&family=Oswald:wght@500;700&display=swap');
 
     * { box-sizing: border-box; }
 
+    :root {
+      --bg-1: #020611;
+      --bg-2: #071320;
+      --bg-3: #0f2a3f;
+      --lime: #c7ff38;
+      --ink: #061005;
+      --text: #f5f7ff;
+      --muted: #9ca8c6;
+      --card: rgba(255,255,255,0.05);
+      --line: rgba(255,255,255,0.12);
+      --oracle: #9ef01a;
+      --tactician: #4ecdc4;
+      --maverick: #ff9f1c;
+    }
+
     body {
-
-      background:
-      radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 25%),
-      linear-gradient(180deg,#020611 0%,#071320 40%,#071a29 100%);
-
-      color: white;
-
-      font-family: 'Segoe UI', Arial, sans-serif;
-
       margin: 0;
-
-      overflow-x: hidden;
-
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
       min-height: 100vh;
-
-    }
-
- /* stadium glow layers */
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
+      overflow-x: hidden;
       background:
-        radial-gradient(circle at center, rgba(120,255,120,0.08), transparent 40%),
-        repeating-radial-gradient(circle at 50% -20%, rgba(255,255,255,0.03) 0px, transparent 80px, transparent 120px);
-      pointer-events:none;
-      z-index: -1;
-    }
-    body::after{
-      content:"";
-      position:fixed;
-      inset:0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
-      background-size:80px 80px;
-      opacity:0.2;
-      pointer-events:none;
-      z-index: -1;
-    }
-    .user-only, .guest-only {
-      display: none;
+        radial-gradient(circle at 10% 0%, rgba(78,205,196,0.16), transparent 25%),
+        radial-gradient(circle at 90% 8%, rgba(255,159,28,0.16), transparent 22%),
+        linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 45%, var(--bg-3) 100%);
     }
 
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 68px 68px;
+      opacity: 0.45;
+      z-index: -1;
+    }
+
+    .user-only, .guest-only { display: none; }
 
     header {
       position: fixed;
@@ -70,328 +62,213 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 15px 30px;
-      background: rgba(0,0,0,0.72);
+      padding: 14px 30px;
+      background: rgba(0,0,0,0.74);
+      border-bottom: 1px solid var(--line);
       backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255,255,255,0.12);
     }
 
     .logo {
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
+      font-family: 'Oswald', sans-serif;
       text-transform: uppercase;
+      letter-spacing: 0.4px;
+      font-size: 24px;
       line-height: 1;
-      display: inline-block;
     }
 
-    .logo span {
-      color: #c7ff38;
-    }
+    .logo span { color: var(--lime); }
 
     nav {
       display: flex;
+      gap: 30px;
       align-items: center;
-      gap: 32px;
     }
 
     nav a {
-      color: white;
+      color: #fff;
       text-decoration: none;
       font-size: 16px;
+      transition: opacity 0.2s ease;
     }
 
-    nav a:hover {
+    nav a:hover { opacity: 0.8; }
 
-      opacity: 0.8;
-
-    }
-
-    .mobile-nav {
-      display: none; /* Hidden by default */
-    }
+    .mobile-nav { display: none; }
 
     .container {
-
-      padding: 90px 30px 40px;
-
-      max-width: 1080px;
-
+      max-width: 1240px;
       margin: auto;
+      padding: 94px 20px 36px;
+    }
 
+    .hero {
+      margin-bottom: 18px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(120deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02));
     }
 
     h1 {
-
-      margin-bottom: 8px;
-
-      font-size: 36px;
-
+      margin: 0 0 10px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 38px;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
     }
 
-    p {
-
-      color: #ccc;
-
-      margin-bottom: 24px;
-
-      line-height: 1.7;
-
-      max-width: 700px;
-
-    }
-
-    .top-panel {
-
-      display: flex;
-
-      justify-content: space-between;
-
-      align-items: flex-start;
-
-      gap: 20px;
-
-      margin-bottom: 30px;
-
-      flex-wrap: wrap;
-
-    }
-
-    .summary-card {
-
-      flex: 1;
-
-      min-width: 320px;
-
-      background: rgba(255,255,255,0.05);
-
-      border: 1px solid rgba(255,255,255,0.1);
-
-      border-radius: 16px;
-
-      padding: 24px;
-
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
-
-    }
-
-    .summary-card h2 {
-
-      margin: 0 0 14px;
-
-      font-size: 18px;
-
-      color: #f8fafc;
-
-    }
-
-    .summary-card strong {
-
-      color: #c7ff38;
-
-      display: block;
-
-      margin-bottom: 8px;
-
-      font-size: 16px;
-
-    }
-
-    .summary-card p {
-
+    .hero p {
       margin: 0;
-
-      color: #c5cad6;
-
+      max-width: 900px;
+      color: #cfdbf8;
+      line-height: 1.5;
     }
 
-
-
-    .grid {
-
-      display: grid;
-
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-
-      gap: 20px;
-
-    }
-
-    .card {
-
-      background: rgba(255,255,255,0.04);
-
-      padding: 24px;
-
-      border-radius: 18px;
-
-      border: 1px solid rgba(255,255,255,0.08);
-
-      box-shadow: 0 10px 30px rgba(0,0,0,0.14);
-
-      transition: transform 0.2s ease;
-
-      display: flex;
-
-      flex-direction: column;
-
-    }
-
-    .card:hover {
-
-      transform: translateY(-3px);
-
-      border-color: rgba(255,255,255,0.16);
-
-    }
-
-    .card h3 {
-
-      margin-bottom: 12px;
-
-      color: #c7ff38;
-
-      font-size: 16px;
-
-    }
-
-     .card.selected {
-      border-color: #c7ff38 !important;
-      box-shadow: 0 0 20px rgba(199, 255, 56, 0.3) !important;
-      transition: all 0.3s ease;
-    }
-
-    select {
-
-      width: 100%;
-
-      padding: 12px 14px;
-
-      background: rgba(11,16,32,0.9);
-
-      color: white;
-
-      border: 1px solid rgba(255,255,255,0.08);
-
-      border-radius: 10px;
-
-      outline: none;
-
-      font-size: 14px;
-
-    }
-
-    .points {
-
+    .status-line {
+      margin-top: 10px;
       font-size: 13px;
-
-      color: #c7ff38;
-
-      margin-top: 14px;
-
-      font-weight: 700;
-
+      color: var(--muted);
     }
 
-    .bottom-row {
-
-      display: flex;
-
-      justify-content: space-between;
-
-      gap: 20px;
-
-      margin-top: 30px;
-
-      flex-wrap: wrap;
-
+    .season-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
     }
 
-    .notes-card {
-
-      flex: 1.2;
-
-      min-width: 320px;
-
-      background: rgba(255,255,255,0.04);
-
-      border: 1px solid rgba(255,255,255,0.08);
-
+    .season-card {
+      border: 1px solid rgba(255,255,255,0.1);
       border-radius: 18px;
-
-      padding: 24px;
-
+      padding: 16px;
+      background: var(--card);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      transition: border-color 0.2s ease;
     }
 
-    .notes-card h3 {
+    .season-card.selected {
+      border-color: var(--lime);
+      box-shadow: 0 0 0 1px rgba(199,255,56,0.45), 0 10px 30px rgba(0,0,0,0.2);
+    }
 
-      margin-top: 0;
-
-      color: white;
-
+    .season-card h3 {
+      margin: 0 0 4px;
       font-size: 18px;
-
+      color: #fff;
     }
 
-    .notes-card ul {
-
-      padding-left: 18px;
-
-      margin: 14px 0 0;
-
-      color: #c5cbd7;
-
-      line-height: 1.7;
-
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    .lock-bottom {
-
+    .pick-select {
       width: 100%;
+      padding: 11px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(8,16,31,0.92);
+      color: #fff;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
 
-      margin-top: 20px;
+    .pick-select:focus {
+      border-color: var(--lime);
+      outline: none;
+    }
 
-      text-align: center;
-
+    .ai-trio {
+      margin-top: 8px;
       border-top: 1px solid rgba(255,255,255,0.08);
-
-      padding-top: 24px;
-
+      padding-top: 10px;
+      display: grid;
+      gap: 8px;
     }
 
-    .lock-bottom button {
+    .ai-item {
+      border-radius: 12px;
+      padding: 9px 10px;
+      border: 1px solid rgba(255,255,255,0.09);
+      background: rgba(0,0,0,0.25);
+    }
 
-      width: 100%;
+    .ai-item[data-ai='oracle'] { border-left: 3px solid var(--oracle); }
+    .ai-item[data-ai='tactician'] { border-left: 3px solid var(--tactician); }
+    .ai-item[data-ai='maverick'] { border-left: 3px solid var(--maverick); }
 
-      background: #c7ff38;
-      color: #041102;
+    .ai-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+      font-size: 12px;
+    }
 
-      padding: 14px 0;
+    .ai-name { font-weight: 700; }
 
-      border-radius: 999px;
+    .ai-pick {
+      color: var(--lime);
+      font-weight: 700;
+      font-size: 13px;
+      margin-bottom: 3px;
+    }
 
+    .ai-reason {
+      font-size: 12px;
+      color: #cad3eb;
+      line-height: 1.45;
+      margin-bottom: 6px;
+    }
+
+    .ai-apply {
       border: none;
-
-      font-size: 15px;
-
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 11px;
       font-weight: 800;
-
       cursor: pointer;
-      transition: 0.2s ease;
+      background: var(--lime);
+      color: var(--ink);
     }
-    .lock-bottom button:hover {
+
+    .submit-wrap {
+      margin-top: 18px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      border: none;
+      border-radius: 999px;
+      padding: 14px 12px;
+      cursor: pointer;
+      background: var(--lime);
+      color: var(--ink);
+      font-weight: 800;
+      font-size: 15px;
+      transition: transform 0.2s ease;
+    }
+
+    .submit-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 0 20px rgba(199, 255, 56, 0.6);
+      box-shadow: 0 0 16px rgba(199,255,56,0.5);
     }
 
-    @media (max-width: 980px) {
+    .submit-note {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+    }
 
-      .grid {
-
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-
-      }
-
+    @media (max-width: 1000px) {
+      .season-grid { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 768px) {
@@ -401,299 +278,37 @@
         align-items: center;
         flex-direction: column;
         padding: 15px 10px;
-        height: auto;
-      }
-      nav {
-        display: none;
-      }
-      h1 {
-        text-align: left;
-        font-size: 24px;
-        line-height: 1.2;
-      }
-      .container {
-        padding-bottom: 100px;
-        padding: 80px 15px 100px;
       }
 
+      nav { display: none; }
+
+      .container { padding: 80px 12px 98px; }
+
+      h1 { font-size: 26px; }
+
       .mobile-nav {
-        display: flex; /* Show on mobile */
+        display: flex;
+        justify-content: space-around;
         position: fixed;
         bottom: 0;
         left: 0;
         width: 100%;
         background: #000;
         padding: 10px 0;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        border-top: 1px solid rgba(255,255,255,0.1);
         z-index: 1000;
-        justify-content: space-around;
       }
+
       .mobile-nav a {
         text-decoration: none !important;
         color: white;
         font-size: 12px;
         text-align: center;
-        margin-left: 0;
-        transition: all 0.2s ease;
-      }
-      .mobile-nav a:hover {
-        color: #c7ff38;
-        transform: translateY(-3px);
-        text-shadow: 0 0 15px rgba(199, 255, 56, 0.6);
-      }
-
-      .top-panel { flex-direction: column; }
-      .grid { grid-template-columns: 1fr; }
-      .bottom-row { flex-direction: column; }
-    }
-
-    .ai-modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(8px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
-      padding: 20px;
-    }
-    .ai-report {
-      background: #0f172a;
-      border: 1px solid #c7ff38;
-      border-radius: 24px;
-      max-width: 450px;
-      width: 100%;
-      padding: 30px;
-      position: relative;
-    }
-    .ai-report h2 { color: #c7ff38; margin-top: 0; }
-    .ai-report p { font-size: 14px; color: #cbd5e1; line-height: 1.6; }
-    .stat-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-    .stat-val { color: #c7ff38; font-weight: bold; }
-
-    /* =========================
-       AI SCOUT STYLES (in-card)
-    ========================= */
-    .ai-avatar-in-card {
-      display: block; /* Visible on all devices */
-      cursor: pointer;
-      position: relative;
-      width: 50px; /* Smaller avatar size for card */
-      height: 50px;
-      flex-shrink: 0; /* Prevent avatar from shrinking */
-      transition: transform 0.2s ease;
-      border-radius: 50%;
-    }
-    .ai-avatar-in-card:hover {
-      transform: scale(1.05);
-    }
-    .speech-bubble-in-card {
-      position: absolute;
-      top: -35px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #c7ff38;
-      color: #041102;
-      padding: 5px 8px;
-      border-radius: 8px;
-      font-size: 10px;
-      font-weight: 800;
-      width: 140px;
-      text-align: center;
-      opacity: 0;
-      transition: 0.2s;
-      pointer-events: none;
-      z-index: 10; /* Ensure it's above other card content */
-    }
-    .ai-avatar-in-card:hover .speech-bubble-in-card {
-      opacity: 1;
-    }
-
-    /* New Scout Layout */
-    .scouts-container {
-      display: flex;
-      justify-content: space-around;
-      padding: 10px 0;
-      margin-bottom: 10px;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-    .ai-mini-avatar {
-      width: 40px;
-      height: 40px;
-      cursor: pointer;
-      position: relative;
-      transition: transform 0.2s;
-      border-radius: 50%;
-      border: 1px solid rgba(199, 255, 56, 0.3);
-      background-size: contain;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-color: rgba(255, 255, 255, 0.05); /* Fallback grey circle */
-    }
-
-    /* AI Image Classes */
-    .striker-img { background-image: url('the oracle.png'); }
-    .analyst-img { background-image: url('the maverick.png'); }
-    .scout-img { background-image: url('the tactician.png'); }
-
-    .ai-mini-avatar:hover {
-      transform: scale(1.1);
-      border-color: #c7ff38;
-    }
-
-    /* Modal Overlay Fix */
-    .ai-modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(8px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
-      padding: 20px;
-    }
-    .ai-report {
-      background: #0f172a;
-      border: 1px solid #c7ff38;
-      border-radius: 24px;
-      max-width: 450px;
-      width: 100%;
-      max-height: min(86vh, 720px);
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      padding: 30px;
-      position: relative;
-    }
-    .ai-report h2 { color: #c7ff38; margin-top: 0; }
-    .ai-report p { font-size: 14px; color: #cbd5e1; line-height: 1.6; }
-    .stat-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-    .stat-val { color: #c7ff38; font-weight: bold; }
-
-    /* Tutorial Trigger Button (copied from myxi.html) */
-    .tutorial-btn-container {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .tutorial-trigger-btn {
-      background: #c7ff38;
-      color: #041102;
-      padding: 14px;
-      width: 100%;
-      border-radius: 999px;
-      border: none;
-      font-weight: 800;
-      font-size: 14px;
-      cursor: pointer;
-      transition: 0.2s ease;
-    }
-    .tutorial-trigger-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 20px rgba(199, 255, 56, 0.6);
-    }
-
-    /* =========================
-       TUTORIAL MODAL STYLES (copied from myxi.html)
-    ========================= */
-    .rules-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(8px);
-      z-index: 2000;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    .rules-card {
-      background: #000;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 24px;
-      max-width: 440px;
-      width: 95%;
-      max-height: 90vh;
-      overflow-y: auto;
-      padding: 20px;
-      text-align: center;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-    }
-    .rules-card h2 { color: #c7ff38; margin-top: 0; text-transform: uppercase; font-size: 20px; }
-    .chat-container {
-      background: rgba(0,0,0,0.5);
-      padding: 15px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.1);
-      margin-bottom: 20px;
-      min-height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .chat-bubble {
-      background: #0f172a;
-      color: #cbd5e1;
-      padding: 12px 18px;
-      border-radius: 20px;
-      position: relative;
-      max-width: 90%;
-      font-style: italic;
-      font-size: 14px;
-      line-height: 1.6;
-      text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    }
-    .chat-bubble::before {
-      content: '';
-      position: absolute;
-      bottom: -10px;
-      left: 50%;
-      transform: translateX(-50%) rotate(45deg);
-      width: 20px;
-      height: 20px;
-      background: #0f172a;
-      border-radius: 0 0 0 5px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-      z-index: -1;
-    }
-    .rules-card p { font-size: 14px; color: #cbd5e1; line-height: 1.6; margin-bottom: 20px; }
-    .rules-card ul { text-align: left; color: #cbd5e1; font-size: 13px; margin-bottom: 25px; }
-
-    @media (max-width: 768px) {
-      .tutorial-btn-container {
-        margin-bottom: 20px;
-      }
-      .tutorial-trigger-btn {
-        font-size: 13px;
-      }
-      .tutorial-img {
-        max-height: 130px !important;
-      }
-      #tutorialModal .rules-card {
-        padding: 15px !important;
-        width: 98% !important;
-      }
-      #tutorialModal .chat-container {
-        min-height: 60px !important;
-        margin-bottom: 10px !important;
       }
     }
   </style>
 </head>
-
 <body>
-
 <header>
   <div class="logo">GAME <span>OF OPINIONS</span></div>
   <nav>
@@ -709,272 +324,31 @@
 </header>
 
 <div class="container">
+  <section class="hero">
+    <h1>Season Command Deck</h1>
+    <p>Each market now shows one live recommendation from each AI character. Every option comes only from your current MyXI data pool, so no external players can appear.</p>
+    <div id="dataStatus" class="status-line">Loading player and team pool from MyXI...</div>
+  </section>
 
-  <div class="tutorial-btn-container">
-    <button class="tutorial-trigger-btn" onclick="openTutorial()">Tutorial - How To Play</button>
-  </div>
+  <div id="seasonGrid" class="season-grid"></div>
 
-
-  <div class="grid">
-
-    <div class="card">
-
-      <h3>Premier League Winner</h3>
-      <div class="scouts-container">
-        <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'winner')">
-          <div class="speech-bubble-in-card">The Oracle<br><small style="font-weight:400">Cautious Picks</small></div>
-        </div>
-        <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'winner')">
-          <div class="speech-bubble-in-card">The Tactician<br><small style="font-weight:400">Bold Picks</small></div>
-        </div>
-        <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'winner')">
-          <div class="speech-bubble-in-card">The Maverick<br><small style="font-weight:400">Extreme Risk</small></div>
-        </div>
-      </div>
-      <select>
-        <option>Select team</option>
-      </select>
-      <div class="points">25 points</div>
-    </div>
-
-    <div class="card">
-
-      <h3>FA Cup Winner</h3>
-      <div class="scouts-container">
-        <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'facup')">
-          <div class="speech-bubble-in-card">The Oracle<br><small style="font-weight:400">Cautious Picks</small></div>
-        </div>
-        <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'facup')">
-          <div class="speech-bubble-in-card">The Tactician<br><small style="font-weight:400">Bold Picks</small></div>
-        </div>
-        <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'facup')">
-          <div class="speech-bubble-in-card">The Maverick<br><small style="font-weight:400">Extreme Risk</small></div>
-        </div>
-      </div>
-      <select>
-        <option>Select team</option>
-      </select>
-      <div class="points">50 points</div>
-    </div>
-
-    <div class="card">
-      <h3>Top Scorer</h3>
-      <div class="scouts-container">
-        <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'scorer')">
-          <div class="speech-bubble-in-card">The Oracle<br><small style="font-weight:400">Cautious Picks</small></div>
-        </div>
-        <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'scorer')">
-          <div class="speech-bubble-in-card">The Tactician<br><small style="font-weight:400">Bold Picks</small></div>
-        </div>
-        <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'scorer')">
-          <div class="speech-bubble-in-card">The Maverick<br><small style="font-weight:400">Extreme Risk</small></div>
-        </div>
-      </div>
-      <select id="topScorerSelect">
-        <option>Select player</option>
-      </select>
-      <div class="points">25 points</div>
-    </div>
-
-    <div class="card">
-      <h3>Top Assists</h3>
-      <div class="scouts-container">
-        <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'assists')">
-          <div class="speech-bubble-in-card">The Oracle<br><small style="font-weight:400">Cautious Picks</small></div>
-        </div>
-        <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'assists')">
-          <div class="speech-bubble-in-card">The Tactician<br><small style="font-weight:400">Bold Picks</small></div>
-        </div>
-        <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'assists')">
-          <div class="speech-bubble-in-card">The Maverick<br><small style="font-weight:400">Extreme Risk</small></div>
-        </div>
-      </div>
-      <select id="topAssistsSelect">
-        <option>Select player</option>
-      </select>
-      <div class="points">50 points</div>
-    </div>
-
-    <div class="card">
-      <h3>Most Clean Sheets</h3>
-      <div class="scouts-container">
-        <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'cleansheets')">
-          <div class="speech-bubble-in-card">The Oracle<br><small style="font-weight:400">Cautious Picks</small></div>
-        </div>
-        <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'cleansheets')">
-          <div class="speech-bubble-in-card">The Tactician<br><small style="font-weight:400">Bold Picks</small></div>
-        </div>
-        <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'cleansheets')">
-          <div class="speech-bubble-in-card">The Maverick<br><small style="font-weight:400">Extreme Risk</small></div>
-        </div>
-      </div>
-      <select id="cleanSheetsSelect">
-        <option>Select player</option>
-      </select>
-      <div class="points">50 points</div>
-    </div>
-
-    <div class="card">
-      <h3>First Hat-Trick</h3>
-      <div class="scouts-container">
-        <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'hattrick')">
-          <div class="speech-bubble-in-card">The Oracle<br><small style="font-weight:400">Cautious Picks</small></div>
-        </div>
-        <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'hattrick')">
-          <div class="speech-bubble-in-card">The Tactician<br><small style="font-weight:400">Bold Picks</small></div>
-        </div>
-        <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'hattrick')">
-          <div class="speech-bubble-in-card">The Maverick<br><small style="font-weight:400">Extreme Risk</small></div>
-        </div>
-      </div>
-      <select id="hatTrickSelect">
-        <option>Select player</option>
-      </select>
-      <div class="points">50 points</div>
-    </div>
-
-    <div class="card">
-      <h3>First Manager Sacked</h3>
-      <div class="scouts-container">
-        <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'sacked')">
-          <div class="speech-bubble-in-card">The Oracle<br><small style="font-weight:400">Cautious Picks</small></div>
-        </div>
-        <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'sacked')">
-          <div class="speech-bubble-in-card">The Tactician<br><small style="font-weight:400">Bold Picks</small></div>
-        </div>
-        <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'sacked')">
-          <div class="speech-bubble-in-card">The Maverick<br><small style="font-weight:400">Extreme Risk</small></div>
-        </div>
-      </div>
-      <select id="managerSackedSelect">
-        <option>Select manager</option>
-      </select>
-      <div class="points">50 points</div>
-    </div>
-
-    <div class="card">
-      <h3>Most Red Cards</h3>
-      <div class="scouts-container">
-        <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'redcards')">
-          <div class="speech-bubble-in-card">The Oracle<br><small style="font-weight:400">Cautious Picks</small></div>
-        </div>
-        <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'redcards')">
-          <div class="speech-bubble-in-card">The Tactician<br><small style="font-weight:400">Bold Picks</small></div>
-        </div>
-        <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'redcards')">
-          <div class="speech-bubble-in-card">The Maverick<br><small style="font-weight:400">Extreme Risk</small></div>
-        </div>
-      </div>
-      <select id="redCardsSelect">
-        <option>Select player</option>
-      </select>
-      <div class="points">75 points</div>
-    </div>
-
-    <div class="card">
-      <h3>Bottom 3 Finishers (Relegation)</h3>
-      <div class="scouts-container">
-        <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'relegated')">
-          <div class="speech-bubble-in-card">The Oracle<br><small style="font-weight:400">Cautious Picks</small></div>
-        </div>
-        <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'relegated')">
-          <div class="speech-bubble-in-card">The Tactician<br><small style="font-weight:400">Bold Picks</small></div>
-        </div>
-        <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'relegated')">
-          <div class="speech-bubble-in-card">The Maverick<br><small style="font-weight:400">Extreme Risk</small></div>
-        </div>
-      </div>
-      <select class="relegated-select" onchange="refreshRelegated()"><option>Select team</option></select>
-      <select class="relegated-select" onchange="refreshRelegated()" style="margin-top: 10px;"><option>Select team</option></select>
-      <select class="relegated-select" onchange="refreshRelegated()" style="margin-top: 10px;"><option>Select team</option></select>
-      <div class="points">40 points per team</div>
-    </div>
-
-    <div class="card">
-      <h3>Most Yellow Cards</h3>
-      <div class="scouts-container">
-        <div class="ai-mini-avatar striker-img" onclick="showAiScout('striker', 'yellows')">
-          <div class="speech-bubble-in-card">The Oracle<br><small style="font-weight:400">Cautious Picks</small></div>
-        </div>
-        <div class="ai-mini-avatar scout-img" onclick="showAiScout('scout', 'yellows')">
-          <div class="speech-bubble-in-card">The Tactician<br><small style="font-weight:400">Bold Picks</small></div>
-        </div>
-        <div class="ai-mini-avatar analyst-img" onclick="showAiScout('analyst', 'yellows')">
-          <div class="speech-bubble-in-card">The Maverick<br><small style="font-weight:400">Extreme Risk</small></div>
-        </div>
-      </div>
-      <select id="yellowCardSelect"><option>Select player</option></select>
-      <div class="points">50 points</div>
-    </div>
-
-  </div>
-
-  <div class="bottom-row">
-
-    <div class="lock-bottom">
-
-      <button onclick="lockSeason()">Submit Season Selections</button>
-
-    </div>
-
-  </div>
-
-</div>
-
-
-<!-- AI REPORT MODAL -->
-<div class="ai-modal" id="aiModal">
-  <div class="ai-report" onclick="event.stopPropagation()">
-    <h2>🤖 AI Scout Report</h2>
-    <p id="aiContent">Initializing The Oracle...</p>
-    <div id="aiStats"></div>
-    <div style="display: flex; justify-content: center; margin-top: 20px;">
-      <button id="aiActionBtn" type="button" onclick="window.loadAiReport()" style="width: 100%; max-width: 240px; background: #c7ff38; color: #041102; font-weight:800; border-radius:999px; border:none; padding:10px 14px; cursor:pointer; touch-action: manipulation;">View Recommendation</button>
-    </div>
+  <div class="submit-wrap">
+    <button id="submitSeasonBtn" class="submit-btn" onclick="lockSeason()">Submit Season Selections</button>
+    <div class="submit-note">Once submitted, these picks are treated as locked season predictions.</div>
   </div>
 </div>
 
-<!-- Tutorial Modal -->
-<div id="tutorialModal" class="rules-modal">
-  <div class="rules-card" style="max-width: 600px; padding: 20px; max-height: 90vh; display: flex; flex-direction: column; overflow-y: auto;">
-    <h2 style="font-size: 18px; margin-bottom: 12px; color: #c7ff38; text-transform: uppercase;">Manager's Briefing</h2>
-    
-    <div style="margin-bottom: 12px; text-align: left; font-size: 12px; color: #cbd5e1;">
-      <p style="margin-bottom: 6px;"><strong>The Oracle:</strong> Risk: Low. Cautious strategies.</p>
-      <p style="margin-bottom: 6px;"><strong>The Tactician:</strong> Risk: Medium. Tactical system advantages.</p>
-      <p style="margin-bottom: 0;"><strong>The Maverick:</strong> Risk: High. High-variance anomalies.</p>
-    </div>
-
-    <img src="ai tutorial.png" alt="How to Play" class="tutorial-img" style="width: 100%; max-height: 180px; object-fit: contain; border-radius: 12px; border: 1px solid rgba(199,255,56,0.3); margin-bottom: 12px;">
-    
-    <div class="chat-container" style="min-height: 70px; margin-bottom: 15px;">
-      <div id="tutorialChatBubble" class="chat-bubble">
-        <p style="margin: 0; font-style: italic; font-size: 13px; color: #cbd5e1; line-height: 1.4;">
-          <!-- Tutorial text will be inserted here by JavaScript -->
-        </p>
-      </div>
-    </div>
-
-    <div style="display: flex; justify-content: center; gap: 12px; margin-top: auto;">
-      <button onclick="closeOnboarding()" style="background: transparent; color: #9ca3af; border: 1px solid #334155; width: 100px; padding: 10px;">Skip</button>
-      <button id="nextTutBtn" onclick="nextTutorialStep()" style="width: 140px; padding: 10px;">Next Step</button>
-    </div>
-  </div>
-</div>
-
-<!-- MOBILE NAV -->
 <div class="mobile-nav">
-  <a href="index.html">🏠<br>Home</a>
-  <a href="myxi.html">⚽<br>Team</a>
-  <a href="season.html">🏆<br>Picks</a>
-  <a href="league.html">📊<br>League</a>
+  <a href="index.html">??<br>Home</a>
+  <a href="myxi.html">?<br>Team</a>
+  <a href="season.html">??<br>Picks</a>
+  <a href="league.html">??<br>League</a>
 </div>
 
-<!-- SCRIPT GOES HERE (IMPORTANT POSITION) -->
-
+<script src="myxi-data-loader.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -989,21 +363,348 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-let currentUser = null;
+const CATEGORY_CONFIG = [
+  { key: "winner", title: "Premier League Winner", type: "team", points: "25 points", count: 1 },
+  { key: "facup", title: "FA Cup Winner", type: "team", points: "50 points", count: 1 },
+  { key: "scorer", title: "Top Scorer", type: "player", points: "25 points", count: 1 },
+  { key: "assists", title: "Top Assists", type: "player", points: "50 points", count: 1 },
+  { key: "cleansheets", title: "Most Clean Sheets", type: "player", points: "50 points", count: 1 },
+  { key: "hattrick", title: "First Hat-Trick", type: "player", points: "50 points", count: 1 },
+  { key: "sacked", title: "First Manager Sacked", type: "team", points: "50 points", count: 1 },
+  { key: "redcards", title: "Most Red Cards", type: "player", points: "75 points", count: 1 },
+  { key: "relegated", title: "Bottom 3 Finishers (Relegation)", type: "team", points: "40 points per team", count: 3 },
+  { key: "yellows", title: "Most Yellow Cards", type: "player", points: "50 points", count: 1 }
+];
 
-onAuthStateChanged(auth, (user) => {
-  const userLinks = document.querySelectorAll('.user-only');
-  const guestLinks = document.querySelectorAll('.guest-only');
-  if (user) {
-    currentUser = user;
-    loadSeasonPicks(user.uid);
-    userLinks.forEach(l => l.style.display = 'inline-block');
-    guestLinks.forEach(l => l.style.display = 'none');
-  } else {
-    userLinks.forEach(l => l.style.display = 'none');
-    guestLinks.forEach(l => l.style.display = 'inline-block');
+const AI_CHARACTERS = [
+  { key: "oracle", label: "The Oracle", tag: "Low Risk", mode: "safe" },
+  { key: "tactician", label: "The Tactician", tag: "Medium Risk", mode: "balanced" },
+  { key: "maverick", label: "The Maverick", tag: "High Risk", mode: "chaos" }
+];
+
+let currentUser = null;
+let gameData = null;
+let predictionCache = new Map();
+
+const teamStrength = {
+  "Arsenal": 94, "Aston Villa": 81, "Bournemouth": 56, "Brentford": 60,
+  "Brighton": 73, "Chelsea": 83, "Coventry": 45, "Crystal Palace": 59,
+  "Everton": 52, "Fulham": 57, "Hull": 42, "Ipswich": 43,
+  "Leeds": 55, "Liverpool": 95, "Man City": 98, "Man Utd": 74,
+  "Newcastle": 77, "Nott'm Forest": 54, "Sunderland": 46, "Spurs": 79
+};
+
+function hashText(text) {
+  let h = 0;
+  for (let i = 0; i < text.length; i++) {
+    h = (h << 5) - h + text.charCodeAt(i);
+    h |= 0;
   }
-});
+  return Math.abs(h % 1000) / 1000;
+}
+
+function decodePlayer(value) {
+  if (!value || value === "Select") return { name: "", club: "" };
+  if (value.includes("|")) {
+    const [name, club] = value.split("|");
+    return { name, club };
+  }
+  return { name: value, club: "" };
+}
+
+function buildPools() {
+  const teams = gameData.teams.slice();
+  const players = gameData.allPlayerObjects.slice();
+
+  const byPos = {
+    GK: players.filter((p) => p.pos === "GK"),
+    DEF: players.filter((p) => p.pos === "DEF"),
+    MID: players.filter((p) => p.pos === "MID"),
+    FWD: players.filter((p) => p.pos === "FWD")
+  };
+
+  return { teams, players, byPos };
+}
+
+function scoreTeam(categoryKey, team) {
+  const base = teamStrength[team] || 50;
+  const jitter = hashText(team + categoryKey) * 6;
+
+  if (categoryKey === "relegated" || categoryKey === "sacked") {
+    return (100 - base) + jitter;
+  }
+
+  if (categoryKey === "facup") {
+    return base * 0.9 + jitter;
+  }
+
+  return base + jitter;
+}
+
+function scorePlayer(categoryKey, player) {
+  const posWeight = {
+    scorer: { FWD: 100, MID: 70, DEF: 28, GK: 4 },
+    assists: { MID: 100, FWD: 72, DEF: 40, GK: 4 },
+    cleansheets: { GK: 100, DEF: 78, MID: 22, FWD: 8 },
+    hattrick: { FWD: 100, MID: 56, DEF: 14, GK: 1 },
+    redcards: { DEF: 100, MID: 82, FWD: 30, GK: 18 },
+    yellows: { MID: 100, DEF: 92, FWD: 42, GK: 24 }
+  };
+
+  const matrix = posWeight[categoryKey] || { FWD: 65, MID: 65, DEF: 65, GK: 65 };
+  const positional = matrix[player.pos] || 40;
+  const clubFactor = (teamStrength[player.club] || 50) * 0.15;
+  const chaos = hashText(player.name + player.club + categoryKey) * 16;
+  return positional + clubFactor + chaos;
+}
+
+function selectIndices(mode, count, maxLen) {
+  const ranges = {
+    safe: [0.1, 0.2, 0.32, 0.45],
+    balanced: [0.28, 0.4, 0.52, 0.64],
+    chaos: [0.55, 0.68, 0.8, 0.9]
+  };
+
+  const base = ranges[mode] || ranges.balanced;
+  const out = [];
+  for (let i = 0; i < count; i++) {
+    const ratio = base[Math.min(i, base.length - 1)];
+    out.push(Math.min(maxLen - 1, Math.floor((maxLen - 1) * ratio)));
+  }
+  return out;
+}
+
+function buildPredictions(category, pools) {
+  const categoryId = category.key;
+
+  return AI_CHARACTERS.map((ai) => {
+    let ranked = [];
+
+    if (category.type === "team") {
+      ranked = pools.teams
+        .map((team) => ({ value: team, label: team, score: scoreTeam(categoryId, team) }))
+        .sort((a, b) => b.score - a.score);
+    } else {
+      ranked = pools.players
+        .map((player) => ({
+          value: player.key,
+          label: `${player.name} (${player.club})`,
+          score: scorePlayer(categoryId, player)
+        }))
+        .sort((a, b) => b.score - a.score);
+    }
+
+    const take = category.count;
+    const indexes = selectIndices(ai.mode, take, ranked.length);
+    const picks = [];
+    const used = new Set();
+
+    indexes.forEach((idx) => {
+      let probe = idx;
+      while (probe < ranked.length && used.has(ranked[probe].value)) probe++;
+      if (probe < ranked.length) {
+        used.add(ranked[probe].value);
+        picks.push(ranked[probe]);
+      }
+    });
+
+    while (picks.length < take) {
+      const next = ranked.find((item) => !used.has(item.value));
+      if (!next) break;
+      used.add(next.value);
+      picks.push(next);
+    }
+
+    const targetText = picks.map((p) => p.label).join(category.count > 1 ? " | " : "");
+    const explanation =
+      ai.mode === "safe"
+        ? `Low-volatility model prefers proven floor outcomes around ${targetText}.`
+        : ai.mode === "balanced"
+        ? `Tactical median model backs ${targetText} for balance of ceiling and reliability.`
+        : `High-variance model spots asymmetric upside in ${targetText} to chase differential points.`;
+
+    return {
+      ai,
+      picks,
+      explanation
+    };
+  });
+}
+
+function createSelect(options, placeholder) {
+  const select = document.createElement("select");
+  select.className = "pick-select";
+  select.innerHTML = `<option value="">${placeholder}</option>`;
+  options.forEach((opt) => {
+    const el = document.createElement("option");
+    el.value = opt.value;
+    el.textContent = opt.label;
+    select.appendChild(el);
+  });
+  return select;
+}
+
+function updateCardSelectionState(card) {
+  const selects = Array.from(card.querySelectorAll("select"));
+  const complete = selects.every((s) => !!s.value);
+  card.classList.toggle("selected", complete);
+}
+
+function setSelectWithFallback(select, value) {
+  if (!value) return;
+  if (Array.from(select.options).some((o) => o.value === value)) {
+    select.value = value;
+    return;
+  }
+
+  if (!value.includes("|")) {
+    const fallback = Array.from(select.options).find((o) => {
+      const decoded = decodePlayer(o.value);
+      return decoded.name === value || o.value === value;
+    });
+    if (fallback) select.value = fallback.value;
+  }
+}
+
+function applyAiPick(card, aiKey) {
+  const categoryKey = card.dataset.category;
+  const predictions = predictionCache.get(categoryKey) || [];
+  const target = predictions.find((p) => p.ai.key === aiKey);
+  if (!target) return;
+
+  const selects = Array.from(card.querySelectorAll("select"));
+  target.picks.forEach((pick, idx) => {
+    if (selects[idx]) {
+      selects[idx].value = pick.value;
+    }
+  });
+
+  updateCardSelectionState(card);
+}
+
+function renderSeasonGrid() {
+  const root = document.getElementById("seasonGrid");
+  root.innerHTML = "";
+
+  const pools = buildPools();
+
+  CATEGORY_CONFIG.forEach((category) => {
+    const card = document.createElement("div");
+    card.className = "season-card";
+    card.dataset.category = category.key;
+
+    const teamOptions = pools.teams.map((team) => ({ value: team, label: team }));
+    const playerOptions = pools.players.map((p) => ({ value: p.key, label: `${p.name} (${p.club})` }));
+    const options = category.type === "team" ? teamOptions : playerOptions;
+
+    const picks = buildPredictions(category, pools);
+    predictionCache.set(category.key, picks);
+
+    card.innerHTML = `
+      <h3>${category.title}</h3>
+      <div class="card-meta">
+        <span>${category.type === "team" ? "Team Market" : "Player Market"}</span>
+        <span>${category.points}</span>
+      </div>
+    `;
+
+    for (let i = 0; i < category.count; i++) {
+      const select = createSelect(options, category.type === "team" ? "Select team" : "Select player");
+      select.dataset.fieldTitle = category.title;
+      select.addEventListener("change", () => updateCardSelectionState(card));
+      card.appendChild(select);
+    }
+
+    const aiWrap = document.createElement("div");
+    aiWrap.className = "ai-trio";
+
+    picks.forEach((entry) => {
+      const item = document.createElement("div");
+      item.className = "ai-item";
+      item.dataset.ai = entry.ai.key;
+      item.innerHTML = `
+        <div class="ai-top">
+          <span class="ai-name">${entry.ai.label}</span>
+          <span>${entry.ai.tag}</span>
+        </div>
+        <div class="ai-pick">${entry.picks.map((p) => p.label).join(category.count > 1 ? " | " : "")}</div>
+        <div class="ai-reason">${entry.explanation}</div>
+        <button type="button" class="ai-apply" data-ai-apply="${entry.ai.key}">Apply ${entry.ai.label}</button>
+      `;
+      item.querySelector(".ai-apply").addEventListener("click", () => applyAiPick(card, entry.ai.key));
+      aiWrap.appendChild(item);
+    });
+
+    card.appendChild(aiWrap);
+    root.appendChild(card);
+  });
+}
+
+function gatherPicksPayload() {
+  const payload = {};
+  const cards = Array.from(document.querySelectorAll(".season-card"));
+
+  for (const card of cards) {
+    const title = card.querySelector("h3")?.textContent?.trim();
+    const selects = Array.from(card.querySelectorAll("select"));
+
+    if (!title || !selects.length) continue;
+
+    const values = selects.map((s) => s.value);
+    if (values.some((v) => !v)) {
+      throw new Error("Please complete all season picks before submitting.");
+    }
+
+    payload[title] = values.length === 1 ? values[0] : values;
+  }
+
+  return payload;
+}
+
+window.lockSeason = async function () {
+  if (!currentUser) {
+    alert("Please log in to save your season picks.");
+    return;
+  }
+
+  if (!confirm("Submit and lock your season selections now?")) {
+    return;
+  }
+
+  try {
+    const picks = gatherPicksPayload();
+    await setDoc(doc(db, "users", currentUser.uid, "predictions", "season"), picks, { merge: true });
+    alert("Season picks saved to Firestore.");
+  } catch (error) {
+    console.error(error);
+    alert(error?.message || "Failed to save season picks.");
+  }
+};
+
+async function loadSeasonPicks(uid) {
+  const snap = await getDoc(doc(db, "users", uid, "predictions", "season"));
+  if (!snap.exists()) return;
+
+  const saved = snap.data() || {};
+
+  Array.from(document.querySelectorAll(".season-card")).forEach((card) => {
+    const title = card.querySelector("h3")?.textContent?.trim();
+    if (!title) return;
+
+    const selects = Array.from(card.querySelectorAll("select"));
+    const value = saved[title];
+
+    if (Array.isArray(value)) {
+      value.forEach((v, idx) => {
+        if (selects[idx]) setSelectWithFallback(selects[idx], v);
+      });
+    } else {
+      if (selects[0]) setSelectWithFallback(selects[0], value);
+    }
+
+    updateCardSelectionState(card);
+  });
+}
 
 window.handleLogout = () => {
   signOut(auth).then(() => {
@@ -1011,776 +712,43 @@ window.handleLogout = () => {
   });
 };
 
-const scoutData = {
-  striker: {
-    name: "The Oracle",
-    risk: "Low (Cautious)",
-    blurb: "Focuses on high-probability outcomes and proven goalscorers. Minimal risk, steady gains.",
-    flavor: "Clinical Instinct",
-    advice: {
-      winner: [
-        { pick: "Man City", reasoning: "Proven title-winning infrastructure. Rodri's midfield control is unmatched." },
-        { pick: "Arsenal", reasoning: "Consistent top-two finisher. Title-level consistency in recent years." },
-        { pick: "Liverpool", reasoning: "Experience and depth. Arne Slot's tactical discipline will deliver." },
-        { pick: "Aston Villa", reasoning: "Champions League exposure builds title-winning mentality." },
-        { pick: "Chelsea", reasoning: "Rebuilding project maturing. Young squad entering peak season." }
-      ],
-      facup: [
-        { pick: "Man City", reasoning: "Squad rotation mastery. Competition depth is their superpower." },
-        { pick: "Liverpool", reasoning: "Cup pedigree remains elite. Strong backup XI." },
-        { pick: "Arsenal", reasoning: "Young, hungry squad. Set-piece threat in knockout football." },
-        { pick: "Manchester Utd", reasoning: "Old Trafford factor. Traditional cup strength." },
-        { pick: "Chelsea", reasoning: "Deep talented squad. Tuchel's cup experience." }
-      ],
-      scorer: [
-        { pick: "Erling Haaland", reasoning: "0.92 xG per 90 is unmatched. Clinical finisher in his prime." },
-        { pick: "Mohamed Salah", reasoning: "Consistent 20-goal seasons. Liverpool's system feeds him chances." },
-        { pick: "Ollie Watkins", reasoning: "25+ goals last season. In-form, reliable poacher." },
-        { pick: "Alexander Isak", reasoning: "Elite conversion rate. Newcastle's focal point." },
-        { pick: "Son Heung-min", reasoning: "Proven high-volume scorer. Spurs' consistent outlet." }
-      ],
-      assists: [
-        { pick: "Kevin De Bruyne", reasoning: "Progressive passing genius. Still league's best creator per 90." },
-        { pick: "Cole Palmer", reasoning: "Chelsea's primary playmaker. Threads through-balls constantly." },
-        { pick: "Bukayo Saka", reasoning: "Creative winger. Arsenal's consistent provider." },
-        { pick: "Pascal Groß", reasoning: "Set-piece and open-play threat. Brighton's midfield hub." },
-        { pick: "James Maddison", reasoning: "Technical quality. Spurs' creative outlet in midfield." }
-      ],
-      cleansheets: [
-        { pick: "Arsenal", reasoning: "High-line mastery. Defensive organization is elite." },
-        { pick: "Man City", reasoning: "Rodri's positioning prevents shots. Best defensive structure." },
-        { pick: "Brighton", reasoning: "De Zerbi's system. Possession-based defense." },
-        { pick: "Aston Villa", reasoning: "Emery's defensive discipline. Champions League experience." },
-        { pick: "Liverpool", reasoning: "Van Dijk's leadership. Alisson's shot-stopping." }
-      ],
-      hattrick: [
-        { pick: "Erling Haaland", reasoning: "High-volume game-time. 40+ shots per season increases hat-trick odds." },
-        { pick: "Mohamed Salah", reasoning: "Completes hat-tricks in big games. Career hat-trick precedent." },
-        { pick: "Ollie Watkins", reasoning: "On-form. High intensity play style lends itself to multiple goals." },
-        { pick: "Son Heung-min", reasoning: "Spurs' penalty taker with high conversion. Completes hat-tricks in thrashings." },
-        { pick: "Alexander Isak", reasoning: "Elite finisher. Newcastle's focal point in attacking play." }
-      ],
-      sacked: [
-        { pick: "David Moyes (West Ham)", reasoning: "History of pressure at mid-table/struggling clubs." },
-        { pick: "Vincent Kompany (Burnley)", reasoning: "Promotion pressure peaks mid-season. Tactical struggles emerge." },
-        { pick: "Gary O'Neil (Wolves)", reasoning: "System failures under early pressure. Seat heating quickly." },
-        { pick: "Marco Silva (Fulham)", reasoning: "Tactical plateau. System needs refresh or investment." },
-        { pick: "Stuart Pearce (Coventry)", reasoning: "Newly promoted manager pressure. Early struggles likely." }
-      ],
-      redcards: [
-        { pick: "Declan Rice", reasoning: "Defensive midfielder. High tackles-per-90 in possession chains." },
-        { pick: "Bruno Fernandes", reasoning: "High intensity play. Box-to-box role breeds tactical fouls." },
-        { pick: "Palhinha", reasoning: "Enforcer role. Aggressive duels accumulate bookings leading to reds." },
-        { pick: "Jorginho", reasoning: "Defensive midfielder. Tactical foul pattern frequency highest." },
-        { pick: "Edson Alvarez", reasoning: "Physical playing style. High fouls-per-90 defensive role." }
-      ],
-      relegated: [
-        { pick: "West Ham", reasoning: "Financial pressures mount. Squad instability in Championship." },
-        { pick: "Burnley", reasoning: "Sustained promotion fatigue. Financial constraints. Squad turnover likely." },
-        { pick: "Wolves", reasoning: "Tactical system failure. Recruitment backfired. Defensive struggles." },
-        { pick: "Bournemouth", reasoning: "Underperformance against odds. Youth development plateaus." },
-        { pick: "Everton", reasoning: "Chaotic season trajectory. Emotional volatility breeding poor form." }
-      ],
-      yellows: [
-        { pick: "Palhinha", reasoning: "Enforcer role. High fouls-per-90 in midfield." },
-        { pick: "Edson Alvarez", reasoning: "Defensive midfielder. Regular tactical fouls." },
-        { pick: "Bruno Guimaraes", reasoning: "Box-to-box work rate. Consistent bookings." },
-        { pick: "Declan Rice", reasoning: "Holding role. Defensive discipline sometimes crosses line." },
-        { pick: "Christian Norgaard", reasoning: "Brentford's tackle machine. High foul rate." }
-      ]
-    }
-  },
-  analyst: {
-    name: "The Maverick",
-    risk: "High (Extreme)",
-    blurb: "Chases massive rewards by identifying high-variance anomalies that others ignore.",
-    flavor: "Probabilistic Modelling",
-    advice: {
-      winner: [
-        { pick: "Man City", reasoning: "Quadruple attempt feasible. Best squad depth on metrics." },
-        { pick: "Arsenal", reasoning: "xG difference closing. Young team entering peak window." },
-        { pick: "Liverpool", reasoning: "Arne Slot effect. System fit improves data models." },
-        { pick: "Aston Villa", reasoning: "Expected points (xP) overperforming. Outlier trajectory." },
-        { pick: "Newcastle", reasoning: "Spending power + PSR constraints create value anomaly." }
-      ],
-      facup: [
-        { pick: "Aston Villa", reasoning: "Squad depth now rivals top six. Rotation advantage." },
-        { pick: "Newcastle", reasoning: "Fixture congestion eases after European drop." },
-        { pick: "Brentford", reasoning: "Underrated squad quality. Deep cup runs likely." },
-        { pick: "Bournemouth", reasoning: "Burnley's trajectory. Mid-table teams thrive in cups." },
-        { pick: "Brighton", reasoning: "Youth + depth combo. Tactical flexibility in knockouts." }
-      ],
-      scorer: [
-        { pick: "Lautaro Martínez", reasoning: "Yet to fully adjust to PL. xG suggests 25+ potential." },
-        { pick: "Myles Goodridge", reasoning: "Breakout candidate. High underlying metrics at Bournemouth." },
-        { pick: "Tammy Abraham", reasoning: "Aston Villa move provides platform. Volume will spike." },
-        { pick: "Ivan Toney", reasoning: "Return from suspension. Penalty-taker opportunity." },
-        { pick: "Amdouni", reasoning: "Burnley forward. Championship success + PL time = outlier" }
-      ],
-      assists: [
-        { pick: "Bukayo Saka", reasoning: "xA metrics suggest underrated. High crossing volume." },
-        { pick: "Marten Ødegaard", reasoning: "Progressive passing elite. Assists lag expected output." },
-        { pick: "Tielemans", reasoning: "Box-to-box role in Aston Villa system. High chance creation." },
-        { pick: "Luis Díaz", reasoning: "Liverpool's tactical width. Underrated chance provider." },
-        { pick: "Neto (Wolves)", reasoning: "Winger role explosion. Volume-based assist spike expected." }
-      ],
-      cleansheets: [
-        { pick: "Brentford", reasoning: "Low xGA metrics. Underrated defensive structure." },
-        { pick: "Newcastle", reasoning: "Ashworth effect. Data-driven defensive setup." },
-        { pick: "Brighton", reasoning: "Possession-based suppression. xGA best in league." },
-        { pick: "Fulham", reasoning: "Defensive metrics spike under Saleh's system." },
-        { pick: "Bournemouth", reasoning: "Small-ball defensive philosophy. Low xGA profile." }
-      ],
-      hattrick: [
-        { pick: "Lautaro Martínez", reasoning: "High variance new player. PL adjustment could produce explosive game." },
-        { pick: "Ollie Watkins", reasoning: "Variance player. One-off performances in top-vs-bottom games." },
-        { pick: "Son Heung-min", reasoning: "Penalty taker + high variance. Hat-trick in thrashing likely." },
-        { pick: "Tammy Abraham", reasoning: "New squad integration. Explosive debut season pattern." },
-        { pick: "Neto", reasoning: "Winger role + emerging form. Volume could spike in one match." }
-      ],
-      sacked: [
-        { pick: "David Moyes", reasoning: "Exit probability rising. West Ham underperformance mounting." },
-        { pick: "Gary O'Neil", reasoning: "Wolves chaos metrics rising. Statistical relegation probability high." },
-        { pick: "Vincent Kompany", reasoning: "Burnley data suggests early exit risk likelihood." },
-        { pick: "Marco Silva", reasoning: "Fulham system adjustment underperformance. Early pressure mounting." },
-        { pick: "Stuart Pearce", reasoning: "Coventry promotion pressure. Firing odds empirically high." }
-      ],
-      redcards: [
-        { pick: "Bruno Fernandes", reasoning: "High fouls-per-90 in box. Tactical foul pattern data." },
-        { pick: "Casemiro", reasoning: "Age factor. Disciplinary volatility increases with age in aggressive duels." },
-        { pick: "Palhinha", reasoning: "Defensive midfielder role. Empirical red card rate 2.1 per season." },
-        { pick: "Jorginho", reasoning: "Pressing system demands. High tactical foul rate in possession chains." },
-        { pick: "Marten Ødegaard", reasoning: "Box-to-box intensity. Possession recovery fouls lead to reds." }
-      ],
-      relegated: [
-        { pick: "Wolves", reasoning: "Expected points analysis signals Championship trajectory. Squad balance poor." },
-        { pick: "Burnley", reasoning: "Promotion curse: Empirical data shows 2-3 year relegation cycle." },
-        { pick: "West Ham", reasoning: "Financial fair play constraints + tactical instability = downside risk." },
-        { pick: "Brighton", reasoning: "Summer departures + competition depth challenges." }
-      ],
-      yellows: [
-        { pick: "Bruno Fernandes", reasoning: "High fouls-per-90 in box. Tactical foul pattern data." },
-        { pick: "Jarrad Bruma (PSV loaned back?)", reasoning: "Aggressive style. High booking frequency metrics." },
-        { pick: "Casemiro", reasoning: "Age factor. Disciplinary volatility increases with age." },
-        { pick: "Jorginho", reasoning: "Defensive midfielder. High foul rate in possession chains." },
-        { pick: "Mount (Chelsea loaned)", reasoning: "Pressing system = high fouls-per-90 likelihood." }
-      ]
-    }
-  },
-  scout: {
-    name: "The Tactician",
-    risk: "Medium (Bold)",
-    blurb: "Suggests 'out there' picks based on tactical matchups and system advantages.",
-    flavor: "Strategic Vision",
-    advice: {
-      winner: [
-        { pick: "Arsenal", reasoning: "Tactical structure maturity. Defensive solidity + attacking depth." },
-        { pick: "Liverpool", reasoning: "Arne Slot system fits PL perfectly. Transition efficiency gains." },
-        { pick: "Aston Villa", reasoning: "Emery's Champions League system translates. Tactical flexibility." },
-        { pick: "Manchester City", reasoning: "Guardiola evolution. New tactical adjustments mid-season." },
-        { pick: "Tottenham", reasoning: "Ange's high-press system peaks. European distraction lessens." }
-      ],
-      facup: [
-        { pick: "Liverpool", reasoning: "Rotation management mastered. Deep bench quality elite." },
-        { pick: "Chelsea", reasoning: "Tuchel's cup success. Tactical flexibility in knockouts." },
-        { pick: "Manchester Utd", reasoning: "Old Trafford advantage + set-piece threat." },
-        { pick: "Aston Villa", reasoning: "Emery's tactical adjustments. System allows squad rotation." },
-        { pick: "Newcastle", reasoning: "St James Park support. Tactical discipline under pressure." }
-      ],
-      scorer: [
-        { pick: "Bukayo Saka", reasoning: "Inverted winger role evolution. Positioning inside creates chances." },
-        { pick: "Ollie Watkins", reasoning: "Tactical focal point in Emery system. Movement patterns elite." },
-        { pick: "Dominic Solanke", reasoning: "Tactical upgrade at Bournemouth. Movement patterns refined." },
-        { pick: "Jude Bellingham", reasoning: "Midfield-to-box runs. Tactical position evolution." },
-        { pick: "Phil Foden", reasoning: "System freedom post-Cancelo. Tactical repositioning." }
-      ],
-      assists: [
-        { pick: "Marten Ødegaard", reasoning: "Playmaking role in Arteta's system. Passes through lines perfectly." },
-        { pick: "Tielemans", reasoning: "Box-to-box role in Aston Villa. Tactical positioning for creation." },
-        { pick: "Sané (Bayern return?)", reasoning: "Crossing threat evolution. Tactical fullback role emerging." },
-        { pick: "Grealish", reasoning: "Left flank revival. System unlocks creative freedom." },
-        { pick: "Bernardo Silva", reasoning: "Midfield hub. Tactical positioning for chance creation." }
-      ],
-      cleansheets: [
-        { pick: "Arsenal", reasoning: "High-line defensive organization. Offside trap mastery." },
-        { pick: "Brighton", reasoning: "Possession-based defense. Tactical press prevents shots." },
-        { pick: "Aston Villa", reasoning: "Emery's defensive structure. Tactical discipline in shape." },
-        { pick: "Brentford", reasoning: "Tactical flexibility. Defensive shape adaptation." },
-        { pick: "Manchester City", reasoning: "Guardiola's defensive shapes. Tactical fluidity prevents chances." }
-      ],
-      hattrick: [
-        { pick: "Bukayo Saka", reasoning: "Tactical freedom in wide role. Multiple goal-scoring angles." },
-        { pick: "Ollie Watkins", reasoning: "Movement patterns create space. Tactical positioning for opportunities." },
-        { pick: "Alexander Isak", reasoning: "Tactical focal point. Newcastle's structure creates chances." },
-        { pick: "Son Heung-min", reasoning: "Tactical flexibility in left role. Multiple shooting angles." },
-        { pick: "Phil Foden", reasoning: "System freedom evolving. Box presence in tactical adjustments." }
-      ],
-      sacked: [
-        { pick: "Gary O'Neil (Wolves)", reasoning: "Tactical mismatch. Squad structure doesn't fit system." },
-        { pick: "David Moyes (West Ham)", reasoning: "Tactical inflexibility. System struggles with squad." },
-        { pick: "Marco Silva (Fulham)", reasoning: "Tactical plateau. System needs refresh or investment." },
-        { pick: "Vincent Kompany (Burnley)", reasoning: "Tactical overhaul needed at Burnley mid-season." },
-        { pick: "Stuart Pearce (Coventry)", reasoning: "Tactical demands strain system implementation with promoted squad." }
-      ],
-      redcards: [
-        { pick: "Declan Rice", reasoning: "Defensive positioning role. High tackle density = accumulation risk." },
-        { pick: "Palhinha", reasoning: "System demands high physical intensity. Tactical role = red card threat." },
-        { pick: "Casemiro", reasoning: "Aggressive defending. Tactical fouls in system integration." },
-        { pick: "James Maddison", reasoning: "Box-to-box intensity in pressing. Possession recovery fouls." },
-        { pick: "Edson Alvarez", reasoning: "Physical defensive approach. System creates tackling opportunities." }
-      ],
-      relegated: [
-        { pick: "West Ham", reasoning: "Tactical structure mismatch. System doesn't optimize squad strengths." },
-        { pick: "Burnley", reasoning: "Tactical rigidity post-promotion. System adaptation failure guaranteed." },
-        { pick: "Wolves", reasoning: "Tactical overhaul failure. Squad alignment issues create chaos." },
-        { pick: "Bournemouth", reasoning: "European demands strain system. Tactics don't travel." },
-        { pick: "Leicester", reasoning: "System identity lost. Tactical structure post-promotion doomed." }
-      ],
-      yellows: [
-        { pick: "Palhinha", reasoning: "System demands high fouls. Tactical role is defensive enforcer." },
-        { pick: "Edson Alvarez", reasoning: "Tactical midfield role breeds bookings." },
-        { pick: "Bruno Fernandes", reasoning: "Tactical box-to-box role. Defensive fouls in possession." },
-        { pick: "Casemiro", reasoning: "Tactical holding role. High fouls-per-90 by design." },
-        { pick: "Jorginho", reasoning: "Tactical midfield pressing. High foul rate in system." }
-      ]
-    }
-  }
-};
-
-const PL_CLUBS = [
-  "Arsenal", "Aston Villa", "Bournemouth", "Brentford", "Brighton", "Chelsea", 
-  "Coventry", "Crystal Palace", "Everton", "Fulham", "Hull", "Ipswich", "Liverpool", 
-  "Man City", "Man Utd", "Newcastle", "Nott'm Forest", "Spurs"
-];
-
-const clubProfiles = {
-  Arsenal: { titleThreat: 0.92, cupPotential: 0.9, goalOutput: 0.76, creativeOutput: 0.74, defensiveControl: 0.95, matchBurst: 0.72, managerPressure: 0.2, disciplineRisk: 0.34, dropZoneDanger: 0.04, bookingRisk: 0.36 },
-  "Aston Villa": { titleThreat: 0.8, cupPotential: 0.92, goalOutput: 0.62, creativeOutput: 0.7, defensiveControl: 0.8, matchBurst: 0.68, managerPressure: 0.28, disciplineRisk: 0.4, dropZoneDanger: 0.16, bookingRisk: 0.38 },
-  Bournemouth: { titleThreat: 0.2, cupPotential: 0.6, goalOutput: 0.46, creativeOutput: 0.5, defensiveControl: 0.42, matchBurst: 0.58, managerPressure: 0.42, disciplineRisk: 0.44, dropZoneDanger: 0.34, bookingRisk: 0.48 },
-  Brentford: { titleThreat: 0.22, cupPotential: 0.62, goalOutput: 0.4, creativeOutput: 0.42, defensiveControl: 0.48, matchBurst: 0.62, managerPressure: 0.44, disciplineRisk: 0.43, dropZoneDanger: 0.32, bookingRisk: 0.56 },
-  Brighton: { titleThreat: 0.48, cupPotential: 0.76, goalOutput: 0.5, creativeOutput: 0.8, defensiveControl: 0.78, matchBurst: 0.6, managerPressure: 0.38, disciplineRisk: 0.45, dropZoneDanger: 0.24, bookingRisk: 0.42 },
-  Chelsea: { titleThreat: 0.82, cupPotential: 0.88, goalOutput: 0.74, creativeOutput: 0.76, defensiveControl: 0.56, matchBurst: 0.74, managerPressure: 0.34, disciplineRisk: 0.4, dropZoneDanger: 0.16, bookingRisk: 0.4 },
-  Coventry: { titleThreat: 0.18, cupPotential: 0.5, goalOutput: 0.32, creativeOutput: 0.38, defensiveControl: 0.45, matchBurst: 0.4, managerPressure: 0.54, disciplineRisk: 0.38, dropZoneDanger: 0.62, bookingRisk: 0.4 },
-  "Crystal Palace": { titleThreat: 0.24, cupPotential: 0.58, goalOutput: 0.42, creativeOutput: 0.4, defensiveControl: 0.5, matchBurst: 0.48, managerPressure: 0.42, disciplineRisk: 0.4, dropZoneDanger: 0.38, bookingRisk: 0.44 },
-  Everton: { titleThreat: 0.22, cupPotential: 0.5, goalOutput: 0.4, creativeOutput: 0.38, defensiveControl: 0.4, matchBurst: 0.44, managerPressure: 0.6, disciplineRisk: 0.46, dropZoneDanger: 0.58, bookingRisk: 0.5 },
-  Fulham: { titleThreat: 0.3, cupPotential: 0.56, goalOutput: 0.45, creativeOutput: 0.46, defensiveControl: 0.58, matchBurst: 0.5, managerPressure: 0.44, disciplineRisk: 0.42, dropZoneDanger: 0.37, bookingRisk: 0.48 },
-  Hull: { titleThreat: 0.1, cupPotential: 0.34, goalOutput: 0.3, creativeOutput: 0.3, defensiveControl: 0.34, matchBurst: 0.34, managerPressure: 0.72, disciplineRisk: 0.36, dropZoneDanger: 0.74, bookingRisk: 0.42 },
-  Ipswich: { titleThreat: 0.12, cupPotential: 0.4, goalOutput: 0.32, creativeOutput: 0.32, defensiveControl: 0.37, matchBurst: 0.34, managerPressure: 0.72, disciplineRisk: 0.4, dropZoneDanger: 0.7, bookingRisk: 0.43 },
-  Liverpool: { titleThreat: 0.95, cupPotential: 0.95, goalOutput: 0.84, creativeOutput: 0.92, defensiveControl: 0.94, matchBurst: 0.8, managerPressure: 0.2, disciplineRisk: 0.3, dropZoneDanger: 0.06, bookingRisk: 0.28 },
-  "Man City": { titleThreat: 1, cupPotential: 0.98, goalOutput: 0.9, creativeOutput: 0.88, defensiveControl: 0.96, matchBurst: 0.78, managerPressure: 0.15, disciplineRisk: 0.28, dropZoneDanger: 0.03, bookingRisk: 0.26 },
-  "Man Utd": { titleThreat: 0.6, cupPotential: 0.8, goalOutput: 0.58, creativeOutput: 0.64, defensiveControl: 0.6, matchBurst: 0.72, managerPressure: 0.42, disciplineRisk: 0.45, dropZoneDanger: 0.22, bookingRisk: 0.44 },
-  Newcastle: { titleThreat: 0.72, cupPotential: 0.74, goalOutput: 0.66, creativeOutput: 0.6, defensiveControl: 0.67, matchBurst: 0.66, managerPressure: 0.38, disciplineRisk: 0.38, dropZoneDanger: 0.24, bookingRisk: 0.36 },
-  "Nott'm Forest": { titleThreat: 0.24, cupPotential: 0.45, goalOutput: 0.4, creativeOutput: 0.42, defensiveControl: 0.42, matchBurst: 0.44, managerPressure: 0.55, disciplineRisk: 0.47, dropZoneDanger: 0.48, bookingRisk: 0.5 },
-  Spurs: { titleThreat: 0.66, cupPotential: 0.72, goalOutput: 0.64, creativeOutput: 0.68, defensiveControl: 0.5, matchBurst: 0.72, managerPressure: 0.4, disciplineRisk: 0.5, dropZoneDanger: 0.26, bookingRisk: 0.5 }
-};
-
-const TOP_SCORER_CANDIDATES = [
-  "Erling Haaland", "Ollie Watkins", "Mohamed Salah", "Son Heung-min", "Alexander Isak", "Dominic Solanke"
-];
-
-const TOP_ASSIST_CANDIDATES = [
-  "Kevin De Bruyne", "Bruno Fernandes", "Bukayo Saka", "Cole Palmer", "Pascal Groß", "James Maddison"
-];
-
-const HAT_TRICK_CANDIDATES = [
-  "Erling Haaland", "Mohamed Salah", "Son Heung-min", "Ollie Watkins", "Dominic Solanke", "Darwin Núñez"
-];
-
-const CLEAN_SHEET_CANDIDATES = [
-  "Alisson", "Ederson", "David Raya", "Guglielmo Vicario", "Jordan Pickford", "Bernd Leno"
-];
-
-const MANAGER_CANDIDATES = [
-  "David Moyes", "Vincent Kompany", "Gary O'Neil", "Marco Silva", "Stuart Pearce", "Steve Bruce"
-];
-
-const RED_CARD_CANDIDATES = [
-  "Declan Rice", "Bruno Fernandes", "Palhinha", "Edson Alvarez", "Jorginho", "Casemiro"
-];
-
-const YELLOW_CANDIDATES = [
-  "Palhinha", "Edson Alvarez", "Christian Norgaard", "Bruno Guimaraes", 
-  "Douglas Luiz", "Joelinton", "Nicolas Jackson", "Mario Lemina", 
-  "Abdoulaye Doucoure", "Alexis Mac Allister"
-];
-
-// Helper to add options to a select element
-function updateCardStatus(select) {
-  const card = select.closest('.card');
-  if (!card) return;
-  const selects = card.querySelectorAll('select');
-  const isSelected = Array.from(selects).every(s => s.value && !s.value.toLowerCase().includes("select"));
-  
-  if (isSelected) {
-    card.classList.add('selected');
-  } else {
-    card.classList.remove('selected');
-  }
-}
-
-function addOptionsToSelect(selectElement, optionsArray) {
-  optionsArray.forEach(item => {
-    let opt = document.createElement('option');
-    opt.value = item;
-    opt.innerHTML = item;
-    selectElement.appendChild(opt);
-  });
-}
-
-function populateAllSelects() {
-  const selects = document.querySelectorAll("select");
-  selects.forEach(select => {
-    const h3 = select.parentElement.querySelector('h3');
-    if (!h3) return;
-    const title = h3.innerText;
-    
-    if (title.includes("Winner") || title.includes("Bottom 3")) {
-      PL_CLUBS.forEach(club => {
-        let opt = document.createElement('option');
-        opt.value = club;
-        opt.innerHTML = club;
-        select.appendChild(opt);
-      });
-    } else if (title.includes("Top Scorer")) {
-      addOptionsToSelect(select, TOP_SCORER_CANDIDATES);
-    } else if (title.includes("Top Assists")) {
-      addOptionsToSelect(select, TOP_ASSIST_CANDIDATES);
-    } else if (title.includes("Hat-Trick")) {
-      addOptionsToSelect(select, HAT_TRICK_CANDIDATES);
-    } else if (title.includes("Clean Sheets")) {
-      addOptionsToSelect(select, CLEAN_SHEET_CANDIDATES);
-    } else if (title.includes("Manager Sacked")) {
-      addOptionsToSelect(select, MANAGER_CANDIDATES);
-    } else if (title.includes("Red Cards")) {
-      addOptionsToSelect(select, RED_CARD_CANDIDATES);
-    } else if (title.includes("Yellow Cards")) {
-      addOptionsToSelect(select, YELLOW_CANDIDATES);
-    }
-
-    select.addEventListener('change', () => updateCardStatus(select));
-  });
-}
-
-window.refreshRelegated = function() {
-  const selects = document.querySelectorAll('.relegated-select');
-  const selectedValues = Array.from(selects)
-    .map(s => s.value)
-    .filter(val => val !== "Select team");
-
-  selects.forEach(select => {
-    const currentVal = select.value;
-    Array.from(select.options).forEach(opt => {
-      if (opt.text === "Select team") return;
-      opt.disabled = selectedValues.includes(opt.value) && opt.value !== currentVal;
-    });
-  });
-}
-
-let currentScoutKey = null;
-let currentCategory = null;
-let aiPage = 0;
-
-const closeAiModal = function() {
-  const modal = document.getElementById('aiModal');
-  if (modal) {
-    modal.style.display = 'none';
-  }
-};
-window.closeAiModal = closeAiModal;
-
-const aiModal = document.getElementById('aiModal');
-if (aiModal) {
-  aiModal.addEventListener('click', (event) => {
-    if (event.target === aiModal) {
-      closeAiModal();
-    }
-  });
-}
-
-const getScoutRecommendations = function(scoutKey, category) {
-  const scout = scoutData[scoutKey];
-  const advice = scout.advice[category] || [];
-  if (!advice.length) return [];
-
-  const categoryKey = {
-    winner: 'titleThreat',
-    facup: 'cupPotential',
-    scorer: 'goalOutput',
-    assists: 'creativeOutput',
-    cleansheets: 'defensiveControl',
-    hattrick: 'matchBurst',
-    sacked: 'managerPressure',
-    redcards: 'disciplineRisk',
-    relegated: 'dropZoneDanger',
-    yellows: 'bookingRisk'
-  }[category] || 'titleThreat';
-
-  const personalityWeights = {
-    striker: {
-      titleThreat: 1.14,
-      cupPotential: 1.08,
-      goalOutput: 1.18,
-      creativeOutput: 0.94,
-      defensiveControl: 1.12,
-      matchBurst: 0.95,
-      managerPressure: 0.64,
-      disciplineRisk: 0.74,
-      dropZoneDanger: 0.48,
-      bookingRisk: 0.68
-    },
-    scout: {
-      titleThreat: 1.02,
-      cupPotential: 1.16,
-      goalOutput: 0.98,
-      creativeOutput: 1.04,
-      defensiveControl: 1.18,
-      matchBurst: 0.96,
-      managerPressure: 0.76,
-      disciplineRisk: 0.84,
-      dropZoneDanger: 0.56,
-      bookingRisk: 0.8
-    },
-    analyst: {
-      titleThreat: 0.92,
-      cupPotential: 0.96,
-      goalOutput: 0.96,
-      creativeOutput: 0.94,
-      defensiveControl: 0.86,
-      matchBurst: 1.22,
-      managerPressure: 1.16,
-      disciplineRisk: 1.18,
-      dropZoneDanger: 1.24,
-      bookingRisk: 1.14
-    }
-  };
-
-  const riskBias = {
-    striker: {
-      titleThreat: 0.06,
-      cupPotential: 0.04,
-      goalOutput: 0.06,
-      creativeOutput: 0,
-      defensiveControl: 0.06,
-      matchBurst: 0.02,
-      managerPressure: -0.16,
-      disciplineRisk: -0.1,
-      dropZoneDanger: -0.2,
-      bookingRisk: -0.12
-    },
-    scout: {
-      titleThreat: 0.04,
-      cupPotential: 0.08,
-      goalOutput: 0.02,
-      creativeOutput: 0.04,
-      defensiveControl: 0.08,
-      matchBurst: 0.01,
-      managerPressure: -0.08,
-      disciplineRisk: -0.04,
-      dropZoneDanger: -0.1,
-      bookingRisk: -0.06
-    },
-    analyst: {
-      titleThreat: -0.02,
-      cupPotential: 0.01,
-      goalOutput: 0.01,
-      creativeOutput: 0.02,
-      defensiveControl: -0.04,
-      matchBurst: 0.1,
-      managerPressure: 0.14,
-      disciplineRisk: 0.12,
-      dropZoneDanger: 0.16,
-      bookingRisk: 0.12
-    }
-  };
-
-  const categoryLabels = {
-    winner: 'title threat',
-    facup: 'cup contender',
-    scorer: 'goal-output pick',
-    assists: 'creative outlet',
-    cleansheets: 'clean-sheet candidate',
-    hattrick: 'match-winning burst',
-    sacked: 'manager pressure case',
-    redcards: 'discipline risk',
-    relegated: 'drop-zone danger',
-    yellows: 'booking risk'
-  };
-
-  const teamBased = ['winner', 'facup', 'relegated'].includes(category);
-
-  if (teamBased) {
-    const ranked = PL_CLUBS.map((club) => {
-      const profile = clubProfiles[club];
-      const baseScore = Number(profile[categoryKey] || 0);
-      const personalityMultiplier = personalityWeights[scoutKey][categoryKey] || 1;
-      const bias = riskBias[scoutKey][categoryKey] || 0;
-      const adjustedScore = Math.max(0.02, baseScore * personalityMultiplier + bias);
-      return { club, score: adjustedScore };
-    }).sort((a, b) => b.score - a.score);
-
-    const pickCount = category === 'relegated' ? 3 : 1;
-    const picks = [];
-    const seen = new Set();
-
-    for (let i = 0; i < pickCount; i++) {
-      const nextPick = ranked.find((entry) => !seen.has(entry.club));
-      if (!nextPick) break;
-      seen.add(nextPick.club);
-      const reason = advice.find((entry) => entry.pick === nextPick.club)?.reasoning || `${scout.name} is backing ${nextPick.club} because it fits the current risk profile.`;
-      picks.push({ pick: nextPick.club, reasoning: reason });
-    }
-
-    return picks;
-  }
-
-  const picks = [];
-  const orderedAdvice = advice.slice().sort((a, b) => {
-    const scoreA = Number(a.score || 0);
-    const scoreB = Number(b.score || 0);
-    return scoreB - scoreA;
-  });
-
-  const pickCount = category === 'relegated' ? 3 : 1;
-  orderedAdvice.slice(0, pickCount).forEach((entry, index) => {
-    const reason = entry.reasoning || `${scout.name} likes ${entry.pick} because it fits the ${categoryLabels[category] || 'season'} profile.`;
-    picks.push({ pick: entry.pick, reasoning: reason });
-  });
-
-  return picks;
-};
-
-function getCategoryConfig(category) {
-  return {
-    winner: { title: 'Premier League Winner', inputType: 'team' },
-    facup: { title: 'FA Cup Winner', inputType: 'team' },
-    scorer: { title: 'Top Scorer', inputType: 'player' },
-    assists: { title: 'Top Assists', inputType: 'player' },
-    cleansheets: { title: 'Most Clean Sheets', inputType: 'player' },
-    hattrick: { title: 'First Hat-Trick', inputType: 'player' },
-    sacked: { title: 'First Manager Sacked', inputType: 'person' },
-    redcards: { title: 'Most Red Cards', inputType: 'player' },
-    relegated: { title: 'Bottom 3 Finishers (Relegation)', inputType: 'team' },
-    yellows: { title: 'Most Yellow Cards', inputType: 'player' }
-  }[category] || { title: 'Season Pick', inputType: 'team' };
-}
-
-function getCategorySelects(category) {
-  const config = getCategoryConfig(category);
-  const cards = Array.from(document.querySelectorAll('.card'));
-  const targetCard = cards.find((card) => card.querySelector('h3')?.innerText.trim() === config.title);
-  return targetCard ? Array.from(targetCard.querySelectorAll('select')) : [];
-}
-
-function applyScoutRecommendation(category, picks) {
-  const selects = getCategorySelects(category);
-  if (!selects.length) return;
-
-  if (category === 'relegated') {
-    picks.forEach((item, index) => {
-      if (selects[index]) {
-        selects[index].value = item.pick;
-        updateCardStatus(selects[index]);
-      }
-    });
-  } else if (picks[0]) {
-    selects[0].value = picks[0].pick;
-    updateCardStatus(selects[0]);
-  }
-
-  refreshRelegated();
-}
-
-window.showAiScout = function(scoutKey, category) {
-  currentScoutKey = scoutKey;
-  currentCategory = category;
-  const scout = scoutData[scoutKey];
-  
-  const modal = document.getElementById('aiModal');
-  const content = document.getElementById('aiContent');
-  const stats = document.getElementById('aiStats');
-  const actionBtn = document.getElementById('aiActionBtn');
-  const title = modal.querySelector('h2');
-  
-  aiPage = 0;
-  modal.style.display = 'flex';
-  title.innerText = `🤖 ${scout.name} Scout Report`;
-  content.innerText = `${scout.name} is ready to analyze.\n\nRisk Profile: ${scout.risk}\n\n"${scout.blurb}"`;
-  stats.innerHTML = "";
-  actionBtn.innerText = "View Recommendation";
-  actionBtn.onclick = () => window.loadAiReport();
-}
-
-window.loadAiReport = function() {
-  const scout = scoutData[currentScoutKey];
-  const config = getCategoryConfig(currentCategory);
-  const predictions = getScoutRecommendations(currentScoutKey, currentCategory);
-  const content = document.getElementById('aiContent');
-  const stats = document.getElementById('aiStats');
-  const actionBtn = document.getElementById('aiActionBtn');
-  const title = document.getElementById('aiModal').querySelector('h2');
-
-  aiPage = 1;
-  title.innerText = `🤖 ${scout.name} - ${config.title}`;
-  content.innerText = `${scout.flavor} analysis for ${config.title}:`;
-  
-  let pickHtml = '<div style="text-align: left; padding: 10px 0;">';
-  predictions.forEach((pred, idx) => {
-    const label = currentCategory === 'relegated' ? `Relegation pick ${idx + 1}` : 'Primary pick';
-    pickHtml += `
-      <div style="padding: 12px; margin: 8px 0; background: rgba(199,255,56,0.08); border-left: 3px solid #c7ff38; border-radius: 6px;">
-        <div style="color: #c7ff38; font-weight: bold; margin-bottom: 4px;">${label} - ${pred.pick}</div>
-        <div style="font-size: 12px; color: #cbd5e1; line-height: 1.5;">${pred.reasoning}</div>
-      </div>
-    `;
-  });
-  pickHtml += '</div>';
-  
-  stats.innerHTML = pickHtml;
-  actionBtn.innerText = currentCategory === 'relegated' ? 'Apply all three picks' : 'Apply this pick';
-  actionBtn.onclick = () => {
-    applyScoutRecommendation(currentCategory, predictions);
-    closeAiModal();
-  };
-}
-
-window.nextAiPage = function() {
-  closeAiModal();
-};
-
-window.lockSeason = async function() {
-  if (!currentUser) {
-    alert("Please log in to save your season picks.");
-    return;
-  }
-
-  if (!confirm("Are you sure you want to lock your Season Selections? Once locked, these picks cannot be changed.")) {
-    // User clicked 'Cancel'
-    return;
-  }
-
-  if (!confirm("Are you sure you want to lock your Season Selections? Once locked, these picks cannot be changed.")) {
-    // User clicked 'Cancel'
-    return;
-  }
-
-  const selects = document.querySelectorAll("select");
-  let picks = {};
-  for (let select of selects) {
-    if (select.value.includes("Select")) {
-      alert("Please complete all season picks.");
-      return;
-    }
-    const title = select.parentElement.querySelector('h3').innerText;
-    if (title.includes("Bottom 3")) {
-      if (!picks[title]) picks[title] = [];
-      picks[title].push(select.value);
-    } else {
-      picks[title] = select.value;
-    }
-  }
-
+async function boot() {
+  const status = document.getElementById("dataStatus");
   try {
-    const seasonDocRef = doc(db, "users", currentUser.uid, "predictions", "season");
-    await setDoc(seasonDocRef, picks);
-    alert("Season picks locked and saved to Firestore!");
-  } catch (error) {
-    console.error("Error saving season picks:", error);
-    alert("Failed to save picks. Please try again.");
-  }
-};
-
-async function loadSeasonPicks(uid) {
-  try {
-    const seasonDocRef = doc(db, "users", uid, "predictions", "season");
-    const docSnap = await getDoc(seasonDocRef);
-    
-
-    if (docSnap.exists()) {
-      const saved = docSnap.data();
-      const allSelects = document.querySelectorAll("select");
-      
-      allSelects.forEach((select) => {
-        const h3 = select.parentElement.querySelector('h3');
-        if (!h3) return;
-        const title = h3.innerText;
-
-        if (Array.isArray(saved[title])) {
-          const group = Array.from(select.parentElement.querySelectorAll('select'));
-          const idx = group.indexOf(select);
-          select.value = saved[title][idx] || "Select team";
-        } else if (saved[title]) {
-          select.value = saved[title];
-        }
-        updateCardStatus(select);
-      });
-      refreshRelegated();
+    if (typeof window.loadMyxiGameData !== "function") {
+      throw new Error("MyXI data loader not available.");
     }
+
+    gameData = await window.loadMyxiGameData();
+    renderSeasonGrid();
+    status.textContent = `Synced to MyXI pool: ${gameData.teams.length} teams, ${gameData.allPlayerObjects.length} players.`;
   } catch (error) {
-    console.error("Error loading season picks:", error);
+    console.error(error);
+    status.textContent = "Failed to read MyXI data. Season picks cannot be built.";
+    alert("Could not load teams/players from myxi.html. Please check that file and refresh.");
   }
 }
 
-// Tutorial Logic (copied from myxi.html and adapted)
-let currentTutStep = 1;
-const tutorialData = [
-  { text: '"On this page, you\'ll make your Season Picks. These are long-term predictions that can earn you big points at the end of the campaign. Let\'s get started!"' },
-  { text: '"Gain a huge advantage and lean on our data expertise. The Oracle gives cautious advice, I offer you bold tactical insights, and The Maverick provides extreme, high-risk predictions. Click them to get their reports!"' },
-  { text: '"Once you\'ve made all your selections, hit the \'Lock In Selections\' button at the bottom. Be careful, these picks are permanent once locked, so choose wisely..... or not!"' }
-];
+onAuthStateChanged(auth, async (user) => {
+  const userLinks = document.querySelectorAll('.user-only');
+  const guestLinks = document.querySelectorAll('.guest-only');
 
-window.updateTutorialUI = function() {
-  const step = tutorialData[currentTutStep - 1];
-  const bubble = document.getElementById('tutorialChatBubble');
-  if (bubble && bubble.querySelector('p')) {
-    bubble.querySelector('p').innerText = step.text;
-  }
-  const btn = document.getElementById('nextTutBtn');
-  if (btn) {
-    btn.innerText = (currentTutStep === tutorialData.length) ? "Let's Play" : "Next Step";
-  }
-};
+  if (user) {
+    currentUser = user;
+    userLinks.forEach((l) => (l.style.display = 'inline-block'));
+    guestLinks.forEach((l) => (l.style.display = 'none'));
 
-window.nextTutorialStep = function() {
-  if (currentTutStep < tutorialData.length) {
-    currentTutStep++;
-    window.updateTutorialUI();
+    if (!gameData) await boot();
+    await loadSeasonPicks(user.uid);
   } else {
-    window.closeOnboarding();
+    currentUser = null;
+    userLinks.forEach((l) => (l.style.display = 'none'));
+    guestLinks.forEach((l) => (l.style.display = 'inline-block'));
+    if (!gameData) await boot();
   }
-};
+});
 
-window.openTutorial = function() {
-  currentTutStep = 1;
-  const modal = document.getElementById('tutorialModal');
-  if (modal) {
-    modal.style.display = 'flex';
-    window.updateTutorialUI();
-  }
-};
-
-window.closeOnboarding = function() {
-  const modal = document.getElementById('tutorialModal');
-  if (modal) modal.style.display = 'none';
-  localStorage.setItem('onboarding_complete', 'true');
-};
-
-const checkOnboarding = () => {
-  if (!localStorage.getItem('onboarding_complete')) {
-    window.openTutorial();
-  }
-};
-  // Run onboarding check after a short delay
-  setTimeout(() => {
-    if (!localStorage.getItem('onboarding_complete')) {
-      window.openTutorial();
-    }
-  }, 800);
-
-// Run onboarding check after a short delay
-setTimeout(checkOnboarding, 800);
-
-  populateAllSelects();
-
+boot();
 </script>
 </body>
 </html>

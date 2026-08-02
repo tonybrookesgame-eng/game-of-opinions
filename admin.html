@@ -108,18 +108,18 @@
     <div class="admin-section">
       <p>5. Season Results (Update only when result is confirmed)</p>
       <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px;">
-        <input type="text" id="res-winner" placeholder="PL Winner">
-        <input type="text" id="res-facup" placeholder="FA Cup Winner">
-        <input type="text" id="res-scorer" placeholder="Top Scorer">
-        <input type="text" id="res-assists" placeholder="Top Assists">
-        <input type="text" id="res-cs" placeholder="Most CS">
-        <input type="text" id="res-ht" placeholder="First Hat-Trick">
-        <input type="text" id="res-sacked" placeholder="First Sacked">
-        <input type="text" id="res-reds" placeholder="Most Reds (Team)">
-        <input type="text" id="res-yellows" placeholder="Most Yellows (Team)">
-        <input type="text" id="res-rel1" placeholder="Rel 1">
-        <input type="text" id="res-rel2" placeholder="Rel 2">
-        <input type="text" id="res-rel3" placeholder="Rel 3">
+        <select id="res-winner"><option value="">PL Winner</option></select>
+        <select id="res-facup"><option value="">FA Cup Winner</option></select>
+        <select id="res-scorer"><option value="">Top Scorer</option></select>
+        <select id="res-assists"><option value="">Top Assists</option></select>
+        <select id="res-cs"><option value="">Most CS</option></select>
+        <select id="res-ht"><option value="">First Hat-Trick</option></select>
+        <select id="res-sacked"><option value="">First Manager Sacked (Team)</option></select>
+        <select id="res-reds"><option value="">Most Reds</option></select>
+        <select id="res-yellows"><option value="">Most Yellows</option></select>
+        <select id="res-rel1"><option value="">Rel 1</option></select>
+        <select id="res-rel2"><option value="">Rel 2</option></select>
+        <select id="res-rel3"><option value="">Rel 3</option></select>
       </div>
     </div>
 
@@ -155,6 +155,7 @@
   </div>
 
   <script src="shared-fixtures.js"></script>
+  <script src="myxi-data-loader.js"></script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, collection, getDocs, doc, updateDoc, increment, setDoc, getDoc, query, orderBy, limit, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -298,40 +299,167 @@
     };
 
     const playersData = [];
-    const plClubs = [...new Set(playersByPos.GK)];
+    let plClubs = [...new Set(playersByPos.GK)];
 
-    Object.entries(playersByPos).forEach(([pos, entries]) => {
-      entries.forEach(entry => {
-        if (typeof entry === 'string') {
-          playersData.push({ name: entry, pos: 'GK', club: entry });
-        } else {
-          playersData.push({ name: entry.name, pos: pos, club: entry.club });
-        }
+    function encodePlayerValue(name, club) {
+      return `${name}|${club}`;
+    }
+
+    function toPlayerLabel(value) {
+      if (!value) return "";
+      if (value.includes("|")) {
+        const [name, club] = value.split("|");
+        return `${name} (${club})`;
+      }
+      return value;
+    }
+
+    function normalizeRosterValue(rawValue) {
+      if (!rawValue || rawValue === "Select") return rawValue;
+      if (rawValue.includes("|")) return rawValue;
+      const matches = playersData.filter(p => p.name === rawValue);
+      if (matches.length === 1) {
+        return encodePlayerValue(matches[0].name, matches[0].club);
+      }
+      return rawValue;
+    }
+
+    function seedPoolsFromEmbeddedData() {
+      playersData.length = 0;
+      Object.entries(playersByPos).forEach(([pos, entries]) => {
+        entries.forEach(entry => {
+          if (typeof entry === 'string') {
+            playersData.push({
+              name: entry,
+              pos: 'GK',
+              club: entry,
+              key: entry,
+              id: entry.replace(/[^a-zA-Z0-9_-]/g, '_')
+            });
+          } else {
+            const key = encodePlayerValue(entry.name, entry.club);
+            playersData.push({
+              name: entry.name,
+              pos,
+              club: entry.club,
+              key,
+              id: key.replace(/[^a-zA-Z0-9_-]/g, '_')
+            });
+          }
+        });
       });
-    });
+      plClubs = [...new Set(playersByPos.GK)];
+    }
 
-    const inputContainer = document.getElementById('player-inputs');
-    const clubDropdown = document.getElementById('winning-club');
+    function renderPlayerInputs() {
+      const inputContainer = document.getElementById('player-inputs');
+      const clubDropdown = document.getElementById('winning-club');
+      if (!inputContainer || !clubDropdown) return;
 
-    plClubs.forEach(c => {
-      clubDropdown.innerHTML += `<option value="${c}">${c}</option>`;
-    });
+      inputContainer.innerHTML = "";
+      clubDropdown.innerHTML = '<option value="none">Select Club</option>';
 
-    playersData.forEach(p => {
-      const abbr = clubAbbr[p.club] || p.club.substring(0,3).toUpperCase();
-      inputContainer.innerHTML += `
-        <div class="player-row">
-          <span title="${p.pos}">${p.name} <small>(${abbr})</small></span>
-          <input type="checkbox" id="app-${p.name}">
-          <input type="number" id="gl-${p.name}" value="0">
-          <input type="number" id="ast-${p.name}" value="0">
-          <input type="checkbox" id="cs-${p.name}">
-          <input type="number" id="ps-${p.name}" value="0" ${p.pos !== 'GK' ? 'disabled style="opacity:0.2"' : ''}>
-          <input type="checkbox" id="yc-${p.name}">
-          <input type="checkbox" id="rc-${p.name}">
-        </div>
-      `;
-    });
+      plClubs.forEach(c => {
+        clubDropdown.innerHTML += `<option value="${c}">${c}</option>`;
+      });
+
+      playersData.forEach(p => {
+        const abbr = clubAbbr[p.club] || p.club.substring(0, 3).toUpperCase();
+        inputContainer.innerHTML += `
+          <div class="player-row">
+            <span title="${p.pos}">${p.name} <small>(${abbr})</small></span>
+            <input type="checkbox" id="app-${p.id}">
+            <input type="number" id="gl-${p.id}" value="0">
+            <input type="number" id="ast-${p.id}" value="0">
+            <input type="checkbox" id="cs-${p.id}">
+            <input type="number" id="ps-${p.id}" value="0" ${p.pos !== 'GK' ? 'disabled style="opacity:0.2"' : ''}>
+            <input type="checkbox" id="yc-${p.id}">
+            <input type="checkbox" id="rc-${p.id}">
+          </div>
+        `;
+      });
+    }
+
+    function setSeasonResultOptions() {
+      const teamSelectIds = ["res-winner", "res-facup", "res-sacked", "res-rel1", "res-rel2", "res-rel3"];
+      const playerSelectIds = ["res-scorer", "res-assists", "res-cs", "res-ht", "res-reds", "res-yellows"];
+
+      const allPlayerOptions = playersData
+        .filter(p => p.pos !== 'GK')
+        .map(p => ({ value: p.key, label: `${p.name} (${p.club})` }));
+
+      teamSelectIds.forEach(id => {
+        const select = document.getElementById(id);
+        if (!select) return;
+        const first = select.options[0] ? select.options[0].textContent : "Select team";
+        select.innerHTML = `<option value="">${first}</option>`;
+        plClubs.forEach(team => {
+          select.innerHTML += `<option value="${team}">${team}</option>`;
+        });
+      });
+
+      playerSelectIds.forEach(id => {
+        const select = document.getElementById(id);
+        if (!select) return;
+        const first = select.options[0] ? select.options[0].textContent : "Select player";
+        select.innerHTML = `<option value="">${first}</option>`;
+        allPlayerOptions.forEach(p => {
+          select.innerHTML += `<option value="${p.value}">${p.label}</option>`;
+        });
+      });
+    }
+
+    async function syncPoolsFromMyxi() {
+      if (typeof window.loadMyxiGameData !== 'function') {
+        seedPoolsFromEmbeddedData();
+        renderPlayerInputs();
+        setSeasonResultOptions();
+        return;
+      }
+
+      try {
+        const liveData = await window.loadMyxiGameData();
+        playersData.length = 0;
+
+        (liveData.playersByPos.GK || []).forEach(club => {
+          playersData.push({
+            name: club,
+            pos: 'GK',
+            club,
+            key: club,
+            id: club.replace(/[^a-zA-Z0-9_-]/g, '_')
+          });
+        });
+
+        ['DEF', 'MID', 'FWD'].forEach(pos => {
+          (liveData.playersByPos[pos] || []).forEach(entry => {
+            const key = encodePlayerValue(entry.name, entry.club);
+            playersData.push({
+              name: entry.name,
+              pos,
+              club: entry.club,
+              key,
+              id: key.replace(/[^a-zA-Z0-9_-]/g, '_')
+            });
+          });
+        });
+
+        plClubs = [...new Set(liveData.playersByPos.GK || [])];
+        renderPlayerInputs();
+        setSeasonResultOptions();
+      } catch (error) {
+        console.error('Failed to sync player pools from myxi.html', error);
+        seedPoolsFromEmbeddedData();
+        renderPlayerInputs();
+        setSeasonResultOptions();
+      }
+    }
+
+    seedPoolsFromEmbeddedData();
+    renderPlayerInputs();
+    setSeasonResultOptions();
+
+    syncPoolsFromMyxi();
 
     // SECURITY
     const ADMIN_EMAIL = "tonybrookes.game@gmail.com"; 
@@ -466,14 +594,14 @@
       };
 
       playersData.forEach(p => {
-        draft.playerStats[p.name] = {
-          app: document.getElementById(`app-${p.name}`).checked,
-          gl: document.getElementById(`gl-${p.name}`).value,
-          ast: document.getElementById(`ast-${p.name}`).value,
-          cs: document.getElementById(`cs-${p.name}`).checked,
-          ps: document.getElementById(`ps-${p.name}`) ? document.getElementById(`ps-${p.name}`).value : 0,
-          yc: document.getElementById(`yc-${p.name}`).checked,
-          rc: document.getElementById(`rc-${p.name}`).checked
+        draft.playerStats[p.key] = {
+          app: !!document.getElementById(`app-${p.id}`)?.checked,
+          gl: document.getElementById(`gl-${p.id}`)?.value || 0,
+          ast: document.getElementById(`ast-${p.id}`)?.value || 0,
+          cs: !!document.getElementById(`cs-${p.id}`)?.checked,
+          ps: document.getElementById(`ps-${p.id}`) ? document.getElementById(`ps-${p.id}`).value : 0,
+          yc: !!document.getElementById(`yc-${p.id}`)?.checked,
+          rc: !!document.getElementById(`rc-${p.id}`)?.checked
         };
       });
 
@@ -501,15 +629,15 @@
 
         if (data.playerStats) {
           playersData.forEach(p => {
-            const s = data.playerStats[p.name];
+            const s = data.playerStats[p.key] || data.playerStats[p.name];
             if (s) {
-              document.getElementById(`app-${p.name}`).checked = s.app;
-              document.getElementById(`gl-${p.name}`).value = s.gl;
-              document.getElementById(`ast-${p.name}`).value = s.ast;
-              document.getElementById(`cs-${p.name}`).checked = s.cs;
-              if (document.getElementById(`ps-${p.name}`)) document.getElementById(`ps-${p.name}`).value = s.ps;
-              document.getElementById(`yc-${p.name}`).checked = s.yc;
-              document.getElementById(`rc-${p.name}`).checked = s.rc;
+              if (document.getElementById(`app-${p.id}`)) document.getElementById(`app-${p.id}`).checked = !!s.app;
+              if (document.getElementById(`gl-${p.id}`)) document.getElementById(`gl-${p.id}`).value = s.gl ?? 0;
+              if (document.getElementById(`ast-${p.id}`)) document.getElementById(`ast-${p.id}`).value = s.ast ?? 0;
+              if (document.getElementById(`cs-${p.id}`)) document.getElementById(`cs-${p.id}`).checked = !!s.cs;
+              if (document.getElementById(`ps-${p.id}`)) document.getElementById(`ps-${p.id}`).value = s.ps ?? 0;
+              if (document.getElementById(`yc-${p.id}`)) document.getElementById(`yc-${p.id}`).checked = !!s.yc;
+              if (document.getElementById(`rc-${p.id}`)) document.getElementById(`rc-${p.id}`).checked = !!s.rc;
             }
           });
         }
@@ -534,6 +662,19 @@
         alert("No saved draft found.");
       }
     };
+
+    function seasonPickMatches(savedValue, resultValue) {
+      if (!savedValue || !resultValue) return false;
+      if (savedValue === resultValue) return true;
+
+      const normalizeName = (value) => {
+        if (!value) return "";
+        if (value.includes("|")) return value.split("|")[0].trim().toLowerCase();
+        return value.trim().toLowerCase();
+      };
+
+      return normalizeName(savedValue) === normalizeName(resultValue);
+    }
 
     window.processGameweek = async function() {
       const gwNum = parseInt(document.getElementById('gameweek-num').value);
@@ -563,19 +704,22 @@
         let total = 0;
         const r = rules[p.pos];
         
-        if (document.getElementById(`app-${p.name}`).checked) total += r.app;
-        if (document.getElementById(`cs-${p.name}`).checked) total += r.cs;
-        if (document.getElementById(`yc-${p.name}`).checked) total += r.yc;
-        if (document.getElementById(`rc-${p.name}`).checked) total += r.rc;
+        if (document.getElementById(`app-${p.id}`)?.checked) total += r.app;
+        if (document.getElementById(`cs-${p.id}`)?.checked) total += r.cs;
+        if (document.getElementById(`yc-${p.id}`)?.checked) total += r.yc;
+        if (document.getElementById(`rc-${p.id}`)?.checked) total += r.rc;
         
-        total += (parseInt(document.getElementById(`gl-${p.name}`).value) || 0) * r.gl;
-        total += (parseInt(document.getElementById(`ast-${p.name}`).value) || 0) * r.ast;
+        total += (parseInt(document.getElementById(`gl-${p.id}`)?.value) || 0) * r.gl;
+        total += (parseInt(document.getElementById(`ast-${p.id}`)?.value) || 0) * r.ast;
         
         if (p.pos === 'GK') {
-          total += (parseInt(document.getElementById(`ps-${p.name}`).value) || 0) * r.ps;
+          total += (parseInt(document.getElementById(`ps-${p.id}`)?.value) || 0) * r.ps;
         }
         
-        currentScores[p.name] = total;
+        currentScores[p.key] = total;
+        if (!(p.name in currentScores)) {
+          currentScores[p.name] = total;
+        }
       });
 
       const betResult = document.getElementById('bet-result').value;
@@ -626,9 +770,12 @@
             const players = teamDoc.data().players; // Array of 11 player names
 
             // 4. Match their players against your point list
-            players.forEach(pName => {
-              if (currentScores[pName]) {
-                userPlayerScore += currentScores[pName];
+            players.forEach(rawValue => {
+              const playerValue = normalizeRosterValue(rawValue);
+              if (Object.prototype.hasOwnProperty.call(currentScores, playerValue)) {
+                userPlayerScore += currentScores[playerValue];
+              } else if (Object.prototype.hasOwnProperty.call(currentScores, rawValue)) {
+                userPlayerScore += currentScores[rawValue];
               }
             });
           }
@@ -666,15 +813,15 @@
           let userSeasonScore = 0;
           if (seasonSnap.exists()) {
             const sp = seasonSnap.data();
-            if (resWinner && sp["Premier League Winner"] === resWinner) userSeasonScore += 25;
-            if (resFacup && sp["FA Cup Winner"] === resFacup) userSeasonScore += 50;
-            if (resScorer && sp["Top Scorer"] === resScorer) userSeasonScore += 25;
-            if (resAssists && sp["Top Assists"] === resAssists) userSeasonScore += 50;
-            if (resCS && sp["Most Clean Sheets"] === resCS) userSeasonScore += 50;
-            if (resHT && sp["First Hat-Trick"] === resHT) userSeasonScore += 50;
-            if (resSacked && sp["First Manager Sacked"] === resSacked) userSeasonScore += 50;
-            if (resReds && sp["Most Red Cards"] === resReds) userSeasonScore += 75;
-            if (resYellows && sp["Most Yellow Cards"] === resYellows) userSeasonScore += 50;
+            if (resWinner && seasonPickMatches(sp["Premier League Winner"], resWinner)) userSeasonScore += 25;
+            if (resFacup && seasonPickMatches(sp["FA Cup Winner"], resFacup)) userSeasonScore += 50;
+            if (resScorer && seasonPickMatches(sp["Top Scorer"], resScorer)) userSeasonScore += 25;
+            if (resAssists && seasonPickMatches(sp["Top Assists"], resAssists)) userSeasonScore += 50;
+            if (resCS && seasonPickMatches(sp["Most Clean Sheets"], resCS)) userSeasonScore += 50;
+            if (resHT && seasonPickMatches(sp["First Hat-Trick"], resHT)) userSeasonScore += 50;
+            if (resSacked && seasonPickMatches(sp["First Manager Sacked"], resSacked)) userSeasonScore += 50;
+            if (resReds && seasonPickMatches(sp["Most Red Cards"], resReds)) userSeasonScore += 75;
+            if (resYellows && seasonPickMatches(sp["Most Yellow Cards"], resYellows)) userSeasonScore += 50;
             
             if (resRel.length > 0 && sp["Bottom 3 Finishers (Relegation)"]) {
               const picks = Array.isArray(sp["Bottom 3 Finishers (Relegation)"]) ? sp["Bottom 3 Finishers (Relegation)"] : [sp["Bottom 3 Finishers (Relegation)"]];

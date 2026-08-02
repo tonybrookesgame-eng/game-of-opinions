@@ -492,9 +492,41 @@ h1 {
     -webkit-overflow-scrolling: touch;
   }
   .container {
+    display: flex;
+    flex-direction: column;
     padding-left: 10px;
     padding-right: 10px;
     padding-top: 62px;
+  }
+
+  .league-management {
+    order: 5;
+    width: 100%;
+    margin: 14px 0 0;
+  }
+
+  #league-table-title {
+    order: 3;
+  }
+
+  .leaderboard {
+    order: 4;
+  }
+
+  .league-card {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .league-actions {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    max-width: none;
+  }
+
+  .league-action-btn {
+    width: 100%;
+    min-height: 44px;
   }
 
   .league-control-grid {
@@ -613,7 +645,7 @@ h1 {
         <button class="league-action-btn" onclick="openLeagueModal('create')">Create a league</button>
         <button class="league-action-btn" onclick="openLeagueModal('join')">Join a league</button>
         <button class="league-action-btn" onclick="openLeagueModal('view')">View a league</button>
-        <button class="league-action-btn" onclick="openLeagueModal('share')">Share League</button>
+        <button class="league-action-btn" onclick="openLeagueModal('share')">Share League Central</button>
       </div>
     </div>
   </div>
@@ -1114,7 +1146,9 @@ onAuthStateChanged(auth,(user)=>{
   const userLinks = document.querySelectorAll('.user-only');
   const guestLinks = document.querySelectorAll('.guest-only');
   if (user) {
-    userLinks.forEach(l => l.style.display = 'inline-block');
+    userLinks.forEach(l => {
+      l.style.display = l.classList.contains('league-management') ? 'flex' : 'inline-block';
+    });
     guestLinks.forEach(l => l.style.display = 'none');
     loadLeagueMemberships(user);
     ensureGlobalLeagueMembership(user);

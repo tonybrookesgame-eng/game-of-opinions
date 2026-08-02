@@ -2523,6 +2523,37 @@ const markTeamAsSaved = () => {
   saveBtn.innerText = 'Team Saved';
 };
 
+const resetWeeklySaveButton = () => {
+  const btn = document.getElementById('saveWeeklyBtn');
+  if (!btn) return;
+  btn.disabled = false;
+  btn.innerText = 'Save Picks';
+};
+
+const markWeeklyAsSaved = () => {
+  const btn = document.getElementById('saveWeeklyBtn');
+  if (!btn) return;
+  btn.disabled = true;
+  btn.innerText = 'Picks Saved';
+};
+
+const resetBetSaveButton = () => {
+  const btn = document.getElementById('saveBetBuilderBtn');
+  if (!btn) return;
+  btn.disabled = false;
+  btn.innerText = 'Save Bet Prediction';
+};
+
+const markBetAsSaved = () => {
+  const btn = document.getElementById('saveBetBuilderBtn');
+  if (!btn) return;
+  btn.disabled = true;
+  btn.innerText = 'Bet Saved';
+};
+
+let isProgrammaticallyUpdatingPicks = false;
+let isProgrammaticallyUpdatingBetChoice = false;
+
 const updateShirt = function(select) {
   const shirt = select.closest('.shirt');
   const nameLabel = shirt.querySelector('.shirt-name');
@@ -3025,30 +3056,41 @@ const loadSelectedGameweekHistory = async () => {
   weeklyPanel.classList.remove('weekly-correct', 'weekly-incorrect', 'panel-saved');
   betPanel.classList.remove('bet-correct', 'bet-incorrect', 'panel-saved');
 
+  isProgrammaticallyUpdatingPicks = true;
   document.getElementById('firstScorer').value = picksData ? picksData.first || "Select" : "Select";
   document.getElementById('goalMinute').value = picksData ? picksData.minute || "Select" : "Select";
+  isProgrammaticallyUpdatingPicks = false;
 
   if (!isHistory && picksData?.first !== "Select" && picksData?.minute !== "Select") {
     weeklyPanel.classList.add('panel-saved');
+    markWeeklyAsSaved();
   } else if (isHistory && picksData?.first && picksData?.first !== "Select") {
     // In history view, show that picks were made by highlighting
     weeklyPanel.classList.add('panel-saved');
+    markWeeklyAsSaved();
+  } else {
+    resetWeeklySaveButton();
   }
 
   // 6. Update Bet Builder Panel - Always show selection in historic view
   if (betData && betData.choice) {
+    isProgrammaticallyUpdatingBetChoice = true;
     setBetChoice(betData.choice);
+    isProgrammaticallyUpdatingBetChoice = false;
     if (!isHistory) {
       betPanel.classList.add('panel-saved');
+      markBetAsSaved();
     } else {
       // In history view, show that bet was made by highlighting
       betPanel.classList.add('panel-saved');
+      markBetAsSaved();
     }
   } else {
     currentBetChoice = null;
     document.getElementById('btnYes').classList.remove('selected');
     document.getElementById('btnNo').classList.remove('selected');
     document.getElementById('betInfo').innerText = "Pick if the bet lands. Cost: 5 pts to play.";
+    resetBetSaveButton();
   }
 
   // 7. Apply color coding for historic results
@@ -3358,6 +3400,7 @@ const saveWeekly = async function() {
 
     status.innerText = "Saved to Firestore";
     panel.classList.add('panel-saved');
+    markWeeklyAsSaved();
     alert("Weekly picks saved and verified.");
     try { showDebug(`Weekly picks verified:\n${JSON.stringify(verifyData, null, 2)}`); } catch(e) {}
   } catch (error) {
@@ -3367,6 +3410,7 @@ const saveWeekly = async function() {
       : `Failed to save weekly picks${error?.code ? ` (${error.code})` : ""}.`;
     status.innerText = "Save Failed";
     panel.classList.remove('panel-saved');
+    resetWeeklySaveButton();
     alert(`${summary}${error?.message ? `\n\n${error.message}` : ""}`);
     try { showDebug(`${summary}\n\n${error?.message || ''}\ncode: ${error?.code || 'n/a'}\nstack: ${error?.stack || 'n/a'}`, true); } catch(e) {}
   }
@@ -3405,11 +3449,13 @@ const saveBetBuilder = async function() {
     }
 
     document.querySelector('.bet-builder-panel').classList.add('panel-saved');
+    markBetAsSaved();
     alert("Bet Builder prediction saved and verified.");
     try { showDebug(`Bet builder verified:\n${JSON.stringify(verifyData, null, 2)}`); } catch(e) {}
   } catch (error) {
     console.error("Error saving bet builder: ", error);
     document.querySelector('.bet-builder-panel').classList.remove('panel-saved');
+    resetBetSaveButton();
     const summary = error?.code === 'permission-denied'
       ? 'Firestore permission denied for bet builder.'
       : `Failed to save bet prediction${error?.code ? ` (${error.code})` : ""}.`;
