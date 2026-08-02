@@ -2108,7 +2108,7 @@ MOBILE
 <!-- BOTTOM PANELS (Weekly Picks and Bet Builder) -->
 <div class="bottom-panels">
   <div class="weekly-panel">
-    <h3>Weekly Picks</h3>
+    <h3>Weekly Predictions</h3>
     <p style="font-size: 13px; color: #9ca3af; margin-bottom: 5px; display: flex; justify-content: space-between;">
       <span>Club to score first:</span>
       <span style="color: #c7ff38; font-weight: bold;">10 pts</span>
@@ -2128,7 +2128,7 @@ MOBILE
   </div>
 
   <div class="bet-builder-panel">
-    <h3>Game Of Opinions Bet Builder</h3>
+    <h3>Match Prediction Boost</h3>
     <div class="bet-match" id="betMatchDisplay">Loading match...</div>
     <ul class="bet-list" id="betPicksDisplay"></ul>
     <div class="bet-odds-box">
@@ -2140,9 +2140,9 @@ MOBILE
       <button class="bet-choice" onclick="setBetChoice('no')" id="btnNo" title="Stake: 5 pts. Win 35 pts if bet fails, lose 85 pts if it lands (16/1 odds).">NO</button>
     </div>
     <div class="bet-info" id="betInfo">
-      Pick if the bet lands. Cost: 5 pts to play.
+      Predict whether this combo will happen. Entry: 5 pts.
     </div>
-    <button class="save-btn" id="saveBetBuilderBtn" onclick="saveBetBuilder()">Save Bet Prediction</button>
+    <button class="save-btn" id="saveBetBuilderBtn" onclick="saveBetBuilder()">Save Match Prediction</button>
   </div>
 </div>
 
@@ -2567,7 +2567,7 @@ const resetBetSaveButton = () => {
   const btn = document.getElementById('saveBetBuilderBtn');
   if (!btn) return;
   btn.disabled = false;
-  btn.innerText = 'Save Bet Prediction';
+  btn.innerText = 'Save Match Prediction';
 };
 
 const markBetAsSaved = () => {
@@ -3119,7 +3119,7 @@ const loadSelectedGameweekHistory = async () => {
     currentBetChoice = null;
     document.getElementById('btnYes').classList.remove('selected');
     document.getElementById('btnNo').classList.remove('selected');
-    document.getElementById('betInfo').innerText = "Pick if the bet lands. Cost: 5 pts to play.";
+    document.getElementById('betInfo').innerText = "Predict whether this combo will happen. Entry: 5 pts.";
     resetBetSaveButton();
   }
 
@@ -3186,20 +3186,13 @@ const gameweekSettingsRef = doc(db, "settings", "gameweek");
 onSnapshot(gameweekSettingsRef, async (docSnap) => {
     if (docSnap.exists()) {
         const settings = docSnap.data();
-        const now = new Date();
         const deadlineDate = settings.deadline ? new Date(settings.deadline) : null;
         const reopenDate = settings.reopenTime ? new Date(settings.reopenTime) : null;
         
-        // DYNAMIC STATUS: Calculate based on current time vs deadline/reopen times
-        // If time is between deadline and reopenTime → LOCKED
-        // Otherwise → OPEN
-        let effectiveStatus = 'open';
-        if (deadlineDate && reopenDate && now >= deadlineDate && now < reopenDate) {
-            effectiveStatus = 'locked';
-        } else if (deadlineDate && !reopenDate && now >= deadlineDate) {
-            // If only deadline is set and we're past it, lock it
-            effectiveStatus = 'locked';
-        }
+    // Shared status logic lives in shared-fixtures.js to avoid drift across pages.
+    const effectiveStatus = typeof window.getGameweekStatusFromTimes === 'function'
+      ? window.getGameweekStatusFromTimes(deadlineDate, reopenDate)
+      : 'open';
 
         gameweekStatus = effectiveStatus;
         let isLocked = (gameweekStatus === 'locked');

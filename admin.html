@@ -578,17 +578,6 @@
       }
     });
 
-    function getEffectiveGameweekStatus(deadlineDate, reopenDate) {
-      const now = new Date();
-      if (deadlineDate && reopenDate && now >= deadlineDate && now < reopenDate) {
-        return 'LOCKED';
-      }
-      if (deadlineDate && !reopenDate && now >= deadlineDate) {
-        return 'LOCKED';
-      }
-      return 'OPEN';
-    }
-
     async function loadCurrentSettings() {
       try {
         const snap = await getDoc(doc(db, "settings", "gameweek"));
@@ -609,7 +598,10 @@
           deadlineText = deadlineDate.toLocaleString('en-GB');
         }
 
-        statusText = getEffectiveGameweekStatus(deadlineDate, reopenDate);
+        const sharedStatus = typeof window.getGameweekStatusFromTimes === 'function'
+          ? window.getGameweekStatusFromTimes(deadlineDate, reopenDate)
+          : 'open';
+        statusText = sharedStatus.toUpperCase();
 
         document.getElementById('current-status').innerText = statusText;
         document.getElementById('current-deadline').innerText = deadlineText;
@@ -656,7 +648,10 @@
         }
 
         document.getElementById('current-deadline').innerText = deadline.toLocaleString('en-GB');
-        document.getElementById('current-status').innerText = getEffectiveGameweekStatus(deadline, null);
+        const sharedStatus = typeof window.getGameweekStatusFromTimes === 'function'
+          ? window.getGameweekStatusFromTimes(deadline, null)
+          : 'open';
+        document.getElementById('current-status').innerText = sharedStatus.toUpperCase();
         alert(
           `Deadline saved to database.\n\n` +
           `First kickoff: ${firstKickOff.toLocaleString('en-GB')}\n` +

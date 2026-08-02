@@ -31,6 +31,28 @@
     return fixtureData;
   }
 
+  function toDateOrNull(value) {
+    if (!value) return null;
+    const date = value instanceof Date ? value : new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  // Centralized lock/open decision used by both MyXI and Admin screens.
+  function getGameweekStatusFromTimes(deadlineInput, reopenInput, now = new Date()) {
+    const deadlineDate = toDateOrNull(deadlineInput);
+    const reopenDate = toDateOrNull(reopenInput);
+
+    if (deadlineDate && reopenDate && now >= deadlineDate && now < reopenDate) {
+      return 'locked';
+    }
+
+    if (deadlineDate && !reopenDate && now >= deadlineDate) {
+      return 'locked';
+    }
+
+    return 'open';
+  }
+
   function getGameweekDeadlineInfo(fixtures = fixtureData) {
     const now = new Date();
     const allTimes = [];
@@ -102,5 +124,6 @@
   window.gameweekFixtures = fixtureData;
   window.getGameweekFixtures = getGameweekFixtures;
   window.getGameweekDeadlineInfo = getGameweekDeadlineInfo;
+  window.getGameweekStatusFromTimes = getGameweekStatusFromTimes;
   window.renderFixtureList = renderFixtureList;
 })();
