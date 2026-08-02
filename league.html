@@ -646,6 +646,7 @@ h1 {
         <button class="league-action-btn" onclick="openLeagueModal('join')">Join a league</button>
         <button class="league-action-btn" onclick="openLeagueModal('view')">View a league</button>
         <button class="league-action-btn" onclick="openLeagueModal('share')">Share League Central</button>
+        <button class="league-action-btn" id="sync-global-btn" onclick="syncGlobalLeagueNow()">Sync Global League</button>
       </div>
     </div>
   </div>
@@ -951,6 +952,38 @@ async function loadLeaderboard(user, leagueCode = "") {
   const q = query(collection(db, "leaderboard"), orderBy("totalPoints", "desc"));
   const snap = await getDocs(q);
   const entries = snap.docs.map(docSnap => ({ uid: docSnap.id, data: docSnap.data() }));
+
+  // Backfill Global rows for users who are members of Global but do not yet have a leaderboard doc.
+  try {
+    const globalSnap = await getDoc(doc(db, "leagues", "L-GLOBAL"));
+    if (globalSnap.exists()) {
+      const globalMembers = (globalSnap.data().members || []).filter(Boolean);
+      const existingIds = new Set(entries.map(entry => entry.uid));
+
+      for (const memberId of globalMembers) {
+        if (existingIds.has(memberId)) continue;
+
+        const teamSnap = await getDoc(doc(db, "users", memberId, "myxi", "team"));
+        if (!teamSnap.exists()) continue;
+
+        const teamData = teamSnap.data() || {};
+        entries.push({
+          uid: memberId,
+          data: {
+            teamName: teamData.teamName || "Anonymous",
+            weeklyPoints: 0,
+            seasonPoints: 0,
+            totalPoints: 0
+          }
+        });
+        existingIds.add(memberId);
+      }
+    }
+  } catch (error) {
+    console.error("Unable to backfill Global league members", error);
+  }
+
+  entries.sort((a, b) => (b.data.totalPoints || 0) - (a.data.totalPoints || 0));
   renderLeaderboardRows(entries, user);
   titleEl.innerText = "Global League Table";
   showLeagueStatus("League ready to share", "Send this code to friends and they can join.", "", "");
@@ -1006,14 +1039,12 @@ async function ensureGlobalLeagueMembership(user) {
   try {
     const teamRef = doc(db, "users", user.uid, "myxi", "team");
     const teamSnap = await getDoc(teamRef);
-
-    if (!teamSnap.exists()) {
-      return false;
-    }
-
     const leaderboardRef = doc(db, "leaderboard", user.uid);
     const leaderboardSnap = await getDoc(leaderboardRef);
     const leaderboardData = leaderboardSnap.exists() ? leaderboardSnap.data() : {};
+    const teamData = teamSnap.exists() ? (teamSnap.data() || {}) : {};
+    const fallbackName = `Manager ${String(user.uid || "").slice(0, 6)}`;
+    const resolvedTeamName = (leaderboardData.teamName || teamData.teamName || fallbackName).trim();
 
     await setDoc(doc(db, "leagues", "L-GLOBAL"), {
       name: "Global League",
@@ -1025,7 +1056,7 @@ async function ensureGlobalLeagueMembership(user) {
     }, { merge: true });
 
     await setDoc(leaderboardRef, {
-      teamName: leaderboardData.teamName || teamSnap.data().teamName || "",
+      teamName: resolvedTeamName,
       userId: user.uid,
       inGlobalLeague: true,
       joinedGlobalLeagueAt: leaderboardData.joinedGlobalLeagueAt || new Date().toISOString()
@@ -1037,6 +1068,42 @@ async function ensureGlobalLeagueMembership(user) {
     return false;
   }
 }
+
+window.syncGlobalLeagueNow = async function() {
+  const user = auth.currentUser;
+  if (!user) {
+    alert("Please log in first.");
+    return;
+  }
+
+  const btn = document.getElementById("sync-global-btn");
+  const originalLabel = btn ? btn.innerText : "";
+  if (btn) {
+    btn.disabled = true;
+    btn.innerText = "Syncing...";
+  }
+
+  try {
+    const synced = await ensureGlobalLeagueMembership(user);
+    await loadLeagueMemberships(user);
+    await loadLeaderboard(user, "");
+
+    if (!synced) {
+      alert("Sync could not complete fully. Please check your connection and try again.");
+      return;
+    }
+
+    alert("Global league synced. Your team should now appear in Global League.");
+  } catch (error) {
+    console.error("Global sync failed", error);
+    alert(`Global sync failed. ${error?.message || "Please try again."}`);
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerText = originalLabel || "Sync Global League";
+    }
+  }
+};
 
 window.createLeague = async ()=>{
   if (!auth.currentUser) {
