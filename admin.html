@@ -565,6 +565,7 @@
           status.style.display = 'none';
           document.getElementById('admin-content').style.display = 'block';
           loadCurrentSettings();
+          autoSyncDeadlineFromFixtures();
           wireSimpleModeToggle();
         } else {
           status.innerHTML = `<h2 style="color: #f87171;">Access Denied</h2>
@@ -614,9 +615,32 @@
     }
 
     window.syncDeadlineFromFixtures = async function() {
+      await writeDeadlineFromFixtures();
+    };
+
+    async function autoSyncDeadlineFromFixtures() {
+      try {
+        const snap = await getDoc(doc(db, "settings", "gameweek"));
+        const info = window.getGameweekDeadlineInfo ? window.getGameweekDeadlineInfo() : null;
+        if (!info || !info.deadline || !info.firstKickOff) return;
+
+        const expectedDeadline = info.deadline.toISOString();
+        const currentDeadline = snap.exists() ? snap.data()?.deadline : null;
+
+        if (currentDeadline !== expectedDeadline) {
+          await writeDeadlineFromFixtures(false);
+          await loadCurrentSettings();
+        }
+      } catch (e) {
+        console.error(e);
+        showDebugAdmin(`Auto-sync deadline failed: ${e?.message || e}`, true);
+      }
+    }
+
+    async function writeDeadlineFromFixtures(showAlerts = true) {
       const info = window.getGameweekDeadlineInfo ? window.getGameweekDeadlineInfo() : null;
       if (!info || !info.deadline || !info.firstKickOff) {
-        alert("Could not parse fixture times. Check shared-fixtures.js date/time format.");
+        if (showAlerts) alert("Could not parse fixture times. Check shared-fixtures.js date/time format.");
         return;
       }
 
@@ -652,15 +676,17 @@
           ? window.getGameweekStatusFromTimes(deadline, null)
           : 'open';
         document.getElementById('current-status').innerText = sharedStatus.toUpperCase();
-        alert(
-          `Deadline saved to database.\n\n` +
-          `First kickoff: ${firstKickOff.toLocaleString('en-GB')}\n` +
-          `Lock deadline (2h before): ${deadline.toLocaleString('en-GB')}`
-        );
+        if (showAlerts) {
+          alert(
+            `Deadline saved to database.\n\n` +
+            `First kickoff: ${firstKickOff.toLocaleString('en-GB')}\n` +
+            `Lock deadline (2h before): ${deadline.toLocaleString('en-GB')}`
+          );
+        }
       } catch (e) {
         console.error(e);
         showDebugAdmin(`Error syncing deadline from fixtures: ${e?.message || e}`, true);
-        alert(`Error syncing deadline from fixtures.\n\n${e?.message || e}`);
+        if (showAlerts) alert(`Error syncing deadline from fixtures.\n\n${e?.message || e}`);
       }
     };
 
