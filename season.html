@@ -130,6 +130,29 @@
       color: var(--muted);
     }
 
+    .tutorial-btn-container {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .tutorial-trigger-btn {
+      background: #c7ff38;
+      color: #041102;
+      padding: 14px;
+      width: 100%;
+      border-radius: 999px;
+      border: none;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .tutorial-trigger-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(199, 255, 56, 0.6);
+    }
+
     .season-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -176,6 +199,103 @@
       color: #fff;
       font-size: 14px;
       margin-bottom: 8px;
+    }
+
+    .pick-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .search-btn {
+      border: 1px solid rgba(199,255,56,0.45);
+      background: rgba(199,255,56,0.12);
+      color: #c7ff38;
+      border-radius: 999px;
+      padding: 0 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .search-btn:hover {
+      background: rgba(199,255,56,0.2);
+    }
+
+    .scouts-container {
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      margin-bottom: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .ai-mini-avatar {
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.2s;
+      border-radius: 50%;
+      border: 1px solid rgba(199, 255, 56, 0.3);
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .striker-img { background-image: url('the oracle.png'); }
+    .analyst-img { background-image: url('the maverick.png'); }
+    .scout-img { background-image: url('the tactician.png'); }
+
+    .ai-mini-avatar:hover {
+      transform: scale(1.1);
+      border-color: #c7ff38;
+    }
+
+    .speech-bubble-in-card {
+      position: absolute;
+      top: -35px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #c7ff38;
+      color: #041102;
+      padding: 5px 8px;
+      border-radius: 8px;
+      font-size: 10px;
+      font-weight: 800;
+      width: 140px;
+      text-align: center;
+      opacity: 0;
+      transition: 0.2s;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .ai-mini-avatar:hover .speech-bubble-in-card {
+      opacity: 1;
+    }
+
+    .ai-footer-strip {
+      margin-top: 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+    }
+
+    .ai-footer-face {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 1px solid rgba(199,255,56,0.45);
+      background-size: cover;
+      background-position: center;
+      box-shadow: 0 0 15px rgba(199,255,56,0.2);
     }
 
     .pick-select:focus {
@@ -267,6 +387,150 @@
       text-align: center;
     }
 
+    .ai-modal,
+    .picker-modal,
+    .rules-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 20px;
+    }
+
+    .ai-report,
+    .picker-card,
+    .rules-card {
+      background: #0f172a;
+      border: 1px solid #c7ff38;
+      border-radius: 20px;
+      width: min(680px, 96vw);
+      max-height: 86vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 20px;
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+    }
+
+    .close-x {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      width: 32px;
+      height: 32px;
+      border: none;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+
+    .close-x:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .ai-report h2,
+    .picker-card h2,
+    .rules-card h2 {
+      color: #c7ff38;
+      margin-top: 0;
+    }
+
+    .ai-report p,
+    .rules-card p {
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    .ai-reco-box {
+      background: rgba(199,255,56,0.08);
+      border-left: 3px solid #c7ff38;
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 10px;
+      white-space: pre-wrap;
+    }
+
+    .picker-search {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.35);
+      color: #fff;
+      margin-bottom: 12px;
+      outline: none;
+    }
+
+    .picker-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      max-height: 55vh;
+      overflow-y: auto;
+    }
+
+    .picker-option {
+      text-align: left;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.06);
+      color: white;
+      border-radius: 10px;
+      padding: 10px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .picker-option:hover {
+      border-color: #c7ff38;
+      background: rgba(199,255,56,0.12);
+    }
+
+    .chat-container {
+      background: rgba(0,0,0,0.5);
+      padding: 15px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 20px;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .chat-bubble {
+      background: #0f172a;
+      color: #cbd5e1;
+      padding: 12px 18px;
+      border-radius: 20px;
+      position: relative;
+      max-width: 90%;
+      font-style: italic;
+      font-size: 14px;
+      line-height: 1.6;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .chat-bubble::before {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%) rotate(45deg);
+      width: 20px;
+      height: 20px;
+      background: #0f172a;
+      border-radius: 0 0 0 5px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      z-index: -1;
+    }
+
     @media (max-width: 1000px) {
       .season-grid { grid-template-columns: 1fr; }
     }
@@ -305,6 +569,10 @@
         font-size: 12px;
         text-align: center;
       }
+
+      .picker-list {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -324,6 +592,10 @@
 </header>
 
 <div class="container">
+  <div class="tutorial-btn-container">
+    <button class="tutorial-trigger-btn" onclick="openTutorial()">Tutorial - How To Play</button>
+  </div>
+
   <section class="hero">
     <h1>Season Command Deck</h1>
     <p>Each market now shows one live recommendation from each AI character. Every option comes only from your current MyXI data pool, so no external players can appear.</p>
@@ -336,13 +608,60 @@
     <button id="submitSeasonBtn" class="submit-btn" onclick="lockSeason()">Submit Season Selections</button>
     <div class="submit-note">Once submitted, these picks are treated as locked season predictions.</div>
   </div>
+
+  <div class="ai-footer-strip" aria-label="AI team footer">
+    <div class="ai-footer-face striker-img" title="The Oracle"></div>
+    <div class="ai-footer-face scout-img" title="The Tactician"></div>
+    <div class="ai-footer-face analyst-img" title="The Maverick"></div>
+  </div>
+</div>
+
+<div id="aiModal" class="ai-modal">
+  <div class="ai-report" onclick="event.stopPropagation()">
+    <button class="close-x" onclick="closeAiModal()" aria-label="Close">&times;</button>
+    <h2 id="aiModalTitle">AI Scout Report</h2>
+    <p id="aiModalBody">Loading analysis...</p>
+    <div id="aiModalPick" class="ai-reco-box"></div>
+  </div>
+</div>
+
+<div id="pickerModal" class="picker-modal">
+  <div class="picker-card" onclick="event.stopPropagation()">
+    <button class="close-x" onclick="closePicker()" aria-label="Close">&times;</button>
+    <h2 id="pickerTitle">Pick Option</h2>
+    <input id="pickerSearch" class="picker-search" placeholder="Search list..." />
+    <div id="pickerList" class="picker-list"></div>
+  </div>
+</div>
+
+<div id="tutorialModal" class="rules-modal">
+  <div class="rules-card" style="max-width: 600px; width: min(92vw, 600px); padding: 20px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden;">
+    <div style="flex: 1 1 auto; min-height: 0; overflow-y: auto; padding-right: 4px;">
+      <h2 style="font-size: 18px; margin-bottom: 12px; color: #c7ff38; text-transform: uppercase;">Manager's Briefing</h2>
+      <div style="margin-bottom: 12px; text-align: left; font-size: 12px; color: #cbd5e1;">
+        <p style="margin-bottom: 6px;"><strong>The Oracle:</strong> Risk: Low. Cautious strategies.</p>
+        <p style="margin-bottom: 6px;"><strong>The Tactician:</strong> Risk: Medium. Tactical system advantages.</p>
+        <p style="margin-bottom: 0;"><strong>The Maverick:</strong> Risk: High. High-variance anomalies.</p>
+      </div>
+      <img src="ai tutorial.png" alt="How to Play" class="tutorial-img" style="width: 100%; max-height: 180px; object-fit: contain; border-radius: 12px; border: 1px solid rgba(199,255,56,0.3); margin-bottom: 12px;">
+      <div class="chat-container" style="min-height: 70px; margin-bottom: 15px;">
+        <div id="tutorialChatBubble" class="chat-bubble">
+          <p style="margin: 0; font-style: italic; font-size: 13px; color: #cbd5e1; line-height: 1.4;"></p>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; justify-content: center; gap: 12px; padding-top: 12px; flex-shrink: 0; border-top: 1px solid rgba(255,255,255,0.12); margin-top: 4px; background: rgba(7, 10, 24, 0.95);">
+      <button onclick="closeOnboarding()" style="background: transparent; color: #9ca3af; border: 1px solid #334155; width: 100px; padding: 10px;">Skip</button>
+      <button id="nextTutBtn" onclick="nextTutorialStep()" style="width: 140px; padding: 10px;">Next Step</button>
+    </div>
+  </div>
 </div>
 
 <div class="mobile-nav">
-  <a href="index.html">??<br>Home</a>
-  <a href="myxi.html">?<br>Team</a>
-  <a href="season.html">??<br>Picks</a>
-  <a href="league.html">??<br>League</a>
+  <a href="index.html">&#127968;<br>Home</a>
+  <a href="myxi.html">&#9917;<br>Team</a>
+  <a href="season.html">&#127942;<br>Picks</a>
+  <a href="league.html">&#128202;<br>League</a>
 </div>
 
 <script src="myxi-data-loader.js"></script>
@@ -385,6 +704,8 @@ const AI_CHARACTERS = [
 let currentUser = null;
 let gameData = null;
 let predictionCache = new Map();
+let pickerTargetSelect = null;
+let pickerOptions = [];
 
 const teamStrength = {
   "Arsenal": 94, "Aston Villa": 81, "Bournemouth": 56, "Brentford": 60,
@@ -544,10 +865,33 @@ function createSelect(options, placeholder) {
   return select;
 }
 
+function createSearchButton(select, options, title) {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "search-btn";
+  btn.innerText = "Search";
+  btn.addEventListener("click", () => openPicker(select, options, title));
+  return btn;
+}
+
 function updateCardSelectionState(card) {
   const selects = Array.from(card.querySelectorAll("select"));
   const complete = selects.every((s) => !!s.value);
   card.classList.toggle("selected", complete);
+}
+
+function refreshRelegatedForCard(card) {
+  const selects = Array.from(card.querySelectorAll("select"));
+  if (selects.length < 2) return;
+
+  const selectedValues = selects.map((s) => s.value).filter(Boolean);
+  selects.forEach((select) => {
+    const currentVal = select.value;
+    Array.from(select.options).forEach((opt) => {
+      if (!opt.value) return;
+      opt.disabled = selectedValues.includes(opt.value) && opt.value !== currentVal;
+    });
+  });
 }
 
 function setSelectWithFallback(select, value) {
@@ -566,21 +910,68 @@ function setSelectWithFallback(select, value) {
   }
 }
 
-function applyAiPick(card, aiKey) {
-  const categoryKey = card.dataset.category;
-  const predictions = predictionCache.get(categoryKey) || [];
-  const target = predictions.find((p) => p.ai.key === aiKey);
-  if (!target) return;
-
-  const selects = Array.from(card.querySelectorAll("select"));
-  target.picks.forEach((pick, idx) => {
-    if (selects[idx]) {
-      selects[idx].value = pick.value;
-    }
-  });
-
-  updateCardSelectionState(card);
+function openPicker(select, options, title) {
+  pickerTargetSelect = select;
+  pickerOptions = options.slice();
+  document.getElementById("pickerTitle").innerText = title;
+  document.getElementById("pickerSearch").value = "";
+  renderPickerList("");
+  document.getElementById("pickerModal").style.display = "flex";
+  setTimeout(() => document.getElementById("pickerSearch").focus(), 0);
 }
+
+window.closePicker = function () {
+  document.getElementById("pickerModal").style.display = "none";
+  pickerTargetSelect = null;
+  pickerOptions = [];
+};
+
+function renderPickerList(queryText) {
+  const list = document.getElementById("pickerList");
+  const query = (queryText || "").trim().toLowerCase();
+  const filtered = !query ? pickerOptions : pickerOptions.filter((o) => o.label.toLowerCase().includes(query));
+  list.innerHTML = "";
+
+  if (!filtered.length) {
+    list.innerHTML = '<div style="grid-column:1/-1;color:#9ca3af;padding:14px;text-align:center;">No options found.</div>';
+    return;
+  }
+
+  filtered.forEach((opt) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "picker-option";
+    button.innerText = opt.label;
+    button.addEventListener("click", () => {
+      if (!pickerTargetSelect) return;
+      pickerTargetSelect.value = opt.value;
+      const card = pickerTargetSelect.closest(".season-card");
+      if (card) {
+        updateCardSelectionState(card);
+        if (card.dataset.category === "relegated") refreshRelegatedForCard(card);
+      }
+      window.closePicker();
+    });
+    list.appendChild(button);
+  });
+}
+
+window.showAiScout = function (aiKey, categoryKey) {
+  const predictions = predictionCache.get(categoryKey) || [];
+  const category = CATEGORY_CONFIG.find((c) => c.key === categoryKey);
+  const entry = predictions.find((p) => p.ai.key === aiKey);
+  if (!entry || !category) return;
+
+  const picksText = entry.picks.map((p) => p.label).join(category.count > 1 ? " | " : "");
+  document.getElementById("aiModalTitle").innerText = `${entry.ai.label} - ${category.title}`;
+  document.getElementById("aiModalBody").innerText = `${entry.ai.tag} profile. Use this as guidance, then choose your own final selection.`;
+  document.getElementById("aiModalPick").innerText = `${picksText}\n\n${entry.explanation}`;
+  document.getElementById("aiModal").style.display = "flex";
+};
+
+window.closeAiModal = function () {
+  document.getElementById("aiModal").style.display = "none";
+};
 
 function renderSeasonGrid() {
   const root = document.getElementById("seasonGrid");
@@ -606,36 +997,35 @@ function renderSeasonGrid() {
         <span>${category.type === "team" ? "Team Market" : "Player Market"}</span>
         <span>${category.points}</span>
       </div>
+      <div class="scouts-container">
+        <div class="ai-mini-avatar striker-img" onclick="showAiScout('oracle','${category.key}')">
+          <div class="speech-bubble-in-card">The Oracle<br><small style="font-weight:400">Cautious Picks</small></div>
+        </div>
+        <div class="ai-mini-avatar scout-img" onclick="showAiScout('tactician','${category.key}')">
+          <div class="speech-bubble-in-card">The Tactician<br><small style="font-weight:400">Bold Picks</small></div>
+        </div>
+        <div class="ai-mini-avatar analyst-img" onclick="showAiScout('maverick','${category.key}')">
+          <div class="speech-bubble-in-card">The Maverick<br><small style="font-weight:400">Extreme Risk</small></div>
+        </div>
+      </div>
     `;
 
     for (let i = 0; i < category.count; i++) {
       const select = createSelect(options, category.type === "team" ? "Select team" : "Select player");
       select.dataset.fieldTitle = category.title;
-      select.addEventListener("change", () => updateCardSelectionState(card));
-      card.appendChild(select);
+      select.addEventListener("change", () => {
+        updateCardSelectionState(card);
+        if (category.key === "relegated") refreshRelegatedForCard(card);
+      });
+
+      const row = document.createElement("div");
+      row.className = "pick-row";
+      row.appendChild(select);
+      row.appendChild(createSearchButton(select, options, `Search ${category.title}`));
+      card.appendChild(row);
     }
 
-    const aiWrap = document.createElement("div");
-    aiWrap.className = "ai-trio";
-
-    picks.forEach((entry) => {
-      const item = document.createElement("div");
-      item.className = "ai-item";
-      item.dataset.ai = entry.ai.key;
-      item.innerHTML = `
-        <div class="ai-top">
-          <span class="ai-name">${entry.ai.label}</span>
-          <span>${entry.ai.tag}</span>
-        </div>
-        <div class="ai-pick">${entry.picks.map((p) => p.label).join(category.count > 1 ? " | " : "")}</div>
-        <div class="ai-reason">${entry.explanation}</div>
-        <button type="button" class="ai-apply" data-ai-apply="${entry.ai.key}">Apply ${entry.ai.label}</button>
-      `;
-      item.querySelector(".ai-apply").addEventListener("click", () => applyAiPick(card, entry.ai.key));
-      aiWrap.appendChild(item);
-    });
-
-    card.appendChild(aiWrap);
+    if (category.key === "relegated") refreshRelegatedForCard(card);
     root.appendChild(card);
   });
 }
@@ -703,6 +1093,7 @@ async function loadSeasonPicks(uid) {
     }
 
     updateCardSelectionState(card);
+    if (card.dataset.category === "relegated") refreshRelegatedForCard(card);
   });
 }
 
@@ -747,6 +1138,67 @@ onAuthStateChanged(auth, async (user) => {
     if (!gameData) await boot();
   }
 });
+
+const tutorialData = [
+  { text: '"On this page, you will make your Season Picks. These are long-term predictions worth big points."' },
+  { text: '"Tap an AI face for guidance only, then decide your own final selection using Search or the full dropdown list."' },
+  { text: '"When everything is selected, submit your season selections. Choose wisely."' }
+];
+let currentTutStep = 1;
+
+window.updateTutorialUI = function () {
+  const step = tutorialData[currentTutStep - 1];
+  const bubble = document.getElementById('tutorialChatBubble');
+  if (bubble && bubble.querySelector('p')) {
+    bubble.querySelector('p').innerText = step.text;
+  }
+  const btn = document.getElementById('nextTutBtn');
+  if (btn) {
+    btn.innerText = (currentTutStep === tutorialData.length) ? "Let's Play" : 'Next Step';
+  }
+};
+
+window.nextTutorialStep = function () {
+  if (currentTutStep < tutorialData.length) {
+    currentTutStep++;
+    window.updateTutorialUI();
+  } else {
+    window.closeOnboarding();
+  }
+};
+
+window.openTutorial = function () {
+  currentTutStep = 1;
+  const modal = document.getElementById('tutorialModal');
+  if (modal) {
+    modal.style.display = 'flex';
+    window.updateTutorialUI();
+  }
+};
+
+window.closeOnboarding = function () {
+  const modal = document.getElementById('tutorialModal');
+  if (modal) modal.style.display = 'none';
+  localStorage.setItem('onboarding_complete', 'true');
+};
+
+document.getElementById('aiModal')?.addEventListener('click', (event) => {
+  if (event.target.id === 'aiModal') window.closeAiModal();
+});
+
+document.getElementById('pickerModal')?.addEventListener('click', (event) => {
+  if (event.target.id === 'pickerModal') window.closePicker();
+});
+
+document.getElementById('pickerSearch')?.addEventListener('input', (event) => {
+  renderPickerList(event.target.value);
+});
+
+setTimeout(() => {
+  if (!localStorage.getItem('onboarding_complete')) {
+    window.openTutorial();
+  }
+}, 800);
 
 boot();
 </script>
