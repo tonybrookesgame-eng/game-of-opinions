@@ -2812,6 +2812,12 @@ const populateWeeklyOptions = function() {
   const clubSelect = document.getElementById('firstScorer');
   const minuteSelect = document.getElementById('goalMinute');
 
+  if (!clubSelect || !minuteSelect) return;
+
+  // Prevent duplicate option lists if auth state re-initializes.
+  clubSelect.innerHTML = '<option>Select</option>';
+  minuteSelect.innerHTML = '<option>Select</option>';
+
   // Populate Clubs using the GK list
   playersByPos.GK.forEach(club => {
     let opt = document.createElement('option');
@@ -3332,17 +3338,37 @@ const saveWeekly = async function() {
 
   const data = {
     first: fs.value,
-    minute: gm.value
+    minute: gm.value,
+    updatedAt: new Date().toISOString()
   };
   try {
     const weeklyDocRef = doc(db, "users", currentUser.uid, "myxi", "weeklyPicks");
-    await setDoc(weeklyDocRef, data);
-    status.innerText = "Saved!";
+    await setDoc(weeklyDocRef, data, { merge: true });
+
+    // Verify immediately so failed persistence is visible to the user.
+    const verifySnap = await getDoc(weeklyDocRef);
+    if (!verifySnap.exists()) {
+      throw new Error("Weekly picks were written but could not be read back.");
+    }
+
+    const verifyData = verifySnap.data() || {};
+    if (verifyData.first !== fs.value || verifyData.minute !== gm.value) {
+      throw new Error("Weekly picks verification mismatch after save.");
+    }
+
+    status.innerText = "Saved to Firestore";
     panel.classList.add('panel-saved');
+    alert("Weekly picks saved and verified.");
+    try { showDebug(`Weekly picks verified:\n${JSON.stringify(verifyData, null, 2)}`); } catch(e) {}
   } catch (error) {
     console.error("Error saving weekly picks: ", error);
-    status.innerText = "Save Failed!";
+    const summary = error?.code === 'permission-denied'
+      ? 'Firestore permission denied for weekly picks.'
+      : `Failed to save weekly picks${error?.code ? ` (${error.code})` : ""}.`;
+    status.innerText = "Save Failed";
     panel.classList.remove('panel-saved');
+    alert(`${summary}${error?.message ? `\n\n${error.message}` : ""}`);
+    try { showDebug(`${summary}\n\n${error?.message || ''}\ncode: ${error?.code || 'n/a'}\nstack: ${error?.stack || 'n/a'}`, true); } catch(e) {}
   }
 }
 window.saveWeekly = saveWeekly;
@@ -3362,13 +3388,33 @@ const saveBetBuilder = async function() {
   }
   try {
     const betBuilderDocRef = doc(db, "users", currentUser.uid, "myxi", "betBuilder");
-    await setDoc(betBuilderDocRef, { choice: currentBetChoice });
+    await setDoc(betBuilderDocRef, {
+      choice: currentBetChoice,
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+
+    // Verify immediately so failed persistence is visible to the user.
+    const verifySnap = await getDoc(betBuilderDocRef);
+    if (!verifySnap.exists()) {
+      throw new Error("Bet builder prediction was written but could not be read back.");
+    }
+
+    const verifyData = verifySnap.data() || {};
+    if (verifyData.choice !== currentBetChoice) {
+      throw new Error("Bet builder verification mismatch after save.");
+    }
+
     document.querySelector('.bet-builder-panel').classList.add('panel-saved');
-    alert("Bet Builder Prediction Saved!");
+    alert("Bet Builder prediction saved and verified.");
+    try { showDebug(`Bet builder verified:\n${JSON.stringify(verifyData, null, 2)}`); } catch(e) {}
   } catch (error) {
     console.error("Error saving bet builder: ", error);
     document.querySelector('.bet-builder-panel').classList.remove('panel-saved');
-    alert("Failed to save bet prediction. Please try again.");
+    const summary = error?.code === 'permission-denied'
+      ? 'Firestore permission denied for bet builder.'
+      : `Failed to save bet prediction${error?.code ? ` (${error.code})` : ""}.`;
+    alert(`${summary}${error?.message ? `\n\n${error.message}` : ""}`);
+    try { showDebug(`${summary}\n\n${error?.message || ''}\ncode: ${error?.code || 'n/a'}\nstack: ${error?.stack || 'n/a'}`, true); } catch(e) {}
   }
 }
 window.saveBetBuilder = saveBetBuilder;
