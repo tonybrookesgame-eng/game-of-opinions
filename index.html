@@ -1595,6 +1595,12 @@ onAuthStateChanged(auth, (user) => {
   if (user) {
     userLinks.forEach(link => { link.style.display = 'inline-block'; });
     guestLinks.forEach(link => { link.style.display = 'none'; });
+
+    // Logged-in users should land on the analytics dashboard instead of marketing home.
+    if (!window.location.search.includes('preview=true')) {
+      window.location.href = 'dashboard.html';
+      return;
+    }
   } else {
     userLinks.forEach(link => { link.style.display = 'none'; });
     guestLinks.forEach(link => { link.style.display = 'inline-block'; });
@@ -1633,7 +1639,7 @@ window.handleAuth = async function() {
   }
   try {
     await signInWithEmailAndPassword(auth, email, password);
-    window.location.href = "myxi.html";
+    window.location.href = "dashboard.html";
   } catch (error) {
     alert(error.message);
   }

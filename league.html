@@ -622,7 +622,7 @@ h1 {
 <header>
   <div class="logo">GAME <span>OF OPINIONS</span></div>
   <nav>
-    <a href="index.html">Home</a>
+    <a href="dashboard.html">Dashboard</a>
     <a href="myxi.html" class="user-only">Your Team</a>
     <a href="season.html" class="user-only">Season Picks</a>
     <a href="league.html" class="user-only">League</a>
@@ -709,6 +709,8 @@ h1 {
         <span id="league-share-code-display">--</span>
       </div>
       <p id="league-share-message">Share your code with friends to join.</p>
+      <label class="league-label" for="league-share-link">Invite link</label>
+      <input id="league-share-link" class="league-input" readonly value="--" />
       <div class="league-status-actions">
         <button class="league-btn secondary" onclick="copyLeagueCode()">Copy Code</button>
         <button class="league-btn secondary" onclick="shareLeagueCode()">Share</button>
@@ -748,6 +750,16 @@ const auth = getAuth(app);
 let activeLeagueCode = "";
 let activeLeagueName = "";
 
+function getLeagueInviteUrl(code) {
+  if (!code) return "";
+  const url = new URL(window.location.href);
+  url.pathname = url.pathname.replace(/[^/]*$/, "league.html");
+  url.search = "";
+  url.hash = "";
+  url.searchParams.set("join", code);
+  return url.toString();
+}
+
 function updateLeagueActionButtons() {
   const shareBtn = document.getElementById("share-league-btn");
   if (!shareBtn) return;
@@ -762,10 +774,12 @@ function showLeagueStatus(title, message, code, leagueName = "") {
   const titleEl = document.getElementById("league-status-title");
   const textEl = document.getElementById("league-status-text");
   const shareCodeEl = document.getElementById("league-share-code-display");
+  const shareLinkEl = document.getElementById("league-share-link");
 
   if (titleEl) titleEl.innerText = title;
   if (textEl) textEl.innerText = message;
   if (shareCodeEl) shareCodeEl.innerText = code || "--";
+  if (shareLinkEl) shareLinkEl.value = code ? getLeagueInviteUrl(code) : "--";
   if (panel) panel.style.display = "flex";
 
   activeLeagueCode = code || "";
@@ -1006,38 +1020,43 @@ async function loadLeaderboard(user, leagueCode = "") {
 async function copyLeagueCode() {
   if (!activeLeagueCode) return;
 
+  const inviteUrl = getLeagueInviteUrl(activeLeagueCode);
+  const sharePayload = `League code: ${activeLeagueCode}\nJoin link: ${inviteUrl}`;
+
   try {
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      await navigator.clipboard.writeText(activeLeagueCode);
+      await navigator.clipboard.writeText(sharePayload);
     } else {
       const temp = document.createElement("textarea");
-      temp.value = activeLeagueCode;
+      temp.value = sharePayload;
       document.body.appendChild(temp);
       temp.select();
       document.execCommand("copy");
       document.body.removeChild(temp);
     }
-    alert(`League code copied: ${activeLeagueCode}`);
+    alert(`Invite copied:\n${sharePayload}`);
   } catch (err) {
     console.error(err);
-    alert("Unable to copy automatically. Please copy the code manually.");
+    alert("Unable to copy automatically. Please copy the code and link manually.");
   }
 }
 
 async function shareLeagueCode() {
   if (!activeLeagueCode) return;
 
-  const shareText = `Join my Game of Opinions league with code ${activeLeagueCode}`;
+  const inviteUrl = getLeagueInviteUrl(activeLeagueCode);
+  const shareText = `Join my Game of Opinions league. Code: ${activeLeagueCode}`;
 
   try {
     if (navigator.share) {
       await navigator.share({
         title: "Game of Opinions League",
-        text: shareText
+        text: shareText,
+        url: inviteUrl
       });
     } else {
       await copyLeagueCode();
-      alert(`Share this code: ${activeLeagueCode}`);
+      alert(`Share this invite link:\n${inviteUrl}`);
     }
   } catch (err) {
     console.error(err);
@@ -1211,6 +1230,15 @@ onAuthStateChanged(auth, async (user) => {
     // Ensure the user is in the global league before any first render or league dropdown load.
     await ensureGlobalLeagueMembership(user);
     await loadLeagueMemberships(user);
+
+    const params = new URLSearchParams(window.location.search);
+    const joinCode = (params.get("join") || "").trim().toUpperCase();
+    if (joinCode) {
+      const joinInput = document.getElementById("league-modal-code");
+      if (joinInput) joinInput.value = joinCode;
+      openLeagueModal("join");
+      showLeagueStatus("Join from link", `Use code ${joinCode} to join this league.`, joinCode, "");
+    }
   } else {
     userLinks.forEach(l => l.style.display = 'none');
     guestLinks.forEach(l => l.style.display = 'inline-block');
@@ -1236,7 +1264,7 @@ window.handleLogout = () => {
 <!-- FOOTER -->
 <!-- MOBILE NAV -->
 <div class="mobile-nav">
-  <a href="index.html">🏠<br>Home</a>
+  <a href="dashboard.html">📈<br>Dashboard</a>
   <a href="myxi.html">⚽<br>Team</a>
   <a href="season.html">🏆<br>Picks</a>
   <a href="league.html">📊<br>League</a>
