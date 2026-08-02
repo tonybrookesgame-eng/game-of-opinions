@@ -671,7 +671,7 @@ const CATEGORY_CONFIG = [
   { key: "assists", title: "Top Assists", type: "player", points: "50 points", count: 1 },
   { key: "cleansheets", title: "Most Clean Sheets", type: "player", points: "50 points", count: 1 },
   { key: "hattrick", title: "First Hat-Trick", type: "player", points: "50 points", count: 1 },
-  { key: "sacked", title: "First Manager Sacked", type: "team", points: "50 points", count: 1 },
+  { key: "sacked", title: "First Club To Sack Manager", type: "team", points: "50 points", count: 1 },
   { key: "redcards", title: "Most Red Cards", type: "player", points: "75 points", count: 1 },
   { key: "relegated", title: "Bottom 3 Finishers (Relegation)", type: "team", points: "40 points per team", count: 3 },
   { key: "yellows", title: "Most Yellow Cards", type: "player", points: "50 points", count: 1 }
@@ -690,8 +690,8 @@ let pickerTargetSelect = null;
 let pickerOptions = [];
 
 const teamStrength = {
-  "Arsenal": 94, "Aston Villa": 81, "Bournemouth": 56, "Brentford": 60,
-  "Brighton": 73, "Chelsea": 83, "Coventry": 45, "Crystal Palace": 59,
+  "Arsenal": 99, "Aston Villa": 81, "Bournemouth": 56, "Brentford": 60,
+  "Brighton": 73, "Chelsea": 90, "Coventry": 45, "Crystal Palace": 59,
   "Everton": 52, "Fulham": 57, "Hull": 42, "Ipswich": 43,
   "Leeds": 55, "Liverpool": 95, "Man City": 98, "Man Utd": 74,
   "Newcastle": 77, "Nott'm Forest": 54, "Sunderland": 46, "Spurs": 79
@@ -750,7 +750,7 @@ function scorePlayer(categoryKey, player) {
     assists: { MID: 100, FWD: 72, DEF: 40, GK: 4 },
     cleansheets: { GK: 100, DEF: 78, MID: 22, FWD: 8 },
     hattrick: { FWD: 100, MID: 56, DEF: 14, GK: 1 },
-    redcards: { DEF: 100, MID: 82, FWD: 30, GK: 18 },
+    redcards: { DEF: 100, MID: 90, FWD: 30, GK: 18 },
     yellows: { MID: 100, DEF: 92, FWD: 42, GK: 24 }
   };
 
