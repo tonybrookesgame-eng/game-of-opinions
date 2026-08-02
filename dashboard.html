@@ -279,17 +279,31 @@ canvas { width: 100%; height: 100%; }
 @media (max-width: 768px) {
   header {
     justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 8px;
     text-align: center;
     padding: 15px 12px;
   }
   nav { display: none; }
   .logo {
+    width: 100%;
+    display: block;
     margin: 0 auto;
     text-align: center;
   }
-  .hero { flex-direction: column; }
-  .container { padding: 82px 14px 24px; }
+  .hero {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+  }
+  .container { padding: 96px 14px 24px; }
   .quick-actions {
+    position: static !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+    transform: none !important;
     gap: 6px;
   }
   .quick-actions a {
