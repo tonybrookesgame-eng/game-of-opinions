@@ -585,6 +585,25 @@ canvas { width: 100%; height: 100%; }
 .install-steps li + li {
   margin-top: 4px;
 }
+.install-platform-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+.install-platform-row label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+.install-platform-select {
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(8,16,31,0.92);
+  color: #fff;
+  font-size: 12px;
+}
 @media (max-width: 980px) {
   .kpi { grid-column: span 6; }
   .trend, .mix { grid-column: span 12; }
@@ -700,12 +719,21 @@ canvas { width: 100%; height: 100%; }
   <div class="install-banner">
     <div>
       <strong>Install GOO</strong>
-      <p>Add GOO to your home screen or desktop for a faster, app-like experience.</p>
+      <p>Add GOO in seconds so it opens like an app.</p>
+      <div class="install-platform-row">
+        <label for="installPlatformSelect">Show steps for:</label>
+        <select id="installPlatformSelect" class="install-platform-select">
+          <option value="auto">Auto</option>
+          <option value="ios">iPhone / iPad</option>
+          <option value="android">Android</option>
+          <option value="desktop">Desktop</option>
+        </select>
+      </div>
       <p id="installDashboardStatus" class="install-status">Checking install availability...</p>
-      <ol class="install-steps">
-        <li>Open browser menu (or Share on iPhone).</li>
-        <li>Tap Install app or Add to Home Screen.</li>
-        <li>Confirm Add/Install and launch GOO from the new icon.</li>
+      <ol class="install-steps" id="installStepsList">
+        <li>Open GOO in your browser.</li>
+        <li>Tap Share (or the menu button).</li>
+        <li>Tap Add to Home Screen or Install app.</li>
       </ol>
     </div>
     <button id="installDashboardBtn" type="button">Install GOO</button>
@@ -829,6 +857,8 @@ let deferredInstallPrompt = null;
 const installDashboardBtn = document.getElementById('installDashboardBtn');
 const installDashboardStatus = document.getElementById('installDashboardStatus');
 const installDashboardBanner = document.querySelector('.install-banner');
+const installPlatformSelect = document.getElementById('installPlatformSelect');
+const installStepsList = document.getElementById('installStepsList');
 let deadlineTickerHandle = null;
 
 function setInstallBannerVisible(visible) {
@@ -843,25 +873,79 @@ function setInstallStatus(message, level = 'default') {
   installDashboardStatus.innerText = message;
 }
 
-function getInstallFallbackMessage() {
+function detectInstallPlatform() {
   const ua = navigator.userAgent || '';
   const isIOS = /iPhone|iPad|iPod/i.test(ua);
   const isAndroid = /Android/i.test(ua);
+  if (isIOS) return 'ios';
+  if (isAndroid) return 'android';
+  return 'desktop';
+}
+
+function getInstallInstructionSet(platformInput = 'auto') {
+  const platform = platformInput === 'auto' ? detectInstallPlatform() : platformInput;
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 
   if (isStandalone) {
-    return 'GOO is already installed on this device.';
+    return {
+      steps: [
+        'GOO is already installed.',
+        'Open it from your home screen/app list.',
+        'You are all set.'
+      ],
+      fallback: 'GOO is already installed on this device.'
+    };
   }
 
-  if (isIOS) {
-    return 'On iPhone/iPad: tap Share, then choose Add to Home Screen.';
+  if (platform === 'ios') {
+    return {
+      steps: [
+        'Open GOO in Safari.',
+        'Tap Share at the bottom.',
+        'Tap Add to Home Screen.'
+      ],
+      fallback: 'Tap Share, then tap Add to Home Screen.'
+    };
   }
 
-  if (isAndroid) {
-    return 'On Android: open the browser menu and tap Install app or Add to Home screen.';
+  if (platform === 'android') {
+    return {
+      steps: [
+        'Open GOO in your browser.',
+        'Tap the menu (three dots).',
+        'Tap Install app or Add to Home screen.'
+      ],
+      fallback: 'Tap the menu, then tap Install app or Add to Home screen.'
+    };
   }
 
-  return 'Use your browser menu and choose Install app. In Chrome this is usually in the address bar menu.';
+  return {
+    steps: [
+      'Open GOO in Chrome or Edge.',
+      'Click the install icon or open the menu.',
+      'Click Install app.'
+    ],
+    fallback: 'Open your browser menu, then tap Install app.'
+  };
+}
+
+function renderInstallSteps(platformInput = 'auto') {
+  if (!installStepsList) return;
+  const instructionSet = getInstallInstructionSet(platformInput);
+  installStepsList.innerHTML = instructionSet.steps.map((step) => `<li>${step}</li>`).join('');
+}
+
+function getInstallFallbackMessage() {
+  const selectedPlatform = installPlatformSelect ? installPlatformSelect.value : 'auto';
+  return getInstallInstructionSet(selectedPlatform).fallback;
+}
+
+renderInstallSteps(installPlatformSelect ? installPlatformSelect.value : 'auto');
+
+if (installPlatformSelect) {
+  installPlatformSelect.addEventListener('change', () => {
+    renderInstallSteps(installPlatformSelect.value);
+  });
 }
 
 if (installDashboardBtn) {
@@ -871,7 +955,7 @@ if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.
   setInstallBannerVisible(false);
 } else {
   setInstallBannerVisible(true);
-  setInstallStatus('Tap install now. If the browser does not show a prompt, we will show manual install steps.', 'default');
+  setInstallStatus('Tip: tap Install GOO or follow the 3 quick steps below.', 'default');
 }
 
 window.addEventListener('beforeinstallprompt', (event) => {
@@ -882,7 +966,7 @@ window.addEventListener('beforeinstallprompt', (event) => {
     installDashboardBtn.disabled = false;
     installDashboardBtn.innerText = 'Install GOO';
   }
-  setInstallStatus('Ready to install on this device.', 'ready');
+  setInstallStatus('Ready. Tap Install GOO.', 'ready');
 });
 
 window.addEventListener('appinstalled', () => {
@@ -904,9 +988,9 @@ if (installDashboardBtn) {
     deferredInstallPrompt.prompt();
     const choice = await deferredInstallPrompt.userChoice;
     if (choice?.outcome === 'accepted') {
-      setInstallStatus('Install accepted. Finishing setup...', 'ready');
+      setInstallStatus('Installed. You can now open GOO from your home screen.', 'success');
     } else {
-      setInstallStatus('Install was dismissed. You can try again any time.', 'warn');
+      setInstallStatus('No problem. You can install any time from Share/menu.', 'warn');
     }
     deferredInstallPrompt = null;
   });
