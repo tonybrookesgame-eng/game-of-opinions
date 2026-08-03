@@ -1,23 +1,27 @@
 {
+  "id": "/",
   "name": "Game of Opinions",
   "short_name": "Opinions",
   "description": "A premium football prediction game for building your XI, making weekly picks, and tracking season performance.",
   "start_url": "/index.html",
   "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#020611",
   "theme_color": "#020611",
+  "lang": "en",
+  "categories": ["games", "sports", "entertainment"],
   "icons": [
     {
-      "src": "/icon-192.svg",
+      "src": "/icon-192.png",
       "sizes": "192x192",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icon-512.svg",
+      "src": "/icon-512.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]
