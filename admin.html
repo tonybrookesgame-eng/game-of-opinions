@@ -317,6 +317,17 @@
       console.log(p.innerText);
     }
 
+    function formatAdminError(error) {
+      const details = error?.message || error || 'Unknown error';
+      if (String(details).includes('permission-denied')) {
+        return `Firestore permission denied. The live rules may still need deploying.\n\n${details}`;
+      }
+      if (String(details).includes('auth')) {
+        return `Authentication issue. Please sign out and back in as the admin account.\n\n${details}`;
+      }
+      return details;
+    }
+
     let simpleModeEnabled = true;
     let advancedViewInitialized = false;
 
@@ -630,13 +641,14 @@
     setSeasonResultOptions();
 
     // SECURITY
-    const ADMIN_EMAIL = "tonybrookes.game@gmail.com"; 
+    const ADMIN_EMAIL = "tonybrookes.game@gmail.com";
 
     onAuthStateChanged(auth, (user) => {
       const status = document.getElementById('auth-status');
       if (user) {
         const userEmail = user.email ? user.email.toLowerCase().trim() : "";
-        if (userEmail === ADMIN_EMAIL.toLowerCase().trim()) {
+        const isAuthorizedAdmin = userEmail === ADMIN_EMAIL.toLowerCase().trim();
+        if (isAuthorizedAdmin) {
           status.style.display = 'none';
           document.getElementById('admin-content').style.display = 'block';
           loadCurrentSettings();
@@ -1029,6 +1041,9 @@
         teamDocExists: !!(teamDoc && teamDoc.exists()),
         betDocExists: !!(betDoc && betDoc.exists()),
         picksDocExists: !!(picksDoc && picksDoc.exists()),
+        teamData: teamDoc && teamDoc.exists() ? teamDoc.data() : null,
+        betData: betDoc && betDoc.exists() ? betDoc.data() : null,
+        picksData: picksDoc && picksDoc.exists() ? picksDoc.data() : null,
         weeklyPoints: userWeeklyTotal,
         selectionScore: userPlayerScore,
         picksScore: userPicksScore,
@@ -1130,8 +1145,9 @@
         showDebugAdmin(`Sanity check complete for GW${gwNum}: ${leaderboardSnap.size} users, ${teamCount} teams, ${picksCount} picks, ${betCount} bets`);
       } catch (error) {
         console.error(error);
-        outputEl.innerText = `Sanity check failed.\n${error?.message || error}`;
-        showDebugAdmin(`Sanity check failed: ${error?.message || error}`, true);
+        const message = formatAdminError(error);
+        outputEl.innerText = `Sanity check failed.\n${message}`;
+        showDebugAdmin(`Sanity check failed: ${message}`, true);
       }
     };
 
@@ -1248,7 +1264,10 @@
             deltaSel,
             deltaPicks,
             deltaBet,
-            deltaTotal
+            deltaTotal,
+            teamData,
+            picksData,
+            betData
           } = preview;
 
           if (isDryRun) {
@@ -1276,9 +1295,9 @@
           showDebugAdmin(`Archiving GW${gwNum} for user ${userId}`);
           await setDoc(archiveRef, {
             gw: gwNum,
-            team: teamDoc ? teamDoc.data() : null,
-            picks: picksDoc ? picksDoc.data() : null,
-            bet: betDoc ? betDoc.data() : null,
+            team: teamData || null,
+            picks: picksData || null,
+            bet: betData || null,
             processedAt: new Date(),
             weeklyPoints: userWeeklyTotal,
             selectionScore: userPlayerScore,
@@ -1319,8 +1338,9 @@
         loadHistory();
       } catch (err) {
         console.error(err);
-        showDebugAdmin(`Error processing GW${gwNum}: ${err?.message || err}`, true);
-        alert("Error processing scores.");
+        const message = formatAdminError(err);
+        showDebugAdmin(`Error processing GW${gwNum}: ${message}`, true);
+        alert(`Error processing scores.\n\n${message}`);
       }
     }
 

@@ -28,34 +28,39 @@ service cloud.firestore {
     }
 
     match /users/{uid} {
-      allow read: if isSignedIn() && (isOwner(uid) || resource.data.public == true);
+      allow read: if isSignedIn() && (isOwner(uid) || isAdmin() || resource.data.public == true);
       allow create, update: if isSignedIn() && (isOwner(uid) || isAdmin());
       allow delete: if isAdmin();
 
       match /myxi/{doc} {
-        allow read: if isSignedIn();
-        allow write: if isSignedIn();
+        allow read: if isSignedIn() && (isOwner(uid) || isAdmin());
+        allow write: if isSignedIn() && (isOwner(uid) || isAdmin());
       }
 
       match /stats/{doc} {
-        allow read: if isSignedIn();
-        allow write: if isSignedIn();
+        allow read: if isSignedIn() && (isOwner(uid) || isAdmin());
+        allow write: if isSignedIn() && (isOwner(uid) || isAdmin());
       }
 
       match /history/{doc} {
-        allow read: if isSignedIn();
-        allow write: if isSignedIn();
+        allow read: if isSignedIn() && (isOwner(uid) || isAdmin());
+        allow write: if isSignedIn() && (isOwner(uid) || isAdmin());
       }
 
       match /analytics/{doc} {
-        allow read: if isSignedIn();
-        allow write: if isSignedIn();
+        allow read: if isSignedIn() && (isOwner(uid) || isAdmin());
+        allow write: if isSignedIn() && (isOwner(uid) || isAdmin());
+      }
+
+      match /predictions/{doc} {
+        allow read: if isSignedIn() && (isOwner(uid) || isAdmin());
+        allow write: if isSignedIn() && (isOwner(uid) || isAdmin());
       }
     }
 
     match /leaderboard/{uid} {
       allow read: if isSignedIn();
-      allow create, update: if isSignedIn();
+      allow create, update: if isSignedIn() && (isOwner(uid) || isAdmin());
       allow delete: if isAdmin();
     }
 
@@ -79,12 +84,12 @@ service cloud.firestore {
 
     match /settings/{doc} {
       allow read: if isSignedIn();
-      allow write: if isSignedIn();
+      allow write: if isAdmin();
     }
 
     match /gameweekHistory/{doc} {
       allow read: if isSignedIn();
-      allow write: if isSignedIn();
+      allow write: if isAdmin();
     }
   }
 }
