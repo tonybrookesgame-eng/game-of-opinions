@@ -575,6 +575,16 @@ canvas { width: 100%; height: 100%; }
 .install-status.ready { color: #d9f99d; }
 .install-status.success { color: #86efac; }
 .install-status.warn { color: #facc15; }
+.install-steps {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+.install-steps li + li {
+  margin-top: 4px;
+}
 @media (max-width: 980px) {
   .kpi { grid-column: span 6; }
   .trend, .mix { grid-column: span 12; }
@@ -692,6 +702,11 @@ canvas { width: 100%; height: 100%; }
       <strong>Install GOO</strong>
       <p>Add GOO to your home screen or desktop for a faster, app-like experience.</p>
       <p id="installDashboardStatus" class="install-status">Checking install availability...</p>
+      <ol class="install-steps">
+        <li>Open browser menu (or Share on iPhone).</li>
+        <li>Tap Install app or Add to Home Screen.</li>
+        <li>Confirm Add/Install and launch GOO from the new icon.</li>
+      </ol>
     </div>
     <button id="installDashboardBtn" type="button">Install GOO</button>
   </div>

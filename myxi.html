@@ -2015,6 +2015,23 @@ MOBILE
   }
 }
 
+/* Keep five-man lines (e.g. 4-5-1 / 3-5-2) readable on narrow screens. */
+@media (max-width: 520px) {
+  .pitch .row.row-five .player {
+    flex: 0 0 72px !important;
+    width: 72px !important;
+    min-width: 72px !important;
+    max-width: 72px !important;
+  }
+
+  .pitch .row.row-five .shirt-name,
+  .pitch .row.row-five .shirt.is-empty .shirt-name {
+    width: 70px !important;
+    min-width: 70px !important;
+    max-width: 70px !important;
+  }
+}
+
 </style>
 
 </head>
@@ -2702,53 +2719,62 @@ const loadFixtures = () => {
 };
 
 const changeFormation = function() {
+  const options = arguments[0] || {};
+  const preserveExisting = options.preserve !== false;
   const formation = document.getElementById('formationSelect').value;
   const parts = formation.split('-').map(Number);
   const pitch = document.querySelector('.pitch');
   const rows = pitch.querySelectorAll('.row');
-  
+
+  const savedByPos = { GK: [], DEF: [], MID: [], FWD: [] };
+  if (preserveExisting) {
+    document.querySelectorAll('.pitch .player select').forEach(select => {
+      const pos = select.dataset.pos;
+      if (!pos || !savedByPos[pos] || !select.value || select.value === 'Select') return;
+      savedByPos[pos].push(select.value);
+    });
+  }
+
   // Rows: 0 is GK (always 1), 1 is DEF, 2 is MID, 3 is FWD
   updatePitchRow(rows[1], 'DEF', parts[0]);
   updatePitchRow(rows[2], 'MID', parts[1]);
   updatePitchRow(rows[3], 'FWD', parts[2]);
 
-  // Reset GK
-  const gkSelect = document.querySelector('select[data-pos="GK"]');
-  if (gkSelect) {
-    gkSelect.value = "Select";
-    updateShirt(gkSelect);
-  }
-  
   populatePlayers();
+
+  if (preserveExisting) {
+    const usedClubs = new Set();
+    isProgrammaticallyUpdatingShirts = true;
+    document.querySelectorAll('.pitch .player select').forEach(select => {
+      const pos = select.dataset.pos;
+      const candidates = savedByPos[pos] || [];
+      while (candidates.length) {
+        const candidate = candidates.shift();
+        const club = getPlayerClub(candidate) || candidate;
+        if (!club || club === 'Select' || usedClubs.has(club)) continue;
+        const resolved = resolvePlayerValueForSelect(select, candidate);
+        if (!resolved || resolved === 'Select') continue;
+        select.value = resolved;
+        usedClubs.add(getPlayerClub(resolved) || resolved);
+        break;
+      }
+      updateShirt(select);
+    });
+    isProgrammaticallyUpdatingShirts = false;
+  }
+
   refreshDropdowns();
 }
 window.changeFormation = changeFormation;
 
 const updatePitchRow = function(row, pos, count) {
   row.innerHTML = '';
-  row.style.flexDirection = 'row'; // Default
+  row.style.flexDirection = 'row';
+  row.classList.toggle('row-five', count === 5);
 
-  if (count === 5) {
-    row.style.flexDirection = 'column';
-    row.style.gap = '10px';
-    
-    const subBase = document.createElement('div');
-    subBase.className = 'pitch-sub-row';
-    const subAdvanced = document.createElement('div');
-    subAdvanced.className = 'pitch-sub-row';
-    
-    const playerHTML = `<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a><select class="player-select" data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div></div>`;
-    
-    for(let i=0; i<4; i++) subBase.innerHTML += playerHTML;
-    subAdvanced.innerHTML += playerHTML;
-
-    // For Midfielders, place the 1 advanced player closer to the strikers (after the row of 4)
-    row.appendChild(subBase);
-    row.appendChild(subAdvanced);
-  } else {
-    for(let i=0; i<count; i++) {
-      row.innerHTML += `<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a><select class="player-select" data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div></div>`;
-    }
+  const playerHTML = `<div class="player"><div class="shirt"><div class="shirt-name"></div><a href="admin.html" class="shirt-pts"></a><select class="player-select" data-pos="${pos}" onchange="window.updateShirt(this)"><option value="Select" selected>Select</option></select></div></div>`;
+  for (let i = 0; i < count; i++) {
+    row.innerHTML += playerHTML;
   }
 }
 window.updatePitchRow = updatePitchRow;
@@ -2861,6 +2887,8 @@ function openPlayerPicker(select) {
   const search = document.getElementById('playerPickerSearch');
   search.value = '';
   renderPlayerPicker('');
+  const list = document.getElementById('playerPickerList');
+  if (list) list.scrollTop = 0;
   const modal = document.getElementById('playerPickerModal');
   modal.style.display = 'flex';
   modal.setAttribute('aria-hidden', 'false');
