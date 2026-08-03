@@ -223,11 +223,16 @@
     <p>6. Save your progress or run the calculation for all managers.</p>
     <div style="background: rgba(251, 191, 36, 0.1); padding: 10px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #fbbf24;">
       <input type="checkbox" id="dry-run-mode"> <label for="dry-run-mode" style="color: #fbbf24; font-weight: bold;">Simulation Mode (Dry Run - No database changes, results show in console)</label>
+      <p style="margin: 6px 0 0 0; color: #fde68a; font-size: 12px;">Dry runs work even if the gameweek is still open. They use whatever is currently saved in Firestore, so they are best when users have already saved their picks.</p>
     </div>
-    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
       <button onclick="saveDraft()" style="background: #3b82f6; width: auto; padding: 10px 20px;">Save Progress Draft</button>
       <button onclick="loadDraft()" style="background: #fbbf24; color: #000; width: auto; padding: 10px 20px;">Load Last Draft</button>
-      <button onclick="processGameweek()" style="width: auto; padding: 10px 20px;">Process & Update Leaderboard</button>
+      <button onclick="runAdminSanityCheck()" style="background: #10b981; width: auto; padding: 10px 20px;">Run Sanity Check</button>
+      <button onclick="processGameweek()" style="width: auto; padding: 10px 20px;">Process / Dry Run</button>
+    </div>
+    <div id="sanity-check-output" style="background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; padding: 10px; color: #d1fae5; font-size: 13px; white-space: pre-wrap;">
+      No sanity check run yet.
     </div>
 
     <div class="admin-section" style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; border: 1px solid #c7ff38;">
@@ -919,6 +924,217 @@
       return normalizeName(savedValue) === normalizeName(resultValue);
     }
 
+    async function calculateUserGameweekPreview({
+      userId,
+      userData,
+      currentScores,
+      betResult,
+      winClub,
+      winMin,
+      resWinner,
+      resFacup,
+      resScorer,
+      resAssists,
+      resCS,
+      resHT,
+      resSacked,
+      resReds,
+      resYellows,
+      resRel,
+      prevWeekly = 0,
+      prevSel = 0,
+      prevPicks = 0,
+      prevBet = 0,
+      prevSeason = 0
+    }) {
+      const teamSnap = await getDocs(collection(db, `users/${userId}/myxi`));
+      const teamDoc = teamSnap.docs.find(d => d.id === 'team');
+      const betDoc = teamSnap.docs.find(d => d.id === 'betBuilder');
+      const picksDoc = teamSnap.docs.find(d => d.id === 'weeklyPicks');
+
+      let userWeeklyTotal = 0;
+      let userBetScore = 0;
+      let userPicksScore = 0;
+      let userPlayerScore = 0;
+
+      if (teamDoc && teamDoc.exists()) {
+        const players = teamDoc.data().players || [];
+        players.forEach(rawValue => {
+          const playerValue = normalizeRosterValue(rawValue);
+          if (Object.prototype.hasOwnProperty.call(currentScores, playerValue)) {
+            userPlayerScore += currentScores[playerValue];
+          } else if (Object.prototype.hasOwnProperty.call(currentScores, rawValue)) {
+            userPlayerScore += currentScores[rawValue];
+          }
+        });
+      }
+
+      if (picksDoc) {
+        const picks = picksDoc.data();
+        if (winClub !== 'none' && picks.first === winClub) userPicksScore += 10;
+        if (winMin !== '' && picks.minute == winMin) userPicksScore += 40;
+      }
+
+      userWeeklyTotal = userPlayerScore + userPicksScore;
+
+      if (betDoc && betResult !== 'none') {
+        const choice = betDoc.data().choice;
+        const oddsVal = parseInt(document.getElementById('bet-odds').value) || 30;
+        const stake = 5;
+        const pointsBig = oddsVal * stake;
+        const pointsSmall = (stake * 5) + stake;
+
+        if (betResult === 'landed') {
+          userBetScore = (choice === 'yes' ? pointsBig : -pointsBig);
+        } else if (betResult === 'failed') {
+          userBetScore = (choice === 'no' ? pointsSmall : -pointsSmall);
+        }
+
+        userWeeklyTotal += userBetScore;
+      }
+
+      const seasonSnap = await getDoc(doc(db, `users/${userId}/predictions/season`));
+      let userSeasonScore = 0;
+      if (seasonSnap.exists()) {
+        const sp = seasonSnap.data();
+        if (resWinner && seasonPickMatches(sp["Premier League Winner"], resWinner)) userSeasonScore += 25;
+        if (resFacup && seasonPickMatches(sp["FA Cup Winner"], resFacup)) userSeasonScore += 50;
+        if (resScorer && seasonPickMatches(sp["Top Scorer"], resScorer)) userSeasonScore += 25;
+        if (resAssists && seasonPickMatches(sp["Top Assists"], resAssists)) userSeasonScore += 50;
+        if (resCS && seasonPickMatches(sp["Most Clean Sheets"], resCS)) userSeasonScore += 50;
+        if (resHT && seasonPickMatches(sp["First Hat-Trick"], resHT)) userSeasonScore += 50;
+        const sackedSaved = sp["First Manager Sacked"] ?? sp["First Club To Sack Manager"];
+        if (resSacked && seasonPickMatches(sackedSaved, resSacked)) userSeasonScore += 50;
+        if (resReds && seasonPickMatches(sp["Most Red Cards"], resReds)) userSeasonScore += 75;
+        if (resYellows && seasonPickMatches(sp["Most Yellow Cards"], resYellows)) userSeasonScore += 50;
+
+        if (resRel.length > 0 && sp["Bottom 3 Finishers (Relegation)"]) {
+          const picks = Array.isArray(sp["Bottom 3 Finishers (Relegation)"]) ? sp["Bottom 3 Finishers (Relegation)"] : [sp["Bottom 3 Finishers (Relegation)"]];
+          picks.forEach(pick => {
+            if (resRel.includes(pick)) userSeasonScore += 40;
+          });
+        }
+      }
+
+      const deltaWeeklyTotal = userWeeklyTotal - prevWeekly;
+      const deltaSeason = userSeasonScore - prevSeason;
+      const deltaSel = userPlayerScore - prevSel;
+      const deltaPicks = userPicksScore - prevPicks;
+      const deltaBet = userBetScore - prevBet;
+      const deltaTotal = deltaWeeklyTotal + deltaSeason;
+
+      return {
+        userId,
+        userData,
+        teamDocExists: !!(teamDoc && teamDoc.exists()),
+        betDocExists: !!(betDoc && betDoc.exists()),
+        picksDocExists: !!(picksDoc && picksDoc.exists()),
+        weeklyPoints: userWeeklyTotal,
+        selectionScore: userPlayerScore,
+        picksScore: userPicksScore,
+        betScore: userBetScore,
+        seasonPoints: userSeasonScore,
+        deltaWeeklyTotal,
+        deltaSeason,
+        deltaSel,
+        deltaPicks,
+        deltaBet,
+        deltaTotal
+      };
+    }
+
+    window.runAdminSanityCheck = async function() {
+      const gwNum = parseInt(document.getElementById('gameweek-num').value);
+      if (isNaN(gwNum)) {
+        alert('Please enter a Gameweek Number.');
+        return;
+      }
+
+      const outputEl = document.getElementById('sanity-check-output');
+      outputEl.innerText = `Running sanity check for GW${gwNum}...`;
+
+      try {
+        const leaderboardSnap = await getDocs(collection(db, 'leaderboard'));
+        const currentScores = {};
+        playersData.forEach(p => {
+          let total = 0;
+          const r = rules[p.pos];
+          if (document.getElementById(`app-${p.id}`)?.checked) total += r.app;
+          if (document.getElementById(`cs-${p.id}`)?.checked) total += r.cs;
+          if (document.getElementById(`yc-${p.id}`)?.checked) total += r.yc;
+          if (document.getElementById(`rc-${p.id}`)?.checked) total += r.rc;
+          total += (parseInt(document.getElementById(`gl-${p.id}`)?.value) || 0) * r.gl;
+          total += (parseInt(document.getElementById(`ast-${p.id}`)?.value) || 0) * r.ast;
+          if (p.pos === 'GK') {
+            total += (parseInt(document.getElementById(`ps-${p.id}`)?.value) || 0) * r.ps;
+          }
+          currentScores[p.key] = total;
+          if (!(p.name in currentScores)) currentScores[p.name] = total;
+        });
+
+        const betResult = document.getElementById('bet-result').value;
+        const winClub = document.getElementById('winning-club').value;
+        const winMin = document.getElementById('winning-minute').value.trim();
+        const resWinner = document.getElementById('res-winner')?.value.trim();
+        const resFacup = document.getElementById('res-facup')?.value.trim();
+        const resScorer = document.getElementById('res-scorer')?.value.trim();
+        const resAssists = document.getElementById('res-assists')?.value.trim();
+        const resCS = document.getElementById('res-cs')?.value.trim();
+        const resHT = document.getElementById('res-ht')?.value.trim();
+        const resSacked = document.getElementById('res-sacked')?.value.trim();
+        const resReds = document.getElementById('res-reds')?.value.trim();
+        const resYellows = document.getElementById('res-yellows')?.value.trim();
+        const resRel = [document.getElementById('res-rel1')?.value.trim(), document.getElementById('res-rel2')?.value.trim(), document.getElementById('res-rel3')?.value.trim()].filter(Boolean);
+
+        let teamCount = 0;
+        let picksCount = 0;
+        let betCount = 0;
+        const previewRows = [];
+
+        for (const userDoc of leaderboardSnap.docs) {
+          const preview = await calculateUserGameweekPreview({
+            userId: userDoc.id,
+            userData: userDoc.data(),
+            currentScores,
+            betResult,
+            winClub,
+            winMin,
+            resWinner,
+            resFacup,
+            resScorer,
+            resAssists,
+            resCS,
+            resHT,
+            resSacked,
+            resReds,
+            resYellows,
+            resRel
+          });
+          if (preview.teamDocExists) teamCount += 1;
+          if (preview.picksDocExists) picksCount += 1;
+          if (preview.betDocExists) betCount += 1;
+          if (previewRows.length < 5) previewRows.push(`${preview.userData?.teamName || preview.userId}: weekly ${preview.weeklyPoints} | season ${preview.seasonPoints}`);
+        }
+
+        const lines = [
+          `Sanity check ready for GW${gwNum}`,
+          `Users found in leaderboard: ${leaderboardSnap.size}`,
+          `Saved teams: ${teamCount}`,
+          `Saved weekly picks: ${picksCount}`,
+          `Saved bet builder picks: ${betCount}`,
+          '',
+          'Preview sample:'
+        ];
+        lines.push(...previewRows);
+        outputEl.innerText = lines.join('\n');
+        showDebugAdmin(`Sanity check complete for GW${gwNum}: ${leaderboardSnap.size} users, ${teamCount} teams, ${picksCount} picks, ${betCount} bets`);
+      } catch (error) {
+        console.error(error);
+        outputEl.innerText = `Sanity check failed.\n${error?.message || error}`;
+        showDebugAdmin(`Sanity check failed: ${error?.message || error}`, true);
+      }
+    };
+
     window.processGameweek = async function() {
       const gwNum = parseInt(document.getElementById('gameweek-num').value);
       const isDryRun = document.getElementById('dry-run-mode').checked;
@@ -997,90 +1213,43 @@
           const prevBet = userData.weeklyBet || 0;
           const prevSeason = userData.seasonPoints || 0;
 
-          // 3. Get their specific team of 11 players
-          // Note: In your current saveTeam, you save players to users/{uid}/myxi/team
-          const teamSnap = await getDocs(collection(db, `users/${userId}/myxi`));
-          const teamDoc = teamSnap.docs.find(d => d.id === 'team'); // contains player names
-          const betDoc = teamSnap.docs.find(d => d.id === 'betBuilder'); // contains 'yes' or 'no'
-          const picksDoc = teamSnap.docs.find(d => d.id === 'weeklyPicks'); // contains firstScorer/goalMinute
+          const preview = await calculateUserGameweekPreview({
+            userId,
+            userData,
+            currentScores,
+            betResult,
+            winClub,
+            winMin,
+            resWinner,
+            resFacup,
+            resScorer,
+            resAssists,
+            resCS,
+            resHT,
+            resSacked,
+            resReds,
+            resYellows,
+            resRel,
+            prevWeekly,
+            prevSel,
+            prevPicks,
+            prevBet,
+            prevSeason
+          });
 
-          let userWeeklyTotal = 0;
-          let userBetScore = 0;
-          let userPicksScore = 0;
-          let userPlayerScore = 0;
-
-          if (teamDoc && teamDoc.exists()) {
-            const players = teamDoc.data().players; // Array of 11 player names
-
-            // 4. Match their players against your point list
-            players.forEach(rawValue => {
-              const playerValue = normalizeRosterValue(rawValue);
-              if (Object.prototype.hasOwnProperty.call(currentScores, playerValue)) {
-                userPlayerScore += currentScores[playerValue];
-              } else if (Object.prototype.hasOwnProperty.call(currentScores, rawValue)) {
-                userPlayerScore += currentScores[rawValue];
-              }
-            });
-          }
-
-          // 5. Calculate Weekly Picks Points
-          if (picksDoc) {
-            const picks = picksDoc.data();
-            if (winClub !== 'none' && picks.first === winClub) userPicksScore += 10;
-            if (winMin !== '' && picks.minute == winMin) userPicksScore += 40;
-          }
-
-          userWeeklyTotal = userPlayerScore + userPicksScore;
-
-          // 6. Calculate Bet Builder Points (Archiving stake and choice)
-          if (betDoc && betResult !== 'none') {
-            const choice = betDoc.data().choice; // 'yes' or 'no'
-            const oddsVal = parseInt(document.getElementById('bet-odds').value) || 30;
-            const stake = 5;
-            
-            // New Bet Builder Logic (e.g. 12/1 odds results in 60 reward and 30 risk)
-            const pointsBig = oddsVal * stake;   // e.g. 30/1: 150 (profit, as per "5pts x odds")
-            const pointsSmall = (stake * 5) + stake;       // e.g. 25 + 5 = 30
-
-            if (betResult === 'landed') {
-              userBetScore = (choice === 'yes' ? pointsBig : -pointsBig); // If YES lands, profit. If NO lands, loss of profit.
-            } else if (betResult === 'failed') {
-              userBetScore = (choice === 'no' ? pointsSmall : -pointsSmall); // If NO fails, profit. If YES fails, loss of profit.
-            }
-            
-            userWeeklyTotal += userBetScore;
-          }
-
-          // 7. Calculate Season Points
-          const seasonSnap = await getDoc(doc(db, `users/${userId}/predictions/season`));
-          let userSeasonScore = 0;
-          if (seasonSnap.exists()) {
-            const sp = seasonSnap.data();
-            if (resWinner && seasonPickMatches(sp["Premier League Winner"], resWinner)) userSeasonScore += 25;
-            if (resFacup && seasonPickMatches(sp["FA Cup Winner"], resFacup)) userSeasonScore += 50;
-            if (resScorer && seasonPickMatches(sp["Top Scorer"], resScorer)) userSeasonScore += 25;
-            if (resAssists && seasonPickMatches(sp["Top Assists"], resAssists)) userSeasonScore += 50;
-            if (resCS && seasonPickMatches(sp["Most Clean Sheets"], resCS)) userSeasonScore += 50;
-            if (resHT && seasonPickMatches(sp["First Hat-Trick"], resHT)) userSeasonScore += 50;
-            if (resSacked && seasonPickMatches(sp["First Manager Sacked"], resSacked)) userSeasonScore += 50;
-            if (resReds && seasonPickMatches(sp["Most Red Cards"], resReds)) userSeasonScore += 75;
-            if (resYellows && seasonPickMatches(sp["Most Yellow Cards"], resYellows)) userSeasonScore += 50;
-            
-            if (resRel.length > 0 && sp["Bottom 3 Finishers (Relegation)"]) {
-              const picks = Array.isArray(sp["Bottom 3 Finishers (Relegation)"]) ? sp["Bottom 3 Finishers (Relegation)"] : [sp["Bottom 3 Finishers (Relegation)"]];
-              picks.forEach(pick => {
-                if (resRel.includes(pick)) userSeasonScore += 40;
-              });
-            }
-          }
-
-          const deltaWeeklyTotal = userWeeklyTotal - prevWeekly;
-          const deltaSeason = userSeasonScore - prevSeason;
-          const deltaSel = userPlayerScore - prevSel;
-          const deltaPicks = userPicksScore - prevPicks;
-          const deltaBet = userBetScore - prevBet;
-          
-          const deltaTotal = deltaWeeklyTotal + deltaSeason;
+          const {
+            weeklyPoints: userWeeklyTotal,
+            selectionScore: userPlayerScore,
+            picksScore: userPicksScore,
+            betScore: userBetScore,
+            seasonPoints: userSeasonScore,
+            deltaWeeklyTotal,
+            deltaSeason,
+            deltaSel,
+            deltaPicks,
+            deltaBet,
+            deltaTotal
+          } = preview;
 
           if (isDryRun) {
             showDebugAdmin(`DryRun - User: ${userData.teamName || userId} | Weekly: ${userWeeklyTotal} (Delta: ${deltaWeeklyTotal}) | Season: ${userSeasonScore} (Delta: ${deltaSeason}) | DeltaTotal: ${deltaTotal}`);
