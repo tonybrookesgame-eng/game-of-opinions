@@ -703,9 +703,9 @@ function getInstallFallbackMessage() {
 }
 
 if (installDashboardBtn) {
-  installDashboardBtn.disabled = true;
+  installDashboardBtn.disabled = false;
 }
-setInstallStatus('Install will unlock when this browser allows app install prompts.');
+setInstallStatus('Tap install now. If the browser does not show a prompt, we will show manual install steps.', 'default');
 
 window.addEventListener('beforeinstallprompt', (event) => {
   event.preventDefault();

@@ -1667,9 +1667,9 @@ function getInstallFallbackMessage() {
 }
 
 if (installAppBtn) {
-  installAppBtn.disabled = true;
+  installAppBtn.disabled = false;
 }
-setInstallNote('Install button activates when this browser allows an app prompt.');
+setInstallNote('Tap install now. If your browser does not show a prompt, we will show the exact fallback steps.');
 
 window.addEventListener('beforeinstallprompt', (event) => {
   event.preventDefault();
