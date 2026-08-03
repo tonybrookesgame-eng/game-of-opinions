@@ -29,29 +29,33 @@ service cloud.firestore {
 
     match /users/{uid} {
       allow read: if isSignedIn() && (isOwner(uid) || resource.data.public == true);
-      allow create, update: if (isSignedIn() && isOwner(uid)) || isAdmin();
+      allow create, update: if isSignedIn() && (isOwner(uid) || isAdmin());
       allow delete: if isAdmin();
 
       match /myxi/{doc} {
-        allow read, write: if (isSignedIn() && isOwner(uid)) || isAdmin();
+        allow read: if isSignedIn();
+        allow write: if isSignedIn();
       }
 
       match /stats/{doc} {
-        allow read, write: if (isSignedIn() && isOwner(uid)) || isAdmin();
+        allow read: if isSignedIn();
+        allow write: if isSignedIn();
       }
 
       match /history/{doc} {
-        allow read, write: if (isSignedIn() && isOwner(uid)) || isAdmin();
+        allow read: if isSignedIn();
+        allow write: if isSignedIn();
       }
 
       match /analytics/{doc} {
-        allow read, write: if (isSignedIn() && isOwner(uid)) || isAdmin();
+        allow read: if isSignedIn();
+        allow write: if isSignedIn();
       }
     }
 
     match /leaderboard/{uid} {
       allow read: if isSignedIn();
-      allow create, update: if (isSignedIn() && request.auth.uid == uid) || isAdmin();
+      allow create, update: if isSignedIn();
       allow delete: if isAdmin();
     }
 
@@ -75,12 +79,12 @@ service cloud.firestore {
 
     match /settings/{doc} {
       allow read: if isSignedIn();
-      allow write: if isAdmin();
+      allow write: if isSignedIn();
     }
 
     match /gameweekHistory/{doc} {
       allow read: if isSignedIn();
-      allow write: if isAdmin();
+      allow write: if isSignedIn();
     }
   }
 }
