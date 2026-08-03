@@ -3,11 +3,18 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="description" content="Game of Opinions dashboard with trends, league rank, and weekly performance analytics." />
+<meta name="description" content="GOO dashboard with trends, league rank, and weekly performance analytics." />
 <meta name="theme-color" content="#020611" />
+<meta name="application-name" content="GOO" />
+<meta name="apple-mobile-web-app-title" content="GOO" />
+<meta property="og:title" content="GOO" />
+<meta property="og:image" content="icon-512.png" />
+<meta name="twitter:title" content="GOO" />
+<meta name="twitter:image" content="icon-512.png" />
 <link rel="manifest" href="manifest.webmanifest" />
-<link rel="icon" href="icon-192.svg" type="image/svg+xml" />
-<title>Dashboard - Game of Opinions</title>
+<link rel="icon" href="icon-192.png" type="image/png" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+<title>Dashboard - GOO</title>
 <script src="shared-fixtures.js"></script>
 <style>
 * { box-sizing: border-box; }
@@ -111,11 +118,60 @@ nav a.active {
   gap: 18px;
   margin-bottom: 16px;
 }
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 8px 0 18px;
+}
+.summary-card {
+  padding: 14px 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+  box-shadow: 0 10px 24px rgba(0,0,0,0.16);
+}
+.summary-card .summary-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.summary-card .summary-chip {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 800;
+}
+.summary-card .summary-pill {
+  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(199,255,56,0.12);
+  border: 1px solid rgba(199,255,56,0.24);
+  color: #d9f99d;
+}
+.summary-card .summary-value {
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.summary-card .summary-caption {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+.quick-actions-card {
+  padding: 14px;
+  margin-top: 8px;
+}
 .quick-actions {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0,1fr));
+  grid-template-columns: repeat(4, minmax(0,1fr));
   gap: 12px;
-  margin-bottom: 18px;
 }
 .section-label {
   margin: 18px 0 10px;
@@ -328,7 +384,7 @@ canvas { width: 100%; height: 100%; }
   justify-content: space-between;
   align-items: flex-start;
   gap: 12px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 .checklist-header h3 {
   margin: 0;
@@ -358,10 +414,47 @@ canvas { width: 100%; height: 100%; }
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
+.checklist-collapsible {
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.03);
+  padding: 10px 12px;
+}
+.checklist-collapsible summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 13px;
+}
+.checklist-collapsible summary::-webkit-details-marker { display: none; }
+.checklist-collapsible .checklist-summary-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.checklist-collapsible .checklist-summary-copy small {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 500;
+}
+.checklist-collapsible .checklist-summary-pill {
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: rgba(199,255,56,0.12);
+  border: 1px solid rgba(199,255,56,0.24);
+  color: #d9f99d;
+  font-size: 11px;
+  white-space: nowrap;
+}
 .checklist-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
+  margin-top: 12px;
 }
 .checklist-item {
   display: flex;
@@ -483,14 +576,12 @@ canvas { width: 100%; height: 100%; }
     text-align: left;
     width: fit-content;
   }
+  .summary-grid {
+    grid-template-columns: 1fr 1fr;
+  }
   .quick-actions {
-    position: static !important;
-    bottom: auto !important;
-    left: auto !important;
-    right: auto !important;
-    transform: none !important;
+    grid-template-columns: 1fr 1fr;
     gap: 8px;
-    margin-bottom: 16px;
   }
   .quick-actions a {
     min-height: 84px;
@@ -535,12 +626,28 @@ canvas { width: 100%; height: 100%; }
     </div>
   </div>
 
-  <div class="section-label">Quick actions</div>
-  <div class="quick-actions">
-    <a href="myxi.html"><span class="icon">XI</span> Update Team</a>
-    <a href="season.html"><span class="icon">SP</span> Season Picks</a>
-    <a href="league.html"><span class="icon">LG</span> League Table</a>
-    <a href="rules.html"><span class="icon">RL</span> Rules</a>
+  <div class="section-label">At a glance</div>
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="summary-top"><span class="summary-chip">Total</span><span class="summary-pill">Season</span></div>
+      <div id="kpiTotal" class="summary-value">0</div>
+      <div class="summary-caption">Cumulative points from every gameweek.</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-top"><span class="summary-chip">This week</span><span class="summary-pill">Live</span></div>
+      <div id="kpiWeek" class="summary-value">0</div>
+      <div class="summary-caption">Latest processed gameweek points.</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-top"><span class="summary-chip">Rank</span><span class="summary-pill">Global</span></div>
+      <div id="kpiRank" class="summary-value">--</div>
+      <div class="summary-caption">Where you stand among all managers.</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-top"><span class="summary-chip">Accuracy</span><span class="summary-pill">Signal</span></div>
+      <div id="kpiSignal" class="summary-value">--</div>
+      <div class="summary-caption">A quick read on whether your form is trending up.</div>
+    </div>
   </div>
 
   <div class="install-banner">
@@ -557,64 +664,51 @@ canvas { width: 100%; height: 100%; }
     <div class="checklist-header">
       <div>
         <h3>Weekly setup checklist</h3>
-        <p class="checklist-note">A quick, saved reminder of the main things to do before the new week locks.</p>
+        <p class="checklist-note">A quick reminder of the main tasks before the lock window closes.</p>
       </div>
       <div class="checklist-progress">
         <strong id="checklistCount">0/5</strong>
         <span>done</span>
       </div>
     </div>
-    <div class="checklist-list" data-checklist-root>
-      <div class="checklist-item">
-        <input type="checkbox" id="checklist-deadline" data-checklist-id="deadline">
-        <label for="checklist-deadline">Check the deadline chip<small>Make sure you know when this week locks.</small></label>
+    <details class="checklist-collapsible">
+      <summary>
+        <span class="checklist-summary-copy">
+          <strong>Open your checklist</strong>
+          <small>Only see the tasks you need right now</small>
+        </span>
+        <span class="checklist-summary-pill">Tap to expand</span>
+      </summary>
+      <div class="checklist-list" data-checklist-root>
+        <div class="checklist-item">
+          <input type="checkbox" id="checklist-deadline" data-checklist-id="deadline">
+          <label for="checklist-deadline">Check the deadline chip<small>Make sure you know when this week locks.</small></label>
+        </div>
+        <div class="checklist-item">
+          <input type="checkbox" id="checklist-team" data-checklist-id="team">
+          <label for="checklist-team">Review and update your XI<small>Confirm your 11-club setup is still valid.</small></label>
+        </div>
+        <div class="checklist-item">
+          <input type="checkbox" id="checklist-picks" data-checklist-id="picks">
+          <label for="checklist-picks">Set weekly picks<small>Choose first scorer and first-goal minute.</small></label>
+        </div>
+        <div class="checklist-item">
+          <input type="checkbox" id="checklist-trend" data-checklist-id="trend">
+          <label for="checklist-trend">Scan your trend and rank<small>See whether you are rising, flat, or slipping.</small></label>
+        </div>
+        <div class="checklist-item">
+          <input type="checkbox" id="checklist-season" data-checklist-id="season">
+          <label for="checklist-season">Check season picks status<small>Only if you still have long-term calls to finish.</small></label>
+        </div>
       </div>
-      <div class="checklist-item">
-        <input type="checkbox" id="checklist-team" data-checklist-id="team">
-        <label for="checklist-team">Review and update your XI<small>Confirm your 11-club setup is still valid.</small></label>
-      </div>
-      <div class="checklist-item">
-        <input type="checkbox" id="checklist-picks" data-checklist-id="picks">
-        <label for="checklist-picks">Set weekly picks<small>Choose first scorer and first-goal minute.</small></label>
-      </div>
-      <div class="checklist-item">
-        <input type="checkbox" id="checklist-trend" data-checklist-id="trend">
-        <label for="checklist-trend">Scan your trend and rank<small>See whether you are rising, flat, or slipping.</small></label>
-      </div>
-      <div class="checklist-item">
-        <input type="checkbox" id="checklist-season" data-checklist-id="season">
-        <label for="checklist-season">Check season picks status<small>Only if you still have long-term calls to finish.</small></label>
-      </div>
-    </div>
-    <details class="checklist-help">
-      <summary>What else can help this week?</summary>
-      <p>Use the league table to judge where you need to gain ground, keep an eye on the rules page if you are unsure about scoring, and revisit the dashboard after the first fixtures to see how the week is unfolding.</p>
+      <details class="checklist-help">
+        <summary>What else can help this week?</summary>
+        <p>Use the league table to judge where you need to gain ground, keep an eye on the rules page if you are unsure about scoring, and revisit the dashboard after the first fixtures to see how the week is unfolding.</p>
+      </details>
     </details>
   </div>
 
   <div class="grid">
-    <div class="card kpi">
-      <div class="kpi-label">Total Points</div>
-      <div id="kpiTotal" class="kpi-value">0</div>
-      <div id="kpiTotalSub" class="kpi-sub">Season cumulative</div>
-    </div>
-    <div class="card kpi">
-      <div class="kpi-label">This Week</div>
-      <div id="kpiWeek" class="kpi-value">0</div>
-      <div id="kpiWeekSub" class="kpi-sub">Latest processed gameweek</div>
-      <div id="kpiWeekDelta" class="kpi-delta flat">No movement yet</div>
-    </div>
-    <div class="card kpi">
-      <div class="kpi-label">Global Rank</div>
-      <div id="kpiRank" class="kpi-value">--</div>
-      <div id="kpiRankSub" class="kpi-sub">Among all managers</div>
-    </div>
-    <div class="card kpi">
-      <div class="kpi-label">Prediction Accuracy Signal</div>
-      <div id="kpiSignal" class="kpi-value">--</div>
-      <div id="kpiSignalSub" class="kpi-sub">Derived from trend consistency</div>
-    </div>
-
     <div class="card trend">
       <h3>Weekly Trend</h3>
       <div class="chart-wrap"><canvas id="trendChart" width="760" height="240"></canvas></div>
@@ -650,6 +744,16 @@ canvas { width: 100%; height: 100%; }
       </div>
     </div>
 
+  </div>
+
+  <div class="section-label">Quick actions</div>
+  <div class="card quick-actions-card">
+    <div class="quick-actions">
+      <a href="myxi.html"><span class="icon">XI</span> Update Team</a>
+      <a href="season.html"><span class="icon">SP</span> Season Picks</a>
+      <a href="league.html"><span class="icon">LG</span> League Table</a>
+      <a href="rules.html"><span class="icon">RL</span> Rules</a>
+    </div>
   </div>
 </div>
 
