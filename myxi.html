@@ -2999,6 +2999,8 @@ const loadSelectedGameweekHistory = async () => {
         betPts: arch.betScore || 0,
         totalPts: arch.weeklyPoints || 0
       };
+    } else {
+      alert(`No archived team data was found for Gameweek ${selectedGw}.\n\nThis usually means scores were run in Dry Run mode and not published.`);
     }
   } else {
     // Load current live data

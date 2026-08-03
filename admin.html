@@ -1330,6 +1330,13 @@
           }, { merge: true });
         }
 
+        // Dry runs are simulation-only: do not publish history or unlock gameweek.
+        if (isDryRun) {
+          showDebugAdmin(`Dry run complete for GW${gwNum}. No data was written.`);
+          alert(`Dry run complete for GW${gwNum}.\n\nNo points were published and no archives were written.`);
+          return;
+        }
+
         // 8. Save to History
         showDebugAdmin(`Saving gameweekHistory GW${gwNum}`);
         await setDoc(doc(db, "gameweekHistory", "GW" + gwNum), {
