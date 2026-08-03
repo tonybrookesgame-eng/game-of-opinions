@@ -863,7 +863,8 @@ function buildPredictions(category, pools) {
         .map((team) => ({ value: team, label: team, score: scoreTeam(categoryId, team) }))
         .sort((a, b) => b.score - a.score);
     } else {
-      ranked = pools.players
+      const playerPool = categoryId === "cleansheets" ? pools.byPos.GK : pools.players;
+      ranked = playerPool
         .map((player) => ({
           value: player.key,
           label: `${player.name} (${player.club})`,
@@ -1043,7 +1044,10 @@ function renderSeasonGrid() {
 
     const teamOptions = pools.teams.map((team) => ({ value: team, label: team }));
     const playerOptions = pools.players.map((p) => ({ value: p.key, label: `${p.name} (${p.club})` }));
-    const options = category.type === "team" ? teamOptions : playerOptions;
+    const cleanSheetOptions = pools.byPos.GK.map((p) => ({ value: p.key, label: `${p.name} (${p.club})` }));
+    const options = category.type === "team"
+      ? teamOptions
+      : (category.key === "cleansheets" ? cleanSheetOptions : playerOptions);
 
     const picks = buildPredictions(category, pools);
     predictionCache.set(category.key, picks);
