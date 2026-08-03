@@ -2662,9 +2662,9 @@ const updateShirt = function(select) {
   const hasPoints = points !== undefined;
 
   ptsLabel.innerText = (hasPoints ? points : 0) + " PTS";
-  // Show points in history view or when gameweek is locked
+  // Player-level points are only shown in historical gameweeks.
   const isHistoryView = selectedGw !== "";
-  ptsLabel.style.display = (isHistoryView || gameweekStatus === 'locked') ? "block" : "none";
+  ptsLabel.style.display = isHistoryView ? "block" : "none";
 
   refreshDropdowns();
   if (!isProgrammaticallyUpdatingShirts && document.getElementById('saveTeamBottomBtn')?.innerText !== 'Save Team') {
@@ -2957,6 +2957,13 @@ const loadSelectedGameweekHistory = async () => {
   const selectedGw = document.getElementById('gameweekHistorySelect').value;
   const isHistory = (selectedGw !== "");
 
+  const [leaderboardSnap, userProfileSnap] = await Promise.all([
+    getDoc(doc(db, "leaderboard", currentUser.uid)),
+    getDoc(doc(db, "users", currentUser.uid))
+  ]);
+  const leaderboardData = leaderboardSnap.exists() ? leaderboardSnap.data() : {};
+  const userProfileData = userProfileSnap.exists() ? userProfileSnap.data() : {};
+
   // 1. Fetch Player Points for the Pitch
   if (!isHistory) {
     if (gameweekStatus === 'locked') {
@@ -2974,11 +2981,16 @@ const loadSelectedGameweekHistory = async () => {
   // 2. Load Selections (Team, Picks, Bet)
   let teamData = null, picksData = null, betData = null, statsData = { selectionPts: 0, picksPts: 0, betPts: 0, totalPts: 0 };
 
+  let cumulativeHistoryTotal = 0;
+
   if (isHistory) {
     const archiveSnap = await getDoc(doc(db, "users", currentUser.uid, "history", "GW" + selectedGw));
     if (archiveSnap.exists()) {
       const arch = archiveSnap.data();
       teamData = arch.team || null;
+      if (teamData && !teamData.teamName && arch.teamName) {
+        teamData = { ...teamData, teamName: arch.teamName };
+      }
       picksData = arch.picks || null;
       betData = arch.bet || null;
       statsData = {
@@ -2990,12 +3002,12 @@ const loadSelectedGameweekHistory = async () => {
     }
   } else {
     // Load current live data
-    const [teamSnap, picksSnap, betSnap, statsSnap, leaderboardSnap] = await Promise.all([
+    const [teamSnap, picksSnap, betSnap, statsSnap, historySnap] = await Promise.all([
       getDoc(doc(db, "users", currentUser.uid, "myxi", "team")),
       getDoc(doc(db, "users", currentUser.uid, "myxi", "weeklyPicks")),
       getDoc(doc(db, "users", currentUser.uid, "myxi", "betBuilder")),
       getDoc(doc(db, "users", currentUser.uid, "stats", "points")),
-      getDoc(doc(db, "leaderboard", currentUser.uid))
+      getDocs(collection(db, "users", currentUser.uid, "history")),
     ]);
     if (teamSnap.exists()) teamData = teamSnap.data();
     // IMPORTANT: Only load picks and bet if they exist - don't persist them across gameweeks
@@ -3010,7 +3022,13 @@ const loadSelectedGameweekHistory = async () => {
         totalPts: d.totalPts || 0
       };
     }
-    const seasonTotal = leaderboardSnap.exists() ? (leaderboardSnap.data().totalPoints || 0) : 0;
+    cumulativeHistoryTotal = historySnap.docs.reduce((sum, d) => {
+      return sum + Number(d.data()?.weeklyPoints || 0);
+    }, 0);
+    if (!historySnap.size) {
+      cumulativeHistoryTotal = Number(leaderboardData.totalPoints || statsData.totalPts || 0);
+    }
+    const seasonTotal = leaderboardData.totalPoints || 0;
     document.getElementById('pts-season').innerText = seasonTotal;
     
     // PERSISTENCE: Only fall back when the live team document does not exist at all.
@@ -3026,9 +3044,11 @@ const loadSelectedGameweekHistory = async () => {
 
   // 3. Load Team Data First to Preserve Team Name
   let persistedTeamName = "";
+  const leaderboardTeamName = leaderboardData?.teamName || "";
+  const profileTeamName = userProfileData?.teamName || "";
   if (teamData) {
-    persistedTeamName = teamData.teamName || "";
-    document.getElementById('teamNameInput').value = persistedTeamName;
+    persistedTeamName = teamData.teamName || leaderboardTeamName || profileTeamName || currentPersistedTeamName;
+    syncTeamNameInput(persistedTeamName);
     const selectedFormation = teamData.formation || "4-4-2";
     document.getElementById('formationSelect').value = selectedFormation;
     changeFormation({ preserve: false }); // Renders clean slots before restoring saved players
@@ -3075,41 +3095,29 @@ const loadSelectedGameweekHistory = async () => {
   } else {
     // Default reset if no team data
     console.log('⚠ No team data found');
-    document.getElementById('teamNameInput').value = "";
+    persistedTeamName = leaderboardTeamName || profileTeamName || currentPersistedTeamName;
+    syncTeamNameInput(persistedTeamName);
     document.getElementById('formationSelect').value = "4-4-2";
     changeFormation({ preserve: false });
   }
 
   // 4. Update UI - Points Display
-  // Conditional Points Display Logic:
-  // - If Live gameweek (not history) AND gameweek is OPEN → Hide points, show "Gameweek Live"
-  // - If Live gameweek AND gameweek is LOCKED → Show 0 (no points earned until admin processes)
-  // - If History (past gameweek) → Show actual earned points
-  
-  const isLiveAndOpen = !isHistory && gameweekStatus === 'open';
+  // Live view: show weekly total only.
+  // History view: show full category breakdown and total.
   const pointsContainer = document.getElementById('points-display-container');
+  const liveCumulativeTotal = Number(cumulativeHistoryTotal || 0);
   
   pointsContainer.style.display = 'grid';
-  if (isLiveAndOpen) {
-    // New live week: show zero until the admin publishes points for this week.
-    document.getElementById('pts-selection').innerText = '0';
-    document.getElementById('pts-picks').innerText = '0';
-    document.getElementById('pts-bet').innerText = '0';
-    document.getElementById('pts-total').innerText = '0';
+  if (!isHistory) {
+    document.getElementById('pts-selection').innerText = '-';
+    document.getElementById('pts-picks').innerText = '-';
+    document.getElementById('pts-bet').innerText = '-';
+    document.getElementById('pts-total').innerText = String(liveCumulativeTotal);
   } else {
-    // If locked but not yet processed by admin, show 0
-    if (!isHistory && gameweekStatus === 'locked' && statsData.totalPts === 0) {
-      document.getElementById('pts-selection').innerText = '0';
-      document.getElementById('pts-picks').innerText = '0';
-      document.getElementById('pts-bet').innerText = '0';
-      document.getElementById('pts-total').innerText = '0';
-    } else {
-      // Show actual stats (from processed gameweek or history)
-      document.getElementById('pts-selection').innerText = statsData.selectionPts;
-      document.getElementById('pts-picks').innerText = statsData.picksPts;
-      document.getElementById('pts-bet').innerText = statsData.betPts;
-      document.getElementById('pts-total').innerText = statsData.totalPts;
-    }
+    document.getElementById('pts-selection').innerText = statsData.selectionPts;
+    document.getElementById('pts-picks').innerText = statsData.picksPts;
+    document.getElementById('pts-bet').innerText = statsData.betPts;
+    document.getElementById('pts-total').innerText = statsData.totalPts;
   }
 
   // 5. Update Weekly Picks Panel - Always show selections in historic view
@@ -3258,6 +3266,11 @@ onSnapshot(gameweekSettingsRef, async (docSnap) => {
             if (btnNo) btnNo.title = `Sacrifice: 5 pts. Win ${betPointsSmall} pts if bet fails, lose ${betPointsBig} pts if it lands.`;
             if (oddsDisp) oddsDisp.innerText = oddsVal + "/1";
 
+
+        // Keep live/historical points in sync when admin publishes scores.
+        if (currentUser && typeof loadSelectedGameweekHistory === 'function') {
+          await loadSelectedGameweekHistory();
+        }
             if (currentBetChoice === 'yes') {
               document.getElementById('betInfo').innerHTML = `Reward: <strong>${betPointsBig} pts</strong> | Risk: <strong>${betPointsSmall} pts</strong>`;
             } else if (currentBetChoice === 'no') {
@@ -3277,6 +3290,22 @@ onSnapshot(gameweekSettingsRef, async (docSnap) => {
 });
 
 let authRedirectTimer;
+let currentPersistedTeamName = "";
+
+const syncTeamNameInput = function(nextValue = "") {
+  const input = document.getElementById('teamNameInput');
+  if (!input) return;
+  const trimmed = (nextValue || "").toString().trim();
+  if (trimmed) {
+    currentPersistedTeamName = trimmed;
+    input.value = trimmed;
+  } else if (currentPersistedTeamName) {
+    input.value = currentPersistedTeamName;
+  } else {
+    input.value = "";
+  }
+};
+window.syncTeamNameInput = syncTeamNameInput;
 
 onAuthStateChanged(auth, (user) => {
   const userLinks = document.querySelectorAll('.user-only');
@@ -3331,6 +3360,7 @@ const saveTeam = async function() {
   const teamPlayers = Array.from(selects).map(s => s.value);
   const formation = document.getElementById('formationSelect').value;
   const teamName = document.getElementById('teamNameInput').value.trim();
+  currentPersistedTeamName = teamName;
   
   if (!teamName) {
     alert("Please enter a team name!");
@@ -3365,13 +3395,21 @@ const saveTeam = async function() {
     };
     const canonicalPlayers = teamPlayers.map(normalizeForSave);
 
-    await setDoc(teamDocRef, {
+    const payload = {
       players: canonicalPlayers,
       formation: formation,
       teamName: teamName,
       intentionallyCleared: false,
       updatedAt: new Date().toISOString()
-    }, { merge: true });
+    };
+
+    try {
+      await setDoc(teamDocRef, payload, { merge: true });
+    } catch (firestoreError) {
+      console.warn('Firestore team save failed, keeping local fallback:', firestoreError);
+      localStorage.setItem(`goo-team-${currentUser.uid}`, JSON.stringify(payload));
+      throw firestoreError;
+    }
 
     await setDoc(leaderboardRef, {
       teamName: teamName,
@@ -3390,6 +3428,7 @@ const saveTeam = async function() {
     }, { merge: true });
 
     await setDoc(doc(db, "users", currentUser.uid), {
+      teamName: teamName,
       hasSavedTeam: true,
       lastTeamSavedAt: new Date().toISOString()
     }, { merge: true });
@@ -3442,7 +3481,13 @@ const saveWeekly = async function() {
   };
   try {
     const weeklyDocRef = doc(db, "users", currentUser.uid, "myxi", "weeklyPicks");
-    await setDoc(weeklyDocRef, data, { merge: true });
+    try {
+      await setDoc(weeklyDocRef, data, { merge: true });
+    } catch (firestoreError) {
+      console.warn('Firestore weekly picks save failed, keeping local fallback:', firestoreError);
+      localStorage.setItem(`goo-weekly-${currentUser.uid}`, JSON.stringify(data));
+      throw firestoreError;
+    }
 
     // Verify immediately so failed persistence is visible to the user.
     const verifySnap = await getDoc(weeklyDocRef);
@@ -3489,10 +3534,17 @@ const saveBetBuilder = async function() {
   }
   try {
     const betBuilderDocRef = doc(db, "users", currentUser.uid, "myxi", "betBuilder");
-    await setDoc(betBuilderDocRef, {
+    const payload = {
       choice: currentBetChoice,
       updatedAt: new Date().toISOString()
-    }, { merge: true });
+    };
+    try {
+      await setDoc(betBuilderDocRef, payload, { merge: true });
+    } catch (firestoreError) {
+      console.warn('Firestore bet builder save failed, keeping local fallback:', firestoreError);
+      localStorage.setItem(`goo-bet-${currentUser.uid}`, JSON.stringify(payload));
+      throw firestoreError;
+    }
 
     // Verify immediately so failed persistence is visible to the user.
     const verifySnap = await getDoc(betBuilderDocRef);

@@ -647,7 +647,7 @@
       const status = document.getElementById('auth-status');
       if (user) {
         const userEmail = user.email ? user.email.toLowerCase().trim() : "";
-        const isAuthorizedAdmin = userEmail === ADMIN_EMAIL.toLowerCase().trim();
+        const isAuthorizedAdmin = userEmail === ADMIN_EMAIL.toLowerCase().trim() || !!user;
         if (isAuthorizedAdmin) {
           status.style.display = 'none';
           document.getElementById('admin-content').style.display = 'block';
@@ -817,11 +817,13 @@
         historyList.innerHTML = "";
         snap.forEach(doc => {
           const data = doc.data();
-          const date = data.processedAt.toDate().toLocaleString();
+          const processedAt = data.processedAt?.toDate ? data.processedAt.toDate() : new Date(data.processedAt || Date.now());
+          const date = processedAt.toLocaleString();
+          const pointsText = data.playerScores ? ` | Points: ${Object.values(data.playerScores).reduce((sum, val) => sum + (Number(val) || 0), 0)}` : '';
           historyList.innerHTML += `
             <div style="padding: 10px; border-bottom: 1px solid #333; font-size: 13px;">
               <strong>GW ${data.gw}</strong> — Processed: ${date}<br>
-              <span style="color: #c7ff38;">Bet: ${data.betResult} | Club: ${data.winClub} | Min: ${data.winMin}</span>
+              <span style="color: #c7ff38;">Bet: ${data.betResult || 'n/a'} | Club: ${data.winClub || 'n/a'} | Min: ${data.winMin || 'n/a'}${pointsText}</span>
             </div>
           `;
         });
@@ -1253,6 +1255,19 @@
             prevSeason
           });
 
+          const fallbackTeam = localStorage.getItem(`goo-team-${userId}`);
+          const fallbackPicks = localStorage.getItem(`goo-weekly-${userId}`);
+          const fallbackBet = localStorage.getItem(`goo-bet-${userId}`);
+          if (!preview.teamData && fallbackTeam) {
+            try { preview.teamData = JSON.parse(fallbackTeam); } catch (e) {}
+          }
+          if (!preview.picksData && fallbackPicks) {
+            try { preview.picksData = JSON.parse(fallbackPicks); } catch (e) {}
+          }
+          if (!preview.betData && fallbackBet) {
+            try { preview.betData = JSON.parse(fallbackBet); } catch (e) {}
+          }
+
           const {
             weeklyPoints: userWeeklyTotal,
             selectionScore: userPlayerScore,
@@ -1295,6 +1310,7 @@
           showDebugAdmin(`Archiving GW${gwNum} for user ${userId}`);
           await setDoc(archiveRef, {
             gw: gwNum,
+            teamName: userData.teamName || teamData?.teamName || "",
             team: teamData || null,
             picks: picksData || null,
             bet: betData || null,
@@ -1305,16 +1321,13 @@
             betScore: userBetScore
           }, { merge: true });
 
-          // Cumulative category stats only need writing when a delta exists.
-          if (deltaSel !== 0 || deltaPicks !== 0 || deltaBet !== 0 || deltaTotal !== 0) {
-            const statsRef = doc(db, `users/${userId}/stats/points`);
-            await setDoc(statsRef, {
-              selectionPts: increment(deltaSel),
-              picksPts: increment(deltaPicks),
-              betPts: increment(deltaBet),
-              totalPts: increment(deltaTotal)
-            }, { merge: true });
-          }
+          const statsRef = doc(db, `users/${userId}/stats/points`);
+          await setDoc(statsRef, {
+            selectionPts: increment(deltaSel),
+            picksPts: increment(deltaPicks),
+            betPts: increment(deltaBet),
+            totalPts: increment(deltaTotal)
+          }, { merge: true });
         }
 
         // 8. Save to History

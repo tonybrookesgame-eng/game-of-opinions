@@ -10,7 +10,7 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return isSignedIn() && request.auth.token.email == "tonybrookes.game@gmail.com";
+      return isSignedIn();
     }
 
     function isLeagueCreator() {
@@ -84,12 +84,12 @@ service cloud.firestore {
 
     match /settings/{doc} {
       allow read: if isSignedIn();
-      allow write: if isAdmin();
+      allow write: if isSignedIn();
     }
 
     match /gameweekHistory/{doc} {
       allow read: if isSignedIn();
-      allow write: if isAdmin();
+      allow write: if isSignedIn();
     }
   }
 }
