@@ -545,11 +545,11 @@ canvas { width: 100%; height: 100%; }
 
   <div class="install-banner">
     <div>
-      <strong>Install the app</strong>
-      <p>Add Game of Opinions to your home screen or desktop for a faster, app-like experience.</p>
+      <strong>Install GOO</strong>
+      <p>Add GOO to your home screen or desktop for a faster, app-like experience.</p>
       <p id="installDashboardStatus" class="install-status">Checking install availability...</p>
     </div>
-    <button id="installDashboardBtn" type="button">Install app</button>
+    <button id="installDashboardBtn" type="button">Install GOO</button>
   </div>
 
   <div class="section-label">New week checklist</div>
@@ -673,7 +673,14 @@ const auth = getAuth(app);
 let deferredInstallPrompt = null;
 const installDashboardBtn = document.getElementById('installDashboardBtn');
 const installDashboardStatus = document.getElementById('installDashboardStatus');
+const installDashboardBanner = document.querySelector('.install-banner');
 let deadlineTickerHandle = null;
+
+function setInstallBannerVisible(visible) {
+  if (installDashboardBanner) {
+    installDashboardBanner.style.display = visible ? '' : 'none';
+  }
+}
 
 function setInstallStatus(message, level = 'default') {
   if (!installDashboardStatus) return;
@@ -688,7 +695,7 @@ function getInstallFallbackMessage() {
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 
   if (isStandalone) {
-    return 'Game of Opinions is already installed on this device.';
+    return 'GOO is already installed on this device.';
   }
 
   if (isIOS) {
@@ -705,25 +712,31 @@ function getInstallFallbackMessage() {
 if (installDashboardBtn) {
   installDashboardBtn.disabled = false;
 }
-setInstallStatus('Tap install now. If the browser does not show a prompt, we will show manual install steps.', 'default');
+if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone || window.matchMedia('(display-mode: fullscreen)').matches) {
+  setInstallBannerVisible(false);
+} else {
+  setInstallBannerVisible(true);
+  setInstallStatus('Tap install now. If the browser does not show a prompt, we will show manual install steps.', 'default');
+}
 
 window.addEventListener('beforeinstallprompt', (event) => {
   event.preventDefault();
   deferredInstallPrompt = event;
+  setInstallBannerVisible(true);
   if (installDashboardBtn) {
     installDashboardBtn.disabled = false;
-    installDashboardBtn.innerText = 'Install app';
+    installDashboardBtn.innerText = 'Install GOO';
   }
   setInstallStatus('Ready to install on this device.', 'ready');
 });
 
 window.addEventListener('appinstalled', () => {
   deferredInstallPrompt = null;
+  setInstallBannerVisible(false);
   if (installDashboardBtn) {
     installDashboardBtn.innerText = 'Installed';
     installDashboardBtn.disabled = true;
   }
-  setInstallStatus('Installed successfully. Open it from your home screen.', 'success');
 });
 
 if (installDashboardBtn) {

@@ -1415,8 +1415,8 @@ nav a:hover {
       <h1>Your Football Opinions.<br>
       <strong>Finally Worth Something.</strong></h1>
       <p>Your team, your rules. Build your XI and dominate the league.</p>
-      <button id="installAppBtn" class="install-cta" type="button">Install Game of Opinions</button>
-      <p id="installNote" class="install-note">Install the app to your phone or desktop for a cleaner launch experience and quicker return visits.</p>
+      <button id="installAppBtn" class="install-cta" type="button">Install GOO</button>
+      <p id="installNote" class="install-note">Install GOO to your phone or desktop for a cleaner launch experience and quicker return visits.</p>
     </div>
     <div class="hero-visual">
       <div class="phone phone-left">
@@ -1639,10 +1639,23 @@ let deferredInstallPrompt = null;
 const installAppBtn = document.getElementById('installAppBtn');
 const installNote = document.getElementById('installNote');
 
+function setInstallUiVisible(visible) {
+  if (installAppBtn) {
+    installAppBtn.style.display = visible ? '' : 'none';
+  }
+  if (installNote) {
+    installNote.style.display = visible ? '' : 'none';
+  }
+}
+
 function setInstallNote(message, level = '') {
   if (!installNote) return;
   installNote.className = `install-note${level ? ` ${level}` : ''}`;
   installNote.innerText = message;
+}
+
+function isInstalledPwa() {
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone || window.matchMedia('(display-mode: fullscreen)').matches;
 }
 
 function getInstallFallbackMessage() {
@@ -1652,7 +1665,7 @@ function getInstallFallbackMessage() {
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 
   if (isStandalone) {
-    return 'Game of Opinions is already installed on this device.';
+    return 'GOO is already installed on this device.';
   }
 
   if (isIOS) {
@@ -1669,25 +1682,31 @@ function getInstallFallbackMessage() {
 if (installAppBtn) {
   installAppBtn.disabled = false;
 }
-setInstallNote('Tap install now. If your browser does not show a prompt, we will show the exact fallback steps.');
+if (isInstalledPwa()) {
+  setInstallUiVisible(false);
+} else {
+  setInstallUiVisible(true);
+  setInstallNote('Tap install now. If your browser does not show a prompt, we will show the exact fallback steps.');
+}
 
 window.addEventListener('beforeinstallprompt', (event) => {
   event.preventDefault();
   deferredInstallPrompt = event;
+  setInstallUiVisible(true);
   if (installAppBtn) {
     installAppBtn.disabled = false;
-    installAppBtn.innerText = 'Install Game of Opinions';
+    installAppBtn.innerText = 'Install GOO';
   }
   setInstallNote('Ready to install on this device.', 'ready');
 });
 
 window.addEventListener('appinstalled', () => {
   deferredInstallPrompt = null;
+  setInstallUiVisible(false);
   if (installAppBtn) {
-    installAppBtn.innerText = 'App installed';
+    installAppBtn.innerText = 'Installed';
     installAppBtn.disabled = true;
   }
-  setInstallNote('Installed successfully. Launch it from your home screen.', 'success');
 });
 
 if (installAppBtn) {

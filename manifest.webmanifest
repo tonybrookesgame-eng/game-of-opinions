@@ -1,7 +1,7 @@
 {
   "id": "/",
-  "name": "Game of Opinions",
-  "short_name": "Opinions",
+  "name": "Game Of Opinions",
+  "short_name": "GOO",
   "description": "A premium football prediction game for building your XI, making weekly picks, and tracking season performance.",
   "start_url": "/index.html",
   "scope": "/",
