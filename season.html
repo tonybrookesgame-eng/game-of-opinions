@@ -837,6 +837,8 @@ function scorePlayer(categoryKey, player) {
 }
 
 function selectIndices(mode, count, maxLen) {
+  if (maxLen <= 0 || count <= 0) return [];
+
   const ranges = {
     safe: [0.1, 0.2, 0.32, 0.45],
     balanced: [0.28, 0.4, 0.52, 0.64],
@@ -863,7 +865,10 @@ function buildPredictions(category, pools) {
         .map((team) => ({ value: team, label: team, score: scoreTeam(categoryId, team) }))
         .sort((a, b) => b.score - a.score);
     } else {
-      const playerPool = categoryId === "cleansheets" ? pools.byPos.GK : pools.players;
+      // MyXI pools may not include GK player objects; fall back to full player pool.
+      const playerPool = categoryId === "cleansheets"
+        ? (pools.byPos.GK.length ? pools.byPos.GK : pools.players)
+        : pools.players;
       ranked = playerPool
         .map((player) => ({
           value: player.key,
@@ -1047,7 +1052,9 @@ function renderSeasonGrid() {
     const cleanSheetOptions = pools.byPos.GK.map((p) => ({ value: p.key, label: `${p.name} (${p.club})` }));
     const options = category.type === "team"
       ? teamOptions
-      : (category.key === "cleansheets" ? cleanSheetOptions : playerOptions);
+      : (category.key === "cleansheets"
+        ? (cleanSheetOptions.length ? cleanSheetOptions : playerOptions)
+        : playerOptions);
 
     const picks = buildPredictions(category, pools);
     predictionCache.set(category.key, picks);
