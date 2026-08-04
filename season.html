@@ -744,7 +744,7 @@ const CATEGORY_CONFIG = [
   { key: "facup", title: "FA Cup Winner", type: "team", points: "50 points", count: 1 },
   { key: "scorer", title: "Top Scorer", type: "player", points: "25 points", count: 1 },
   { key: "assists", title: "Top Assists", type: "player", points: "50 points", count: 1 },
-  { key: "cleansheets", title: "Most Clean Sheets", type: "player", points: "50 points", count: 1 },
+  { key: "cleansheets", title: "Most Clean Sheets", type: "team", points: "50 points", count: 1 },
   { key: "hattrick", title: "First Hat-Trick", type: "player", points: "50 points", count: 1 },
   { key: "sacked", title: "First Club To Sack Manager", type: "team", points: "50 points", count: 1 },
   { key: "redcards", title: "Most Red Cards", type: "player", points: "75 points", count: 1 },
@@ -1150,7 +1150,12 @@ async function loadSeasonPicks(uid) {
     if (!title) return;
 
     const selects = Array.from(card.querySelectorAll("select"));
-    const value = saved[title];
+    let value = saved[title];
+
+    if (title === "Most Clean Sheets" && typeof value === "string" && value.includes("|")) {
+      const decoded = decodePlayer(value);
+      if (decoded.club) value = decoded.club;
+    }
 
     if (Array.isArray(value)) {
       value.forEach((v, idx) => {
