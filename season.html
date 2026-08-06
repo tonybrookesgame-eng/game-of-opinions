@@ -252,37 +252,59 @@
       letter-spacing: 0.5px;
     }
 
-    .pick-select {
+    .pick-field {
+      margin-bottom: 8px;
+    }
+
+    /* Native select stays in the DOM for its value/change semantics but is never
+       shown or focused directly - tapping it on mobile is what used to trigger
+       Safari's input-zoom, and it duplicated the search button below. */
+    .pick-select-native {
+      display: none !important;
+    }
+
+    .pick-select-display {
       width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
       padding: 11px 12px;
       border-radius: 10px;
       border: 1px solid rgba(255,255,255,0.15);
       background: rgba(8,16,31,0.92);
       color: #fff;
       font-size: 14px;
-      margin-bottom: 8px;
-    }
-
-    .pick-row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .search-btn {
-      border: 1px solid rgba(199,255,56,0.45);
-      background: rgba(199,255,56,0.12);
-      color: #c7ff38;
-      border-radius: 999px;
-      padding: 0 12px;
-      font-size: 12px;
-      font-weight: 700;
+      font-family: inherit;
+      text-align: left;
       cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease;
     }
 
-    .search-btn:hover {
-      background: rgba(199,255,56,0.2);
+    .pick-select-display:hover {
+      border-color: rgba(199,255,56,0.45);
+    }
+
+    .pick-select-display.has-value {
+      color: #fff;
+    }
+
+    .pick-select-value {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .pick-select-display:not(.has-value) .pick-select-value {
+      color: #9ca8c6;
+    }
+
+    .pick-select-icon {
+      flex-shrink: 0;
+      font-size: 14px;
+      opacity: 0.85;
     }
 
     .scouts-container {
@@ -360,7 +382,8 @@
       box-shadow: 0 0 15px rgba(199,255,56,0.2);
     }
 
-    .pick-select:focus {
+    .pick-select-display:focus,
+    .pick-select-display:focus-visible {
       border-color: var(--lime);
       outline: none;
     }
@@ -527,6 +550,8 @@
       color: #fff;
       margin-bottom: 12px;
       outline: none;
+      /* iOS Safari auto-zooms the page when a focused text input is under 16px. */
+      font-size: 16px;
     }
 
     .picker-list {
@@ -915,9 +940,14 @@ function buildPredictions(category, pools) {
   });
 }
 
-function createSelect(options, placeholder) {
+// Builds one pick field: a hidden native <select> (kept for its value/change
+// semantics) plus a visible pseudo-select button with a built-in search icon.
+// Tapping the button opens the search picker directly - there's no separate
+// dropdown to open first, which also removes the old dropdown as a mobile
+// zoom-on-focus trigger.
+function createPickField(options, placeholder, title) {
   const select = document.createElement("select");
-  select.className = "pick-select";
+  select.className = "pick-select-native";
   select.innerHTML = `<option value="">${placeholder}</option>`;
   options.forEach((opt) => {
     const el = document.createElement("option");
@@ -925,16 +955,37 @@ function createSelect(options, placeholder) {
     el.textContent = opt.label;
     select.appendChild(el);
   });
-  return select;
-}
 
-function createSearchButton(select, options, title) {
-  const btn = document.createElement("button");
-  btn.type = "button";
-  btn.className = "search-btn";
-  btn.innerText = "Search";
-  btn.addEventListener("click", () => openPicker(select, options, title));
-  return btn;
+  const display = document.createElement("button");
+  display.type = "button";
+  display.className = "pick-select-display";
+  display.innerHTML = `<span class="pick-select-value">${placeholder}</span><span class="pick-select-icon" aria-hidden="true">&#128269;</span>`;
+
+  const updateDisplay = () => {
+    const chosen = options.find((o) => o.value === select.value);
+    display.querySelector(".pick-select-value").textContent = chosen ? chosen.label : placeholder;
+    display.classList.toggle("has-value", !!chosen);
+  };
+  select.updatePickDisplay = updateDisplay;
+
+  display.addEventListener("click", () => {
+    // Exclude options already disabled on the select (e.g. relegation teams
+    // already taken by a sibling pick) so the search list matches the dropdown.
+    const optionEls = Array.from(select.options);
+    const available = options.filter((opt) => {
+      const optionEl = optionEls.find((o) => o.value === opt.value);
+      return !optionEl || !optionEl.disabled;
+    });
+    openPicker(select, available, title);
+  });
+  select.addEventListener("change", updateDisplay);
+  updateDisplay();
+
+  const field = document.createElement("div");
+  field.className = "pick-field";
+  field.appendChild(select);
+  field.appendChild(display);
+  return { select, field };
 }
 
 function updateCardSelectionState(card) {
@@ -961,6 +1012,7 @@ function setSelectWithFallback(select, value) {
   if (!value) return;
   if (Array.from(select.options).some((o) => o.value === value)) {
     select.value = value;
+    select.updatePickDisplay?.();
     return;
   }
 
@@ -969,7 +1021,10 @@ function setSelectWithFallback(select, value) {
       const decoded = decodePlayer(o.value);
       return decoded.name === value || o.value === value;
     });
-    if (fallback) select.value = fallback.value;
+    if (fallback) {
+      select.value = fallback.value;
+      select.updatePickDisplay?.();
+    }
   }
 }
 
@@ -1008,11 +1063,8 @@ function renderPickerList(queryText) {
     button.addEventListener("click", () => {
       if (!pickerTargetSelect) return;
       pickerTargetSelect.value = opt.value;
-      const card = pickerTargetSelect.closest(".season-card");
-      if (card) {
-        updateCardSelectionState(card);
-        if (card.dataset.category === "relegated") refreshRelegatedForCard(card);
-      }
+      pickerTargetSelect.updatePickDisplay?.();
+      pickerTargetSelect.dispatchEvent(new Event("change", { bubbles: true }));
       window.closePicker();
     });
     list.appendChild(button);
@@ -1079,18 +1131,15 @@ function renderSeasonGrid() {
     `;
 
     for (let i = 0; i < category.count; i++) {
-      const select = createSelect(options, category.type === "team" ? "Select team" : "Select player");
+      const placeholder = category.type === "team" ? "Select team" : "Select player";
+      const { select, field } = createPickField(options, placeholder, category.title);
       select.dataset.fieldTitle = category.title;
       select.addEventListener("change", () => {
         updateCardSelectionState(card);
         if (category.key === "relegated") refreshRelegatedForCard(card);
       });
 
-      const row = document.createElement("div");
-      row.className = "pick-row";
-      row.appendChild(select);
-      row.appendChild(createSearchButton(select, options, `Search ${category.title}`));
-      card.appendChild(row);
+      card.appendChild(field);
     }
 
     if (category.key === "relegated") refreshRelegatedForCard(card);
