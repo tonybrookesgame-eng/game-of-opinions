@@ -2609,11 +2609,14 @@ const markTeamAsSaved = () => {
 };
 
 const resetWeeklySaveButton = () => {
-  const btn = document.getElementById('saveWeeklyBtn');
   weeklyIsSaved = false;
-  if (!btn) return;
-  btn.disabled = (gameweekStatus === 'locked') || !hasTeamNameSaved();
-  btn.innerText = 'Save Picks';
+  const btn = document.getElementById('saveWeeklyBtn');
+  if (btn) {
+    btn.disabled = (gameweekStatus === 'locked') || !hasTeamNameSaved();
+    btn.innerText = 'Save Picks';
+  }
+  // Editing weekly picks after they were saved re-locks Bet Builder until re-saved.
+  updateDependentSaveButtonsAvailability();
 };
 
 const markWeeklyAsSaved = () => {
@@ -2628,7 +2631,7 @@ const resetBetSaveButton = () => {
   const btn = document.getElementById('saveBetBuilderBtn');
   betIsSaved = false;
   if (!btn) return;
-  btn.disabled = (gameweekStatus === 'locked') || !hasTeamNameSaved();
+  btn.disabled = (gameweekStatus === 'locked') || !hasTeamNameSaved() || !weeklyIsSaved;
   btn.innerText = 'Save Match Prediction';
 };
 
@@ -3347,20 +3350,24 @@ let currentPersistedTeamName = "";
 // not merely typed into the input - that's what gates Weekly Picks / Bet Builder saves.
 const hasTeamNameSaved = () => !!(currentPersistedTeamName && currentPersistedTeamName.trim());
 
-// Weekly Picks / Bet Builder stay disabled until a Team Name has been saved, on top of the
+// Enforces the required save order: Team -> Weekly Picks -> Bet Builder. Each
+// button stays disabled until the previous step is saved, on top of the
 // normal gameweek-lock rule and each section's own already-saved state.
 const updateDependentSaveButtonsAvailability = (isLocked = (gameweekStatus === 'locked')) => {
   const nameSaved = hasTeamNameSaved();
-  const lockedTitle = 'Save your Team Name first to unlock this.';
+  const nameLockedTitle = 'Save your Team first to unlock this.';
+  const weeklyLockedTitle = 'Save your Weekly Picks first to unlock this.';
+
   const weeklyBtn = document.getElementById('saveWeeklyBtn');
   if (weeklyBtn) {
     weeklyBtn.disabled = isLocked || !nameSaved || weeklyIsSaved;
-    weeklyBtn.title = (!isLocked && !nameSaved) ? lockedTitle : '';
+    weeklyBtn.title = (!isLocked && !nameSaved) ? nameLockedTitle : '';
   }
+
   const betBtn = document.getElementById('saveBetBuilderBtn');
   if (betBtn) {
-    betBtn.disabled = isLocked || !nameSaved || betIsSaved;
-    betBtn.title = (!isLocked && !nameSaved) ? lockedTitle : '';
+    betBtn.disabled = isLocked || !nameSaved || !weeklyIsSaved || betIsSaved;
+    betBtn.title = (!isLocked && !nameSaved) ? nameLockedTitle : (!isLocked && !weeklyIsSaved) ? weeklyLockedTitle : '';
   }
 };
 window.updateDependentSaveButtonsAvailability = updateDependentSaveButtonsAvailability;
@@ -3611,6 +3618,10 @@ const saveBetBuilder = async function() {
   if (!hasTeamNameSaved()) {
     alert("Please enter and save your Team Name first (use the Save Team button) before saving your Bet Builder prediction.");
     document.getElementById('teamNameInput')?.focus();
+    return;
+  }
+  if (!weeklyIsSaved) {
+    alert("Please save your Weekly Picks first (use the Save Picks button) before saving your Bet Builder prediction.");
     return;
   }
   if(!currentBetChoice) {

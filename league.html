@@ -240,52 +240,58 @@ h1 {
   box-shadow: 0 0 16px rgba(199,255,56,0.18);
 }
 
-.league-tab-icon-btn {
+.league-primary-actions {
+  display: flex;
+  gap: 10px;
   flex-shrink: 0;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
+}
+
+.league-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  padding: 11px 18px;
+  border-radius: 999px;
   border: 1px solid rgba(255,255,255,0.14);
   background: rgba(255,255,255,0.06);
   color: #fff;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-weight: 800;
+  font-size: 13px;
   cursor: pointer;
+  white-space: nowrap;
   transition: 0.2s ease;
 }
 
-.league-tab-icon-btn:hover {
+.league-action-btn:hover {
   border-color: #c7ff38;
   color: #c7ff38;
 }
 
-.league-tab-icon-btn.primary {
+.league-action-btn.primary {
   background: #c7ff38;
   border-color: #c7ff38;
   color: #041102;
-  font-weight: 900;
   box-shadow: 0 4px 16px rgba(199,255,56,0.35);
 }
 
-.league-tab-icon-btn.primary:hover {
+.league-action-btn.primary:hover {
   background: #d9ff70;
   color: #041102;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(199,255,56,0.45);
 }
 
-.league-tab-icon-btn.accent {
-  background: rgba(199,255,56,0.12);
-  border-color: rgba(199,255,56,0.55);
+.league-action-btn.accent {
+  background: rgba(199,255,56,0.14);
+  border-color: rgba(199,255,56,0.6);
   color: #c7ff38;
 }
 
-.league-tab-icon-btn.accent:hover {
-  background: rgba(199,255,56,0.22);
+.league-action-btn.accent:hover {
+  background: rgba(199,255,56,0.24);
   border-color: #c7ff38;
-  color: #c7ff38;
+  transform: translateY(-2px);
 }
 
 /* ========================= STAT STRIP ========================= */
@@ -874,6 +880,19 @@ h1 {
     margin: 4px 0 14px;
   }
 
+  .league-primary-actions {
+    gap: 6px;
+  }
+
+  .league-action-btn {
+    padding: 9px 12px;
+    font-size: 12px;
+  }
+
+  .league-action-btn .btn-label {
+    display: none;
+  }
+
   .league-stat-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
@@ -1053,8 +1072,10 @@ h1 {
 
   <div class="league-tabs-row user-only">
     <div class="league-tabs" id="league-tabs"></div>
-    <button class="league-tab-icon-btn primary" onclick="openLeagueModal('create')" aria-label="Create or join a league" title="Create or join a league">+</button>
-    <button class="league-tab-icon-btn accent" id="share-league-btn" onclick="openLeagueModal('share')" aria-label="Share league code" title="Share league code">🔗</button>
+    <div class="league-primary-actions">
+      <button class="league-action-btn primary" onclick="openLeagueModal('create')" aria-label="Create or join a league" title="Create or join a league">+ <span class="btn-label">New League</span></button>
+      <button class="league-action-btn accent" id="share-league-btn" onclick="openLeagueModal('share')" aria-label="Share league code" title="Share league code">🔗 <span class="btn-label">Share Code</span></button>
+    </div>
   </div>
 
   <div class="league-stat-grid" id="league-stat-grid" style="display:none;"></div>
@@ -1176,6 +1197,11 @@ const auth = getAuth(app);
 let activeLeagueCode = "";
 let activeLeagueName = "";
 let userLeagues = [];
+// The league whose code/link is currently populated into the Share modal - kept
+// separate from activeLeagueCode so "Share Code" can target a private league
+// even while the leaderboard below is showing Global.
+let shareTargetCode = "";
+let shareTargetName = "";
 
 function getLeagueInviteUrl(code) {
   if (!code) return "";
@@ -1187,13 +1213,12 @@ function getLeagueInviteUrl(code) {
   return url.toString();
 }
 
-function updateLeagueActionButtons() {
-  const shareBtn = document.getElementById("share-league-btn");
-  if (!shareBtn) return;
-
-  const isPrivateLeague = !!activeLeagueCode;
-  shareBtn.style.display = isPrivateLeague ? "flex" : "none";
-  shareBtn.disabled = !isPrivateLeague;
+// Picks what "Share Code" should target: the league currently being viewed if
+// it's a private one, otherwise the user's first private league, if any.
+function getShareTarget() {
+  if (activeLeagueCode) return { code: activeLeagueCode, name: activeLeagueName };
+  if (userLeagues.length) return { code: userLeagues[0].code, name: userLeagues[0].name || `League ${userLeagues[0].code}` };
+  return null;
 }
 
 function showToast(message) {
@@ -1210,19 +1235,12 @@ function showToast(message) {
   }, 2500);
 }
 
-// Silently syncs which league is "active" (used by the share button, tabs, and
-// the Share modal panel). Does NOT toast - this runs on every routine table
+// Silently syncs which league is "active" (used by the tabs and, as a default,
+// the Share modal). Does NOT toast - this runs on every routine table
 // load/tab switch, not just explicit user actions.
 function syncActiveLeague(code, leagueName = "") {
-  const shareCodeEl = document.getElementById("league-share-code-display");
-  const shareLinkEl = document.getElementById("league-share-link");
-
-  if (shareCodeEl) shareCodeEl.innerText = code || "--";
-  if (shareLinkEl) shareLinkEl.value = code ? getLeagueInviteUrl(code) : "--";
-
   activeLeagueCode = code || "";
   activeLeagueName = leagueName || "";
-  updateLeagueActionButtons();
   renderLeagueTabs();
 }
 
@@ -1248,12 +1266,22 @@ function openLeagueModal(mode) {
     if (subtitleEl) subtitleEl.innerText = "Enter a code and jump into a league.";
     if (joinPanel) joinPanel.style.display = "grid";
   } else if (mode === "share") {
-    if (!activeLeagueCode) {
-      alert("Share League Code is only available for private leagues.");
+    const target = getShareTarget();
+    if (!target) {
+      alert("You don't have a private league yet. Create one first to get a shareable code!");
+      openLeagueModal("create");
       return;
     }
+    shareTargetCode = target.code;
+    shareTargetName = target.name;
+
+    const shareCodeEl = document.getElementById("league-share-code-display");
+    const shareLinkEl = document.getElementById("league-share-link");
+    if (shareCodeEl) shareCodeEl.innerText = target.code;
+    if (shareLinkEl) shareLinkEl.value = getLeagueInviteUrl(target.code);
+
     if (titleEl) titleEl.innerText = "Share League";
-    if (subtitleEl) subtitleEl.innerText = "Copy the code or share it directly.";
+    if (subtitleEl) subtitleEl.innerText = `Copy the code or share it directly for ${target.name || "this league"}.`;
     if (sharePanel) sharePanel.style.display = "grid";
   }
 
@@ -1272,7 +1300,6 @@ function openShareModal() {
 window.openLeagueModal = openLeagueModal;
 window.closeLeagueModal = closeLeagueModal;
 window.openShareModal = openShareModal;
-updateLeagueActionButtons();
 
 // Deterministic hue from a team name so avatar chips are stable across renders.
 function hashHue(text) {
@@ -1635,10 +1662,10 @@ async function loadLeaderboard(user, leagueCode = "") {
 }
 
 async function copyLeagueCode() {
-  if (!activeLeagueCode) return;
+  if (!shareTargetCode) return;
 
-  const inviteUrl = getLeagueInviteUrl(activeLeagueCode);
-  const sharePayload = `League code: ${activeLeagueCode}\nJoin link: ${inviteUrl}`;
+  const inviteUrl = getLeagueInviteUrl(shareTargetCode);
+  const sharePayload = `League code: ${shareTargetCode}\nJoin link: ${inviteUrl}`;
 
   try {
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1659,10 +1686,10 @@ async function copyLeagueCode() {
 }
 
 async function shareLeagueCode() {
-  if (!activeLeagueCode) return;
+  if (!shareTargetCode) return;
 
-  const inviteUrl = getLeagueInviteUrl(activeLeagueCode);
-  const shareText = `Join my Game of Opinions league. Code: ${activeLeagueCode}`;
+  const inviteUrl = getLeagueInviteUrl(shareTargetCode);
+  const shareText = `Join my Game of Opinions league. Code: ${shareTargetCode}`;
 
   try {
     if (navigator.share) {

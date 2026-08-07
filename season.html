@@ -285,6 +285,16 @@
       border-color: rgba(199,255,56,0.45);
     }
 
+    .pick-select-display:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      background: rgba(8,16,31,0.6);
+    }
+
+    .pick-select-display:disabled:hover {
+      border-color: rgba(255,255,255,0.15);
+    }
+
     .pick-select-display.has-value {
       color: #fff;
     }
@@ -464,6 +474,14 @@
     .submit-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 0 16px rgba(199,255,56,0.5);
+    }
+
+    .submit-btn:disabled {
+      background: rgba(255,255,255,0.1);
+      color: var(--muted);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
     }
 
     .submit-note {
@@ -1168,20 +1186,55 @@ function gatherPicksPayload() {
   return payload;
 }
 
+let seasonLocked = false;
+
+// Once locked, every pick field and the submit button stay disabled for the
+// rest of the season - there is no way back to editable from here.
+function applySeasonLockState(locked) {
+  seasonLocked = locked;
+
+  document.querySelectorAll(".pick-select-display").forEach((btn) => {
+    btn.disabled = locked;
+  });
+
+  const submitBtn = document.getElementById("submitSeasonBtn");
+  if (submitBtn) {
+    submitBtn.disabled = locked;
+    submitBtn.innerText = locked ? "Season Picks Locked" : "Submit Season Selections";
+  }
+
+  const note = document.querySelector(".submit-note");
+  if (note) {
+    note.innerText = locked
+      ? "Your season picks are locked in for the rest of the season."
+      : "Once submitted, these picks are locked in for the rest of the season - make any final changes before then.";
+  }
+}
+
 window.lockSeason = async function () {
   if (!currentUser) {
     alert("Please log in to save your season picks.");
     return;
   }
 
-  if (!confirm("Submit and lock your season selections now?")) {
+  if (seasonLocked) {
+    alert("Your season picks are already locked in for this season.");
+    return;
+  }
+
+  if (!confirm("Submit and lock your season selections now? You won't be able to change them again this season.")) {
     return;
   }
 
   try {
     const picks = gatherPicksPayload();
-    await setDoc(doc(db, "users", currentUser.uid, "predictions", "season"), picks, { merge: true });
-    alert("Season picks saved to Firestore.");
+    await setDoc(doc(db, "users", currentUser.uid, "predictions", "season"), {
+      ...picks,
+      locked: true,
+      lockedAt: new Date().toISOString()
+    }, { merge: true });
+    applySeasonLockState(true);
+    alert("Your season picks are locked in for the season. Good luck!");
   } catch (error) {
     console.error(error);
     alert(error?.message || "Failed to save season picks.");
@@ -1193,6 +1246,7 @@ async function loadSeasonPicks(uid) {
   if (!snap.exists()) return;
 
   const saved = snap.data() || {};
+  if (saved.locked) applySeasonLockState(true);
 
   Array.from(document.querySelectorAll(".season-card")).forEach((card) => {
     const title = card.querySelector("h3")?.textContent?.trim();
