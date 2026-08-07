@@ -21,6 +21,7 @@
 <link rel="icon" href="icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>League - GOO</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
 
@@ -137,6 +138,250 @@ h1 {
   text-align:center;
 }
 
+/* ========================= HERO ========================= */
+
+.league-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.league-hero-text h1 {
+  text-align: left;
+  margin-bottom: 6px;
+  background: linear-gradient(135deg, #ffffff 0%, #c7ff38 130%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.league-hero-text .subtitle {
+  text-align: left;
+  margin-bottom: 0;
+}
+
+.league-hero-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: rgba(199,255,56,0.1);
+  border: 1px solid rgba(199,255,56,0.35);
+  color: #c7ff38;
+  font-weight: 800;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.league-hero-chip .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 8px #4ade80;
+  animation: dotPulse 1.6s infinite;
+  flex-shrink: 0;
+}
+
+@keyframes dotPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* ========================= LEAGUE TABS ========================= */
+
+.league-tabs-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 20px;
+}
+
+.league-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  flex: 1;
+  min-width: 0;
+  padding: 2px;
+}
+
+.league-tabs::-webkit-scrollbar { display: none; }
+
+.league-tab {
+  flex-shrink: 0;
+  padding: 9px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+  color: #cbd5e1;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: 0.2s ease;
+}
+
+.league-tab:hover {
+  border-color: rgba(199,255,56,0.4);
+  color: #fff;
+}
+
+.league-tab.active {
+  background: linear-gradient(135deg, rgba(199,255,56,0.22), rgba(199,255,56,0.08));
+  border-color: #c7ff38;
+  color: #c7ff38;
+  box-shadow: 0 0 16px rgba(199,255,56,0.18);
+}
+
+.league-tab-icon-btn {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.league-tab-icon-btn:hover {
+  border-color: #c7ff38;
+  color: #c7ff38;
+}
+
+/* ========================= STAT STRIP ========================= */
+
+.league-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.league-stat-card {
+  padding: 14px 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+  box-shadow: 0 10px 24px rgba(0,0,0,0.16);
+}
+
+.league-stat-top {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #c7ff38;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.league-stat-value {
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.league-stat-caption {
+  color: #9ca3af;
+  font-size: 11px;
+}
+
+.share-rank-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.14);
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  margin: 0 0 20px;
+}
+
+.share-rank-btn:hover {
+  border-color: #c7ff38;
+  color: #c7ff38;
+}
+
+/* ========================= PODIUM ========================= */
+
+.league-podium {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.podium-card {
+  position: relative;
+  text-align: center;
+  padding: 18px 10px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+  animation: fadeIn 0.4s ease;
+}
+
+.podium-card.rank-1 {
+  border-color: rgba(255,215,0,0.5);
+  background: linear-gradient(160deg, rgba(255,215,0,0.14), rgba(255,255,255,0.03));
+  transform: translateY(-8px);
+}
+
+.podium-card.rank-2 { border-color: rgba(226,232,240,0.35); }
+.podium-card.rank-3 { border-color: rgba(205,127,50,0.4); }
+
+.podium-medal {
+  font-size: 22px;
+  margin-bottom: 6px;
+}
+
+.podium-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 8px;
+  font-weight: 900;
+  font-size: 15px;
+  color: #04110a;
+  border: 2px solid rgba(255,255,255,0.25);
+}
+
+.podium-name {
+  font-weight: 700;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.podium-points {
+  color: #c7ff38;
+  font-weight: 900;
+  font-size: 16px;
+  margin-top: 2px;
+}
+
 /* ========================= LEADERBOARD ========================= */
 
 .leaderboard {
@@ -237,6 +482,26 @@ h1 {
   font-weight: 600;
 }
 
+.team-cell-inner {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.row-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 900;
+  color: #04110a;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
 /* POINTS */
 
 .points {text-align:right;font-weight:bold;}
@@ -255,57 +520,164 @@ h1 {
 
 /* MOVEMENT */
 
-.up {color:#4ade80;}
-
-.down {color:#f87171;}
-
-.same {color:#9ca3af;}
-
-/* ========================= BUTTONS ========================= */
-
-.league-management {
-  display:flex;
-  justify-content:center;
-  gap:12px;
-  margin: 8px auto 16px;
-  max-width: 780px;
-}
-
-.league-card {
-  width: 100%;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.09);
-  border-radius: 16px;
-  padding: 14px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.16);
-  display:flex;
-  justify-content:center;
-}
-
-.league-actions {
-  display:grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
-  width: 100%;
-  max-width: 760px;
-  margin: 0 auto;
-  justify-items:center;
-}
-
-.league-action-btn {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12);
-  color: white;
+.move-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
   border-radius: 999px;
-  padding: 10px 14px;
-  cursor: pointer;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 800;
 }
 
-.league-action-btn:hover {
-  border-color: #c7ff38;
+.move-pill.up { background: rgba(74,222,128,0.14); color: #4ade80; }
+.move-pill.down { background: rgba(248,113,113,0.14); color: #f87171; }
+.move-pill.same { background: rgba(156,163,175,0.14); color: #9ca3af; }
+
+/* ========================= STICKY RANK BAR + TOAST ========================= */
+
+.sticky-rank-bar {
+  position: fixed;
+  top: 66px;
+  left: 50%;
+  transform: translate(-50%, -140%);
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgba(7,19,32,0.92);
+  border: 1px solid rgba(199,255,56,0.4);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+  backdrop-filter: blur(10px);
+  font-size: 13px;
+  font-weight: 700;
+  transition: transform 0.25s ease;
+  max-width: calc(100% - 24px);
+}
+
+.sticky-rank-bar.visible {
+  transform: translate(-50%, 0);
+}
+
+.sticky-rank-bar .srb-jump {
+  background: #c7ff38;
+  color: #041102;
+  border: none;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.toast-stack {
+  position: fixed;
+  left: 50%;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  pointer-events: none;
+}
+
+.toast {
+  background: rgba(10,20,35,0.96);
+  border: 1px solid rgba(199,255,56,0.35);
+  color: #fff;
+  padding: 11px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  max-width: min(90vw, 380px);
+  text-align: center;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ========================= SHARE CARD (off-screen capture template) ========================= */
+
+.share-card-offscreen {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+  width: 420px;
+  padding: 32px;
+  border-radius: 28px;
+  background: linear-gradient(160deg, #071320 0%, #0c2338 60%, #14361f 140%);
+  border: 1px solid rgba(199,255,56,0.35);
+  color: #fff;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.share-card-logo {
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin-bottom: 24px;
+}
+
+.share-card-logo span { color: #c7ff38; }
+
+.share-card-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 22px;
+  color: #04110a;
+  margin-bottom: 14px;
+}
+
+.share-card-team {
+  font-size: 24px;
+  font-weight: 900;
+  margin-bottom: 4px;
+}
+
+.share-card-league {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-bottom: 22px;
+}
+
+.share-card-stats {
+  display: flex;
+  gap: 24px;
+}
+
+.share-card-stat-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #9ca3af;
+  margin-bottom: 4px;
+}
+
+.share-card-stat-value {
+  font-size: 28px;
+  font-weight: 900;
   color: #c7ff38;
 }
+
+/* ========================= LEAGUE MODAL ========================= */
 
 .league-label {
   display:block;
@@ -335,11 +707,6 @@ h1 {
   outline: none;
 }
 
-.league-select {
-  width: 100%;
-  min-width: 0;
-}
-
 .league-btn {
   background:rgba(199,255,56,0.1);
   border:1px solid #c7ff38;
@@ -354,30 +721,6 @@ h1 {
   background: rgba(255,255,255,0.08);
   color: white;
   border: 1px solid rgba(255,255,255,0.12);
-}
-
-.league-status {
-  display:none;
-  align-items:center;
-  justify-content:space-between;
-  gap: 14px;
-  margin: 0 0 24px;
-  padding: 16px;
-  border-radius: 16px;
-  background: rgba(199,255,56,0.08);
-  border: 1px solid rgba(199,255,255,0.2);
-}
-
-.league-status h3 {
-  margin: 0 0 6px;
-  color: #c7ff38;
-  font-size: 16px;
-}
-
-.league-status p {
-  margin: 0;
-  color: #cbd5e1;
-  font-size: 14px;
 }
 
 .league-code-pill {
@@ -465,25 +808,6 @@ h1 {
   display: none;
 }
 
-@media (max-width: 900px) {
-  .league-actions {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 600px) {
-  .league-actions {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-  }
-
-  .league-action-btn {
-    padding: 9px 10px;
-    font-size: 13px;
-    min-height: 42px;
-  }
-}
-
 @media (max-width: 768px) {
   header {
     background: rgba(0,0,0,0.9) !important;
@@ -510,34 +834,61 @@ h1 {
     padding-top: 62px;
   }
 
-  .league-management {
-    order: 5;
-    width: 100%;
-    margin: 14px 0 0;
+  .league-hero {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 14px;
   }
 
-  #league-table-title {
-    order: 3;
+  .league-tabs-row {
+    margin: 4px 0 14px;
   }
 
-  .leaderboard {
-    order: 4;
+  .league-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 14px;
   }
 
-  .league-card {
-    width: 100%;
+  .league-stat-card {
     padding: 12px;
   }
 
-  .league-actions {
-    grid-template-columns: 1fr;
-    gap: 8px;
-    max-width: none;
+  .league-stat-value {
+    font-size: 20px;
   }
 
-  .league-action-btn {
+  .share-rank-btn {
     width: 100%;
-    min-height: 44px;
+    justify-content: center;
+  }
+
+  .league-podium {
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .podium-card {
+    padding: 12px 4px 10px;
+  }
+
+  .podium-card.rank-1 {
+    transform: none;
+  }
+
+  .podium-avatar {
+    width: 38px;
+    height: 38px;
+    font-size: 12px;
+  }
+
+  .podium-name {
+    font-size: 10px;
+  }
+
+  .podium-points {
+    font-size: 13px;
   }
 
   .league-control-grid {
@@ -597,6 +948,17 @@ h1 {
     font-size: 9px;
   }
 
+  .sticky-rank-bar {
+    top: 58px;
+    font-size: 12px;
+    padding: 8px 12px;
+    gap: 10px;
+  }
+
+  .toast-stack {
+    bottom: calc(70px + env(safe-area-inset-bottom));
+  }
+
   .mobile-nav {
     display: flex;
     justify-content: space-around;
@@ -604,14 +966,17 @@ h1 {
     bottom: 0;
     left: 0;
     width: 100%;
-    background: #000;
-    padding: 10px 0;
+    background: rgba(2,6,17,0.94);
+    backdrop-filter: blur(10px);
+    padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     z-index: 1000;
   }
   .mobile-nav a {
+    flex: 1;
     text-decoration: none !important;
-    color: white;
+    color: rgba(255,255,255,0.92);
+    font-weight: 700;
     font-size: 12px;
     text-align: center;
     margin-left: 0;
@@ -646,22 +1011,28 @@ h1 {
 
 <div class="container">
 
-  <h1>League Table</h1>
-
-  <p class="subtitle">Climb. Dominate. Prove your opinions.</p>
-
-  <div class="league-management user-only">
-    <div class="league-card">
-      <div class="league-actions">
-        <button class="league-action-btn" onclick="openLeagueModal('create')">Create a league</button>
-        <button class="league-action-btn" onclick="openLeagueModal('join')">Join a league</button>
-        <button class="league-action-btn" onclick="openLeagueModal('view')">View a league</button>
-        <button class="league-action-btn" id="share-league-btn" onclick="openLeagueModal('share')">Share League Code</button>
-      </div>
+  <div class="league-hero">
+    <div class="league-hero-text">
+      <h1>League Table</h1>
+      <p class="subtitle">Climb. Dominate. Prove your opinions.</p>
+    </div>
+    <div class="league-hero-chip">
+      <span class="dot"></span>
+      <span id="league-table-title">Global League Table</span>
     </div>
   </div>
 
-  <h2 id="league-table-title" style="margin: 8px 0 12px; font-size: 22px; text-align: center;">Global League Table</h2>
+  <div class="league-tabs-row user-only">
+    <div class="league-tabs" id="league-tabs"></div>
+    <button class="league-tab-icon-btn" onclick="openLeagueModal('create')" aria-label="Create or join a league" title="Create or join a league">+</button>
+    <button class="league-tab-icon-btn" id="share-league-btn" onclick="openLeagueModal('share')" aria-label="Share league code" title="Share league code">🔗</button>
+  </div>
+
+  <div class="league-stat-grid" id="league-stat-grid" style="display:none;"></div>
+
+  <button class="share-rank-btn" id="share-rank-btn" onclick="shareMyRank()" style="display:none;">📤 Share My Rank</button>
+
+  <div class="league-podium" id="league-podium"></div>
 
   <div class="leaderboard">
 
@@ -685,6 +1056,30 @@ h1 {
 
 </div>
 
+<div class="sticky-rank-bar" id="sticky-rank-bar">
+  <span id="sticky-rank-text">You: #-- &middot; -- pts</span>
+  <button class="srb-jump" onclick="jumpToMyRow()">Jump to me &darr;</button>
+</div>
+
+<div class="toast-stack" id="toast-stack"></div>
+
+<div class="share-card-offscreen" id="share-card-template">
+  <div class="share-card-logo">GAME <span>OF OPINIONS</span></div>
+  <div class="share-card-avatar" id="share-card-avatar">--</div>
+  <div class="share-card-team" id="share-card-team">Team Name</div>
+  <div class="share-card-league" id="share-card-league">Global League</div>
+  <div class="share-card-stats">
+    <div>
+      <div class="share-card-stat-label">Rank</div>
+      <div class="share-card-stat-value" id="share-card-rank">#--</div>
+    </div>
+    <div>
+      <div class="share-card-stat-label">Points</div>
+      <div class="share-card-stat-value" id="share-card-points">--</div>
+    </div>
+  </div>
+</div>
+
 <div id="league-action-modal" class="league-modal-overlay" style="display:none;">
   <div class="league-modal-card">
     <button class="league-modal-close" onclick="closeLeagueModal()" aria-label="Close">×</button>
@@ -704,14 +1099,6 @@ h1 {
       <input id="league-modal-code" class="league-input" placeholder="Enter league code" />
       <div class="league-modal-actions">
         <button class="league-btn" onclick="joinLeague()">Join</button>
-      </div>
-    </div>
-
-    <div id="league-modal-view" class="league-modal-panel" style="display:none;">
-      <label class="league-label" for="league-modal-view-select">Choose a league (Global is default)</label>
-      <select id="league-modal-view-select" class="league-input league-select"></select>
-      <div class="league-modal-actions">
-        <button class="league-btn" onclick="viewLeagueFromModal()">View</button>
       </div>
     </div>
 
@@ -760,6 +1147,7 @@ const auth = getAuth(app);
 
 let activeLeagueCode = "";
 let activeLeagueName = "";
+let userLeagues = [];
 
 function getLeagueInviteUrl(code) {
   if (!code) return "";
@@ -776,26 +1164,38 @@ function updateLeagueActionButtons() {
   if (!shareBtn) return;
 
   const isPrivateLeague = !!activeLeagueCode;
-  shareBtn.style.display = isPrivateLeague ? "" : "none";
+  shareBtn.style.display = isPrivateLeague ? "flex" : "none";
   shareBtn.disabled = !isPrivateLeague;
 }
 
-function showLeagueStatus(title, message, code, leagueName = "") {
-  const panel = document.getElementById("league-status");
-  const titleEl = document.getElementById("league-status-title");
-  const textEl = document.getElementById("league-status-text");
+function showToast(message) {
+  const stack = document.getElementById("toast-stack");
+  if (!stack || !message) return;
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.innerText = message;
+  stack.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add("show"));
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.remove(), 300);
+  }, 2500);
+}
+
+// Silently syncs which league is "active" (used by the share button, tabs, and
+// the Share modal panel). Does NOT toast - this runs on every routine table
+// load/tab switch, not just explicit user actions.
+function syncActiveLeague(code, leagueName = "") {
   const shareCodeEl = document.getElementById("league-share-code-display");
   const shareLinkEl = document.getElementById("league-share-link");
 
-  if (titleEl) titleEl.innerText = title;
-  if (textEl) textEl.innerText = message;
   if (shareCodeEl) shareCodeEl.innerText = code || "--";
   if (shareLinkEl) shareLinkEl.value = code ? getLeagueInviteUrl(code) : "--";
-  if (panel) panel.style.display = "flex";
 
   activeLeagueCode = code || "";
   activeLeagueName = leagueName || "";
   updateLeagueActionButtons();
+  renderLeagueTabs();
 }
 
 function openLeagueModal(mode) {
@@ -806,10 +1206,9 @@ function openLeagueModal(mode) {
   const subtitleEl = document.getElementById("league-modal-subtitle");
   const createPanel = document.getElementById("league-modal-create");
   const joinPanel = document.getElementById("league-modal-join");
-  const viewPanel = document.getElementById("league-modal-view");
   const sharePanel = document.getElementById("league-modal-share");
 
-  const panels = [createPanel, joinPanel, viewPanel, sharePanel];
+  const panels = [createPanel, joinPanel, sharePanel];
   panels.forEach(panel => { if (panel) panel.style.display = "none"; });
 
   if (mode === "create") {
@@ -820,11 +1219,6 @@ function openLeagueModal(mode) {
     if (titleEl) titleEl.innerText = "Join a league";
     if (subtitleEl) subtitleEl.innerText = "Enter a code and jump into a league.";
     if (joinPanel) joinPanel.style.display = "grid";
-  } else if (mode === "view") {
-    if (titleEl) titleEl.innerText = "View a league";
-    if (subtitleEl) subtitleEl.innerText = "Pick an existing league to view its standings.";
-    if (viewPanel) viewPanel.style.display = "grid";
-    loadLeagueMemberships(auth.currentUser);
   } else if (mode === "share") {
     if (!activeLeagueCode) {
       alert("Share League Code is only available for private leagues.");
@@ -852,12 +1246,40 @@ window.closeLeagueModal = closeLeagueModal;
 window.openShareModal = openShareModal;
 updateLeagueActionButtons();
 
+// Deterministic hue from a team name so avatar chips are stable across renders.
+function hashHue(text) {
+  let h = 0;
+  const str = text || "?";
+  for (let i = 0; i < str.length; i++) {
+    h = (h << 5) - h + str.charCodeAt(i);
+    h |= 0;
+  }
+  return Math.abs(h) % 360;
+}
+
+function avatarStyle(name) {
+  return `background: hsl(${hashHue(name)}, 62%, 45%);`;
+}
+
+function getInitials(name) {
+  const parts = (name || "").trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return "??";
+  if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+let currentUserStats = null;
+let rankRowObserver = null;
+
 function renderLeaderboardRows(entries, user) {
   const body = document.getElementById("leaderboard-body");
   body.innerHTML = "";
 
   if (!entries.length) {
     body.innerHTML = '<div class="leader-row"><div class="team" style="grid-column: 1 / -1;">No entries yet for this league.</div></div>';
+    renderPodium([]);
+    renderStatStrip([], user);
+    setupStickyRankObserver();
     return;
   }
 
@@ -887,55 +1309,216 @@ function renderLeaderboardRows(entries, user) {
     row.innerHTML = `
       <div class="rank ${medalClass}">${medalIcon}</div>
       <div class="team" ${isTruncated ? `onclick="alert('${escapedName}')" style="cursor:help;"` : ""}>
-        <span title="${teamName}">${displayTeamName}</span> ${isYou ? "(You)" : ""}
+        <span class="team-cell-inner">
+          <span class="row-avatar" style="${avatarStyle(teamName)}">${getInitials(teamName)}</span>
+          <span title="${teamName}">${displayTeamName}</span>${isYou ? " (You)" : ""}
+        </span>
       </div>
       <div class="points">${season}</div>
-      <div class="week ${changeClass}">${weekly > 0 ? "+" : ""}${weekly} <span class="change-arrow">${arrow}</span></div>
+      <div class="week"><span class="move-pill ${changeClass}">${weekly > 0 ? "+" : ""}${weekly} <span class="change-arrow">${arrow}</span></span></div>
       <div class="points" style="font-weight: 900; color: #c7ff38;">${data.totalPoints || 0}</div>
     `;
 
     body.appendChild(row);
     rank++;
   });
+
+  renderPodium(entries);
+  renderStatStrip(entries, user);
+  setupStickyRankObserver();
 }
 
-async function loadLeagueMemberships(user) {
-  const selects = [
-    document.getElementById("league-select"),
-    document.getElementById("league-modal-view-select")
-  ].filter(Boolean);
+function renderPodium(entries) {
+  const podium = document.getElementById("league-podium");
+  if (!podium) return;
+  podium.innerHTML = "";
+  if (!entries.length) return;
 
+  const top3 = entries.slice(0, 3).map((entry, i) => ({ entry, rank: i + 1 }));
+  const visualOrder = top3.length === 3 ? [top3[1], top3[0], top3[2]] : top3;
+  const medals = { 1: "🥇", 2: "🥈", 3: "🥉" };
+
+  visualOrder.forEach(({ entry, rank }) => {
+    const teamName = entry.data.teamName || "Anonymous";
+    const card = document.createElement("div");
+    card.className = `podium-card rank-${rank}`;
+    card.innerHTML = `
+      <div class="podium-medal">${medals[rank]}</div>
+      <div class="podium-avatar" style="${avatarStyle(teamName)}">${getInitials(teamName)}</div>
+      <div class="podium-name" title="${teamName}">${teamName}</div>
+      <div class="podium-points">${entry.data.totalPoints || 0} pts</div>
+    `;
+    podium.appendChild(card);
+  });
+}
+
+function renderStatStrip(entries, user) {
+  const grid = document.getElementById("league-stat-grid");
+  const shareBtn = document.getElementById("share-rank-btn");
+  if (!grid) return;
+
+  const myIndex = user ? entries.findIndex(e => e.uid === user.uid) : -1;
+  if (myIndex === -1) {
+    grid.style.display = "none";
+    grid.innerHTML = "";
+    if (shareBtn) shareBtn.style.display = "none";
+    currentUserStats = null;
+    return;
+  }
+
+  const myEntry = entries[myIndex];
+  const myRank = myIndex + 1;
+  const myPoints = myEntry.data.totalPoints || 0;
+  const leaderData = entries[0].data;
+
+  grid.innerHTML = `
+    <div class="league-stat-card">
+      <div class="league-stat-top">Your Rank</div>
+      <div class="league-stat-value">#${myRank}</div>
+      <div class="league-stat-caption">of ${entries.length}</div>
+    </div>
+    <div class="league-stat-card">
+      <div class="league-stat-top">Your Points</div>
+      <div class="league-stat-value">${myPoints}</div>
+      <div class="league-stat-caption">total this season</div>
+    </div>
+    <div class="league-stat-card">
+      <div class="league-stat-top">Leader</div>
+      <div class="league-stat-value">${leaderData.totalPoints || 0}</div>
+      <div class="league-stat-caption">${leaderData.teamName || "Anonymous"}</div>
+    </div>
+    <div class="league-stat-card">
+      <div class="league-stat-top">League Size</div>
+      <div class="league-stat-value">${entries.length}</div>
+      <div class="league-stat-caption">managers</div>
+    </div>
+  `;
+  grid.style.display = "grid";
+  if (shareBtn) shareBtn.style.display = "inline-flex";
+
+  currentUserStats = {
+    rank: myRank,
+    points: myPoints,
+    teamName: myEntry.data.teamName || "Anonymous",
+    leagueName: activeLeagueName || "Global League",
+    total: entries.length
+  };
+}
+
+function setupStickyRankObserver() {
+  const bar = document.getElementById("sticky-rank-bar");
+  if (rankRowObserver) {
+    rankRowObserver.disconnect();
+    rankRowObserver = null;
+  }
+  if (!bar) return;
+
+  const row = document.querySelector(".leader-row.you");
+  if (!row || !currentUserStats) {
+    bar.classList.remove("visible");
+    return;
+  }
+
+  const textEl = document.getElementById("sticky-rank-text");
+  if (textEl) textEl.innerText = `You: #${currentUserStats.rank} · ${currentUserStats.points} pts`;
+
+  rankRowObserver = new IntersectionObserver((observed) => {
+    observed.forEach(item => bar.classList.toggle("visible", !item.isIntersecting));
+  }, { rootMargin: "-80px 0px 0px 0px", threshold: 0 });
+  rankRowObserver.observe(row);
+}
+
+window.jumpToMyRow = function() {
+  const row = document.querySelector(".leader-row.you");
+  if (row) row.scrollIntoView({ behavior: "smooth", block: "center" });
+};
+
+window.shareMyRank = async function() {
+  if (!currentUserStats || typeof html2canvas !== "function") {
+    if (typeof html2canvas !== "function") {
+      alert("Sharing isn't available right now. Please try again in a moment.");
+    }
+    return;
+  }
+
+  const avatarEl = document.getElementById("share-card-avatar");
+  avatarEl.style.cssText = avatarStyle(currentUserStats.teamName);
+  avatarEl.innerText = getInitials(currentUserStats.teamName);
+  document.getElementById("share-card-team").innerText = currentUserStats.teamName;
+  document.getElementById("share-card-league").innerText = currentUserStats.leagueName;
+  document.getElementById("share-card-rank").innerText = `#${currentUserStats.rank}`;
+  document.getElementById("share-card-points").innerText = currentUserStats.points;
+
+  const template = document.getElementById("share-card-template");
+
+  try {
+    const canvas = await html2canvas(template, { backgroundColor: null, scale: 2 });
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+    if (!blob) throw new Error("Could not generate image.");
+
+    const file = new File([blob], "my-goo-rank.png", { type: "image/png" });
+    const shareText = `I'm #${currentUserStats.rank} in ${currentUserStats.leagueName} with ${currentUserStats.points} pts on Game of Opinions!`;
+
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: "Game of Opinions", text: shareText });
+        return;
+      } catch (err) {
+        if (err?.name === "AbortError") return;
+      }
+    }
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "my-goo-rank.png";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    showToast("Rank card downloaded!");
+  } catch (error) {
+    console.error("Share My Rank failed", error);
+    alert("Unable to generate your rank card right now. Please try again.");
+  }
+};
+
+async function loadLeagueMemberships(user) {
   if (!user) {
-    selects.forEach(select => {
-      select.innerHTML = '<option value="">Global League</option>';
-    });
+    userLeagues = [];
+    renderLeagueTabs();
     return;
   }
 
   const q = query(collection(db, "leagues"), where("members", "array-contains", user.uid));
   const snap = await getDocs(q);
-  const leagues = snap.docs
+  userLeagues = snap.docs
     .map(docSnap => ({ id: docSnap.id, ...docSnap.data() }))
+    .filter(league => !(league.isGlobal || league.code === "GLOBAL" || (league.name || "").toLowerCase() === "global league"))
     .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
 
-  selects.forEach(select => {
-    const currentValue = select.value;
-    select.innerHTML = '<option value="">Global League</option>';
+  renderLeagueTabs();
+}
 
-    leagues
-      .filter(league => !(league.isGlobal || league.code === "GLOBAL" || (league.name || "").toLowerCase() === "global league"))
-      .forEach(league => {
-        const option = document.createElement("option");
-        option.value = league.code;
-        option.textContent = league.name || `League ${league.code}`;
-        select.appendChild(option);
-      });
+function renderLeagueTabs() {
+  const wrap = document.getElementById("league-tabs");
+  if (!wrap) return;
+  wrap.innerHTML = "";
 
-    if (currentValue) {
-      select.value = currentValue;
-    } else {
-      select.value = "";
-    }
+  const globalTab = document.createElement("button");
+  globalTab.type = "button";
+  globalTab.className = `league-tab${activeLeagueCode ? "" : " active"}`;
+  globalTab.innerText = "Global";
+  globalTab.addEventListener("click", () => window.viewLeague(""));
+  wrap.appendChild(globalTab);
+
+  userLeagues.forEach(league => {
+    const tab = document.createElement("button");
+    tab.type = "button";
+    tab.className = `league-tab${activeLeagueCode === league.code ? " active" : ""}`;
+    tab.innerText = league.name || `League ${league.code}`;
+    tab.addEventListener("click", () => window.viewLeague(league.code));
+    wrap.appendChild(tab);
   });
 }
 
@@ -982,9 +1565,9 @@ async function loadLeaderboard(user, leagueCode = "") {
     }
 
     entries.sort((a, b) => (b.data.totalPoints || 0) - (a.data.totalPoints || 0));
+    syncActiveLeague(leagueCode, leagueData.name || "");
     renderLeaderboardRows(entries, user);
     titleEl.innerText = `${leagueData.name || "League"} Table`;
-    showLeagueStatus("Viewing league", `Showing standings for ${leagueData.name || "this league"}.`, leagueCode, leagueData.name || "");
     return;
   }
 
@@ -1023,9 +1606,9 @@ async function loadLeaderboard(user, leagueCode = "") {
   }
 
   entries.sort((a, b) => (b.data.totalPoints || 0) - (a.data.totalPoints || 0));
+  syncActiveLeague("", "");
   renderLeaderboardRows(entries, user);
   titleEl.innerText = "Global League Table";
-  showLeagueStatus("League ready to share", "Send this code to friends and they can join.", "", "");
 }
 
 async function copyLeagueCode() {
@@ -1045,7 +1628,7 @@ async function copyLeagueCode() {
       document.execCommand("copy");
       document.body.removeChild(temp);
     }
-    alert(`Invite copied:\n${sharePayload}`);
+    showToast("Invite copied to clipboard!");
   } catch (err) {
     console.error(err);
     alert("Unable to copy automatically. Please copy the code and link manually.");
@@ -1067,7 +1650,6 @@ async function shareLeagueCode() {
       });
     } else {
       await copyLeagueCode();
-      alert(`Share this invite link:\n${inviteUrl}`);
     }
   } catch (err) {
     console.error(err);
@@ -1152,11 +1734,9 @@ window.createLeague = async ()=>{
 
     if (nameInput) nameInput.value = "";
     closeLeagueModal();
-    showLeagueStatus("Share League", `Use this code to invite friends to ${name}.`, code, name);
     await loadLeagueMemberships(auth.currentUser);
-    const mainSelect = document.getElementById("league-select");
-    if (mainSelect) mainSelect.value = code;
     await loadLeaderboard(auth.currentUser, code);
+    openLeagueModal("share");
   } catch (error) {
     console.error("Create league failed", error);
     alert(`Unable to create the league right now. ${error?.message || ""}`.trim());
@@ -1189,10 +1769,9 @@ window.joinLeague = async ()=>{
 
     const leagueData = leagueSnap.data();
     if (leagueData.members && leagueData.members.includes(auth.currentUser.uid)) {
-      alert("You are already in this league.");
+      closeLeagueModal();
+      showToast("You are already in this league.");
       await loadLeagueMemberships(auth.currentUser);
-      const mainSelect = document.getElementById("league-select");
-      if (mainSelect) mainSelect.value = code;
       await loadLeaderboard(auth.currentUser, code);
       return;
     }
@@ -1203,22 +1782,13 @@ window.joinLeague = async ()=>{
 
     if (input) input.value = "";
     closeLeagueModal();
-    showLeagueStatus("Share League", `You joined ${leagueData.name || "the league"}.`, code, leagueData.name || "");
     await loadLeagueMemberships(auth.currentUser);
-    const mainSelect = document.getElementById("league-select");
-    if (mainSelect) mainSelect.value = code;
     await loadLeaderboard(auth.currentUser, code);
+    showToast(`You joined ${leagueData.name || "the league"}.`);
   } catch (error) {
     console.error("Join league failed", error);
     alert(`Unable to join the league right now. ${error?.message || ""}`.trim());
   }
-};
-
-window.viewLeagueFromModal = async function() {
-  const select = document.getElementById("league-modal-view-select");
-  const code = select?.value || "";
-  closeLeagueModal();
-  await window.viewLeague(code);
 };
 
 window.viewLeague = async function(code) {
@@ -1234,11 +1804,11 @@ onAuthStateChanged(auth, async (user) => {
   const guestLinks = document.querySelectorAll('.guest-only');
   if (user) {
     userLinks.forEach(l => {
-      l.style.display = l.classList.contains('league-management') ? 'flex' : 'inline-block';
+      l.style.display = l.classList.contains('league-tabs-row') ? 'flex' : 'inline-block';
     });
     guestLinks.forEach(l => l.style.display = 'none');
 
-    // Ensure the user is in the global league before any first render or league dropdown load.
+    // Ensure the user is in the global league before any first render or tab-list load.
     await ensureGlobalLeagueMembership(user);
     await loadLeagueMemberships(user);
 
@@ -1248,7 +1818,6 @@ onAuthStateChanged(auth, async (user) => {
       const joinInput = document.getElementById("league-modal-code");
       if (joinInput) joinInput.value = joinCode;
       openLeagueModal("join");
-      showLeagueStatus("Join from link", `Use code ${joinCode} to join this league.`, joinCode, "");
     }
   } else {
     userLinks.forEach(l => l.style.display = 'none');
@@ -1256,13 +1825,6 @@ onAuthStateChanged(auth, async (user) => {
   }
   await loadLeaderboard(user);
 });
-
-const leagueSelect = document.getElementById("league-select");
-if (leagueSelect) {
-  leagueSelect.addEventListener("change", () => {
-    window.viewLeague(leagueSelect.value);
-  });
-}
 
 window.handleLogout = () => {
   signOut(auth).then(() => {
