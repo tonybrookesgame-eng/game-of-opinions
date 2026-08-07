@@ -112,11 +112,57 @@ nav a.active {
   padding: 90px 24px 120px;
 }
 .hero {
+  position: relative;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: flex-end;
   gap: 18px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  padding: 26px 28px;
+  border-radius: 24px;
+  border: 1px solid rgba(199,255,56,0.2);
+  background:
+    radial-gradient(circle at 12% 15%, rgba(199,255,56,0.16), transparent 45%),
+    radial-gradient(circle at 90% -10%, rgba(96,165,250,0.14), transparent 42%),
+    linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02));
+  box-shadow: 0 20px 50px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.07);
+  overflow: hidden;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(115deg, rgba(255,255,255,0.025) 0 2px, transparent 2px 42px);
+  pointer-events: none;
+}
+.hero-greeting {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.hero-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 14px;
+  color: #04110a;
+  border: 2px solid rgba(255,255,255,0.25);
+  flex-shrink: 0;
+}
+.hero-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 800;
+}
+.hero-eyebrow strong {
+  color: var(--accent);
 }
 .summary-grid {
   display: grid;
@@ -130,6 +176,12 @@ nav a.active {
   border: 1px solid rgba(255,255,255,0.14);
   background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
   box-shadow: 0 10px 24px rgba(0,0,0,0.16);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.summary-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(199,255,56,0.35);
+  box-shadow: 0 14px 30px rgba(0,0,0,0.26);
 }
 .summary-card .summary-top {
   display: flex;
@@ -255,7 +307,11 @@ nav a.active {
 }
 .hero h1 {
   margin: 0;
-  font-size: 30px;
+  font-size: 32px;
+  background: linear-gradient(135deg, #ffffff 0%, #c7ff38 140%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 .hero p {
   margin: 6px 0 0;
@@ -315,9 +371,6 @@ nav a.active {
   border: 1px solid var(--line);
   border-radius: 14px;
   padding: 14px;
-  .deadline-stack {
-    align-items: center;
-  }
   box-shadow: 0 10px 24px rgba(0,0,0,0.2);
   position: relative;
   overflow: hidden;
@@ -329,10 +382,6 @@ nav a.active {
   background: radial-gradient(circle at top right, rgba(199,255,56,0.08), transparent 35%);
   pointer-events: none;
 }
-.kpi { grid-column: span 3; }
-.kpi-label { color: var(--muted); font-size: 12px; text-transform: uppercase; }
-.kpi-value { font-size: 30px; font-weight: 900; margin-top: 4px; }
-.kpi-sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
 .kpi-delta {
   margin-top: 8px;
   display: inline-flex;
@@ -560,12 +609,28 @@ canvas { width: 100%; height: 100%; }
 }
 .install-banner button {
   margin-top: 0;
-  padding: 10px 14px;
+  padding: 11px 18px;
   width: auto;
   white-space: nowrap;
   background: #c7ff38;
   color: #041102;
   font-size: 13px;
+  font-weight: 800;
+  font-family: inherit;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(199,255,56,0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.install-banner button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(199,255,56,0.4);
+}
+.install-banner button:disabled {
+  opacity: 0.6;
+  cursor: default;
+  box-shadow: none;
 }
 .install-status {
   margin-top: 8px;
@@ -605,7 +670,6 @@ canvas { width: 100%; height: 100%; }
   font-size: 12px;
 }
 @media (max-width: 980px) {
-  .kpi { grid-column: span 6; }
   .trend, .mix { grid-column: span 12; }
   .insight-grid { grid-template-columns: 1fr; }
 }
@@ -629,6 +693,15 @@ canvas { width: 100%; height: 100%; }
     flex-direction: column;
     text-align: center;
     align-items: center;
+    padding: 22px 18px;
+  }
+  .hero-greeting {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .deadline-stack {
+    align-items: center;
+    margin-top: 4px;
   }
   .container { padding: 96px 14px 24px; }
   .checklist-list {
@@ -661,7 +734,6 @@ canvas { width: 100%; height: 100%; }
     height: 28px;
     font-size: 11px;
   }
-  .kpi { grid-column: span 12; }
 }
 </style>
 </head>
@@ -680,7 +752,13 @@ canvas { width: 100%; height: 100%; }
 <div class="container">
   <div class="hero">
     <div>
-      <h1>Performance Dashboard</h1>
+      <div class="hero-greeting">
+        <div class="hero-avatar" id="heroAvatar">--</div>
+        <div>
+          <div class="hero-eyebrow">Welcome back, <strong id="heroTeamName">Manager</strong></div>
+          <h1>Performance Dashboard</h1>
+        </div>
+      </div>
       <p>Track your trend, rank momentum, and prediction mix in one place.</p>
     </div>
     <div class="deadline-stack">
@@ -702,6 +780,7 @@ canvas { width: 100%; height: 100%; }
     <div class="summary-card">
       <div class="summary-top"><span class="summary-chip">This week</span><span class="summary-pill">Live</span></div>
       <div id="kpiWeek" class="summary-value">0</div>
+      <div id="kpiWeekDelta" class="kpi-delta flat">--</div>
       <div class="summary-caption">Latest processed gameweek points.</div>
     </div>
     <div class="summary-card">
@@ -1026,6 +1105,35 @@ async function recordPwaVisit(user) {
   }
 }
 
+// Deterministic hue from a team name so the hero avatar chip is stable across visits.
+function hashHue(text) {
+  let h = 0;
+  const str = text || "?";
+  for (let i = 0; i < str.length; i++) {
+    h = (h << 5) - h + str.charCodeAt(i);
+    h |= 0;
+  }
+  return Math.abs(h) % 360;
+}
+
+function getInitials(name) {
+  const parts = (name || "").trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return "??";
+  if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+function renderHeroGreeting(teamName) {
+  const nameEl = document.getElementById('heroTeamName');
+  const avatarEl = document.getElementById('heroAvatar');
+  const resolvedName = teamName || 'Manager';
+  if (nameEl) nameEl.innerText = resolvedName;
+  if (avatarEl) {
+    avatarEl.style.background = `hsl(${hashHue(resolvedName)}, 62%, 45%)`;
+    avatarEl.innerText = getInitials(resolvedName);
+  }
+}
+
 function formatDuration(ms) {
   const totalMinutes = Math.max(0, Math.floor(ms / 60000));
   const days = Math.floor(totalMinutes / 1440);
@@ -1164,18 +1272,14 @@ function drawTrendChart(values) {
     ctx.stroke();
   }
 
-  ctx.strokeStyle = '#c7ff38';
   ctx.lineWidth = 3;
-  ctx.beginPath();
-  const points = [];
-  values.forEach((v, idx) => {
-    const x = pad + stepX * idx;
-    const y = h - pad - (v / maxVal) * (h - pad * 2);
-    points.push({ x, y });
-    if (idx === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
-  });
-  ctx.stroke();
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+
+  const points = values.map((v, idx) => ({
+    x: pad + stepX * idx,
+    y: h - pad - (v / maxVal) * (h - pad * 2)
+  }));
 
   // Soft filled area under the trend line for a premium analytics look.
   if (points.length > 1) {
@@ -1189,24 +1293,20 @@ function drawTrendChart(values) {
     grad.addColorStop(1, 'rgba(199,255,56,0.03)');
     ctx.fillStyle = grad;
     ctx.fill();
-
-    // Redraw line above filled area.
-    ctx.strokeStyle = '#c7ff38';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    points.forEach((pt, idx) => {
-      if (idx === 0) ctx.moveTo(pt.x, pt.y);
-      else ctx.lineTo(pt.x, pt.y);
-    });
-    ctx.stroke();
   }
 
+  ctx.strokeStyle = '#c7ff38';
+  ctx.beginPath();
+  points.forEach((pt, idx) => {
+    if (idx === 0) ctx.moveTo(pt.x, pt.y);
+    else ctx.lineTo(pt.x, pt.y);
+  });
+  ctx.stroke();
+
   ctx.fillStyle = '#c7ff38';
-  values.forEach((v, idx) => {
-    const x = pad + stepX * idx;
-    const y = h - pad - (v / maxVal) * (h - pad * 2);
+  points.forEach(pt => {
     ctx.beginPath();
-    ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+    ctx.arc(pt.x, pt.y, 3.5, 0, Math.PI * 2);
     ctx.fill();
   });
 }
@@ -1302,6 +1402,7 @@ async function loadDashboard(user) {
 
   const stats = statsSnap.exists() ? (statsSnap.data() || {}) : {};
   const leader = leaderboardSnap.exists() ? (leaderboardSnap.data() || {}) : {};
+  renderHeroGreeting(leader.teamName);
 
   const selectionPts = stats.selectionPts || 0;
   const picksPts = stats.picksPts || 0;
