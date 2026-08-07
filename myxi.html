@@ -3348,7 +3348,7 @@ const loadSelectedGameweekHistory = async () => {
   document.getElementById('goalMinute').value = picksData ? picksData.minute || "Select" : "Select";
   isProgrammaticallyUpdatingPicks = false;
 
-  if (!isHistory && picksData?.first !== "Select" && picksData?.minute !== "Select") {
+  if (!isHistory && picksData && picksData.first && picksData.first !== "Select" && picksData.minute && picksData.minute !== "Select") {
     weeklyPanel.classList.add('panel-saved');
     markWeeklyAsSaved();
   } else if (isHistory && picksData?.first && picksData?.first !== "Select") {
