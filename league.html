@@ -642,6 +642,26 @@ h1 {
   transform: translateY(0);
 }
 
+/* SKELETON SHIMMER - loading placeholders instead of plain "Loading..." text */
+.skeleton-bar {
+  height: 14px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.08);
+  position: relative;
+  overflow: hidden;
+}
+.skeleton-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.09), transparent);
+  animation: skeletonShimmer 1.4s ease-in-out infinite;
+}
+@keyframes skeletonShimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
 /* ========================= SHARE CARD (off-screen capture template) ========================= */
 
 .share-card-offscreen {
@@ -1336,6 +1356,20 @@ function getInitials(name) {
 let currentUserStats = null;
 let rankRowObserver = null;
 
+function renderLeaderboardSkeleton() {
+  const body = document.getElementById("leaderboard-body");
+  if (!body) return;
+  body.innerHTML = Array.from({ length: 6 }).map(() => `
+    <div class="leader-row">
+      <div class="skeleton-bar" style="width:22px;height:22px;border-radius:50%;"></div>
+      <div class="skeleton-bar" style="width:65%;"></div>
+      <div class="skeleton-bar" style="width:32px;margin-left:auto;"></div>
+      <div class="skeleton-bar" style="width:48px;margin-left:auto;"></div>
+      <div class="skeleton-bar" style="width:32px;margin-left:auto;"></div>
+    </div>
+  `).join('');
+}
+
 function renderLeaderboardRows(entries, user) {
   const body = document.getElementById("leaderboard-body");
   body.innerHTML = "";
@@ -1585,7 +1619,7 @@ function renderLeagueTabs() {
 async function loadLeaderboard(user, leagueCode = "") {
   const body = document.getElementById("leaderboard-body");
   const titleEl = document.getElementById("league-table-title");
-  body.innerHTML = "Loading...";
+  renderLeaderboardSkeleton();
 
   if (leagueCode) {
     const leagueRef = doc(db, "leagues", "L-" + leagueCode);

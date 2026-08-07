@@ -1191,6 +1191,59 @@ button.btn-locked:hover {
   box-shadow: none !important;
 }
 
+/* TOAST NOTIFICATIONS - non-blocking confirmations, matching league.html */
+.toast-stack {
+  position: fixed;
+  left: 50%;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  pointer-events: none;
+}
+.toast {
+  background: rgba(10,20,35,0.96);
+  border: 1px solid rgba(199,255,56,0.35);
+  color: #fff;
+  padding: 11px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  max-width: min(90vw, 380px);
+  text-align: center;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* SKELETON SHIMMER - loading placeholders instead of plain "Loading..." text */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255,255,255,0.06);
+  border-radius: 10px;
+  color: transparent !important;
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.09), transparent);
+  animation: skeletonShimmer 1.4s ease-in-out infinite;
+}
+@keyframes skeletonShimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
 #weeklyStatus{
 
   margin-top:10px;
@@ -1669,6 +1722,10 @@ MOBILE
     background: rgba(199, 255, 56, 0.05);
     padding: 2px 0;
     border-radius: 4px;
+  }
+
+  .toast-stack {
+    bottom: calc(70px + env(safe-area-inset-bottom));
   }
 
   .mobile-nav {
@@ -2814,6 +2871,22 @@ const scrollToSection = (selector) => {
   el.scrollIntoView({ behavior: 'smooth', block: 'center' });
 };
 
+// Non-blocking confirmation, used for save-success and sequencing nudges
+// instead of a native alert() - real input/state errors still use alert().
+const showToast = (message) => {
+  const stack = document.getElementById('toast-stack');
+  if (!stack || !message) return;
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerText = message;
+  stack.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add('show'));
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 2500);
+};
+
 let isProgrammaticallyUpdatingPicks = false;
 let isProgrammaticallyUpdatingBetChoice = false;
 
@@ -3693,7 +3766,7 @@ const saveTeam = async function() {
     document.getElementById('teamNameInput').disabled = true;
     markTeamAsSaved();
     updateDependentSaveButtonsAvailability();
-    alert(`Team XI Saved & verified!\n\n${getNextStepsMessage()}`);
+    showToast(`Team saved! ${getNextStepsMessage()}`);
     if (!weeklyIsSaved) scrollToSection('.weekly-panel');
   } catch (error) {
     console.error("Error saving team: ", error);
@@ -3717,7 +3790,7 @@ const saveWeekly = async function() {
     return;
   }
   if (!hasTeamNameSaved()) {
-    alert("Please enter and save your Team Name first (use the Save Team button) before saving your Weekly Picks.");
+    showToast("Save your Team first to unlock Weekly Picks.");
     scrollToSection('.team-name-ribbon');
     document.getElementById('teamNameInput')?.focus();
     return;
@@ -3762,7 +3835,7 @@ const saveWeekly = async function() {
     status.innerText = "Saved to Firestore";
     panel.classList.add('panel-saved');
     markWeeklyAsSaved();
-    alert(`Weekly picks saved and verified.\n\n${getNextStepsMessage()}`);
+    showToast(`Weekly picks saved! ${getNextStepsMessage()}`);
     if (!betIsSaved) scrollToSection('.bet-builder-panel');
     try { showDebug(`Weekly picks verified:\n${JSON.stringify(verifyData, null, 2)}`); } catch(e) {}
   } catch (error) {
@@ -3789,13 +3862,13 @@ const saveBetBuilder = async function() {
     return;
   }
   if (!hasTeamNameSaved()) {
-    alert("Please enter and save your Team Name first (use the Save Team button) before saving your Bet Builder prediction.");
+    showToast("Save your Team first to unlock Bet Builder.");
     scrollToSection('.team-name-ribbon');
     document.getElementById('teamNameInput')?.focus();
     return;
   }
   if (!weeklyIsSaved) {
-    alert("Please save your Weekly Picks first (use the Save Picks button) before saving your Bet Builder prediction.");
+    showToast("Save your Weekly Picks first to unlock Bet Builder.");
     scrollToSection('.weekly-panel');
     return;
   }
@@ -3830,7 +3903,7 @@ const saveBetBuilder = async function() {
 
     document.querySelector('.bet-builder-panel').classList.add('panel-saved');
     markBetAsSaved();
-    alert(`Bet Builder prediction saved and verified.\n\n${getNextStepsMessage()}`);
+    showToast(`Bet Builder saved! ${getNextStepsMessage()}`);
     try { showDebug(`Bet builder verified:\n${JSON.stringify(verifyData, null, 2)}`); } catch(e) {}
   } catch (error) {
     console.error("Error saving bet builder: ", error);
@@ -3869,7 +3942,7 @@ const clearTeam = async function() {
       refreshDropdowns();
       // Clearing is the deliberate "unlock" - re-enable the pitch and Save Team.
       resetTeamSaveButton();
-      alert("Players cleared! Your team name remains secured.");
+      showToast("Players cleared! Your team name remains secured.");
     } catch (error) {
       console.error("Error clearing team: ", error);
       alert(`Failed to clear team${error?.code ? ` (${error.code})` : ""}. Please try again.`);
@@ -3983,6 +4056,8 @@ if (typeof window.renderFixtureList === 'function') {
   <a href="season.html">🏆<br>Picks</a>
   <a href="league.html">📊<br>League</a>
 </div>
+
+<div class="toast-stack" id="toast-stack"></div>
 
 <script>
 if ('serviceWorker' in navigator) {
