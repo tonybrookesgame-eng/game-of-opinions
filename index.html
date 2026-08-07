@@ -696,72 +696,12 @@ nav a:hover {
 
 ========================= */
 
-.hero-top-links {
-  font-size: 18px;
-  color: rgba(255,255,255,0.7);
-  margin-bottom: 10px; /* Reduced margin */
-}
-
 .hero-copy h1 {
   font-size: 28px;
   line-height: 1.2;
   max-width: 650px;
   color: #c7ff38;
   display: block;
-}
-
-/* =========================
-
-   HERO BUTTONS
-
-========================= */
-
-.hero-buttons {
-
-  display: flex;
-
-  flex-wrap: wrap;
-
-  gap: 18px;
-
-}
-
-.hero-buttons a {
-
-  text-decoration: none;
-
-  padding: 16px 30px;
-
-  border-radius: 999px;
-
-  font-weight: 700;
-
-  transition: 0.2s ease;
-
-}
-
-.primary-btn {
-
-  background: #c7ff38;
-
-  color: #041102;
-
-}
-
-.secondary-btn {
-
-  border: 1px solid rgba(255,255,255,0.20);
-
-  color: white;
-
-  background: rgba(255,255,255,0.04);
-
-}
-
-.hero-buttons a:hover {
-
-  transform: translateY(-2px);
-
 }
 
 /* PLAYER CARD (for mini-pitch) */
@@ -885,29 +825,6 @@ nav a:hover {
 
 }
 
-/* PHONE BUTTON (App-style CTA) */
-.phone-btn {
-  display: none;
-  text-decoration: none;
-  background: #b8ff1e;
-  color: #041102;
-  padding: 12px;
-  border-radius: 12px;
-  font-weight: 800;
-  text-align: center;
-  margin-top: auto;
-  font-size: 14px;
-  transition: 0.2s;
-  width: auto;
-  min-width: 160px;
-  align-self: center;
-  z-index: 5;
-}
-
-.phone-btn:hover {
-  filter: brightness(1.1);
-}
-
 .install-cta {
   margin-top: 18px;
   display: inline-flex;
@@ -980,6 +897,26 @@ nav a:hover {
   color: #cbd5e1;
   font-size: 12px;
   line-height: 1.5;
+}
+.install-platform-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.install-platform-row label {
+  color: #9ca3af;
+  font-size: 12px;
+  font-weight: 700;
+}
+.install-platform-select {
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(8,16,31,0.92);
+  color: #fff;
+  font-size: 12px;
 }
 
 /* =========================
@@ -1081,6 +1018,106 @@ nav a:hover {
 
   line-height: 1.7;
 
+}
+
+/* =========================
+
+   CLOSING CTA
+
+========================= */
+
+.closing-cta {
+  text-align: center;
+  padding: 60px 24px 70px;
+  margin: 0 24px 40px;
+  border-radius: 28px;
+  border: 1px solid rgba(199,255,56,0.22);
+  background:
+    radial-gradient(circle at 20% 15%, rgba(199,255,56,0.14), transparent 45%),
+    radial-gradient(circle at 85% 100%, rgba(96,165,250,0.12), transparent 45%),
+    linear-gradient(160deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+}
+.closing-cta h2 {
+  margin: 0 0 10px;
+  font-size: 32px;
+  background: linear-gradient(135deg, #ffffff 0%, #c7ff38 140%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.closing-cta p {
+  margin: 0 0 26px;
+  color: #9ca3af;
+  font-size: 16px;
+}
+.closing-cta-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.cta-primary, .cta-secondary {
+  text-decoration: none;
+  padding: 15px 32px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 15px;
+  transition: 0.2s ease;
+  cursor: pointer;
+  display: inline-block;
+}
+.cta-primary {
+  background: #c7ff38;
+  color: #041102;
+}
+.cta-secondary {
+  border: 1px solid rgba(255,255,255,0.22);
+  color: white;
+  background: rgba(255,255,255,0.05);
+}
+.cta-primary:hover, .cta-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+}
+
+/* =========================
+
+   FOOTER
+
+========================= */
+
+.site-footer {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding: 30px 24px calc(30px + env(safe-area-inset-bottom));
+}
+.site-footer-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.footer-nav {
+  display: flex;
+  gap: 20px;
+}
+.footer-nav a {
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+  font-size: 14px;
+  transition: 0.2s ease;
+}
+.footer-nav a:hover { color: #c7ff38; }
+.footer-copy {
+  color: #64748b;
+  font-size: 12px;
+  margin: 0;
+  width: 100%;
+  text-align: center;
+  order: 3;
 }
 
 /* =========================
@@ -1226,7 +1263,10 @@ nav a:hover {
 
   .hero-copy h1 { order: 1; margin-bottom: 12px; }
   .hero-copy p { order: 2; margin-bottom: 15px; }
-  .hero-visual { 
+  .hero-copy .install-cta,
+  .hero-copy .install-note,
+  .hero-copy .install-help-card { order: 2; }
+  .hero-visual {
     order: 3;
     display: flex;
     flex-direction: column;
@@ -1259,8 +1299,6 @@ nav a:hover {
     z-index: -1;
   }
   .phone-left, .phone-right { transform: none !important; }
-  .hero-buttons { display: none !important; } /* Hide desktop hero buttons on mobile */ /* Keep this line */
-  .phone-btn { display: block; } /* Show app-style button on mobile */ /* Keep this line */
 
   .hero-copy h1 {
     font-size: 24px;
@@ -1279,44 +1317,29 @@ nav a:hover {
 
   }
 
-  .hero-buttons {
-
-    flex-direction: column;
-
-    align-items: center;
-
-    width: 100%;
-
-    padding: 0 10px;
-
-  }
-
-  .hero-buttons a {
-
-    width: 100%;
-
-    max-width: 260px;
-
-    margin: 0 auto;
-
-    text-align: center;
-
-    padding: 12px 20px;
-
-  }
-
   .section {
     padding-top: 0;
   }
 
-  .primary-btn {
-
-    display: inline-flex;
-
-    justify-content: center;
-
+  .closing-cta {
+    margin: 0 14px 30px;
+    padding: 40px 18px 50px;
+  }
+  .closing-cta h2 {
+    font-size: 24px;
+  }
+  .closing-cta-actions {
+    flex-direction: column;
     align-items: center;
-
+  }
+  .cta-primary, .cta-secondary {
+    width: 100%;
+    max-width: 280px;
+    text-align: center;
+  }
+  .site-footer-inner {
+    flex-direction: column;
+    text-align: center;
   }
 
   .phone {
@@ -1363,34 +1386,6 @@ nav a:hover {
   .hero-copy p {
 
     font-size: 12px;
-
-  }
-
-  .hero-buttons {
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    gap: 10px;
-
-    width: 100%;
-
-    padding: 0 6px;
-
-  }
-
-  .hero-buttons a {
-
-    width: 100%;
-
-    max-width: 240px;
-
-    margin: 0 auto;
-
-    padding: 10px 16px;
 
   }
 
@@ -1456,7 +1451,25 @@ nav a:hover {
       <strong>Finally Worth Something.</strong></h1>
       <p>Your team, your rules. Build your XI and dominate the league.</p>
       <button id="installAppBtn" class="install-cta" type="button">Install GOO</button>
-      <p id="installNote" class="install-note">Install guidance is now shown on your Dashboard after login.</p>
+      <p id="installNote" class="install-note">Tap Install GOO, or follow the steps below for your device.</p>
+      <div class="install-help-card" id="installHelpCard">
+        <h3>How to install</h3>
+        <div class="install-platform-row">
+          <label for="installPlatformSelect">Show steps for:</label>
+          <select id="installPlatformSelect" class="install-platform-select">
+            <option value="auto">Auto-detect</option>
+            <option value="ios">iPhone / iPad</option>
+            <option value="android">Android</option>
+            <option value="desktop">Desktop</option>
+          </select>
+        </div>
+        <ol class="install-help-list" id="installStepsList">
+          <li>Open GOO in your browser.</li>
+          <li>Tap Share (or the menu button).</li>
+          <li>Tap Add to Home Screen or Install app.</li>
+        </ol>
+        <p class="install-help-tip">Tip: once installed, GOO opens full-screen like a normal app - no browser address bar - and sits on your home screen for one-tap access.</p>
+      </div>
     </div>
     <div class="hero-visual">
       <div class="phone phone-left">
@@ -1657,6 +1670,29 @@ nav a:hover {
 </div>
 </section>
 
+<!-- CLOSING CTA -->
+<section class="closing-cta">
+  <h2>Ready to build your XI?</h2>
+  <p>Sign up free, pick your 11, and start climbing the league today.</p>
+  <div class="closing-cta-actions">
+    <a href="signup.html" class="cta-primary">Sign Up Free</a>
+    <a href="javascript:void(0)" class="cta-secondary" onclick="openLogin()">Log In</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="site-footer-inner">
+    <div class="logo">GAME <span>OF OPINIONS</span></div>
+    <nav class="footer-nav">
+      <a href="rules.html">Rules</a>
+      <a href="signup.html">Sign Up</a>
+      <a href="javascript:void(0)" onclick="openLogin()">Log In</a>
+    </nav>
+    <p class="footer-copy">&copy; 2026 Game of Opinions. Fan-made football predictions, built for opinions.</p>
+  </div>
+</footer>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -1678,6 +1714,9 @@ console.log("Firebase initialized successfully");
 let deferredInstallPrompt = null;
 const installAppBtn = document.getElementById('installAppBtn');
 const installNote = document.getElementById('installNote');
+const installHelpCard = document.getElementById('installHelpCard');
+const installStepsList = document.getElementById('installStepsList');
+const installPlatformSelect = document.getElementById('installPlatformSelect');
 
 function setInstallUiVisible(visible) {
   if (installAppBtn) {
@@ -1685,6 +1724,9 @@ function setInstallUiVisible(visible) {
   }
   if (installNote) {
     installNote.style.display = visible ? '' : 'none';
+  }
+  if (installHelpCard) {
+    installHelpCard.style.display = visible ? '' : 'none';
   }
 }
 
@@ -1698,25 +1740,77 @@ function isInstalledPwa() {
   return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone || window.matchMedia('(display-mode: fullscreen)').matches;
 }
 
-function getInstallFallbackMessage() {
+function detectInstallPlatform() {
   const ua = navigator.userAgent || '';
   const isIOS = /iPhone|iPad|iPod/i.test(ua);
   const isAndroid = /Android/i.test(ua);
-  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  if (isIOS) return 'ios';
+  if (isAndroid) return 'android';
+  return 'desktop';
+}
 
-  if (isStandalone) {
-    return 'GOO is already installed on this device.';
+function getInstallInstructionSet(platformInput = 'auto') {
+  const platform = platformInput === 'auto' ? detectInstallPlatform() : platformInput;
+
+  if (isInstalledPwa()) {
+    return {
+      steps: [
+        'GOO is already installed.',
+        'Open it from your home screen/app list.',
+        'You are all set.'
+      ],
+      fallback: 'GOO is already installed on this device.'
+    };
   }
 
-  if (isIOS) {
-    return 'On iPhone/iPad: tap Share, then choose Add to Home Screen.';
+  if (platform === 'ios') {
+    return {
+      steps: [
+        'Open GOO in Safari.',
+        'Tap Share at the bottom.',
+        'Tap Add to Home Screen.'
+      ],
+      fallback: 'Tap Share, then tap Add to Home Screen.'
+    };
   }
 
-  if (isAndroid) {
-    return 'On Android: open the browser menu and tap Install app or Add to Home screen.';
+  if (platform === 'android') {
+    return {
+      steps: [
+        'Open GOO in your browser.',
+        'Tap the menu (three dots).',
+        'Tap Install app or Add to Home screen.'
+      ],
+      fallback: 'Tap the menu, then tap Install app or Add to Home screen.'
+    };
   }
 
-  return 'Use your browser menu and choose Install app. In Chrome this is usually in the address bar menu.';
+  return {
+    steps: [
+      'Open GOO in Chrome or Edge.',
+      'Click the install icon or open the menu.',
+      'Click Install app.'
+    ],
+    fallback: 'Open your browser menu, then tap Install app.'
+  };
+}
+
+function renderInstallSteps(platformInput = 'auto') {
+  if (!installStepsList) return;
+  installStepsList.innerHTML = getInstallInstructionSet(platformInput).steps.map((step) => `<li>${step}</li>`).join('');
+}
+
+function getInstallFallbackMessage() {
+  const selectedPlatform = installPlatformSelect ? installPlatformSelect.value : 'auto';
+  return getInstallInstructionSet(selectedPlatform).fallback;
+}
+
+renderInstallSteps(installPlatformSelect ? installPlatformSelect.value : 'auto');
+
+if (installPlatformSelect) {
+  installPlatformSelect.addEventListener('change', () => {
+    renderInstallSteps(installPlatformSelect.value);
+  });
 }
 
 if (installAppBtn) {
@@ -1726,7 +1820,7 @@ if (isInstalledPwa()) {
   setInstallUiVisible(false);
 } else {
   setInstallUiVisible(true);
-  setInstallNote('Tap install now. If your browser does not show a prompt, we will show the exact fallback steps.');
+  setInstallNote('Tap Install GOO, or follow the steps below for your device.');
 }
 
 window.addEventListener('beforeinstallprompt', (event) => {

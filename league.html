@@ -1094,7 +1094,6 @@ h1 {
 
 <div class="share-card-offscreen" id="share-card-template">
   <div class="share-card-logo">GAME <span>OF OPINIONS</span></div>
-  <div class="share-card-avatar" id="share-card-avatar">--</div>
   <div class="share-card-team" id="share-card-team">Team Name</div>
   <div class="share-card-league" id="share-card-league">Global League</div>
   <div class="share-card-stats">
@@ -1339,7 +1338,6 @@ function renderLeaderboardRows(entries, user) {
       <div class="rank ${medalClass}">${medalIcon}</div>
       <div class="team" ${isTruncated ? `onclick="alert('${escapedName}')" style="cursor:help;"` : ""}>
         <span class="team-cell-inner">
-          <span class="row-avatar" style="${avatarStyle(teamName)}">${getInitials(teamName)}</span>
           <span title="${teamName}">${displayTeamName}</span>${isYou ? " (You)" : ""}
         </span>
       </div>
@@ -1373,7 +1371,6 @@ function renderPodium(entries) {
     card.className = `podium-card rank-${rank}`;
     card.innerHTML = `
       <div class="podium-medal">${medals[rank]}</div>
-      <div class="podium-avatar" style="${avatarStyle(teamName)}">${getInitials(teamName)}</div>
       <div class="podium-name" title="${teamName}">${teamName}</div>
       <div class="podium-points">${entry.data.totalPoints || 0} pts</div>
     `;
@@ -1470,9 +1467,6 @@ window.shareMyRank = async function() {
     return;
   }
 
-  const avatarEl = document.getElementById("share-card-avatar");
-  avatarEl.style.cssText = avatarStyle(currentUserStats.teamName);
-  avatarEl.innerText = getInitials(currentUserStats.teamName);
   document.getElementById("share-card-team").innerText = currentUserStats.teamName;
   document.getElementById("share-card-league").innerText = currentUserStats.leagueName;
   document.getElementById("share-card-rank").innerText = `#${currentUserStats.rank}`;
