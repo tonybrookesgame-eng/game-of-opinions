@@ -4014,16 +4014,8 @@ window.closeOnboarding = function() {
   localStorage.setItem('onboarding_complete', 'true');
 };
 
-const isMobileViewport = window.matchMedia('(max-width: 768px)').matches;
-
-const checkOnboarding = () => {
-  if (!isMobileViewport && !localStorage.getItem('onboarding_complete')) {
-    window.openTutorial();
-  }
-};
-
-// Run onboarding check after a short delay
-setTimeout(checkOnboarding, 800);
+// Tutorial no longer auto-opens - it's available any time via the
+// "Tutorial - How To Play" button instead of popping up unprompted.
 
 const initializeDefaultFormation = () => {
   const formationSelect = document.getElementById('formationSelect');

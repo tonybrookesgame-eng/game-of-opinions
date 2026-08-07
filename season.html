@@ -1550,11 +1550,8 @@ document.getElementById('pickerSearch')?.addEventListener('input', (event) => {
   renderPickerList(event.target.value);
 });
 
-setTimeout(() => {
-  if (!localStorage.getItem('onboarding_complete')) {
-    window.openTutorial();
-  }
-}, 800);
+// Tutorial no longer auto-opens - it's available any time via the
+// "Tutorial - How To Play" button instead of popping up unprompted.
 
 boot();
 </script>
