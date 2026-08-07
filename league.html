@@ -1027,13 +1027,23 @@ h1 {
     font-weight: 700;
     font-size: 12px;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-height: 52px;
+    border-radius: 12px;
     margin-left: 0;
     transition: all 0.2s ease;
   }
   .mobile-nav a:hover {
     color: #c7ff38;
-    transform: translateY(-3px);
-    text-shadow: 0 0 15px rgba(199, 255, 56, 0.6);
+    transform: translateY(-2px);
+  }
+  .mobile-nav a.active {
+    color: #041102;
+    background: #c7ff38;
   }
 }
 
@@ -1890,7 +1900,7 @@ window.handleLogout = () => {
   <a href="dashboard.html">📈<br>Dashboard</a>
   <a href="myxi.html">⚽<br>Team</a>
   <a href="season.html">🏆<br>Picks</a>
-  <a href="league.html">📊<br>League</a>
+  <a href="league.html" class="active">📊<br>League</a>
 </div>
 
 </body>

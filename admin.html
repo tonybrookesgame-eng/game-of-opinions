@@ -647,7 +647,7 @@
       const status = document.getElementById('auth-status');
       if (user) {
         const userEmail = user.email ? user.email.toLowerCase().trim() : "";
-        const isAuthorizedAdmin = userEmail === ADMIN_EMAIL.toLowerCase().trim() || !!user;
+        const isAuthorizedAdmin = userEmail === ADMIN_EMAIL.toLowerCase().trim();
         if (isAuthorizedAdmin) {
           status.style.display = 'none';
           document.getElementById('admin-content').style.display = 'block';
@@ -1417,7 +1417,7 @@
       
       try {
         const batch = writeBatch(db);
-        showDebugAdmin('Starting nuclear season reset - building batch operations');
+        showDebugAdmin('Starting team name update - building batch operations');
         batch.update(doc(db, "users", uid, "myxi", "team"), { teamName: newName });
         batch.update(doc(db, "leaderboard", uid), { teamName: newName });
         showDebugAdmin(`Updating teamName for ${uid} -> ${newName}`);

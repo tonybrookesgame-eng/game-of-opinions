@@ -21,25 +21,50 @@
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      background: #020611;
       color: white;
       font-family: 'Segoe UI', Arial, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       min-height: 100vh;
+      overflow-x: hidden;
       background: url('managers office.png') no-repeat center center;
       background-size: cover;
     }
-    .auth-overlay {
+    header {
       position: fixed;
-      inset: 0;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      background: rgba(0,0,0,0.72);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+    }
+    .logo {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+    .logo span { color: #c7ff38; }
+    header nav a {
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 700;
+    }
+    header nav a:hover { color: #fff; }
+    .auth-overlay {
+      min-height: 100vh;
       background: rgba(0,0,0,0.7);
       backdrop-filter: blur(8px);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 100px 20px 40px;
     }
     .whiteboard-login {
       width: 100%;
@@ -87,6 +112,31 @@
       color: white;
       font-size: 16px;
     }
+    .auth-input:focus {
+      outline: none;
+      border-color: #c7ff38;
+    }
+    .auth-hint {
+      position: relative;
+      z-index: 2;
+      margin: -4px 0 14px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+      text-align: left;
+    }
+    .auth-error {
+      position: relative;
+      z-index: 2;
+      display: none;
+      text-align: left;
+      background: rgba(248,113,113,0.12);
+      border: 1px solid rgba(248,113,113,0.4);
+      color: #fecaca;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
     .auth-submit-btn {
       position: relative;
       z-index: 2;
@@ -99,28 +149,51 @@
       font-weight: 800;
       cursor: pointer;
       margin-top: 10px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     .auth-submit-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 0 20px rgba(199, 255, 56, 0.6);
     }
+    .auth-submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
     a { color: #c7ff38; text-decoration: none; font-weight: bold; }
+    @media (max-width: 480px) {
+      header { padding: 12px 16px; }
+      .auth-overlay { padding: 90px 14px 30px; }
+      .whiteboard-login { padding: 28px 22px; }
+    }
   </style>
 </head>
 <body>
+  <header>
+    <div class="logo">GAME <span>OF OPINIONS</span></div>
+    <nav>
+      <a href="index.html">Home</a>
+    </nav>
+  </header>
+
   <div class="auth-overlay">
     <div class="whiteboard-login">
       <div class="pitch-markings"></div>
       <h2>Manager Registration</h2>
       <p style="position: relative; z-index: 2; font-weight: 700; margin-bottom: 20px; font-size: 14px;">Have you got what it takes?</p>
-      
-      <input id="email" class="auth-input" type="email" placeholder="Email Address">
-      <input id="password" class="auth-input" type="password" placeholder="Create Password">
-      
-      <button class="auth-submit-btn" onclick="handleSignup()">Finalise Application</button>
-      
+
+      <div id="signupError" class="auth-error"></div>
+
+      <input id="email" class="auth-input" type="email" placeholder="Email Address" autocomplete="email">
+      <input id="password" class="auth-input" type="password" placeholder="Create Password" autocomplete="new-password">
+      <input id="confirmPassword" class="auth-input" type="password" placeholder="Confirm Password" autocomplete="new-password">
+      <div class="auth-hint">Use at least 6 characters.</div>
+
+      <button id="signupSubmitBtn" class="auth-submit-btn" onclick="handleSignup()">Finalise Application</button>
+
       <p style="position: relative; z-index: 2; font-size: 12px; margin-top: 20px;">
-        Already a manager? <a href="index.html">Log In</a>
+        Already a manager? <a href="index.html?login=true">Log In</a>
       </p>
     </div>
   </div>
@@ -142,14 +215,37 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    window.handleSignup = async () => {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
+    const errorEl = document.getElementById('signupError');
+    const submitBtn = document.getElementById('signupSubmitBtn');
 
-      if (!email || !password) {
-        alert("Please fill in all fields.");
+    function showSignupError(message) {
+      if (!errorEl) return;
+      errorEl.textContent = message;
+      errorEl.style.display = message ? 'block' : 'none';
+    }
+
+    window.handleSignup = async () => {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      showSignupError('');
+
+      if (!email || !password || !confirmPassword) {
+        showSignupError('Please fill in all fields.');
         return;
       }
+      if (password.length < 6) {
+        showSignupError('Password must be at least 6 characters.');
+        return;
+      }
+      if (password !== confirmPassword) {
+        showSignupError('Passwords do not match.');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Creating your account...';
 
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -160,7 +256,9 @@
         });
         window.location.href = "myxi.html";
       } catch (error) {
-        alert(error.message);
+        showSignupError(error.message);
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Finalise Application';
       }
     };
   </script>

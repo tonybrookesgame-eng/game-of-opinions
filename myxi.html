@@ -1605,24 +1605,37 @@ MOBILE
     bottom: 0;
     left: 0;
     width: 100%;
-    background: #000;
-    padding: 10px 0;
+    background: rgba(2,6,17,0.94);
+    padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-     z-index: 1000; /* Ensure it stays on top */
+    z-index: 1000;
+    backdrop-filter: blur(10px);
   }
 
   .mobile-nav a {
+    flex: 1;
     text-decoration: none !important; /* Fixes the line underneath icons */
-    color: white;
+    color: rgba(255,255,255,0.92);
     font-size: 12px;
+    font-weight: 700;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-height: 52px;
+    border-radius: 12px;
     margin-left: 0; /* Reset margin for mobile nav links */
     transition: all 0.2s ease;
   }
   .mobile-nav a:hover {
     color: #c7ff38;
-    transform: translateY(-3px);
-    text-shadow: 0 0 15px rgba(199, 255, 56, 0.6);
+    transform: translateY(-2px);
+  }
+  .mobile-nav a.active {
+    color: #041102;
+    background: #c7ff38;
   }
 
   .main-layout {
@@ -2604,20 +2617,34 @@ let teamIsSaved = false;
 let weeklyIsSaved = false;
 let betIsSaved = false;
 
-const resetTeamSaveButton = () => {
+// Locks the pitch (shirt selects + formation picker) together with the Save
+// Team button whenever the team has been saved - editing again requires an
+// explicit "Clear Team" first, instead of silently re-unlocking on any tap.
+const applyPitchLockState = (isLocked = (gameweekStatus === 'locked')) => {
+  const lockPitch = isLocked || teamIsSaved;
+  document.querySelectorAll('.pitch select').forEach(s => {
+    s.disabled = lockPitch;
+    const shirt = s.closest('.shirt');
+    if (shirt) shirt.classList.toggle('is-disabled', lockPitch);
+  });
+  const formationSelect = document.getElementById('formationSelect');
+  if (formationSelect) formationSelect.disabled = lockPitch;
   const saveBtn = document.getElementById('saveTeamBottomBtn');
+  if (saveBtn) saveBtn.disabled = isLocked || teamIsSaved;
+};
+
+const resetTeamSaveButton = () => {
   teamIsSaved = false;
-  if (!saveBtn) return;
-  saveBtn.disabled = (gameweekStatus === 'locked');
-  saveBtn.innerText = 'Save Team';
+  const saveBtn = document.getElementById('saveTeamBottomBtn');
+  if (saveBtn) saveBtn.innerText = 'Save Team';
+  applyPitchLockState();
 };
 
 const markTeamAsSaved = () => {
-  const saveBtn = document.getElementById('saveTeamBottomBtn');
   teamIsSaved = true;
-  if (!saveBtn) return;
-  saveBtn.disabled = true;
-  saveBtn.innerText = 'Saved';
+  const saveBtn = document.getElementById('saveTeamBottomBtn');
+  if (saveBtn) saveBtn.innerText = 'Saved';
+  applyPitchLockState();
 };
 
 // Weekly/Bet button disabled + btn-locked + title state all live in
@@ -2728,9 +2755,8 @@ const updateShirt = function(select) {
   ptsLabel.style.display = isHistoryView ? "block" : "none";
 
   refreshDropdowns();
-  if (!isProgrammaticallyUpdatingShirts && document.getElementById('saveTeamBottomBtn')?.innerText !== 'Save Team') {
-    resetTeamSaveButton();
-  }
+  // Once the team is saved, the pitch itself is locked (see applyPitchLockState) -
+  // editing again requires "Clear Team" first, so no auto-reset here anymore.
 }
 window.updateShirt = updateShirt;
 
@@ -3254,12 +3280,12 @@ const loadSelectedGameweekHistory = async () => {
   const isLocked = gameweekStatus === 'locked' || isHistory;
   // Team name is constant once set, unless changed by admin - always disable if a name has been saved
   document.getElementById('teamNameInput').disabled = !!persistedTeamName;
-  document.getElementById('formationSelect').disabled = isLocked;
-  document.querySelectorAll('.pitch select').forEach(s => s.disabled = isLocked);
+  // Pitch/formation/Save Team stay locked while the gameweek is locked OR the
+  // team is already saved (only "Clear Team" reopens them - see applyPitchLockState).
+  applyPitchLockState(isLocked);
   document.getElementById('firstScorer').disabled = isLocked;
   document.getElementById('goalMinute').disabled = isLocked;
   document.querySelectorAll('.bet-choice').forEach(b => b.disabled = isLocked);
-  document.getElementById('saveTeamBottomBtn').disabled = isLocked;
   document.getElementById('clearTeamBtn').disabled = isLocked;
   updateDependentSaveButtonsAvailability(isLocked);
 };
@@ -3353,7 +3379,7 @@ onSnapshot(gameweekSettingsRef, async (docSnap) => {
         }
 
         // Disable/Enable save buttons based on lock status
-        document.getElementById('saveTeamBottomBtn').disabled = isLocked;
+        applyPitchLockState(isLocked);
         document.getElementById('clearTeamBtn').disabled = isLocked;
         updateDependentSaveButtonsAvailability(isLocked);
 
@@ -3552,6 +3578,7 @@ const saveTeam = async function() {
     markTeamAsSaved();
     updateDependentSaveButtonsAvailability();
     alert(`Team XI Saved & verified!\n\n${getNextStepsMessage('team')}`);
+    if (!weeklyIsSaved) scrollToSection('.weekly-panel');
   } catch (error) {
     console.error("Error saving team: ", error);
     const summary = error?.code === 'permission-denied'
@@ -3575,6 +3602,7 @@ const saveWeekly = async function() {
   }
   if (!hasTeamNameSaved()) {
     alert("Please enter and save your Team Name first (use the Save Team button) before saving your Weekly Picks.");
+    scrollToSection('.team-name-ribbon');
     document.getElementById('teamNameInput')?.focus();
     return;
   }
@@ -3619,6 +3647,7 @@ const saveWeekly = async function() {
     panel.classList.add('panel-saved');
     markWeeklyAsSaved();
     alert(`Weekly picks saved and verified.\n\n${getNextStepsMessage('weekly')}`);
+    if (!betIsSaved) scrollToSection('.bet-builder-panel');
     try { showDebug(`Weekly picks verified:\n${JSON.stringify(verifyData, null, 2)}`); } catch(e) {}
   } catch (error) {
     console.error("Error saving weekly picks: ", error);
@@ -3645,11 +3674,13 @@ const saveBetBuilder = async function() {
   }
   if (!hasTeamNameSaved()) {
     alert("Please enter and save your Team Name first (use the Save Team button) before saving your Bet Builder prediction.");
+    scrollToSection('.team-name-ribbon');
     document.getElementById('teamNameInput')?.focus();
     return;
   }
   if (!weeklyIsSaved) {
     alert("Please save your Weekly Picks first (use the Save Picks button) before saving your Bet Builder prediction.");
+    scrollToSection('.weekly-panel');
     return;
   }
   if(!currentBetChoice) {
@@ -3720,6 +3751,8 @@ const clearTeam = async function() {
       document.getElementById('formationSelect').value = "4-4-2";
       changeFormation({ preserve: false });
       refreshDropdowns();
+      // Clearing is the deliberate "unlock" - re-enable the pitch and Save Team.
+      resetTeamSaveButton();
       alert("Players cleared! Your team name remains secured.");
     } catch (error) {
       console.error("Error clearing team: ", error);
@@ -3830,7 +3863,7 @@ if (typeof window.renderFixtureList === 'function') {
 <!-- MOBILE NAV -->
 <div class="mobile-nav">
   <a href="dashboard.html">📈<br>Dashboard</a>
-  <a href="myxi.html">⚽<br>Team</a>
+  <a href="myxi.html" class="active">⚽<br>Team</a>
   <a href="season.html">🏆<br>Picks</a>
   <a href="league.html">📊<br>League</a>
 </div>

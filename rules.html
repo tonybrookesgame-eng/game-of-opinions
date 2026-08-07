@@ -134,6 +134,12 @@
       border-radius: 14px;
       padding: 18px;
       box-shadow: 0 10px 22px rgba(0,0,0,0.18);
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .quick-start-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(199,255,56,0.35);
+      box-shadow: 0 14px 30px rgba(0,0,0,0.26);
     }
     .quick-start-card strong {
       display: block;
@@ -227,46 +233,6 @@
     .rules-table .win { color: #4ade80; font-weight: bold; }
     .rules-table .loss { color: #f87171; font-weight: bold; }
 
-    /* CALCULATOR STYLES */
-    .calc-container {
-      margin-top: 30px;
-      background: rgba(199, 255, 56, 0.05);
-      border: 1px solid rgba(199, 255, 56, 0.2);
-      padding: 25px;
-      border-radius: 16px;
-    }
-    .calc-input-group {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-    .calc-input-group input {
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid #c7ff38;
-      color: white;
-      padding: 10px;
-      border-radius: 8px;
-      width: 80px;
-      font-weight: 800;
-      font-size: 18px;
-      outline: none;
-    }
-    .calc-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-    .calc-card {
-      background: rgba(0, 0, 0, 0.3);
-      padding: 15px;
-      border-radius: 12px;
-      text-align: center;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-    .calc-card label { display: block; font-size: 10px; color: #9ca3af; text-transform: uppercase; margin-bottom: 5px; font-weight: 700; }
-    .calc-card span { font-size: 22px; font-weight: 800; }
-
     .mobile-nav { display: none; }
     @media (max-width: 768px) {
       header {
@@ -291,22 +257,35 @@
         bottom: 0;
         left: 0;
         width: 100%;
-        background: #000;
-        padding: 10px 0;
+        background: rgba(2,6,17,0.94);
+        padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
         border-top: 1px solid rgba(255, 255, 255, 0.1);
         z-index: 1000;
+        backdrop-filter: blur(10px);
       }
-      .mobile-nav a { 
-        text-decoration: none !important; 
-        color: white; 
-        font-size: 12px; 
-        text-align: center; 
+      .mobile-nav a {
+        flex: 1;
+        text-decoration: none !important;
+        color: rgba(255,255,255,0.92);
+        font-weight: 700;
+        font-size: 12px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        min-height: 52px;
+        border-radius: 12px;
         transition: all 0.2s ease;
       }
       .mobile-nav a:hover {
         color: #c7ff38;
-        transform: translateY(-3px);
-        text-shadow: 0 0 15px rgba(199, 255, 56, 0.6);
+        transform: translateY(-2px);
+      }
+      .mobile-nav a.active {
+        color: #041102;
+        background: #c7ff38;
       }
     }
   </style>
