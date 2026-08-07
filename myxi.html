@@ -394,6 +394,79 @@ p {
   flex-wrap: nowrap;
   backdrop-filter: blur(10px);
 }
+
+/* SETUP PROGRESS - always-visible "where am I in Team -> Weekly -> Bet" guide,
+   so the required order is never just a one-off alert you might miss. */
+.setup-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 0 6px;
+  flex-wrap: wrap;
+}
+.setup-step {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.04);
+  font-size: 12px;
+  font-weight: 700;
+  color: #9ca3af;
+  transition: 0.2s ease;
+}
+.setup-step-num {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+.setup-step-connector {
+  width: 20px;
+  height: 1px;
+  background: rgba(255,255,255,0.14);
+  flex-shrink: 0;
+}
+.setup-step.is-done {
+  border-color: rgba(74,222,128,0.4);
+  color: #4ade80;
+  background: rgba(74,222,128,0.08);
+}
+.setup-step.is-done .setup-step-num {
+  background: #4ade80;
+  color: #041102;
+}
+.setup-step.is-current {
+  border-color: #c7ff38;
+  color: #c7ff38;
+  background: rgba(199,255,56,0.1);
+  box-shadow: 0 0 16px rgba(199,255,56,0.18);
+}
+.setup-step.is-current .setup-step-num {
+  background: #c7ff38;
+  color: #041102;
+}
+.setup-progress-hint {
+  text-align: center;
+  font-size: 12px;
+  color: #c7ff38;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+@media(max-width:768px) {
+  .setup-step-label { display: none; }
+  .setup-step { padding: 7px 10px; }
+}
 #points-display-container {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -2083,6 +2156,15 @@ MOBILE
   <button class="tutorial-trigger-btn" onclick="openTutorial()">Tutorial - How To Play</button>
 </div>
 
+<div class="setup-progress" id="setupProgress">
+  <div class="setup-step" id="setupStepTeam"><span class="setup-step-num">1</span><span class="setup-step-label">Team</span></div>
+  <div class="setup-step-connector"></div>
+  <div class="setup-step" id="setupStepWeekly"><span class="setup-step-num">2</span><span class="setup-step-label">Weekly Picks</span></div>
+  <div class="setup-step-connector"></div>
+  <div class="setup-step" id="setupStepBet"><span class="setup-step-num">3</span><span class="setup-step-label">Bet Builder</span></div>
+</div>
+<div class="setup-progress-hint" id="setupProgressHint">Save your Team to get started.</div>
+
 <div class="team-name-ribbon">
   <div class="name-section">
     <div class="mobile-row">
@@ -2631,6 +2713,7 @@ const applyPitchLockState = (isLocked = (gameweekStatus === 'locked')) => {
   if (formationSelect) formationSelect.disabled = lockPitch;
   const saveBtn = document.getElementById('saveTeamBottomBtn');
   if (saveBtn) saveBtn.disabled = isLocked || teamIsSaved;
+  updateProgressStepper();
 };
 
 const resetTeamSaveButton = () => {
@@ -2679,15 +2762,47 @@ const markBetAsSaved = () => {
   updateDependentSaveButtonsAvailability();
 };
 
-// Builds the "what to save next" prompt appended to each success message.
-const getNextStepsMessage = (justSaved) => {
-  const remaining = [];
-  if (justSaved !== 'team' && !teamIsSaved) remaining.push('your Team');
-  if (justSaved !== 'weekly' && !weeklyIsSaved) remaining.push('your Weekly Picks');
-  if (justSaved !== 'bet' && !betIsSaved) remaining.push('your Bet Builder prediction');
-  if (!remaining.length) return "You're all set for this gameweek!";
-  if (remaining.length === 1) return `Now save ${remaining[0]} to finish up.`;
-  return `Now save ${remaining.slice(0, -1).join(', ')} and ${remaining[remaining.length - 1]} to finish up.`;
+// Returns ONLY the single next required step (Team -> Weekly -> Bet, in that
+// strict order) - not a list of everything outstanding. Used both in each
+// save's success alert and in the always-visible progress hint below, so
+// both notifications say exactly the same thing.
+const getNextStepsMessage = () => {
+  if (!teamIsSaved) return "Now save your Team to get started.";
+  if (!weeklyIsSaved) return "Now save your Weekly Picks.";
+  if (!betIsSaved) return "Now save your Bet Builder prediction.";
+  return "You're all set for this gameweek!";
+};
+
+// Keeps the persistent Team -> Weekly -> Bet stepper (and its hint line) in
+// sync with the actual save flags. Called from applyPitchLockState() and
+// updateDependentSaveButtonsAvailability(), which between them run after
+// every state change, so this never needs its own separate call sites.
+const updateProgressStepper = () => {
+  const steps = [
+    { id: 'setupStepTeam', num: '1', done: teamIsSaved },
+    { id: 'setupStepWeekly', num: '2', done: weeklyIsSaved },
+    { id: 'setupStepBet', num: '3', done: betIsSaved }
+  ];
+  let currentAssigned = false;
+  steps.forEach((step) => {
+    const el = document.getElementById(step.id);
+    if (!el) return;
+    const numEl = el.querySelector('.setup-step-num');
+    el.classList.remove('is-done', 'is-current');
+    if (step.done) {
+      el.classList.add('is-done');
+      if (numEl) numEl.textContent = '✓';
+    } else {
+      if (numEl) numEl.textContent = step.num;
+      if (!currentAssigned) {
+        el.classList.add('is-current');
+        currentAssigned = true;
+      }
+    }
+  });
+
+  const hintEl = document.getElementById('setupProgressHint');
+  if (hintEl) hintEl.textContent = getNextStepsMessage();
 };
 
 // Smoothly brings the given section into view - used after each save (and
@@ -3423,6 +3538,7 @@ const updateDependentSaveButtonsAvailability = (isLocked = (gameweekStatus === '
     betBtn.title = (!isLocked && !betIsSaved && missingName) ? nameLockedTitle
       : (!isLocked && !betIsSaved && missingWeekly) ? weeklyLockedTitle : '';
   }
+  updateProgressStepper();
 };
 window.updateDependentSaveButtonsAvailability = updateDependentSaveButtonsAvailability;
 
@@ -3577,7 +3693,7 @@ const saveTeam = async function() {
     document.getElementById('teamNameInput').disabled = true;
     markTeamAsSaved();
     updateDependentSaveButtonsAvailability();
-    alert(`Team XI Saved & verified!\n\n${getNextStepsMessage('team')}`);
+    alert(`Team XI Saved & verified!\n\n${getNextStepsMessage()}`);
     if (!weeklyIsSaved) scrollToSection('.weekly-panel');
   } catch (error) {
     console.error("Error saving team: ", error);
@@ -3646,7 +3762,7 @@ const saveWeekly = async function() {
     status.innerText = "Saved to Firestore";
     panel.classList.add('panel-saved');
     markWeeklyAsSaved();
-    alert(`Weekly picks saved and verified.\n\n${getNextStepsMessage('weekly')}`);
+    alert(`Weekly picks saved and verified.\n\n${getNextStepsMessage()}`);
     if (!betIsSaved) scrollToSection('.bet-builder-panel');
     try { showDebug(`Weekly picks verified:\n${JSON.stringify(verifyData, null, 2)}`); } catch(e) {}
   } catch (error) {
@@ -3714,7 +3830,7 @@ const saveBetBuilder = async function() {
 
     document.querySelector('.bet-builder-panel').classList.add('panel-saved');
     markBetAsSaved();
-    alert(`Bet Builder prediction saved and verified.\n\n${getNextStepsMessage('bet')}`);
+    alert(`Bet Builder prediction saved and verified.\n\n${getNextStepsMessage()}`);
     try { showDebug(`Bet builder verified:\n${JSON.stringify(verifyData, null, 2)}`); } catch(e) {}
   } catch (error) {
     console.error("Error saving bet builder: ", error);
@@ -3874,6 +3990,14 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/service-worker.js').catch((error) => {
       console.warn('Service worker registration failed:', error);
     });
+  });
+  // Once a new service worker takes control, reload once so this page picks
+  // up the latest app-shell instead of running a stale cached version.
+  let swRefreshedOnce = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (swRefreshedOnce) return;
+    swRefreshedOnce = true;
+    window.location.reload();
   });
 }
 </script>

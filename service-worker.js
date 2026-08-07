@@ -1,4 +1,4 @@
-const CACHE_NAME = 'game-of-opinions-pwa-v2';
+const CACHE_NAME = 'game-of-opinions-pwa-v3';
 const APP_SHELL = [
   '/',
   '/index.html',
@@ -41,8 +41,12 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(request)
         .then((response) => {
+          // Cache each navigated page under its own URL, not always as
+          // index.html - otherwise every page you visit overwrites the
+          // index.html cache entry, and the offline fallback below can end
+          // up serving the wrong page's content.
           const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put('/index.html', copy));
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
           return response;
         })
         .catch(() => caches.match(request).then((cached) => cached || caches.match('/index.html')))

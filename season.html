@@ -1404,6 +1404,14 @@ if ('serviceWorker' in navigator) {
       console.warn('Service worker registration failed:', error);
     });
   });
+  // Once a new service worker takes control, reload once so this page picks
+  // up the latest app-shell instead of running a stale cached version.
+  let swRefreshedOnce = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (swRefreshedOnce) return;
+    swRefreshedOnce = true;
+    window.location.reload();
+  });
 }
 </script>
 </body>
