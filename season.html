@@ -998,6 +998,32 @@ function scoreTeam(categoryKey, team) {
   return base + jitter;
 }
 
+// Each club's most likely main goal threat / creative outlet, so "Top Scorer"
+// and "Top Assists" don't treat every forward or midfielder on a club as
+// equally likely - a squad's 4th-choice forward was previously indistinguishable
+// from its first-choice striker except by random luck. Values are a confidence
+// weight (0-1), not a guarantee - squad roles shift, so this is a nudge, and
+// unlisted players still get a fair (if lower) score from position + club alone.
+const ATTACK_PROMINENCE = {
+  "Gyokeres|Arsenal": 1, "Watkins|Aston Villa": 1, "Evanilson|Bournemouth": 1,
+  "Thiago|Brentford": 0.9, "Kostoulas|Brighton": 0.8, "Joao Pedro|Chelsea": 1,
+  "Thomas-Asante|Coventry": 0.7, "Mateta|Crystal Palace": 1, "Beto|Everton": 0.8,
+  "Muniz|Fulham": 0.9, "McBurnie|Hull": 0.8, "Akpom|Ipswich": 0.8,
+  "Calvert-Lewin|Leeds": 0.9, "Isak|Liverpool": 1, "Haaland|Man City": 1,
+  "Sesko|Man Utd": 0.9, "Woltemade|Newcastle": 1, "Wood|Nott'm Forest": 0.9,
+  "Mayenda|Sunderland": 0.6, "Solanke|Spurs": 1
+};
+
+const CREATIVE_PROMINENCE = {
+  "Odegaard|Arsenal": 1, "Buendia|Aston Villa": 0.7, "Christie|Bournemouth": 0.7,
+  "Damsgaard|Brentford": 0.8, "Mitoma|Brighton": 1, "Palmer|Chelsea": 1,
+  "Rudoni|Coventry": 0.6, "Pino|Crystal Palace": 0.7, "Ndiaye|Everton": 0.9,
+  "Iwobi|Fulham": 0.8, "Morita|Hull": 0.5, "Fatawu|Ipswich": 0.8,
+  "James|Leeds": 0.7, "Wirtz|Liverpool": 1, "Foden|Man City": 0.9,
+  "Bruno Fernandes|Man Utd": 1, "Barnes|Newcastle": 0.8, "Gibbs-White|Nott'm Forest": 0.9,
+  "Adingra|Sunderland": 0.6, "Maddison|Spurs": 0.9
+};
+
 function scorePlayer(categoryKey, player) {
   const posWeight = {
     scorer: { FWD: 100, MID: 70, DEF: 28, GK: 4 },
@@ -1011,8 +1037,19 @@ function scorePlayer(categoryKey, player) {
   const matrix = posWeight[categoryKey] || { FWD: 65, MID: 65, DEF: 65, GK: 65 };
   const positional = matrix[player.pos] || 40;
   const clubFactor = (teamStrength[player.club] || 50) * 0.15;
-  const chaos = hashText(player.name + player.club + categoryKey) * 16;
-  return positional + clubFactor + chaos;
+
+  const prominenceKey = `${player.name}|${player.club}`;
+  let prominenceBoost = 0;
+  if (categoryKey === "scorer" || categoryKey === "hattrick") {
+    prominenceBoost = (ATTACK_PROMINENCE[prominenceKey] || 0) * 22;
+  } else if (categoryKey === "assists") {
+    prominenceBoost = (CREATIVE_PROMINENCE[prominenceKey] || 0) * 22;
+  }
+
+  // Kept small on purpose - it's now a tiebreaker between similarly-uncertain
+  // players, not a big enough swing to beat a club's clear first-choice option.
+  const chaos = hashText(player.name + player.club + categoryKey) * 6;
+  return positional + clubFactor + prominenceBoost + chaos;
 }
 
 function selectIndices(mode, count, maxLen) {
