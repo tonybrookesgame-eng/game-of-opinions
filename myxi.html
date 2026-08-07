@@ -1106,6 +1106,18 @@ button:disabled {
   box-shadow: none !important;
 }
 
+/* Looks disabled like button:disabled, but stays clickable - used on the
+   Weekly Picks / Bet Builder buttons when the previous step isn't saved yet,
+   so tapping them still explains what to do next instead of doing nothing. */
+button.btn-locked {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+button.btn-locked:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
 #weeklyStatus{
 
   margin-top:10px;
@@ -2608,39 +2620,36 @@ const markTeamAsSaved = () => {
   saveBtn.innerText = 'Saved';
 };
 
+// Weekly/Bet button disabled + btn-locked + title state all live in
+// updateDependentSaveButtonsAvailability() so there's one source of truth -
+// these two just flip the save flag and update the label/text.
 const resetWeeklySaveButton = () => {
   weeklyIsSaved = false;
   const btn = document.getElementById('saveWeeklyBtn');
-  if (btn) {
-    btn.disabled = (gameweekStatus === 'locked') || !hasTeamNameSaved();
-    btn.innerText = 'Save Picks';
-  }
+  if (btn) btn.innerText = 'Save Picks';
   // Editing weekly picks after they were saved re-locks Bet Builder until re-saved.
   updateDependentSaveButtonsAvailability();
 };
 
 const markWeeklyAsSaved = () => {
-  const btn = document.getElementById('saveWeeklyBtn');
   weeklyIsSaved = true;
-  if (!btn) return;
-  btn.disabled = true;
-  btn.innerText = 'Saved';
+  const btn = document.getElementById('saveWeeklyBtn');
+  if (btn) btn.innerText = 'Saved';
+  updateDependentSaveButtonsAvailability();
 };
 
 const resetBetSaveButton = () => {
-  const btn = document.getElementById('saveBetBuilderBtn');
   betIsSaved = false;
-  if (!btn) return;
-  btn.disabled = (gameweekStatus === 'locked') || !hasTeamNameSaved() || !weeklyIsSaved;
-  btn.innerText = 'Save Match Prediction';
+  const btn = document.getElementById('saveBetBuilderBtn');
+  if (btn) btn.innerText = 'Save Match Prediction';
+  updateDependentSaveButtonsAvailability();
 };
 
 const markBetAsSaved = () => {
-  const btn = document.getElementById('saveBetBuilderBtn');
   betIsSaved = true;
-  if (!btn) return;
-  btn.disabled = true;
-  btn.innerText = 'Saved';
+  const btn = document.getElementById('saveBetBuilderBtn');
+  if (btn) btn.innerText = 'Saved';
+  updateDependentSaveButtonsAvailability();
 };
 
 // Builds the "what to save next" prompt appended to each success message.
@@ -2652,6 +2661,15 @@ const getNextStepsMessage = (justSaved) => {
   if (!remaining.length) return "You're all set for this gameweek!";
   if (remaining.length === 1) return `Now save ${remaining[0]} to finish up.`;
   return `Now save ${remaining.slice(0, -1).join(', ')} and ${remaining[remaining.length - 1]} to finish up.`;
+};
+
+// Smoothly brings the given section into view - used after each save (and
+// after a blocked, out-of-order save attempt) so the next required step is
+// physically on screen, not just described in an alert.
+const scrollToSection = (selector) => {
+  const el = document.querySelector(selector);
+  if (!el) return;
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
 };
 
 let isProgrammaticallyUpdatingPicks = false;
@@ -3350,9 +3368,13 @@ let currentPersistedTeamName = "";
 // not merely typed into the input - that's what gates Weekly Picks / Bet Builder saves.
 const hasTeamNameSaved = () => !!(currentPersistedTeamName && currentPersistedTeamName.trim());
 
-// Enforces the required save order: Team -> Weekly Picks -> Bet Builder. Each
-// button stays disabled until the previous step is saved, on top of the
-// normal gameweek-lock rule and each section's own already-saved state.
+// Enforces the required save order: Team -> Weekly Picks -> Bet Builder.
+// When the gameweek is locked or a section is already saved, its button is
+// truly disabled (nothing to do). When the *previous* step just hasn't been
+// saved yet, the button stays clickable but styled as locked ("btn-locked")
+// so a new user tapping it still gets told what to do next, instead of a
+// native-disabled button silently doing nothing (especially on mobile, where
+// there's no hover to reveal the title tooltip).
 const updateDependentSaveButtonsAvailability = (isLocked = (gameweekStatus === 'locked')) => {
   const nameSaved = hasTeamNameSaved();
   const nameLockedTitle = 'Save your Team first to unlock this.';
@@ -3360,14 +3382,20 @@ const updateDependentSaveButtonsAvailability = (isLocked = (gameweekStatus === '
 
   const weeklyBtn = document.getElementById('saveWeeklyBtn');
   if (weeklyBtn) {
-    weeklyBtn.disabled = isLocked || !nameSaved || weeklyIsSaved;
-    weeklyBtn.title = (!isLocked && !nameSaved) ? nameLockedTitle : '';
+    const prereqMissing = !nameSaved;
+    weeklyBtn.disabled = isLocked || weeklyIsSaved;
+    weeklyBtn.classList.toggle('btn-locked', !isLocked && !weeklyIsSaved && prereqMissing);
+    weeklyBtn.title = (!isLocked && !weeklyIsSaved && prereqMissing) ? nameLockedTitle : '';
   }
 
   const betBtn = document.getElementById('saveBetBuilderBtn');
   if (betBtn) {
-    betBtn.disabled = isLocked || !nameSaved || !weeklyIsSaved || betIsSaved;
-    betBtn.title = (!isLocked && !nameSaved) ? nameLockedTitle : (!isLocked && !weeklyIsSaved) ? weeklyLockedTitle : '';
+    const missingName = !nameSaved;
+    const missingWeekly = !weeklyIsSaved;
+    betBtn.disabled = isLocked || betIsSaved;
+    betBtn.classList.toggle('btn-locked', !isLocked && !betIsSaved && (missingName || missingWeekly));
+    betBtn.title = (!isLocked && !betIsSaved && missingName) ? nameLockedTitle
+      : (!isLocked && !betIsSaved && missingWeekly) ? weeklyLockedTitle : '';
   }
 };
 window.updateDependentSaveButtonsAvailability = updateDependentSaveButtonsAvailability;
