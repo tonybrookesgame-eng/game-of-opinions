@@ -128,25 +128,6 @@
       display: none !important;
     }
 
-    .season-hero {
-      margin-bottom: 18px;
-    }
-    .season-hero h1 {
-      margin: 0 0 6px;
-      font-size: 32px;
-      background: linear-gradient(135deg, #ffffff 0%, var(--lime) 140%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .season-hero-sub {
-      margin: 0;
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.6;
-      max-width: 640px;
-    }
-
     .tutorial-btn-container {
       text-align: center;
       margin-bottom: 16px;
@@ -246,22 +227,12 @@
       padding: 16px;
       background: var(--card);
       box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .season-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(199,255,56,0.3);
-      box-shadow: 0 14px 34px rgba(0,0,0,0.28);
+      transition: border-color 0.2s ease;
     }
 
     .season-card.selected {
       border-color: var(--lime);
       box-shadow: 0 0 0 1px rgba(199,255,56,0.45), 0 10px 30px rgba(0,0,0,0.2);
-    }
-
-    .season-card.selected:hover {
-      box-shadow: 0 0 0 1px rgba(199,255,56,0.45), 0 14px 34px rgba(0,0,0,0.28);
     }
 
     .season-card h3 {
@@ -281,69 +252,37 @@
       letter-spacing: 0.5px;
     }
 
-    .pick-field {
-      margin-bottom: 8px;
-    }
-
-    /* Native select stays in the DOM for its value/change semantics but is never
-       shown or focused directly - tapping it on mobile is what used to trigger
-       Safari's input-zoom, and it duplicated the search button below. */
-    .pick-select-native {
-      display: none !important;
-    }
-
-    .pick-select-display {
+    .pick-select {
       width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
       padding: 11px 12px;
       border-radius: 10px;
       border: 1px solid rgba(255,255,255,0.15);
       background: rgba(8,16,31,0.92);
       color: #fff;
       font-size: 14px;
-      font-family: inherit;
-      text-align: left;
+      margin-bottom: 8px;
+    }
+
+    .pick-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .search-btn {
+      border: 1px solid rgba(199,255,56,0.45);
+      background: rgba(199,255,56,0.12);
+      color: #c7ff38;
+      border-radius: 999px;
+      padding: 0 12px;
+      font-size: 12px;
+      font-weight: 700;
       cursor: pointer;
-      transition: border-color 0.2s ease, background 0.2s ease;
     }
 
-    .pick-select-display:hover {
-      border-color: rgba(199,255,56,0.45);
-    }
-
-    .pick-select-display:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      background: rgba(8,16,31,0.6);
-    }
-
-    .pick-select-display:disabled:hover {
-      border-color: rgba(255,255,255,0.15);
-    }
-
-    .pick-select-display.has-value {
-      color: #fff;
-    }
-
-    .pick-select-value {
-      flex: 1;
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .pick-select-display:not(.has-value) .pick-select-value {
-      color: #9ca8c6;
-    }
-
-    .pick-select-icon {
-      flex-shrink: 0;
-      font-size: 14px;
-      opacity: 0.85;
+    .search-btn:hover {
+      background: rgba(199,255,56,0.2);
     }
 
     .scouts-container {
@@ -421,8 +360,7 @@
       box-shadow: 0 0 15px rgba(199,255,56,0.2);
     }
 
-    .pick-select-display:focus,
-    .pick-select-display:focus-visible {
+    .pick-select:focus {
       border-color: var(--lime);
       outline: none;
     }
@@ -503,68 +441,6 @@
     .submit-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 0 16px rgba(199,255,56,0.5);
-    }
-
-    .submit-btn:disabled {
-      background: rgba(255,255,255,0.1);
-      color: var(--muted);
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-
-    /* TOAST NOTIFICATIONS - non-blocking confirmations, matching league.html */
-    .toast-stack {
-      position: fixed;
-      left: 50%;
-      bottom: calc(24px + env(safe-area-inset-bottom));
-      transform: translateX(-50%);
-      z-index: 3000;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      align-items: center;
-      pointer-events: none;
-    }
-    .toast {
-      background: rgba(10,20,35,0.96);
-      border: 1px solid rgba(199,255,56,0.35);
-      color: #fff;
-      padding: 11px 18px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 700;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-      opacity: 0;
-      transform: translateY(10px);
-      transition: opacity 0.25s ease, transform 0.25s ease;
-      max-width: min(90vw, 380px);
-      text-align: center;
-    }
-    .toast.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* SKELETON SHIMMER - loading placeholders instead of plain "Loading..." text */
-    .skeleton-card {
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: var(--card);
-      min-height: 168px;
-      position: relative;
-      overflow: hidden;
-    }
-    .skeleton-card::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
-      animation: skeletonShimmer 1.4s ease-in-out infinite;
-    }
-    @keyframes skeletonShimmer {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(100%); }
     }
 
     .submit-note {
@@ -651,8 +527,6 @@
       color: #fff;
       margin-bottom: 12px;
       outline: none;
-      /* iOS Safari auto-zooms the page when a focused text input is under 16px. */
-      font-size: 16px;
     }
 
     .picker-list {
@@ -733,17 +607,6 @@
         height: auto;
       }
 
-      .season-hero {
-        text-align: center;
-      }
-      .season-hero-sub {
-        margin: 0 auto;
-      }
-
-      .toast-stack {
-        bottom: calc(70px + env(safe-area-inset-bottom));
-      }
-
       nav { display: none; }
 
       .container { padding: 80px 15px 100px; }
@@ -755,36 +618,17 @@
         bottom: 0;
         left: 0;
         width: 100%;
-        background: rgba(2,6,17,0.94);
-        padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+        background: #000;
+        padding: 10px 0;
         border-top: 1px solid rgba(255,255,255,0.1);
         z-index: 1000;
-        backdrop-filter: blur(10px);
       }
 
       .mobile-nav a {
-        flex: 1;
         text-decoration: none !important;
-        color: rgba(255,255,255,0.92);
+        color: white;
         font-size: 12px;
-        font-weight: 700;
         text-align: center;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 4px;
-        min-height: 52px;
-        border-radius: 12px;
-        transition: all 0.2s ease;
-      }
-      .mobile-nav a:hover {
-        color: #c7ff38;
-        transform: translateY(-2px);
-      }
-      .mobile-nav a.active {
-        color: #041102;
-        background: #c7ff38;
       }
 
       .picker-list {
@@ -809,11 +653,6 @@
 </header>
 
 <div class="container">
-  <div class="season-hero">
-    <h1>Season Picks</h1>
-    <p class="season-hero-sub">Lock in your long-term calls — Premier League Winner, Top Scorer, relegation battles, and more. Change your mind as often as you like until you submit.</p>
-  </div>
-
   <div class="tutorial-btn-container">
     <button class="tutorial-trigger-btn" onclick="openTutorial()">Tutorial - How To Play</button>
   </div>
@@ -824,7 +663,7 @@
 
   <div class="submit-wrap">
     <button id="submitSeasonBtn" class="submit-btn" onclick="lockSeason()">Submit Season Selections</button>
-    <div class="submit-note">Change your picks as many times as you like - once you submit, they lock in for the rest of the season.</div>
+    <div class="submit-note">Once submitted, these picks are treated as locked season predictions.</div>
   </div>
 
   <div class="ai-footer-strip" aria-label="AI team footer">
@@ -878,11 +717,9 @@
 <div class="mobile-nav">
   <a href="dashboard.html">&#128200;<br>Dashboard</a>
   <a href="myxi.html">&#9917;<br>Team</a>
-  <a href="season.html" class="active">&#127942;<br>Picks</a>
+  <a href="season.html">&#127942;<br>Picks</a>
   <a href="league.html">&#128202;<br>League</a>
 </div>
-
-<div class="toast-stack" id="toast-stack"></div>
 
 <script src="myxi-data-loader.js"></script>
 <script type="module">
@@ -927,28 +764,12 @@ let predictionCache = new Map();
 let pickerTargetSelect = null;
 let pickerOptions = [];
 
-// Non-blocking confirmation, used for save-success and sequencing nudges
-// instead of a native alert() - real input/state errors still use alert().
-function showToast(message) {
-  const stack = document.getElementById("toast-stack");
-  if (!stack || !message) return;
-  const toast = document.createElement("div");
-  toast.className = "toast";
-  toast.innerText = message;
-  stack.appendChild(toast);
-  requestAnimationFrame(() => toast.classList.add("show"));
-  setTimeout(() => {
-    toast.classList.remove("show");
-    setTimeout(() => toast.remove(), 300);
-  }, 2500);
-}
-
 const teamStrength = {
-  "Arsenal": 99, "Aston Villa": 81, "Bournemouth": 56, "Brentford": 60,
-  "Brighton": 73, "Chelsea": 90, "Coventry": 45, "Crystal Palace": 59,
-  "Everton": 52, "Fulham": 57, "Hull": 42, "Ipswich": 43,
-  "Leeds": 55, "Liverpool": 95, "Man City": 98, "Man Utd": 74,
-  "Newcastle": 77, "Nott'm Forest": 54, "Sunderland": 46, "Spurs": 79
+  "Arsenal": 99, "Aston Villa": 88, "Bournemouth": 74, "Brentford": 60,
+  "Brighton": 73, "Chelsea": 90, "Coventry": 45, "Crystal Palace": 66,
+  "Everton": 60, "Fulham": 57, "Hull": 42, "Ipswich": 43,
+  "Leeds": 55, "Liverpool": 95, "Man City": 98, "Man Utd": 89,
+  "Newcastle": 77, "Nott'm Forest": 54, "Sunderland": 46, "Spurs": 84
 };
 
 function hashText(text) {
@@ -998,32 +819,6 @@ function scoreTeam(categoryKey, team) {
   return base + jitter;
 }
 
-// Each club's most likely main goal threat / creative outlet, so "Top Scorer"
-// and "Top Assists" don't treat every forward or midfielder on a club as
-// equally likely - a squad's 4th-choice forward was previously indistinguishable
-// from its first-choice striker except by random luck. Values are a confidence
-// weight (0-1), not a guarantee - squad roles shift, so this is a nudge, and
-// unlisted players still get a fair (if lower) score from position + club alone.
-const ATTACK_PROMINENCE = {
-  "Gyokeres|Arsenal": 1, "Watkins|Aston Villa": 1, "Evanilson|Bournemouth": 1,
-  "Thiago|Brentford": 0.9, "Kostoulas|Brighton": 0.8, "Joao Pedro|Chelsea": 1,
-  "Thomas-Asante|Coventry": 0.7, "Mateta|Crystal Palace": 1, "Beto|Everton": 0.8,
-  "Muniz|Fulham": 0.9, "McBurnie|Hull": 0.8, "Akpom|Ipswich": 0.8,
-  "Calvert-Lewin|Leeds": 0.9, "Isak|Liverpool": 1, "Haaland|Man City": 1,
-  "Sesko|Man Utd": 0.9, "Woltemade|Newcastle": 1, "Wood|Nott'm Forest": 0.9,
-  "Mayenda|Sunderland": 0.6, "Solanke|Spurs": 1
-};
-
-const CREATIVE_PROMINENCE = {
-  "Odegaard|Arsenal": 1, "Buendia|Aston Villa": 0.7, "Christie|Bournemouth": 0.7,
-  "Damsgaard|Brentford": 0.8, "Mitoma|Brighton": 1, "Palmer|Chelsea": 1,
-  "Rudoni|Coventry": 0.6, "Pino|Crystal Palace": 0.7, "Ndiaye|Everton": 0.9,
-  "Iwobi|Fulham": 0.8, "Morita|Hull": 0.5, "Fatawu|Ipswich": 0.8,
-  "James|Leeds": 0.7, "Wirtz|Liverpool": 1, "Foden|Man City": 0.9,
-  "Bruno Fernandes|Man Utd": 1, "Barnes|Newcastle": 0.8, "Gibbs-White|Nott'm Forest": 0.9,
-  "Adingra|Sunderland": 0.6, "Maddison|Spurs": 0.9
-};
-
 function scorePlayer(categoryKey, player) {
   const posWeight = {
     scorer: { FWD: 100, MID: 70, DEF: 28, GK: 4 },
@@ -1037,19 +832,8 @@ function scorePlayer(categoryKey, player) {
   const matrix = posWeight[categoryKey] || { FWD: 65, MID: 65, DEF: 65, GK: 65 };
   const positional = matrix[player.pos] || 40;
   const clubFactor = (teamStrength[player.club] || 50) * 0.15;
-
-  const prominenceKey = `${player.name}|${player.club}`;
-  let prominenceBoost = 0;
-  if (categoryKey === "scorer" || categoryKey === "hattrick") {
-    prominenceBoost = (ATTACK_PROMINENCE[prominenceKey] || 0) * 22;
-  } else if (categoryKey === "assists") {
-    prominenceBoost = (CREATIVE_PROMINENCE[prominenceKey] || 0) * 22;
-  }
-
-  // Kept small on purpose - it's now a tiebreaker between similarly-uncertain
-  // players, not a big enough swing to beat a club's clear first-choice option.
-  const chaos = hashText(player.name + player.club + categoryKey) * 6;
-  return positional + clubFactor + prominenceBoost + chaos;
+  const chaos = hashText(player.name + player.club + categoryKey) * 16;
+  return positional + clubFactor + chaos;
 }
 
 function selectIndices(mode, count, maxLen) {
@@ -1131,14 +915,9 @@ function buildPredictions(category, pools) {
   });
 }
 
-// Builds one pick field: a hidden native <select> (kept for its value/change
-// semantics) plus a visible pseudo-select button with a built-in search icon.
-// Tapping the button opens the search picker directly - there's no separate
-// dropdown to open first, which also removes the old dropdown as a mobile
-// zoom-on-focus trigger.
-function createPickField(options, placeholder, title) {
+function createSelect(options, placeholder) {
   const select = document.createElement("select");
-  select.className = "pick-select-native";
+  select.className = "pick-select";
   select.innerHTML = `<option value="">${placeholder}</option>`;
   options.forEach((opt) => {
     const el = document.createElement("option");
@@ -1146,37 +925,16 @@ function createPickField(options, placeholder, title) {
     el.textContent = opt.label;
     select.appendChild(el);
   });
+  return select;
+}
 
-  const display = document.createElement("button");
-  display.type = "button";
-  display.className = "pick-select-display";
-  display.innerHTML = `<span class="pick-select-value">${placeholder}</span><span class="pick-select-icon" aria-hidden="true">&#128269;</span>`;
-
-  const updateDisplay = () => {
-    const chosen = options.find((o) => o.value === select.value);
-    display.querySelector(".pick-select-value").textContent = chosen ? chosen.label : placeholder;
-    display.classList.toggle("has-value", !!chosen);
-  };
-  select.updatePickDisplay = updateDisplay;
-
-  display.addEventListener("click", () => {
-    // Exclude options already disabled on the select (e.g. relegation teams
-    // already taken by a sibling pick) so the search list matches the dropdown.
-    const optionEls = Array.from(select.options);
-    const available = options.filter((opt) => {
-      const optionEl = optionEls.find((o) => o.value === opt.value);
-      return !optionEl || !optionEl.disabled;
-    });
-    openPicker(select, available, title);
-  });
-  select.addEventListener("change", updateDisplay);
-  updateDisplay();
-
-  const field = document.createElement("div");
-  field.className = "pick-field";
-  field.appendChild(select);
-  field.appendChild(display);
-  return { select, field };
+function createSearchButton(select, options, title) {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "search-btn";
+  btn.innerText = "Search";
+  btn.addEventListener("click", () => openPicker(select, options, title));
+  return btn;
 }
 
 function updateCardSelectionState(card) {
@@ -1203,7 +961,6 @@ function setSelectWithFallback(select, value) {
   if (!value) return;
   if (Array.from(select.options).some((o) => o.value === value)) {
     select.value = value;
-    select.updatePickDisplay?.();
     return;
   }
 
@@ -1212,10 +969,7 @@ function setSelectWithFallback(select, value) {
       const decoded = decodePlayer(o.value);
       return decoded.name === value || o.value === value;
     });
-    if (fallback) {
-      select.value = fallback.value;
-      select.updatePickDisplay?.();
-    }
+    if (fallback) select.value = fallback.value;
   }
 }
 
@@ -1254,8 +1008,11 @@ function renderPickerList(queryText) {
     button.addEventListener("click", () => {
       if (!pickerTargetSelect) return;
       pickerTargetSelect.value = opt.value;
-      pickerTargetSelect.updatePickDisplay?.();
-      pickerTargetSelect.dispatchEvent(new Event("change", { bubbles: true }));
+      const card = pickerTargetSelect.closest(".season-card");
+      if (card) {
+        updateCardSelectionState(card);
+        if (card.dataset.category === "relegated") refreshRelegatedForCard(card);
+      }
       window.closePicker();
     });
     list.appendChild(button);
@@ -1322,15 +1079,18 @@ function renderSeasonGrid() {
     `;
 
     for (let i = 0; i < category.count; i++) {
-      const placeholder = category.type === "team" ? "Select team" : "Select player";
-      const { select, field } = createPickField(options, placeholder, category.title);
+      const select = createSelect(options, category.type === "team" ? "Select team" : "Select player");
       select.dataset.fieldTitle = category.title;
       select.addEventListener("change", () => {
         updateCardSelectionState(card);
         if (category.key === "relegated") refreshRelegatedForCard(card);
       });
 
-      card.appendChild(field);
+      const row = document.createElement("div");
+      row.className = "pick-row";
+      row.appendChild(select);
+      row.appendChild(createSearchButton(select, options, `Search ${category.title}`));
+      card.appendChild(row);
     }
 
     if (category.key === "relegated") refreshRelegatedForCard(card);
@@ -1359,55 +1119,20 @@ function gatherPicksPayload() {
   return payload;
 }
 
-let seasonLocked = false;
-
-// Once locked, every pick field and the submit button stay disabled for the
-// rest of the season - there is no way back to editable from here.
-function applySeasonLockState(locked) {
-  seasonLocked = locked;
-
-  document.querySelectorAll(".pick-select-display").forEach((btn) => {
-    btn.disabled = locked;
-  });
-
-  const submitBtn = document.getElementById("submitSeasonBtn");
-  if (submitBtn) {
-    submitBtn.disabled = locked;
-    submitBtn.innerText = locked ? "Season Picks Locked" : "Submit Season Selections";
-  }
-
-  const note = document.querySelector(".submit-note");
-  if (note) {
-    note.innerText = locked
-      ? "Your season picks are locked in for the rest of the season."
-      : "Change your picks as many times as you like - once you submit, they lock in for the rest of the season.";
-  }
-}
-
 window.lockSeason = async function () {
   if (!currentUser) {
     alert("Please log in to save your season picks.");
     return;
   }
 
-  if (seasonLocked) {
-    showToast("Your season picks are already locked in for this season.");
-    return;
-  }
-
-  if (!confirm("Submit and lock your season selections now? You won't be able to change them again this season.")) {
+  if (!confirm("Submit and lock your season selections now?")) {
     return;
   }
 
   try {
     const picks = gatherPicksPayload();
-    await setDoc(doc(db, "users", currentUser.uid, "predictions", "season"), {
-      ...picks,
-      locked: true,
-      lockedAt: new Date().toISOString()
-    }, { merge: true });
-    applySeasonLockState(true);
-    showToast("Your season picks are locked in for the season. Good luck!");
+    await setDoc(doc(db, "users", currentUser.uid, "predictions", "season"), picks, { merge: true });
+    alert("Season picks saved to Firestore.");
   } catch (error) {
     console.error(error);
     alert(error?.message || "Failed to save season picks.");
@@ -1419,7 +1144,6 @@ async function loadSeasonPicks(uid) {
   if (!snap.exists()) return;
 
   const saved = snap.data() || {};
-  if (saved.locked) applySeasonLockState(true);
 
   Array.from(document.querySelectorAll(".season-card")).forEach((card) => {
     const title = card.querySelector("h3")?.textContent?.trim();
@@ -1452,15 +1176,8 @@ window.handleLogout = () => {
   });
 };
 
-function renderSeasonGridSkeleton() {
-  const root = document.getElementById("seasonGrid");
-  if (!root) return;
-  root.innerHTML = Array.from({ length: 10 }).map(() => '<div class="skeleton-card"></div>').join('');
-}
-
 async function boot() {
   const status = document.getElementById("dataStatus");
-  renderSeasonGridSkeleton();
   try {
     if (typeof window.loadMyxiGameData !== "function") {
       throw new Error("MyXI data loader not available.");
@@ -1550,8 +1267,11 @@ document.getElementById('pickerSearch')?.addEventListener('input', (event) => {
   renderPickerList(event.target.value);
 });
 
-// Tutorial no longer auto-opens - it's available any time via the
-// "Tutorial - How To Play" button instead of popping up unprompted.
+setTimeout(() => {
+  if (!localStorage.getItem('onboarding_complete')) {
+    window.openTutorial();
+  }
+}, 800);
 
 boot();
 </script>
@@ -1561,14 +1281,6 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/service-worker.js').catch((error) => {
       console.warn('Service worker registration failed:', error);
     });
-  });
-  // Once a new service worker takes control, reload once so this page picks
-  // up the latest app-shell instead of running a stale cached version.
-  let swRefreshedOnce = false;
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (swRefreshedOnce) return;
-    swRefreshedOnce = true;
-    window.location.reload();
   });
 }
 </script>
