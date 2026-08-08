@@ -252,37 +252,70 @@
       letter-spacing: 0.5px;
     }
 
-    .pick-select {
+    .pick-field {
+      margin-bottom: 8px;
+    }
+
+    .pick-select-native {
+      display: none !important;
+    }
+
+    .combo-wrap {
+      position: relative;
+    }
+
+    .combo-input {
       width: 100%;
-      padding: 11px 12px;
+      padding: 11px 34px 11px 12px;
       border-radius: 10px;
       border: 1px solid rgba(255,255,255,0.15);
-      background: rgba(8,16,31,0.92);
+      background: rgba(8,16,31,0.92) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%239ca8c6" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>') no-repeat right 10px center;
+      background-size: 15px;
       color: #fff;
       font-size: 14px;
-      margin-bottom: 8px;
+      font-family: inherit;
     }
 
-    .pick-row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 8px;
-      margin-bottom: 8px;
+    .combo-input::placeholder {
+      color: #9ca8c6;
     }
 
-    .search-btn {
-      border: 1px solid rgba(199,255,56,0.45);
-      background: rgba(199,255,56,0.12);
-      color: #c7ff38;
-      border-radius: 999px;
-      padding: 0 12px;
-      font-size: 12px;
-      font-weight: 700;
+    .combo-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      max-height: 220px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      background: #0f1c2e;
+      border: 1px solid rgba(199,255,56,0.35);
+      border-radius: 10px;
+      box-shadow: 0 14px 34px rgba(0,0,0,0.4);
+      z-index: 50;
+    }
+
+    .combo-dropdown.open {
+      display: block;
+    }
+
+    .combo-option {
+      padding: 10px 12px;
+      font-size: 13px;
+      color: #fff;
       cursor: pointer;
     }
 
-    .search-btn:hover {
-      background: rgba(199,255,56,0.2);
+    .combo-option:hover,
+    .combo-option.active {
+      background: rgba(199,255,56,0.15);
+    }
+
+    .combo-empty {
+      padding: 10px 12px;
+      font-size: 13px;
+      color: var(--muted);
     }
 
     .scouts-container {
@@ -360,7 +393,7 @@
       box-shadow: 0 0 15px rgba(199,255,56,0.2);
     }
 
-    .pick-select:focus {
+    .combo-input:focus {
       border-color: var(--lime);
       outline: none;
     }
@@ -450,7 +483,6 @@
     }
 
     .ai-modal,
-    .picker-modal,
     .rules-modal {
       position: fixed;
       inset: 0;
@@ -464,7 +496,6 @@
     }
 
     .ai-report,
-    .picker-card,
     .rules-card {
       background: #0f172a;
       border: 1px solid #c7ff38;
@@ -497,7 +528,6 @@
     }
 
     .ai-report h2,
-    .picker-card h2,
     .rules-card h2 {
       color: #c7ff38;
       margin-top: 0;
@@ -516,41 +546,6 @@
       padding: 10px;
       margin-top: 10px;
       white-space: pre-wrap;
-    }
-
-    .picker-search {
-      width: 100%;
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(0,0,0,0.35);
-      color: #fff;
-      margin-bottom: 12px;
-      outline: none;
-    }
-
-    .picker-list {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-      max-height: 55vh;
-      overflow-y: auto;
-    }
-
-    .picker-option {
-      text-align: left;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.06);
-      color: white;
-      border-radius: 10px;
-      padding: 10px;
-      cursor: pointer;
-      font-size: 13px;
-    }
-
-    .picker-option:hover {
-      border-color: #c7ff38;
-      background: rgba(199,255,56,0.12);
     }
 
     .chat-container {
@@ -630,10 +625,6 @@
         font-size: 12px;
         text-align: center;
       }
-
-      .picker-list {
-        grid-template-columns: 1fr;
-      }
     }
   </style>
 </head>
@@ -679,15 +670,6 @@
     <h2 id="aiModalTitle">AI Scout Report</h2>
     <p id="aiModalBody">Loading analysis...</p>
     <div id="aiModalPick" class="ai-reco-box"></div>
-  </div>
-</div>
-
-<div id="pickerModal" class="picker-modal">
-  <div class="picker-card" onclick="event.stopPropagation()">
-    <button class="close-x" onclick="closePicker()" aria-label="Close">&times;</button>
-    <h2 id="pickerTitle">Pick Option</h2>
-    <input id="pickerSearch" class="picker-search" placeholder="Search list..." />
-    <div id="pickerList" class="picker-list"></div>
   </div>
 </div>
 
@@ -761,8 +743,6 @@ const AI_CHARACTERS = [
 let currentUser = null;
 let gameData = null;
 let predictionCache = new Map();
-let pickerTargetSelect = null;
-let pickerOptions = [];
 
 const teamStrength = {
   "Arsenal": 99, "Aston Villa": 88, "Bournemouth": 74, "Brentford": 60,
@@ -915,9 +895,14 @@ function buildPredictions(category, pools) {
   });
 }
 
-function createSelect(options, placeholder) {
+// One combo box per pick: a hidden native <select> (kept for its value/change
+// semantics, used by the rest of the app) plus a text input that doubles as
+// search box and dropdown trigger - typing filters the list, and the list
+// itself scrolls, so there's a single control instead of a select + a
+// separate search button/modal.
+function createPickField(options, placeholder) {
   const select = document.createElement("select");
-  select.className = "pick-select";
+  select.className = "pick-select-native";
   select.innerHTML = `<option value="">${placeholder}</option>`;
   options.forEach((opt) => {
     const el = document.createElement("option");
@@ -925,16 +910,102 @@ function createSelect(options, placeholder) {
     el.textContent = opt.label;
     select.appendChild(el);
   });
-  return select;
-}
 
-function createSearchButton(select, options, title) {
-  const btn = document.createElement("button");
-  btn.type = "button";
-  btn.className = "search-btn";
-  btn.innerText = "Search";
-  btn.addEventListener("click", () => openPicker(select, options, title));
-  return btn;
+  const input = document.createElement("input");
+  input.type = "text";
+  input.className = "combo-input";
+  input.placeholder = placeholder;
+  input.autocomplete = "off";
+
+  const dropdown = document.createElement("div");
+  dropdown.className = "combo-dropdown";
+
+  function availableOptions() {
+    const optionEls = Array.from(select.options);
+    return options.filter((opt) => {
+      const optionEl = optionEls.find((o) => o.value === opt.value);
+      return !optionEl || !optionEl.disabled;
+    });
+  }
+
+  function chooseOption(opt) {
+    select.value = opt.value;
+    input.value = opt.label;
+    dropdown.classList.remove("open");
+    select.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+
+  function renderList(filterText) {
+    const query = (filterText || "").trim().toLowerCase();
+    const pool = availableOptions();
+    const filtered = !query ? pool : pool.filter((o) => o.label.toLowerCase().includes(query));
+    dropdown.innerHTML = "";
+
+    if (!filtered.length) {
+      dropdown.innerHTML = '<div class="combo-empty">No matches.</div>';
+      return;
+    }
+
+    filtered.forEach((opt) => {
+      const item = document.createElement("div");
+      item.className = "combo-option";
+      item.textContent = opt.label;
+      // mousedown (not click) + preventDefault so the input never blurs
+      // before the option registers, which would close the dropdown first.
+      item.addEventListener("mousedown", (event) => {
+        event.preventDefault();
+        chooseOption(opt);
+      });
+      dropdown.appendChild(item);
+    });
+  }
+
+  function syncInputToSelect() {
+    const chosen = options.find((o) => o.value === select.value);
+    input.value = chosen ? chosen.label : "";
+  }
+  select.updateComboDisplay = syncInputToSelect;
+
+  input.addEventListener("focus", () => {
+    renderList("");
+    dropdown.classList.add("open");
+    input.select();
+  });
+
+  input.addEventListener("input", () => {
+    dropdown.classList.add("open");
+    renderList(input.value);
+  });
+
+  input.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      dropdown.classList.remove("open");
+      syncInputToSelect();
+      input.blur();
+    } else if (event.key === "Enter") {
+      event.preventDefault();
+      const query = input.value.trim().toLowerCase();
+      const pool = availableOptions();
+      const filtered = !query ? pool : pool.filter((o) => o.label.toLowerCase().includes(query));
+      if (filtered.length) chooseOption(filtered[0]);
+    }
+  });
+
+  input.addEventListener("blur", () => {
+    dropdown.classList.remove("open");
+    syncInputToSelect();
+  });
+
+  const wrap = document.createElement("div");
+  wrap.className = "combo-wrap";
+  wrap.appendChild(input);
+  wrap.appendChild(dropdown);
+
+  const field = document.createElement("div");
+  field.className = "pick-field";
+  field.appendChild(select);
+  field.appendChild(wrap);
+  return { select, field };
 }
 
 function updateCardSelectionState(card) {
@@ -961,6 +1032,7 @@ function setSelectWithFallback(select, value) {
   if (!value) return;
   if (Array.from(select.options).some((o) => o.value === value)) {
     select.value = value;
+    select.updateComboDisplay?.();
     return;
   }
 
@@ -969,54 +1041,11 @@ function setSelectWithFallback(select, value) {
       const decoded = decodePlayer(o.value);
       return decoded.name === value || o.value === value;
     });
-    if (fallback) select.value = fallback.value;
+    if (fallback) {
+      select.value = fallback.value;
+      select.updateComboDisplay?.();
+    }
   }
-}
-
-function openPicker(select, options, title) {
-  pickerTargetSelect = select;
-  pickerOptions = options.slice();
-  document.getElementById("pickerTitle").innerText = title;
-  document.getElementById("pickerSearch").value = "";
-  renderPickerList("");
-  document.getElementById("pickerModal").style.display = "flex";
-  setTimeout(() => document.getElementById("pickerSearch").focus(), 0);
-}
-
-window.closePicker = function () {
-  document.getElementById("pickerModal").style.display = "none";
-  pickerTargetSelect = null;
-  pickerOptions = [];
-};
-
-function renderPickerList(queryText) {
-  const list = document.getElementById("pickerList");
-  const query = (queryText || "").trim().toLowerCase();
-  const filtered = !query ? pickerOptions : pickerOptions.filter((o) => o.label.toLowerCase().includes(query));
-  list.innerHTML = "";
-
-  if (!filtered.length) {
-    list.innerHTML = '<div style="grid-column:1/-1;color:#9ca3af;padding:14px;text-align:center;">No options found.</div>';
-    return;
-  }
-
-  filtered.forEach((opt) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "picker-option";
-    button.innerText = opt.label;
-    button.addEventListener("click", () => {
-      if (!pickerTargetSelect) return;
-      pickerTargetSelect.value = opt.value;
-      const card = pickerTargetSelect.closest(".season-card");
-      if (card) {
-        updateCardSelectionState(card);
-        if (card.dataset.category === "relegated") refreshRelegatedForCard(card);
-      }
-      window.closePicker();
-    });
-    list.appendChild(button);
-  });
 }
 
 window.showAiScout = function (aiKey, categoryKey) {
@@ -1079,18 +1108,15 @@ function renderSeasonGrid() {
     `;
 
     for (let i = 0; i < category.count; i++) {
-      const select = createSelect(options, category.type === "team" ? "Select team" : "Select player");
+      const placeholder = category.type === "team" ? "Select team" : "Select player";
+      const { select, field } = createPickField(options, placeholder);
       select.dataset.fieldTitle = category.title;
       select.addEventListener("change", () => {
         updateCardSelectionState(card);
         if (category.key === "relegated") refreshRelegatedForCard(card);
       });
 
-      const row = document.createElement("div");
-      row.className = "pick-row";
-      row.appendChild(select);
-      row.appendChild(createSearchButton(select, options, `Search ${category.title}`));
-      card.appendChild(row);
+      card.appendChild(field);
     }
 
     if (category.key === "relegated") refreshRelegatedForCard(card);
@@ -1214,7 +1240,7 @@ onAuthStateChanged(auth, async (user) => {
 
 const tutorialData = [
   { text: '"On this page, you will make your Season Picks. These are long-term predictions worth big points."' },
-  { text: '"Tap an AI face for guidance only, then decide your own final selection using Search or the full dropdown list."' },
+  { text: '"Tap an AI face for guidance only, then decide your own final selection - type to search or scroll the list in the box below."' },
   { text: '"When everything is selected, submit your season selections. Choose wisely."' }
 ];
 let currentTutStep = 1;
@@ -1257,14 +1283,6 @@ window.closeOnboarding = function () {
 
 document.getElementById('aiModal')?.addEventListener('click', (event) => {
   if (event.target.id === 'aiModal') window.closeAiModal();
-});
-
-document.getElementById('pickerModal')?.addEventListener('click', (event) => {
-  if (event.target.id === 'pickerModal') window.closePicker();
-});
-
-document.getElementById('pickerSearch')?.addEventListener('input', (event) => {
-  renderPickerList(event.target.value);
 });
 
 setTimeout(() => {
