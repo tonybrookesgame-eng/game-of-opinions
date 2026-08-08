@@ -272,7 +272,8 @@
       background: rgba(8,16,31,0.92) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%239ca8c6" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>') no-repeat right 10px center;
       background-size: 15px;
       color: #fff;
-      font-size: 14px;
+      /* iOS Safari auto-zooms the page when a focused text input is under 16px. */
+      font-size: 16px;
       font-family: inherit;
     }
 
@@ -302,7 +303,7 @@
 
     .combo-option {
       padding: 10px 12px;
-      font-size: 13px;
+      font-size: 14px;
       color: #fff;
       cursor: pointer;
     }
@@ -613,17 +614,38 @@
         bottom: 0;
         left: 0;
         width: 100%;
-        background: #000;
-        padding: 10px 0;
+        background: rgba(2,6,17,0.94);
+        padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
         border-top: 1px solid rgba(255,255,255,0.1);
         z-index: 1000;
+        backdrop-filter: blur(10px);
       }
 
       .mobile-nav a {
+        flex: 1;
         text-decoration: none !important;
-        color: white;
+        color: rgba(255,255,255,0.92);
         font-size: 12px;
+        font-weight: 700;
         text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        min-height: 52px;
+        border-radius: 12px;
+        transition: all 0.2s ease;
+      }
+
+      .mobile-nav a:hover {
+        color: var(--lime);
+        transform: translateY(-2px);
+      }
+
+      .mobile-nav a.active {
+        color: #041102;
+        background: var(--lime);
       }
     }
   </style>
@@ -699,7 +721,7 @@
 <div class="mobile-nav">
   <a href="dashboard.html">&#128200;<br>Dashboard</a>
   <a href="myxi.html">&#9917;<br>Team</a>
-  <a href="season.html">&#127942;<br>Picks</a>
+  <a href="season.html" class="active">&#127942;<br>Picks</a>
   <a href="league.html">&#128202;<br>League</a>
 </div>
 
@@ -834,6 +856,127 @@ function selectIndices(mode, count, maxLen) {
   return out;
 }
 
+const POS_LABEL = { FWD: "forward", MID: "midfielder", DEF: "defender", GK: "goalkeeper" };
+
+// Real-world scouting one-liners for the players most likely to lead their
+// club's attack or creative output. Keyed by "Name|Club" so the AI Scout
+// Report can give a specific footballing reason (e.g. "Haaland's goal
+// conversion is off the charts") instead of generic model-speak - anyone not
+// in these lists still gets a position/club-grounded reason via the fallback
+// in playerReasonText, just without the bespoke scouting detail.
+const ATTACK_CORE = {
+  "Gyokeres|Arsenal": "Gyokeres bullies defenders and finishes clinically with either foot",
+  "Watkins|Aston Villa": "Watkins' movement in behind is relentless and clinical",
+  "Evanilson|Bournemouth": "Evanilson's low centre of gravity and composure in the box stand out",
+  "Thiago|Brentford": "Thiago's aerial threat and poacher's instinct make him a constant nuisance",
+  "Kostoulas|Brighton": "Kostoulas' pace and directness give him a shot at every through ball",
+  "Joao Pedro|Chelsea": "Joao Pedro's link-up play and cool finishing make him a nightmare to mark",
+  "Thomas-Asante|Coventry": "Thomas-Asante's physicality and hold-up play create chances out of nothing",
+  "Mateta|Crystal Palace": "Mateta's strength and much-improved finishing have made him Palace's focal point",
+  "Beto|Everton": "Beto's work-rate and knack for scrappy goals stand out",
+  "Muniz|Fulham": "Muniz's aerial power at set-pieces is a genuine weapon",
+  "McBurnie|Hull": "McBurnie's target-man presence drags defenders out of position",
+  "Akpom|Ipswich": "Akpom's movement between the lines keeps finding him half-chances",
+  "Calvert-Lewin|Leeds": "Calvert-Lewin's fresh start has reignited his eye for goal",
+  "Isak|Liverpool": "Isak's movement in the box and clinical finishing make him a constant threat",
+  "Haaland|Man City": "Haaland's goal conversion is off the charts",
+  "Sesko|Man Utd": "Sesko's pace in behind and physical profile make him a real handful",
+  "Woltemade|Newcastle": "Woltemade's hold-up play and composure in front of goal stand out",
+  "Wood|Nott'm Forest": "Wood's sharp movement in the six-yard box keeps him among the goals",
+  "Mayenda|Sunderland": "Mayenda's pace and instinct for the right run give him a scoring edge",
+  "Solanke|Spurs": "Solanke's smart movement and finishing touch make him a nailed-on threat"
+};
+
+const CREATIVE_REASONS = {
+  "Odegaard|Arsenal": "Odegaard's vision and set-piece delivery keep the assist tally ticking over.",
+  "Buendia|Aston Villa": "Buendia's close control in tight spaces consistently unlocks defences.",
+  "Christie|Bournemouth": "Christie's late runs into the box and clever passing generate a steady chance supply.",
+  "Damsgaard|Brentford": "Damsgaard's dead-ball delivery and left foot are a constant source of assists.",
+  "Mitoma|Brighton": "Mitoma's dribbling drags defenders out of shape and opens up cutbacks all game.",
+  "Palmer|Chelsea": "Palmer's vision and weight of pass make him Chelsea's main creative outlet.",
+  "Rudoni|Coventry": "Rudoni's energy box-to-box and eye for a through ball create regular chances.",
+  "Pino|Crystal Palace": "Pino's directness down the flank consistently sets up teammates.",
+  "Ndiaye|Everton": "Ndiaye's dribbling and end product make him Everton's most dangerous creator.",
+  "Iwobi|Fulham": "Iwobi's tidy passing and set-piece work keep him near the top of the assist charts.",
+  "Morita|Hull": "Morita's range of passing from deep regularly picks out runners.",
+  "Fatawu|Ipswich": "Fatawu's pace and crossing ability are a constant outlet for chances.",
+  "James|Leeds": "James' delivery from wide areas is a reliable source of assists.",
+  "Wirtz|Liverpool": "Wirtz's vision between the lines makes him one of the league's most creative threats.",
+  "Foden|Man City": "Foden's close control and end product in the final third are elite.",
+  "Bruno Fernandes|Man Utd": "Bruno Fernandes' passing range and set-piece deliveries keep the assists flowing.",
+  "Barnes|Newcastle": "Barnes' movement and crossing consistently open up defences.",
+  "Gibbs-White|Nott'm Forest": "Gibbs-White's creativity through the middle is Forest's main source of chances.",
+  "Adingra|Sunderland": "Adingra's dribbling and delivery from wide make him a constant creative threat.",
+  "Maddison|Spurs": "Maddison's set-piece delivery and vision make him a persistent source of assists."
+};
+
+function playerReasonText(categoryKey, pick) {
+  const key = `${pick.name}|${pick.club}`;
+  const posLabel = POS_LABEL[pick.pos] || "player";
+
+  if (categoryKey === "scorer" && ATTACK_CORE[key]) {
+    return `${ATTACK_CORE[key]} - the volume of chances that generates makes a serious golden boot run realistic.`;
+  }
+  if (categoryKey === "hattrick" && ATTACK_CORE[key]) {
+    return `${ATTACK_CORE[key]} - when a game breaks open, he's the most likely name to walk away with the match ball.`;
+  }
+  if (categoryKey === "assists" && CREATIVE_REASONS[key]) {
+    return CREATIVE_REASONS[key];
+  }
+
+  const fallback = {
+    scorer: `Lining up as a ${posLabel} for ${pick.club}, he gets enough sight of goal to be firmly in the golden boot conversation.`,
+    assists: `His ${posLabel} role at ${pick.club} puts him in position to keep teeing up goals all season.`,
+    cleansheets: `Between the sticks for ${pick.club}, he's got a real shot at topping the clean sheet charts behind a well-drilled defence.`,
+    hattrick: `As a ${posLabel} at ${pick.club} who gets a decent shot count, a three-goal haul is a genuine possibility on his day.`,
+    redcards: `His combative style as a ${posLabel} for ${pick.club} means the referee's book comes out often - and sometimes twice.`,
+    yellows: `He picks up more cards than most playing ${posLabel} minutes for ${pick.club}.`
+  };
+
+  return fallback[categoryKey] || `His role as a ${posLabel} for ${pick.club} fits this market well.`;
+}
+
+function teamReasonText(categoryKey, team) {
+  const strength = teamStrength[team] || 50;
+  const tier = strength >= 90 ? "elite" : strength >= 75 ? "strong" : strength >= 60 ? "solid" : "underdog";
+
+  const phrasesByCategory = {
+    winner: {
+      elite: `${team} have the squad depth and quality to go the distance - genuine title favourites.`,
+      strong: `${team} are strong enough to be in the mix, even if the very top sides start as favourites.`,
+      solid: `${team} would need a career-best season, but a top-half platform gives them an outside shot.`,
+      underdog: `${team} winning the league would be one of the great top-flight shocks.`
+    },
+    facup: {
+      elite: `${team}'s squad depth means cup football barely dents their firepower - built for knockout runs.`,
+      strong: `${team} have the quality to go on a cup run without their league form suffering.`,
+      solid: `${team} could catch fire in a one-off format where a single bad day doesn't define the season.`,
+      underdog: `${team} would need a run of upsets, but cup football has a habit of levelling things out.`
+    },
+    cleansheets: {
+      elite: `${team}'s defensive unit and goalkeeping options are built to rack up shutouts.`,
+      strong: `${team} defend well enough as a team to be near the top of the clean sheet charts.`,
+      solid: `${team} can grind out clean sheets against sides they're expected to beat.`,
+      underdog: `${team} sitting deep and compact could bank them more shutouts than the table suggests.`
+    },
+    sacked: {
+      elite: `Even ${team} aren't immune to a slow start putting real pressure on the dugout.`,
+      strong: `${team}'s fanbase and board have little patience if results dip early.`,
+      solid: `${team} are the kind of club where a poor run quickly turns into a managerial crisis.`,
+      underdog: `${team} are prime candidates for an early change if the season starts badly.`
+    },
+    relegated: {
+      elite: `${team} going down would defy their squad quality entirely - about as unlikely as it gets.`,
+      strong: `${team} have enough about them to avoid the bottom three barring a squad collapse.`,
+      solid: `${team} are the type of side that gets dragged into a relegation fight most seasons.`,
+      underdog: `${team}'s threadbare squad puts them squarely in the relegation conversation.`
+    }
+  };
+
+  return (phrasesByCategory[categoryKey] && phrasesByCategory[categoryKey][tier])
+    || `${team}'s current squad strength makes them a fit for this market.`;
+}
+
 function buildPredictions(category, pools) {
   const categoryId = category.key;
 
@@ -853,6 +996,9 @@ function buildPredictions(category, pools) {
         .map((player) => ({
           value: player.key,
           label: `${player.name} (${player.club})`,
+          name: player.name,
+          club: player.club,
+          pos: player.pos,
           score: scorePlayer(categoryId, player)
         }))
         .sort((a, b) => b.score - a.score);
@@ -879,13 +1025,11 @@ function buildPredictions(category, pools) {
       picks.push(next);
     }
 
-    const targetText = picks.map((p) => p.label).join(category.count > 1 ? " | " : "");
-    const explanation =
-      ai.mode === "safe"
-        ? `Low-volatility model prefers proven floor outcomes around ${targetText}.`
-        : ai.mode === "balanced"
-        ? `Tactical median model backs ${targetText} for balance of ceiling and reliability.`
-        : `High-variance model spots asymmetric upside in ${targetText} to chase differential points.`;
+    const reasonParts = picks.map((p) => (
+      category.type === "team" ? teamReasonText(categoryId, p.value) : playerReasonText(categoryId, p)
+    ));
+    const riskLabel = ai.mode === "safe" ? "Cautious read:" : ai.mode === "balanced" ? "Balanced read:" : "Bold swing:";
+    const explanation = `${riskLabel} ${reasonParts.join(" ")}`;
 
     return {
       ai,
