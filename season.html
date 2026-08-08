@@ -264,21 +264,54 @@
       position: relative;
     }
 
-    .combo-input {
+    /* The visible control is a <button>, not a text input - tapping it opens
+       the dropdown straight to the scrollable list without summoning the
+       mobile keyboard. The keyboard only appears if the user taps the search
+       field inside the open dropdown. */
+    .combo-trigger {
       width: 100%;
-      padding: 11px 34px 11px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 11px 12px;
       border-radius: 10px;
       border: 1px solid rgba(255,255,255,0.15);
-      background: rgba(8,16,31,0.92) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%239ca8c6" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>') no-repeat right 10px center;
-      background-size: 15px;
+      background: rgba(8,16,31,0.92);
       color: #fff;
-      /* iOS Safari auto-zooms the page when a focused text input is under 16px. */
-      font-size: 16px;
+      font-size: 14px;
       font-family: inherit;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color 0.2s ease;
     }
 
-    .combo-input::placeholder {
+    .combo-trigger:hover {
+      border-color: rgba(199,255,56,0.45);
+    }
+
+    .combo-trigger:focus,
+    .combo-trigger:focus-visible {
+      border-color: var(--lime);
+      outline: none;
+    }
+
+    .combo-trigger-value {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .combo-trigger:not(.has-value) .combo-trigger-value {
       color: #9ca8c6;
+    }
+
+    .combo-trigger-icon {
+      flex-shrink: 0;
+      font-size: 13px;
+      opacity: 0.85;
     }
 
     .combo-dropdown {
@@ -287,18 +320,40 @@
       top: calc(100% + 4px);
       left: 0;
       right: 0;
-      max-height: 220px;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
       background: #0f1c2e;
       border: 1px solid rgba(199,255,56,0.35);
       border-radius: 10px;
       box-shadow: 0 14px 34px rgba(0,0,0,0.4);
       z-index: 50;
+      overflow: hidden;
     }
 
     .combo-dropdown.open {
       display: block;
+    }
+
+    .combo-search {
+      display: block;
+      width: 100%;
+      padding: 10px 12px;
+      border: none;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.25);
+      color: #fff;
+      /* iOS Safari auto-zooms the page when a focused text input is under 16px. */
+      font-size: 16px;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .combo-search::placeholder {
+      color: #9ca8c6;
+    }
+
+    .combo-list {
+      max-height: 200px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .combo-option {
@@ -392,11 +447,6 @@
       background-size: cover;
       background-position: center;
       box-shadow: 0 0 15px rgba(199,255,56,0.2);
-    }
-
-    .combo-input:focus {
-      border-color: var(--lime);
-      outline: none;
     }
 
     .ai-trio {
@@ -1055,14 +1105,29 @@ function createPickField(options, placeholder) {
     select.appendChild(el);
   });
 
-  const input = document.createElement("input");
-  input.type = "text";
-  input.className = "combo-input";
-  input.placeholder = placeholder;
-  input.autocomplete = "off";
+  // The trigger is a <button>, not a text input, so tapping it opens straight
+  // to the scrollable option list without summoning the mobile keyboard. The
+  // keyboard only appears if the user deliberately taps the search field
+  // inside the open dropdown.
+  const trigger = document.createElement("button");
+  trigger.type = "button";
+  trigger.className = "combo-trigger";
+  trigger.innerHTML = `<span class="combo-trigger-value">${placeholder}</span><span class="combo-trigger-icon" aria-hidden="true">&#128269;</span>`;
 
   const dropdown = document.createElement("div");
   dropdown.className = "combo-dropdown";
+
+  const search = document.createElement("input");
+  search.type = "text";
+  search.className = "combo-search";
+  search.placeholder = "Search...";
+  search.autocomplete = "off";
+
+  const list = document.createElement("div");
+  list.className = "combo-list";
+
+  dropdown.appendChild(search);
+  dropdown.appendChild(list);
 
   function availableOptions() {
     const optionEls = Array.from(select.options);
@@ -1072,10 +1137,21 @@ function createPickField(options, placeholder) {
     });
   }
 
+  function updateTriggerLabel() {
+    const chosen = options.find((o) => o.value === select.value);
+    trigger.querySelector(".combo-trigger-value").textContent = chosen ? chosen.label : placeholder;
+    trigger.classList.toggle("has-value", !!chosen);
+  }
+  select.updateComboDisplay = updateTriggerLabel;
+
+  function closeDropdown() {
+    dropdown.classList.remove("open");
+  }
+
   function chooseOption(opt) {
     select.value = opt.value;
-    input.value = opt.label;
-    dropdown.classList.remove("open");
+    updateTriggerLabel();
+    closeDropdown();
     select.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
@@ -1083,10 +1159,10 @@ function createPickField(options, placeholder) {
     const query = (filterText || "").trim().toLowerCase();
     const pool = availableOptions();
     const filtered = !query ? pool : pool.filter((o) => o.label.toLowerCase().includes(query));
-    dropdown.innerHTML = "";
+    list.innerHTML = "";
 
     if (!filtered.length) {
-      dropdown.innerHTML = '<div class="combo-empty">No matches.</div>';
+      list.innerHTML = '<div class="combo-empty">No matches.</div>';
       return;
     }
 
@@ -1094,56 +1170,55 @@ function createPickField(options, placeholder) {
       const item = document.createElement("div");
       item.className = "combo-option";
       item.textContent = opt.label;
-      // mousedown (not click) + preventDefault so the input never blurs
-      // before the option registers, which would close the dropdown first.
+      // mousedown (not click) + preventDefault so the search input never
+      // blurs before the option registers, which would close the dropdown first.
       item.addEventListener("mousedown", (event) => {
         event.preventDefault();
         chooseOption(opt);
       });
-      dropdown.appendChild(item);
+      list.appendChild(item);
     });
   }
 
-  function syncInputToSelect() {
-    const chosen = options.find((o) => o.value === select.value);
-    input.value = chosen ? chosen.label : "";
-  }
-  select.updateComboDisplay = syncInputToSelect;
-
-  input.addEventListener("focus", () => {
+  function openDropdown() {
+    search.value = "";
     renderList("");
     dropdown.classList.add("open");
-    input.select();
+  }
+
+  trigger.addEventListener("click", () => {
+    if (dropdown.classList.contains("open")) {
+      closeDropdown();
+    } else {
+      openDropdown();
+    }
   });
 
-  input.addEventListener("input", () => {
-    dropdown.classList.add("open");
-    renderList(input.value);
-  });
+  search.addEventListener("input", () => renderList(search.value));
 
-  input.addEventListener("keydown", (event) => {
+  search.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
-      dropdown.classList.remove("open");
-      syncInputToSelect();
-      input.blur();
+      closeDropdown();
+      trigger.focus();
     } else if (event.key === "Enter") {
       event.preventDefault();
-      const query = input.value.trim().toLowerCase();
+      const query = search.value.trim().toLowerCase();
       const pool = availableOptions();
       const filtered = !query ? pool : pool.filter((o) => o.label.toLowerCase().includes(query));
       if (filtered.length) chooseOption(filtered[0]);
     }
   });
 
-  input.addEventListener("blur", () => {
-    dropdown.classList.remove("open");
-    syncInputToSelect();
-  });
-
   const wrap = document.createElement("div");
   wrap.className = "combo-wrap";
-  wrap.appendChild(input);
+  wrap.appendChild(trigger);
   wrap.appendChild(dropdown);
+
+  document.addEventListener("click", (event) => {
+    if (!wrap.contains(event.target)) closeDropdown();
+  });
+
+  updateTriggerLabel();
 
   const field = document.createElement("div");
   field.className = "pick-field";
