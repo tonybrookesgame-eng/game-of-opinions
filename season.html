@@ -946,8 +946,26 @@ function scorePlayer(categoryKey, player) {
   const matrix = posWeight[categoryKey] || { FWD: 65, MID: 65, DEF: 65, GK: 65 };
   const positional = matrix[player.pos] || 40;
   const clubFactor = (teamStrength[player.club] || 50) * 0.15;
-  const chaos = hashText(player.name + player.club + categoryKey) * 16;
-  return positional + clubFactor + chaos;
+
+  // Known standout goal threats / creative outlets (see ATTACK_CORE /
+  // CREATIVE_REASONS below) should reliably rank above the rest of their
+  // position, not just get a nicer sentence if the random chaos term
+  // happens to favour them. Without this, someone like Haaland could lose
+  // out to an unremarkable squad player purely on the coin-flip below.
+  const key = `${player.name}|${player.club}`;
+  let prominenceBoost = 0;
+  if ((categoryKey === "scorer" || categoryKey === "hattrick") && ATTACK_CORE[key]) {
+    prominenceBoost = 26;
+  } else if (categoryKey === "assists" && CREATIVE_REASONS[key]) {
+    prominenceBoost = 26;
+  } else if ((categoryKey === "redcards" || categoryKey === "yellows") && DISCIPLINE_CORE[key]) {
+    prominenceBoost = 26;
+  }
+
+  // Kept small on purpose - now a tiebreaker between similarly-uncertain
+  // players, not a big enough swing to beat a club's clear first-choice option.
+  const chaos = hashText(player.name + player.club + categoryKey) * 6;
+  return positional + clubFactor + prominenceBoost + chaos;
 }
 
 function selectIndices(mode, count, maxLen) {
@@ -960,10 +978,16 @@ function selectIndices(mode, count, maxLen) {
   };
 
   const base = ranges[mode] || ranges.balanced;
+  // Percentiles are taken from a capped "genuinely in contention" shortlist
+  // (roughly one club's worth of candidates), not the whole ranked pool.
+  // Player categories rank 400+ names; without this cap, "safe" mode's 10th
+  // percentile lands ~40 places down that list - well past every club's
+  // actual first-choice player - instead of picking a real contender.
+  const window = Math.min(maxLen, 20);
   const out = [];
   for (let i = 0; i < count; i++) {
     const ratio = base[Math.min(i, base.length - 1)];
-    out.push(Math.min(maxLen - 1, Math.floor((maxLen - 1) * ratio)));
+    out.push(Math.min(maxLen - 1, Math.floor((window - 1) * ratio)));
   }
   return out;
 }
@@ -1022,6 +1046,30 @@ const CREATIVE_REASONS = {
   "Maddison|Spurs": "Maddison's set-piece delivery and vision make him a persistent source of assists."
 };
 
+// Real-reputation picks for the disciplinary markets (red/yellow cards).
+// Kept deliberately shorter than ATTACK_CORE/CREATIVE_REASONS above - these
+// are specific claims about a real person's tendency to foul or mistime a
+// tackle, so only clubs where that reputation is well-established and
+// widely reported are listed here. Everyone else (including several clubs
+// with no strong individual reputation to point to) gets the honest
+// position/club-grounded fallback in playerReasonText instead of an invented
+// "he's notorious for X" claim about a real player.
+const DISCIPLINE_CORE = {
+  "Gabriel|Arsenal": "Gabriel's uncompromising defending has already brought reckless-challenge bookings, and worse, at Arsenal",
+  "Joao Gomes|Aston Villa": "Joao Gomes throws himself into every duel, and that combative style comes with a steady flow of cards",
+  "Araujo|Bournemouth": "Araujo's full-blooded, last-ditch tackling style has a track record of picking up cards across Europe",
+  "Baleba|Brighton": "Baleba's engine and physicality in midfield duels regularly puts him in the referee's notebook",
+  "Caicedo|Chelsea": "Caicedo covers more ground and makes more tackles than almost anyone in the league, and that comes with cards attached",
+  "Doucoure|Crystal Palace": "Doucoure's combative screening in front of the back four is exactly the kind of role that racks up cards",
+  "Tarkowski|Everton": "Tarkowski defends the uncompromising way Everton need him to, and that means taking cards to stop attacks",
+  "Konate|Liverpool": "Konate's physical, front-foot defending style means the odd mistimed challenge and a steady card count",
+  "Rodri|Man City": "Rodri sits in front of the back four and takes the tactical fouls that protect City's shape - cards included",
+  "Ugarte|Man Utd": "Ugarte's entire game is built around aggressive ball-winning, which comes with a heavy card count attached",
+  "Joelinton|Newcastle": "Joelinton's box-to-box energy and physical duels make him a regular in the book",
+  "Xhaka|Sunderland": "Xhaka has never shied away from a crunching tackle, and his card count has followed him through his career",
+  "Romero|Spurs": "Romero defends on the edge - his no-fear, foul-if-needed style is notorious for cards and the odd red"
+};
+
 function playerReasonText(categoryKey, pick) {
   const key = `${pick.name}|${pick.club}`;
   const posLabel = POS_LABEL[pick.pos] || "player";
@@ -1034,6 +1082,12 @@ function playerReasonText(categoryKey, pick) {
   }
   if (categoryKey === "assists" && CREATIVE_REASONS[key]) {
     return CREATIVE_REASONS[key];
+  }
+  if (categoryKey === "redcards" && DISCIPLINE_CORE[key]) {
+    return `${DISCIPLINE_CORE[key]} - and when the tackling gets that committed, a straight red is never far away.`;
+  }
+  if (categoryKey === "yellows" && DISCIPLINE_CORE[key]) {
+    return `${DISCIPLINE_CORE[key]} - exactly the profile that racks up a high yellow card count over a season.`;
   }
 
   const fallback = {
