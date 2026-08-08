@@ -527,6 +527,23 @@
       box-shadow: 0 0 16px rgba(199,255,56,0.5);
     }
 
+    .submit-btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .combo-trigger:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+      background: rgba(8,16,31,0.6);
+    }
+
+    .combo-trigger:disabled:hover {
+      border-color: rgba(255,255,255,0.15);
+    }
+
     .submit-note {
       font-size: 12px;
       color: var(--muted);
@@ -725,8 +742,8 @@
   <div id="seasonGrid" class="season-grid"></div>
 
   <div class="submit-wrap">
-    <button id="submitSeasonBtn" class="submit-btn" onclick="lockSeason()">Submit Season Selections</button>
-    <div class="submit-note">Once submitted, these picks are treated as locked season predictions.</div>
+    <button id="submitSeasonBtn" class="submit-btn" onclick="saveSeasonPicks()">Submit Season Selections</button>
+    <div id="submitNote" class="submit-note">You can change your picks as many times as you like until they lock.</div>
   </div>
 
   <div class="ai-footer-strip" aria-label="AI team footer">
@@ -812,9 +829,54 @@ const AI_CHARACTERS = [
   { key: "maverick", label: "The Maverick", tag: "High Risk", mode: "chaos" }
 ];
 
+// Season picks stay editable right up until the season's opening kickoff,
+// then lock for good. This is fixed on purpose rather than read from
+// settings/gameweek in Firestore - that doc is the *weekly* transfer
+// deadline and admin resets it every gameweek, so it can't double as a
+// one-time season-start marker without season picks re-"unlocking" later.
+// Matches shared-fixtures.js's opening fixture: Arsenal v Coventry,
+// Friday 21 August 2026, 20:00 kickoff, minus the app's usual 2-hour lock window.
+const SEASON_LOCK_AT = new Date("2026-08-21T18:00:00");
+
 let currentUser = null;
 let gameData = null;
 let predictionCache = new Map();
+
+function isSeasonLocked() {
+  return Date.now() >= SEASON_LOCK_AT.getTime();
+}
+
+function formatSeasonLockTime() {
+  return SEASON_LOCK_AT.toLocaleString('en-GB', {
+    weekday: 'short',
+    day: '2-digit',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  });
+}
+
+function applySeasonLockUI() {
+  const locked = isSeasonLocked();
+
+  document.querySelectorAll('.combo-trigger').forEach((btn) => {
+    btn.disabled = locked;
+  });
+
+  const submitBtn = document.getElementById('submitSeasonBtn');
+  if (submitBtn) {
+    submitBtn.disabled = locked;
+    submitBtn.innerText = locked ? 'Season Picks Locked' : 'Submit Season Selections';
+  }
+
+  const note = document.getElementById('submitNote');
+  if (note) {
+    note.innerText = locked
+      ? `Season picks locked at ${formatSeasonLockTime()} - these are final for the rest of the season.`
+      : `Change your picks as many times as you like - they lock for the season at ${formatSeasonLockTime()}.`;
+  }
+}
 
 const teamStrength = {
   "Arsenal": 99, "Aston Villa": 88, "Bournemouth": 74, "Brentford": 60,
@@ -1364,20 +1426,25 @@ function gatherPicksPayload() {
   return payload;
 }
 
-window.lockSeason = async function () {
+window.saveSeasonPicks = async function () {
+  if (isSeasonLocked()) {
+    alert(`Season picks locked at ${formatSeasonLockTime()} and can no longer be changed.`);
+    return;
+  }
+
   if (!currentUser) {
     alert("Please log in to save your season picks.");
     return;
   }
 
-  if (!confirm("Submit and lock your season selections now?")) {
+  if (!confirm("Save your season selections now? You can keep changing them until they lock.")) {
     return;
   }
 
   try {
     const picks = gatherPicksPayload();
     await setDoc(doc(db, "users", currentUser.uid, "predictions", "season"), picks, { merge: true });
-    alert("Season picks saved to Firestore.");
+    alert(`Season picks saved. You can keep changing them until they lock at ${formatSeasonLockTime()}.`);
   } catch (error) {
     console.error(error);
     alert(error?.message || "Failed to save season picks.");
@@ -1430,6 +1497,7 @@ async function boot() {
 
     gameData = await window.loadMyxiGameData();
     renderSeasonGrid();
+    applySeasonLockUI();
     status.textContent = `Synced to MyXI pool: ${gameData.teams.length} teams, ${gameData.allPlayerObjects.length} players.`;
   } catch (error) {
     console.error(error);
@@ -1437,6 +1505,9 @@ async function boot() {
     alert("Could not load teams/players from myxi.html. Please check that file and refresh.");
   }
 }
+
+// Keep the lock state correct if a user leaves this tab open across the deadline.
+setInterval(applySeasonLockUI, 30000);
 
 onAuthStateChanged(auth, async (user) => {
   const userLinks = document.querySelectorAll('.user-only');
@@ -1460,7 +1531,7 @@ onAuthStateChanged(auth, async (user) => {
 const tutorialData = [
   { text: '"On this page, you will make your Season Picks. These are long-term predictions worth big points."' },
   { text: '"Tap an AI face for guidance only, then decide your own final selection - type to search or scroll the list in the box below."' },
-  { text: '"When everything is selected, submit your season selections. Choose wisely."' }
+  { text: '"Save whenever you like and keep changing your mind - your picks lock automatically once the season kicks off."' }
 ];
 let currentTutStep = 1;
 
