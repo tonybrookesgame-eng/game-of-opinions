@@ -1095,6 +1095,93 @@ nav a:hover {
 }
 
 /* =========================
+   WHAT MAKES US DIFFERENT (mobile-only condensed version of .features -
+   six full cards read as a wall of near-identical scrolling on a phone;
+   this swaps them for one lead paragraph plus expandable detail. Desktop
+   keeps the existing card grid untouched.)
+========================= */
+
+.differentiator-section { display: none; }
+
+.diff-lead {
+  max-width: 560px;
+  margin: 0 auto 24px;
+  text-align: center;
+  color: #cbd5e1;
+  font-size: 15px;
+  line-height: 1.7;
+}
+.diff-lead strong { color: #c7ff38; }
+
+.diff-accordion {
+  margin: 0 0 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.03);
+  overflow: hidden;
+}
+.diff-accordion summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: background 0.2s ease;
+}
+.diff-accordion summary::-webkit-details-marker { display: none; }
+.diff-accordion summary:hover { background: rgba(255,255,255,0.04); }
+
+.diff-icon {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: rgba(199,255,56,0.12);
+  color: #c7ff38;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.diff-summary-text { flex: 1; min-width: 0; }
+.diff-summary-text strong { display: block; font-size: 14.5px; color: #f8fafc; }
+.diff-summary-text span { display: block; font-size: 12px; color: #9ca3af; margin-top: 2px; }
+
+.diff-chevron {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  font-size: 14px;
+  font-weight: 700;
+  transition: transform 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.diff-accordion[open] .diff-chevron {
+  transform: rotate(45deg);
+  color: #c7ff38;
+  border-color: rgba(199,255,56,0.4);
+}
+
+.diff-body {
+  padding: 0 16px 16px 66px;
+  color: #cbd5e1;
+  font-size: 13.5px;
+  line-height: 1.65;
+}
+
+@media (max-width: 768px) {
+  #how-it-works { display: none; }
+  .differentiator-section { display: block; }
+}
+
+/* =========================
 
    CLOSING CTA
 
@@ -1743,6 +1830,70 @@ nav a:hover {
     </p>
   </div>
 </div>
+</section>
+
+<!-- WHAT MAKES US DIFFERENT (mobile-only condensed version of the features grid above) -->
+<section class="section differentiator-section" id="differentiator">
+  <h2 class="section-title">What Makes Us Different</h2>
+  <p class="diff-lead">
+    It's not just about picking a squad. Every gameweek you call the first goal and swing on a live Bet Builder, then stack season-long predictions on top &mdash; all backed by <strong>AI scouts</strong> that actually explain their thinking, not a random number generator dressed up as one.
+  </p>
+
+  <details class="diff-accordion" open>
+    <summary>
+      <div class="diff-icon">&#9917;</div>
+      <div class="diff-summary-text">
+        <strong>Build a Squad That's Actually Yours</strong>
+        <span>One player per club. No budget, no price tags.</span>
+      </div>
+      <span class="diff-chevron">+</span>
+    </summary>
+    <div class="diff-body">
+      No heavily-owned City or Arsenal spam &mdash; every club gets exactly one pick, so every selection is a real decision. There's no meta team to copy, because the rules don't let one exist.
+    </div>
+  </details>
+
+  <details class="diff-accordion">
+    <summary>
+      <div class="diff-icon">&#9889;</div>
+      <div class="diff-summary-text">
+        <strong>Weekly Calls, Not Just Weekly Transfers</strong>
+        <span>First goal, the exact minute, and a live Bet Builder.</span>
+      </div>
+      <span class="diff-chevron">+</span>
+    </summary>
+    <div class="diff-body">
+      Back the club you think scores first, call the minute, then risk points on a weekly Bet Builder market for a bigger swing &mdash; all locked in before a ball is kicked, and settled automatically once it is.
+    </div>
+  </details>
+
+  <details class="diff-accordion">
+    <summary>
+      <div class="diff-icon">&#127942;</div>
+      <div class="diff-summary-text">
+        <strong>Season-Long Swings</strong>
+        <span>Title race, golden boot, relegation battle, and more.</span>
+      </div>
+      <span class="diff-chevron">+</span>
+    </summary>
+    <div class="diff-body">
+      Predict the Premier League winner, top scorer, relegated teams and more. Get the big calls right and they're worth enough points to transform your league position overnight.
+    </div>
+  </details>
+
+  <details class="diff-accordion">
+    <summary>
+      <div class="diff-icon">&#129504;</div>
+      <div class="diff-summary-text">
+        <strong>AI Scouts In Your Corner</strong>
+        <span>Three risk profiles, real footballing reasons.</span>
+      </div>
+      <span class="diff-chevron">+</span>
+    </summary>
+    <div class="diff-body">
+      The Oracle, The Tactician, and The Maverick each back a different risk level &mdash; and unlike a template fantasy game, every pick comes with an actual footballing reason behind it. Use it as a second opinion, then back your own judgement.
+    </div>
+  </details>
 </section>
 
 <!-- CLOSING CTA -->
