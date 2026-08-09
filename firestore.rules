@@ -96,5 +96,14 @@ service cloud.firestore {
       allow read: if isSignedIn();
       allow write: if isAdmin();
     }
+
+    // Aggregate-only stats shown on the public marketing page (e.g. manager
+    // count). Deliberately its own tiny collection, separate from
+    // users/leaderboard, so the public read here can never expose individual
+    // user data - only whatever admin.html explicitly writes into it.
+    match /public/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
   }
 }

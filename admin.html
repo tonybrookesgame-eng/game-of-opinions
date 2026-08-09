@@ -154,6 +154,17 @@
       <p id="usage-status" style="margin-top: 10px; color: #9ca3af; font-size: 13px;">Loading PWA usage metrics...</p>
     </div>
 
+    <div class="admin-section" style="background: rgba(199,255,56,0.05); border: 1px solid rgba(199,255,56,0.25); border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+      <p style="margin-top: 0; font-weight: bold; color: #c7ff38;">Public Stats (shown on the homepage)</p>
+      <p style="margin: 0 0 10px; color: #9ca3af; font-size: 13px;">
+        This is a real, server-counted number written to a public Firestore doc that the marketing page reads without requiring login. It only ever updates when you click the button below - nothing here is live-ticking or auto-incrementing.
+      </p>
+      <div style="margin-bottom: 10px;">
+        <strong>Public manager count:</strong> <span id="public-manager-count">Not synced yet</span>
+      </div>
+      <button onclick="refreshPublicStats()" style="margin-top: 0; padding: 8px 20px; width: auto; background: #c7ff38; color: #041102; font-weight: 800;">Refresh Public Stats</button>
+    </div>
+
     <div class="admin-section" style="border-top: none; margin-top: 0; padding-top: 0;">
       <p>1. Gameweek Number</p>
       <input type="number" id="gameweek-num" placeholder="e.g. 1" style="width: 100px; background: #fff; color: #000;">
@@ -260,7 +271,7 @@
   <script src="myxi-data-loader.js"></script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, collectionGroup, getDocs, doc, updateDoc, increment, setDoc, getDoc, query, orderBy, limit, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, collectionGroup, getDocs, getCountFromServer, doc, updateDoc, increment, setDoc, getDoc, query, orderBy, limit, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     const firebaseConfig = {
@@ -661,6 +672,7 @@
           document.getElementById('admin-content').style.display = 'block';
           loadCurrentSettings();
           loadPwaUsageMetrics();
+          loadPublicStatsDisplay();
           autoSyncDeadlineFromFixtures();
           wireSimpleModeToggle();
         } else {
@@ -732,6 +744,40 @@
       } catch (e) {
         console.error(e);
         document.getElementById('usage-status').innerText = 'Unable to load PWA usage metrics.';
+      }
+    }
+
+    // Manager count shown on the public homepage. Deliberately a manual,
+    // admin-triggered snapshot rather than a live auto-updating counter -
+    // there's no Cloud Functions in this project to keep it in sync
+    // automatically, and a real number refreshed occasionally is more
+    // trustworthy than a fragile client-incremented one that can drift.
+    window.refreshPublicStats = async function() {
+      try {
+        const countSnap = await getCountFromServer(collection(db, 'leaderboard'));
+        const managerCount = countSnap.data().count;
+        await setDoc(doc(db, 'public', 'stats'), {
+          managerCount,
+          updatedAt: new Date().toISOString()
+        }, { merge: true });
+        document.getElementById('public-manager-count').innerText = `${managerCount} (just synced)`;
+        showDebugAdmin(`Public stats refreshed: managerCount=${managerCount}`);
+      } catch (e) {
+        console.error(e);
+        showDebugAdmin(`Failed to refresh public stats: ${e?.message || e}`, true);
+      }
+    };
+
+    async function loadPublicStatsDisplay() {
+      try {
+        const snap = await getDoc(doc(db, 'public', 'stats'));
+        if (snap.exists()) {
+          const data = snap.data() || {};
+          const when = data.updatedAt ? new Date(data.updatedAt).toLocaleString('en-GB') : 'unknown';
+          document.getElementById('public-manager-count').innerText = `${data.managerCount ?? 0} (last synced ${when})`;
+        }
+      } catch (e) {
+        console.error(e);
       }
     }
 
