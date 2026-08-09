@@ -75,8 +75,16 @@ body::after{
 
 }
 
-.user-only, .guest-only {
+/* Default to the logged-out nav (guest-only visible) rather than hiding
+   everything - if the Firebase script fails to load (ad-blockers and privacy
+   browsers commonly block its CDN), onAuthStateChanged never fires and
+   nothing would ever un-hide the nav, leaving it completely empty. This way
+   a broken script degrades to a working logged-out header instead. */
+.user-only {
   display: none;
+}
+.guest-only {
+  display: inline-block;
 }
 
 /* =========================
@@ -186,16 +194,20 @@ nav a:hover {
 
 .signup-btn {
 
-  background: #c7ff38;
+  background: linear-gradient(135deg, #d9ff6e 0%, #c7ff38 55%, #a8e619 100%);
 
   color: #041102 !important;
 
-  padding: 8px 18px;
+  padding: 9px 20px;
 
   border-radius: 999px;
-  font-size: 16px;
+  font-size: 15px;
 
   font-weight: 800;
+
+  border: 1px solid rgba(199,255,56,0.9);
+
+  box-shadow: 0 4px 16px rgba(199,255,56,0.25);
 
   transition: 0.2s ease;
 
@@ -207,9 +219,51 @@ nav a:hover {
 
   transform: translateY(-2px);
 
-  box-shadow: 0 0 20px rgba(199, 255, 56, 0.6);
+  box-shadow: 0 8px 26px rgba(199, 255, 56, 0.45);
 
   opacity: 1;
+
+}
+
+/* Secondary pill to pair with .signup-btn - previously plain nav-link text,
+   which made Log In look like an afterthought next to the solid Sign Up pill. */
+.login-link {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  color: #fff !important;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+  padding: 9px 20px;
+
+  border-radius: 999px;
+
+  border: 1px solid rgba(199,255,56,0.4);
+
+  background: rgba(199,255,56,0.06);
+
+  transition: 0.2s ease;
+
+  text-decoration: none !important;
+
+  opacity: 1;
+
+}
+
+.login-link:hover {
+
+  border-color: rgba(199,255,56,0.8);
+
+  background: rgba(199,255,56,0.14);
+
+  color: #c7ff38 !important;
+
+  transform: translateY(-2px);
 
 }
 
@@ -313,12 +367,6 @@ nav a:hover {
   border-width: 0 0 2px 0;
   padding-bottom: 12px;
   margin-bottom: 25px;
-}
-
-.login-link {
-  color: white !important;
-  opacity: 1;
-  font-size: 16px; /* Align with nav links and signup button */
 }
 
 .auth-input {
@@ -866,7 +914,22 @@ nav a:hover {
   border-color: rgba(250,204,21,0.5);
   color: #fde68a;
 }
+.install-help-toggle {
+  display: inline-block;
+  margin-top: 8px;
+  background: none;
+  border: none;
+  color: #9ca3af;
+  font-size: 12px;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 4px 0;
+}
+.install-help-toggle:hover {
+  color: #c7ff38;
+}
 .install-help-card {
+  display: none;
   margin-top: 14px;
   border: 1px solid rgba(255,255,255,0.12);
   background: rgba(255,255,255,0.04);
@@ -876,6 +939,9 @@ nav a:hover {
   max-width: 560px;
   margin-left: auto;
   margin-right: auto;
+}
+.install-help-card.open {
+  display: block;
 }
 .install-help-card h3 {
   margin: 0 0 8px;
@@ -1030,7 +1096,7 @@ nav a:hover {
   text-align: center;
   padding: 60px 24px 70px;
   margin: 0 24px 40px;
-  border-radius: 28px;
+  border-radius: 24px;
   border: 1px solid rgba(199,255,56,0.22);
   background:
     radial-gradient(circle at 20% 15%, rgba(199,255,56,0.14), transparent 45%),
@@ -1451,7 +1517,8 @@ nav a:hover {
       <strong>Finally Worth Something.</strong></h1>
       <p>Your team, your rules. Build your XI and dominate the league.</p>
       <button id="installAppBtn" class="install-cta" type="button">Install GOO</button>
-      <p id="installNote" class="install-note">Tap Install GOO, or follow the steps below for your device.</p>
+      <p id="installNote" class="install-note">Add GOO to your home screen for the full app experience.</p>
+      <button id="installHelpToggle" class="install-help-toggle" type="button" aria-expanded="false">How do I install this?</button>
       <div class="install-help-card" id="installHelpCard">
         <h3>How to install</h3>
         <div class="install-platform-row">
@@ -1686,8 +1753,6 @@ nav a:hover {
     <div class="logo">GAME <span>OF OPINIONS</span></div>
     <nav class="footer-nav">
       <a href="rules.html">Rules</a>
-      <a href="signup.html">Sign Up</a>
-      <a href="javascript:void(0)" onclick="openLogin()">Log In</a>
     </nav>
     <p class="footer-copy">&copy; 2026 Game of Opinions. Fan-made football predictions, built for opinions.</p>
   </div>
@@ -1714,6 +1779,7 @@ console.log("Firebase initialized successfully");
 let deferredInstallPrompt = null;
 const installAppBtn = document.getElementById('installAppBtn');
 const installNote = document.getElementById('installNote');
+const installHelpToggle = document.getElementById('installHelpToggle');
 const installHelpCard = document.getElementById('installHelpCard');
 const installStepsList = document.getElementById('installStepsList');
 const installPlatformSelect = document.getElementById('installPlatformSelect');
@@ -1725,9 +1791,31 @@ function setInstallUiVisible(visible) {
   if (installNote) {
     installNote.style.display = visible ? '' : 'none';
   }
-  if (installHelpCard) {
-    installHelpCard.style.display = visible ? '' : 'none';
+  if (installHelpToggle) {
+    installHelpToggle.style.display = visible ? '' : 'none';
   }
+  // Collapse the detailed steps whenever the whole install UI is hidden
+  // (e.g. once installed) - otherwise it could resurface pre-opened later.
+  if (!visible && installHelpCard) {
+    installHelpCard.classList.remove('open');
+  }
+}
+
+function openInstallHelp() {
+  if (!installHelpCard) return;
+  installHelpCard.classList.add('open');
+  if (installHelpToggle) {
+    installHelpToggle.innerText = 'Hide install steps';
+    installHelpToggle.setAttribute('aria-expanded', 'true');
+  }
+}
+
+if (installHelpToggle && installHelpCard) {
+  installHelpToggle.addEventListener('click', () => {
+    const isOpen = installHelpCard.classList.toggle('open');
+    installHelpToggle.innerText = isOpen ? 'Hide install steps' : 'How do I install this?';
+    installHelpToggle.setAttribute('aria-expanded', String(isOpen));
+  });
 }
 
 function setInstallNote(message, level = '') {
@@ -1820,7 +1908,7 @@ if (isInstalledPwa()) {
   setInstallUiVisible(false);
 } else {
   setInstallUiVisible(true);
-  setInstallNote('Tap Install GOO, or follow the steps below for your device.');
+  setInstallNote('Add GOO to your home screen for the full app experience.');
 }
 
 window.addEventListener('beforeinstallprompt', (event) => {
@@ -1847,6 +1935,7 @@ if (installAppBtn) {
   installAppBtn.addEventListener('click', async () => {
     if (!deferredInstallPrompt) {
       setInstallNote(getInstallFallbackMessage(), 'warn');
+      openInstallHelp();
       return;
     }
 
@@ -1902,11 +1991,6 @@ window.handleLogout = () => {
   });
 };
 
-// Check for login redirect from other pages
-if (window.location.search.includes('login=true')) {
-  window.openLogin();
-}
-
 // AUTH SCREEN CONTROLS
 window.openLogin = () => {
   document.getElementById('auth-overlay').style.display = 'flex';
@@ -1915,6 +1999,14 @@ window.openLogin = () => {
 window.closeAuth = () => {
   document.getElementById('auth-overlay').style.display = 'none';
 };
+
+// Check for login redirect from other pages - must run after openLogin is
+// defined above, otherwise this throws and silently kills the rest of the
+// script (including handleAuth below), breaking the Log In button entirely
+// for anyone who arrived via a "Log In" link from another page.
+if (window.location.search.includes('login=true')) {
+  window.openLogin();
+}
 
 // UNIFIED AUTH HANDLER
 window.handleAuth = async function() {

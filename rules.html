@@ -90,6 +90,47 @@
     }
     nav a:hover { color: white; }
 
+    .signup-btn {
+      display: inline-flex;
+      align-items: center;
+      background: linear-gradient(135deg, #d9ff6e 0%, #c7ff38 55%, #a8e619 100%);
+      color: #041102 !important;
+      padding: 9px 20px;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 800;
+      border: 1px solid rgba(199,255,56,0.9);
+      box-shadow: 0 4px 16px rgba(199,255,56,0.25);
+      transition: 0.2s ease;
+      text-decoration: none !important;
+    }
+    .signup-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 26px rgba(199,255,56,0.45);
+      opacity: 1;
+    }
+
+    .login-link {
+      display: inline-flex;
+      align-items: center;
+      color: #fff !important;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 9px 20px;
+      border-radius: 999px;
+      border: 1px solid rgba(199,255,56,0.4);
+      background: rgba(199,255,56,0.06);
+      transition: 0.2s ease;
+      text-decoration: none !important;
+      opacity: 1;
+    }
+    .login-link:hover {
+      border-color: rgba(199,255,56,0.8);
+      background: rgba(199,255,56,0.14);
+      color: #c7ff38 !important;
+      transform: translateY(-2px);
+    }
+
     .container {
       max-width: 900px;
       margin: auto;
@@ -300,8 +341,8 @@
     <a href="season.html" class="user-only">Season Picks</a>
     <a href="league.html" class="user-only">League</a>
     <a href="rules.html" class="guest-only">Rules</a>
-    <a href="javascript:void(0)" class="guest-only" onclick="location.href='index.html?login=true'">Log In</a>
-    <a href="signup.html" class="guest-only">Sign Up</a>
+    <a href="javascript:void(0)" class="login-link guest-only" onclick="location.href='index.html?login=true'">Log In</a>
+    <a href="signup.html" class="signup-btn guest-only">Sign Up</a>
     <a href="javascript:void(0)" class="user-only" onclick="handleLogout()">Log Out</a>
   </nav>
 </header>

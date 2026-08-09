@@ -9,8 +9,13 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == uid;
     }
 
+    // Matches the client-side admin gate in admin.html - this is the only
+    // account allowed to bypass per-user ownership checks. Previously this
+    // returned true for any signed-in user, meaning every user could write
+    // to (and tamper with) anyone else's leaderboard, team, or predictions
+    // data directly via the Firestore SDK, bypassing the app's UI entirely.
     function isAdmin() {
-      return isSignedIn();
+      return isSignedIn() && request.auth.token.email == "tonybrookes.game@gmail.com";
     }
 
     function isLeagueCreator() {
@@ -84,12 +89,12 @@ service cloud.firestore {
 
     match /settings/{doc} {
       allow read: if isSignedIn();
-      allow write: if isSignedIn();
+      allow write: if isAdmin();
     }
 
     match /gameweekHistory/{doc} {
       allow read: if isSignedIn();
-      allow write: if isSignedIn();
+      allow write: if isAdmin();
     }
   }
 }
