@@ -302,6 +302,28 @@ nav a:hover {
   z-index: 2000;
   align-items: center;
   justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.close-x {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 6;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  background: rgba(255,255,255,0.1);
+  color: white;
+  transition: background 0.2s ease;
+}
+.close-x:hover {
+  background: rgba(255,255,255,0.2);
 }
 .auth-submit-btn {
   width: 100%;
@@ -374,6 +396,7 @@ nav a:hover {
 .whiteboard-login {
   width: 100%;
   max-width: 420px;
+  max-height: 88vh;
   background:
     radial-gradient(circle at 18% 0%, rgba(199,255,56,0.12), transparent 55%),
     linear-gradient(180deg, #101b2d 0%, #0a1220 100%);
@@ -386,7 +409,9 @@ nav a:hover {
   text-align: center;
   color: white;
   transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: auto;
 }
 
 .whiteboard-login h2 {
@@ -439,40 +464,6 @@ nav a:hover {
    PHONE MOCKUP
 
 ========================= */
-
-.hero-visual {
-  display: flex;
-  align-items: center;
-  gap: 60px;
-  justify-content: center;
-  perspective: 1200px;
-}
-
-.phone {
-
-  width: 340px;
-  flex-shrink: 0;
-
-  height: 600px;
-
-  background: #0b1220;
-
-  border-radius: 32px;
-
-  padding: 14px;
-
-  border: 1px solid rgba(255,255,255,0.12);
-
-  box-shadow: 0 30px 60px rgba(0,0,0,0.55);
-
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.phone-left { transform: rotateY(20deg) rotateX(5deg); }
-.phone-middle { transform: translateY(-20px) scale(1.05); z-index: 10; }
-.phone-right { transform: rotateY(-20deg) rotateX(5deg) translateY(-20px); }
 
 /* BET BUILDER STYLES (Replicated from myxi.html) */
 .bet-match {
@@ -531,60 +522,6 @@ nav a:hover {
   font-weight: 700;
   font-size: 12px;
   text-align: center;
-}
-
-/* PHONE LABELS */
-.phone-label {
-  position: absolute;
-  top: -90px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(199, 255, 56, 0.4);
-  backdrop-filter: blur(8px);
-  padding: 12px 16px;
-  border-radius: 16px;
-  width: 220px;
-  text-align: center;
-  z-index: 20;
-  pointer-events: none;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-}
-.phone-label strong {
-  display: block;
-  color: #c7ff38;
-  font-size: 13px;
-  text-transform: uppercase;
-  margin-bottom: 4px;
-  letter-spacing: 0.5px;
-}
-.phone-label p {
-  margin: 0;
-  font-size: 11px;
-  color: #cbd5e1;
-  line-height: 1.4;
-}
-
-.phone::before {
-
-  content: "";
-
-  position: absolute;
-
-  top: 14px;
-
-  left: 50%;
-
-  transform: translateX(-50%);
-
-  width: 110px;
-
-  height: 8px;
-
-  border-radius: 999px;
-
-  background: rgba(255,255,255,0.12);
-
 }
 
 .phone-screen {
@@ -1295,20 +1232,6 @@ nav a:hover {
   }
 
 
-  .phone {
-
-    width: 100%;
-
-    max-width: 340px;
-
-  }
-
-  .features {
-
-    grid-template-columns: 1fr;
-
-  }
-
 }
 
 @media (max-width: 768px) {
@@ -1389,50 +1312,9 @@ nav a:hover {
     gap: 30px;
   }
 
-  .hero-copy {
-    display: contents; /* Allows reordering children with the visual block */
-  }
-
-  .hero-copy h1 { order: 1; margin-bottom: 12px; }
-  .hero-copy p { order: 2; margin-bottom: 15px; }
-  .hero-visual {
-    order: 3;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 120px; /* Tightened gap to move sections up */
-    margin-top: 60px;
-  }
-  .phone-label {
-    width: 280px;
-    top: -85px;
-    border-color: #c7ff38;
-    box-shadow: 0 0 20px rgba(199, 255, 56, 0.2);
-    animation: mobileGlow 3s infinite alternate;
-  }
-  .phone-left {
-    max-width: 230px !important;
-    height: auto !important;
-  }
-
-  @keyframes mobileGlow {
-    from { box-shadow: 0 0 10px rgba(199, 255, 56, 0.1); }
-    to { box-shadow: 0 0 25px rgba(199, 255, 56, 0.3); }
-  }
-  .hero-visual::before {
-    content: "";
-    position: absolute;
-    width: 100vw;
-    height: 100%;
-    background: radial-gradient(circle at center, rgba(199, 255, 56, 0.08) 0%, transparent 70%);
-    z-index: -1;
-  }
-  .phone-left, .phone-right { transform: none !important; }
-
   .hero-copy h1 {
     font-size: 24px;
     line-height: 1.05;
-
     margin-bottom: 8px;
   }
 
@@ -1469,12 +1351,6 @@ nav a:hover {
   .site-footer-inner {
     flex-direction: column;
     text-align: center;
-  }
-
-  .phone {
-
-    width: 100%;
-    max-width: none !important;
   }
 
   .phone-screen {
@@ -1555,6 +1431,7 @@ nav a:hover {
 <!-- UNIFIED AUTH OVERLAY -->
 <div id="auth-overlay" class="auth-overlay">
   <div class="whiteboard-login">
+    <button class="close-x" onclick="closeAuth()" aria-label="Close">&times;</button>
     <h2 id="auth-title">Manager Login</h2>
     <p id="auth-subtitle" style="position: relative; z-index: 2; color: #cbd5e1; font-weight: 700; margin-bottom: 20px; font-size: 14px;">Winners Think Outside The Box.</p>
     <input id="auth-email" class="auth-input" type="email" placeholder="Email Address" style="position: relative; z-index: 2;">
@@ -1564,13 +1441,13 @@ nav a:hover {
     <p id="auth-switch-text" style="position: relative; z-index: 2; font-size: 12px; color: #cbd5e1; margin-top: 20px;">
       Need an account? <a href="signup.html" class="inline-switch-link">Sign Up</a>
     </p>
-    <button onclick="closeAuth()" style="position: relative; z-index: 2; margin-top: 15px; background: transparent; border: none; color: #9ca8c6; cursor: pointer; font-size: 12px; text-decoration: underline;">Cancel</button>
   </div>
 </div>
 
 <!-- INSTALL OVERLAY -->
 <div id="install-overlay" class="auth-overlay">
   <div class="whiteboard-login">
+    <button class="close-x" onclick="closeInstallOverlay()" aria-label="Close">&times;</button>
     <h2>Install GOO</h2>
     <p id="installNote" class="install-note">Add GOO to your home screen for the full app experience.</p>
     <button id="installAppBtn" class="auth-submit-btn" type="button" style="position: relative; z-index: 2;">Install GOO</button>
@@ -1592,7 +1469,6 @@ nav a:hover {
       </ol>
       <p class="install-help-tip">Tip: once installed, GOO opens full-screen like a normal app - no browser address bar - and sits on your home screen for one-tap access.</p>
     </div>
-    <button onclick="closeInstallOverlay()" style="position: relative; z-index: 2; margin-top: 15px; background: transparent; border: none; color: #9ca8c6; cursor: pointer; font-size: 12px; text-decoration: underline;">Close</button>
   </div>
 </div>
 
@@ -1608,110 +1484,6 @@ nav a:hover {
       <h1>Your Football Opinions.<br>
       <strong>Finally Worth Something.</strong></h1>
       <p>Your team, your rules. Build your XI and dominate the league.</p>
-    </div>
-    <div class="hero-visual">
-      <div class="phone phone-left">
-      <div class="phone-label">
-        <strong>Squad Builder</strong>
-        <p>Select 11 stars from 11 different clubs. No budget, just pure tactics.</p>
-      </div>
-      <div class="phone-screen">
-        <div class="app-header">
-          <strong>Your Team</strong>
-          <span class="club-rule">● Max 1 per club</span>
-        </div>
-        <div class="mini-pitch">
-          <div class="centre-circle"></div>
-          <div class="pitch-row">
-            <div class="player-card"><div class="shirt arsenal"></div><span>Arsenal</span></div>
-          </div>
-          <div class="pitch-row">
-            <div class="player-card"><div class="shirt newcastle"></div><span>Schar</span></div>
-            <div class="player-card"><div class="shirt everton"></div><span>Tarkowski</span></div>
-            <div class="player-card"><div class="shirt mancity"></div><span>Guehi</span></div>
-            <div class="player-card"><div class="shirt spurs"></div><span>Porro</span></div>
-          </div>
-          <div class="pitch-row">
-            <div class="player-card"><div class="shirt liverpool"></div><span>Wirtz</span></div>
-            <div class="player-card"><div class="shirt chelsea"></div><span>Palmer</span></div>
-            <div class="player-card"><div class="shirt manutd"></div><span>Mainoo</span></div>
-          </div>
-          <div class="pitch-row">
-            <div class="player-card"><div class="shirt leeds"></div><span>Nmecha</span></div>
-            <div class="player-card"><div class="shirt city"></div><span>Haaland</span></div>
-            <div class="player-card"><div class="shirt villa"></div><span>Watkins</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="phone phone-middle">
-      <div class="phone-label">
-        <strong>Match Predictions</strong>
-        <p>Call the weekend results and climb the global leaderboard.</p>
-      </div>
-      <div class="phone-screen" style="padding: 0; background: #000; display: flex; flex-direction: column;">
-        <div style="height: 220px; overflow: hidden; border-bottom: 1px solid rgba(199,255,56,0.3); position: relative;">
-          <img src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?q=80&w=800&auto=format&fit=crop" alt="Match Predictor" style="width: 100%; height: 100%; object-fit: cover; display: block;">
-          <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);"></div>
-          <div style="position: absolute; bottom: 15px; left: 20px; color: #c7ff38; font-weight: 900; font-size: 14px; text-transform: uppercase;">Match Predictor</div>
-        </div>
-        <div style="padding: 20px; flex: 1; display: flex; flex-direction: column; gap: 12px;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 10px; color: #9ca3af;">FEATURED BET BUILDER</span>
-            <span style="background: #c7ff38; color: #000; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px;">HOT</span>
-          </div>
-          
-          <div class="bet-match">Liverpool vs Brentford</div>
-          
-          <ul class="bet-list">
-            <li>Liverpool to win</li>
-            <li>Over 3.5 Goals</li>
-            <li>Konate to be carded</li>
-          </ul>
-
-          <div class="bet-odds-box">
-            <span class="odds-label">Est. Odds</span>
-            <span class="odds-value">30/1</span>
-          </div>
-
-          <div class="bet-actions">
-            <div class="bet-choice-mock" style="background: #c7ff38; color: #041102; border-color: #c7ff38;">YES</div>
-            <div class="bet-choice-mock">NO</div>
-          </div>
-
-          <p style="font-size: 10px; color: #64748b; margin-top: 0; text-align: center;">5 PT Entry. Risk vs Reward.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="phone phone-right">
-      <div class="phone-label">
-        <strong>Scout Intelligence</strong>
-        <p>Get data-driven insights and strategic advice from AI legends.</p>
-      </div>
-      <div class="phone-screen" style="padding: 0; background: #000; display: flex; flex-direction: column;">
-        <div style="height: 160px; overflow: hidden; border-bottom: 1px solid rgba(199,255,56,0.3);">
-          <img src="avatars.png" alt="AI Scouts" style="width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block;">
-        </div>
-        <div style="padding: 24px 20px; flex: 1; display: flex; flex-direction: column; gap: 15px;">
-          <div style="color: #c7ff38; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;">Scout Intelligence</div>
-          <h4 style="margin: 0; font-size: 20px; color: #fff; font-weight: 800;">Golden Boot Report</h4>
-          <p style="font-size: 14px; color: #cbd5e1; margin: 0; line-height: 1.6; font-style: italic;">
-            "Positioning is everything. Haaland is always in the right place. My data suggests he is the only logical pick for Top Scorer."
-          </p>
-          <div style="margin-top: auto; background: rgba(199,255,56,0.05); padding: 12px; border-radius: 12px; border: 1px solid rgba(199,255,56,0.1);">
-            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
-              <span style="color: #9ca3af;">Primary Pick:</span>
-              <span style="color: #c7ff38; font-weight: 800;">Erling Haaland</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; font-size: 12px;">
-              <span style="color: #9ca3af;">Certainty:</span>
-              <span style="color: #c7ff38; font-weight: 800;">98%</span>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </section>
@@ -1759,6 +1531,7 @@ nav a:hover {
 
 <div id="pillar-squad-overlay" class="auth-overlay">
   <div class="whiteboard-login pillar-card">
+    <button class="close-x" onclick="closePillar('squad')" aria-label="Close">&times;</button>
     <div class="pillar-eyebrow">Squad Builder</div>
     <h2>One Player Per Club.<br>No Exceptions.</h2>
     <p class="pillar-sub">No budget, no price tags, no template team copied from a thousand other squads &mdash; every pick is a real decision.</p>
@@ -1795,12 +1568,12 @@ nav a:hover {
       <li>Built entirely around your own judgement</li>
     </ul>
     <a href="signup.html" class="auth-submit-btn" style="text-decoration: none; display: block; text-align: center; box-sizing: border-box;">Sign Up Free</a>
-    <button onclick="closePillar('squad')" style="position: relative; z-index: 2; margin-top: 15px; background: transparent; border: none; color: #9ca8c6; cursor: pointer; font-size: 12px; text-decoration: underline;">Close</button>
   </div>
 </div>
 
 <div id="pillar-weekly-overlay" class="auth-overlay">
   <div class="whiteboard-login pillar-card">
+    <button class="close-x" onclick="closePillar('weekly')" aria-label="Close">&times;</button>
     <div class="pillar-eyebrow">Weekly Predictions</div>
     <h2>Call The First Goal.<br>Back Your Instinct.</h2>
     <p class="pillar-sub">Pick the club, call the minute, then swing for more on a live Bet Builder &mdash; all locked in before a ball is kicked.</p>
@@ -1830,12 +1603,12 @@ nav a:hover {
       <li>Scored automatically once results land &mdash; zero admin</li>
     </ul>
     <a href="signup.html" class="auth-submit-btn" style="text-decoration: none; display: block; text-align: center; box-sizing: border-box;">Sign Up Free</a>
-    <button onclick="closePillar('weekly')" style="position: relative; z-index: 2; margin-top: 15px; background: transparent; border: none; color: #9ca8c6; cursor: pointer; font-size: 12px; text-decoration: underline;">Close</button>
   </div>
 </div>
 
 <div id="pillar-season-overlay" class="auth-overlay">
   <div class="whiteboard-login pillar-card">
+    <button class="close-x" onclick="closePillar('season')" aria-label="Close">&times;</button>
     <div class="pillar-eyebrow">Season Predictions</div>
     <h2>One Call Can Flip<br>Your Season.</h2>
     <p class="pillar-sub">Predict the title race, the golden boot, the relegation battle &mdash; and let our AI scouts back you up.</p>
@@ -1862,7 +1635,6 @@ nav a:hover {
       <li>Big point swings that can transform your league position</li>
     </ul>
     <a href="signup.html" class="auth-submit-btn" style="text-decoration: none; display: block; text-align: center; box-sizing: border-box;">Sign Up Free</a>
-    <button onclick="closePillar('season')" style="position: relative; z-index: 2; margin-top: 15px; background: transparent; border: none; color: #9ca8c6; cursor: pointer; font-size: 12px; text-decoration: underline;">Close</button>
   </div>
 </div>
 
