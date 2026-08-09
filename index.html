@@ -267,6 +267,31 @@ nav a:hover {
 
 }
 
+/* Header install icon - opens the install overlay instead of living inline
+   in the hero, so it stays reachable from every page state on both mobile
+   and desktop instead of only being visible on first scroll of the homepage. */
+.install-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(199,255,56,0.4);
+  background: rgba(199,255,56,0.06);
+  color: #c7ff38;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+.install-nav-btn:hover {
+  border-color: rgba(199,255,56,0.8);
+  background: rgba(199,255,56,0.14);
+  transform: translateY(-2px);
+}
+
 /* AUTH POPUP STYLES */
 .auth-overlay {
   display: none;
@@ -881,25 +906,6 @@ nav a:hover {
 
 }
 
-.install-cta {
-  margin-top: 18px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 14px 18px;
-  border-radius: 999px;
-  border: 1px solid rgba(199,255,56,0.45);
-  background: rgba(199,255,56,0.12);
-  color: #c7ff38;
-  font-weight: 800;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-.install-cta:hover {
-  transform: translateY(-2px);
-  background: rgba(199,255,56,0.18);
-}
 .install-note {
   margin-top: 10px;
   font-size: 12px;
@@ -921,20 +927,6 @@ nav a:hover {
 .install-note.warn {
   border-color: rgba(250,204,21,0.5);
   color: #fde68a;
-}
-.install-help-toggle {
-  display: inline-block;
-  margin-top: 8px;
-  background: none;
-  border: none;
-  color: #9ca3af;
-  font-size: 12px;
-  text-decoration: underline;
-  cursor: pointer;
-  padding: 4px 0;
-}
-.install-help-toggle:hover {
-  color: #c7ff38;
 }
 .install-help-card {
   display: none;
@@ -1424,9 +1416,6 @@ nav a:hover {
 
   .hero-copy h1 { order: 1; margin-bottom: 12px; }
   .hero-copy p { order: 2; margin-bottom: 15px; }
-  .hero-copy .install-cta,
-  .hero-copy .install-note,
-  .hero-copy .install-help-card { order: 2; }
   .hero-visual {
     order: 3;
     display: flex;
@@ -1563,6 +1552,7 @@ nav a:hover {
   <div class="header-top">
     <div class="logo">GAME <span>OF OPINIONS</span></div>
     <nav>
+      <button id="installNavBtn" class="install-nav-btn" type="button" onclick="openInstallOverlay()" title="Install GOO" aria-label="Install GOO">&#128242;</button>
       <a href="myxi.html" class="user-only">Your Team</a>
       <a href="season.html" class="user-only">Season Picks</a>
       <a href="league.html" class="user-only">League</a>
@@ -1599,6 +1589,34 @@ nav a:hover {
   </div>
 </div>
 
+<!-- INSTALL OVERLAY -->
+<div id="install-overlay" class="auth-overlay">
+  <div class="whiteboard-login">
+    <h2>Install GOO</h2>
+    <p id="installNote" class="install-note">Add GOO to your home screen for the full app experience.</p>
+    <button id="installAppBtn" class="auth-submit-btn" type="button" style="position: relative; z-index: 2;">Install GOO</button>
+    <div class="install-help-card open" id="installHelpCard">
+      <h3>How to install</h3>
+      <div class="install-platform-row">
+        <label for="installPlatformSelect">Show steps for:</label>
+        <select id="installPlatformSelect" class="install-platform-select">
+          <option value="auto">Auto-detect</option>
+          <option value="ios">iPhone / iPad</option>
+          <option value="android">Android</option>
+          <option value="desktop">Desktop</option>
+        </select>
+      </div>
+      <ol class="install-help-list" id="installStepsList">
+        <li>Open GOO in your browser.</li>
+        <li>Tap Share (or the menu button).</li>
+        <li>Tap Add to Home Screen or Install app.</li>
+      </ol>
+      <p class="install-help-tip">Tip: once installed, GOO opens full-screen like a normal app - no browser address bar - and sits on your home screen for one-tap access.</p>
+    </div>
+    <button onclick="closeInstallOverlay()" style="position: relative; z-index: 2; margin-top: 15px; background: transparent; border: none; color: #9ca8c6; cursor: pointer; font-size: 12px; text-decoration: underline;">Close</button>
+  </div>
+</div>
+
 <!-- MANAGER'S OFFICE VISUAL -->
 <section class="office-section" id="login-section">
 </section>
@@ -1611,27 +1629,6 @@ nav a:hover {
       <h1>Your Football Opinions.<br>
       <strong>Finally Worth Something.</strong></h1>
       <p>Your team, your rules. Build your XI and dominate the league.</p>
-      <button id="installAppBtn" class="install-cta" type="button">Install GOO</button>
-      <p id="installNote" class="install-note">Add GOO to your home screen for the full app experience.</p>
-      <button id="installHelpToggle" class="install-help-toggle" type="button" aria-expanded="false">How do I install this?</button>
-      <div class="install-help-card" id="installHelpCard">
-        <h3>How to install</h3>
-        <div class="install-platform-row">
-          <label for="installPlatformSelect">Show steps for:</label>
-          <select id="installPlatformSelect" class="install-platform-select">
-            <option value="auto">Auto-detect</option>
-            <option value="ios">iPhone / iPad</option>
-            <option value="android">Android</option>
-            <option value="desktop">Desktop</option>
-          </select>
-        </div>
-        <ol class="install-help-list" id="installStepsList">
-          <li>Open GOO in your browser.</li>
-          <li>Tap Share (or the menu button).</li>
-          <li>Tap Add to Home Screen or Install app.</li>
-        </ol>
-        <p class="install-help-tip">Tip: once installed, GOO opens full-screen like a normal app - no browser address bar - and sits on your home screen for one-tap access.</p>
-      </div>
     </div>
     <div class="hero-visual">
       <div class="phone phone-left">
@@ -1936,46 +1933,29 @@ const auth = getAuth(app);
 console.log("Firebase initialized successfully");
 
 let deferredInstallPrompt = null;
+const installNavBtn = document.getElementById('installNavBtn');
 const installAppBtn = document.getElementById('installAppBtn');
 const installNote = document.getElementById('installNote');
-const installHelpToggle = document.getElementById('installHelpToggle');
 const installHelpCard = document.getElementById('installHelpCard');
 const installStepsList = document.getElementById('installStepsList');
 const installPlatformSelect = document.getElementById('installPlatformSelect');
 
+// The install icon lives in the header nav instead of the hero, so it's
+// reachable from any scroll position on both mobile and desktop rather than
+// only appearing once on first page load.
 function setInstallUiVisible(visible) {
-  if (installAppBtn) {
-    installAppBtn.style.display = visible ? '' : 'none';
-  }
-  if (installNote) {
-    installNote.style.display = visible ? '' : 'none';
-  }
-  if (installHelpToggle) {
-    installHelpToggle.style.display = visible ? '' : 'none';
-  }
-  // Collapse the detailed steps whenever the whole install UI is hidden
-  // (e.g. once installed) - otherwise it could resurface pre-opened later.
-  if (!visible && installHelpCard) {
-    installHelpCard.classList.remove('open');
+  if (installNavBtn) {
+    installNavBtn.style.display = visible ? '' : 'none';
   }
 }
 
-function openInstallHelp() {
-  if (!installHelpCard) return;
-  installHelpCard.classList.add('open');
-  if (installHelpToggle) {
-    installHelpToggle.innerText = 'Hide install steps';
-    installHelpToggle.setAttribute('aria-expanded', 'true');
-  }
-}
+window.openInstallOverlay = function () {
+  document.getElementById('install-overlay').style.display = 'flex';
+};
 
-if (installHelpToggle && installHelpCard) {
-  installHelpToggle.addEventListener('click', () => {
-    const isOpen = installHelpCard.classList.toggle('open');
-    installHelpToggle.innerText = isOpen ? 'Hide install steps' : 'How do I install this?';
-    installHelpToggle.setAttribute('aria-expanded', String(isOpen));
-  });
-}
+window.closeInstallOverlay = function () {
+  document.getElementById('install-overlay').style.display = 'none';
+};
 
 function setInstallNote(message, level = '') {
   if (!installNote) return;
@@ -2094,7 +2074,6 @@ if (installAppBtn) {
   installAppBtn.addEventListener('click', async () => {
     if (!deferredInstallPrompt) {
       setInstallNote(getInstallFallbackMessage(), 'warn');
-      openInstallHelp();
       return;
     }
 
