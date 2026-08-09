@@ -448,13 +448,11 @@ nav a:hover {
 
   position: relative;
 
-  min-height: 100vh;
-
   display: flex;
 
   align-items: center;
 
-  padding: 40px 60px;
+  padding: 44px 60px 60px;
 
   overflow: hidden;
 }
@@ -689,10 +687,6 @@ nav a:hover {
   align-items: center; /* Center items horizontally */
   text-align: center; /* Center text within items */
 
-  gap: 100px; /* Increased gap to accommodate phone labels */
-
-  align-items: center;
-
   width: 100%;
 
   max-width: 1200px;
@@ -701,11 +695,9 @@ nav a:hover {
 
 }
 
-/* Adjust hero copy for new layout */
 .hero-copy {
   width: 100%; /* Take full width */
-  max-width: 650px; /* Limit width for readability */
-  margin-bottom: 15px; /* Reduced space before phones */
+  max-width: 850px; /* Wide enough for the bigger headline below */
 }
 
 /* =========================
@@ -715,11 +707,14 @@ nav a:hover {
 ========================= */
 
 .hero-copy h1 {
-  font-size: 28px;
-  line-height: 1.2;
-  max-width: 650px;
+  font-size: clamp(40px, 6vw, 68px);
+  line-height: 1.08;
+  max-width: 850px;
   color: #c7ff38;
+  font-weight: 900;
+  letter-spacing: -0.01em;
   display: block;
+  text-shadow: 0 0 40px rgba(199,255,56,0.25);
 }
 
 /* PLAYER CARD (for mini-pitch) */
@@ -1209,29 +1204,6 @@ nav a:hover {
 
   }
 
-  .hero-copy h1 {
-
-    font-size: 36px;
-
-    margin: auto auto 24px;
-
-    line-height: 1.05;
-
-  }
-
-  .hero-copy p {
-
-    margin: auto auto 34px;
-
-    font-size: 16px;
-
-    max-width: 100%;
-
-    line-height: 1.6;
-
-  }
-
-
 }
 
 @media (max-width: 768px) {
@@ -1301,31 +1273,13 @@ nav a:hover {
   }
 
   .hero {
-   padding: 20px 15px 20px; /* Reduced top padding for mobile */
-
-    min-height: auto;
+    padding: 24px 15px 36px; /* Reduced top padding for mobile */
   }
 
   .hero-grid {
     display: flex;
     flex-direction: column;
     gap: 30px;
-  }
-
-  .hero-copy h1 {
-    font-size: 24px;
-    line-height: 1.05;
-    margin-bottom: 8px;
-  }
-
-  .hero-copy p {
-
-    font-size: 16px;
-
-    max-width: 100%;
-
-    line-height: 1.6; /* Keep this line */
-
   }
 
   .section {
@@ -1377,18 +1331,6 @@ nav a:hover {
   }
 
   nav a {
-
-    font-size: 12px;
-
-  }
-
-  .hero-copy h1 {
-
-    font-size: 20px;
-
-  }
-
-  .hero-copy p {
 
     font-size: 12px;
 
@@ -1483,7 +1425,6 @@ nav a:hover {
     <div class="hero-copy">
       <h1>Your Football Opinions.<br>
       <strong>Finally Worth Something.</strong></h1>
-      <p>Your team, your rules. Build your XI and dominate the league.</p>
     </div>
   </div>
 </section>
