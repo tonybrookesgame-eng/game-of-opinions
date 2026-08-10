@@ -192,6 +192,24 @@ nav a:hover {
 
 }
 
+/* Rules link - previously plain nav text, easy to miss next to the Log In/
+   Sign Up pills. Given a light border so it registers as a real nav item
+   without competing with the primary Sign Up CTA. */
+.rules-link {
+  display: inline-flex;
+  align-items: center;
+  color: #fff !important;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.04);
+}
+.rules-link:hover {
+  border-color: rgba(199,255,56,0.5);
+  background: rgba(199,255,56,0.08);
+  color: #c7ff38 !important;
+}
+
 .signup-btn {
 
   background: linear-gradient(135deg, #d9ff6e 0%, #c7ff38 55%, #a8e619 100%);
@@ -267,24 +285,32 @@ nav a:hover {
 
 }
 
-/* Header install icon - opens the install overlay instead of living inline
+/* Header install button - opens the install overlay instead of living inline
    in the hero, so it stays reachable from every page state on both mobile
-   and desktop instead of only being visible on first scroll of the homepage. */
+   and desktop instead of only being visible on first scroll of the homepage.
+   Carries a visible "Install" label (not just an icon) since the icon alone
+   doesn't read as "install this app" to a first-time visitor, and a hover
+   tooltip is invisible to touch users anyway. */
 .install-nav-btn {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
+  gap: 6px;
   flex-shrink: 0;
-  border-radius: 50%;
+  padding: 8px 14px 8px 10px;
+  border-radius: 999px;
   border: 1px solid rgba(199,255,56,0.4);
   background: rgba(199,255,56,0.06);
   color: #c7ff38;
-  font-size: 16px;
+  font-size: 13px;
+  font-weight: 700;
   line-height: 1;
   cursor: pointer;
   transition: 0.2s ease;
+  white-space: nowrap;
+}
+.install-nav-btn-icon {
+  font-size: 16px;
+  line-height: 1;
 }
 .install-nav-btn:hover {
   border-color: rgba(199,255,56,0.8);
@@ -1531,11 +1557,13 @@ nav a:hover {
   <div class="header-top">
     <div class="logo">GAME <span>OF OPINIONS</span></div>
     <nav>
-      <button id="installNavBtn" class="install-nav-btn" type="button" onclick="openInstallOverlay()" title="Install GOO" aria-label="Install GOO">&#128242;</button>
+      <button id="installNavBtn" class="install-nav-btn" type="button" onclick="openInstallOverlay()" title="Install GOO" aria-label="Install GOO">
+        <span class="install-nav-btn-icon" aria-hidden="true">&#128242;</span><span>Install</span>
+      </button>
       <a href="myxi.html" class="user-only">Your Team</a>
       <a href="season.html" class="user-only">Season Picks</a>
       <a href="league.html" class="user-only">League</a>
-      <a href="rules.html" class="guest-only">Rules</a>
+      <a href="rules.html" class="rules-link guest-only">Rules</a>
       <a href="javascript:void(0)" class="login-link guest-only" onclick="openLogin()">Log In</a>
       <a href="signup.html" class="signup-btn guest-only">Sign Up</a>
       <a href="javascript:void(0)" class="user-only" onclick="handleLogout()">Log Out</a>
