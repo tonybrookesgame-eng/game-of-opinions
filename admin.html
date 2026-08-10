@@ -1049,8 +1049,9 @@
         const choice = betDoc.data().choice;
         const oddsVal = parseInt(document.getElementById('bet-odds').value) || 30;
         const stake = 5;
+        const safeSidePenalty = 30; // flat penalty for backing the "safe" side and being wrong
         const pointsBig = oddsVal * stake;
-        const pointsSmall = (stake * 5) + stake;
+        const pointsSmall = safeSidePenalty + stake; // 30 + your 5pt stake = 35 total
 
         if (betResult === 'landed') {
           userBetScore = (choice === 'yes' ? pointsBig : -pointsBig);

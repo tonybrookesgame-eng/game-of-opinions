@@ -3584,8 +3584,9 @@ onSnapshot(gameweekSettingsRef, async (docSnap) => {
         if (settings.odds) {
             const oddsVal = parseInt(settings.odds);
             const stake = 5;
+            const safeSidePenalty = 30; // flat penalty for backing the "safe" side and being wrong
             betPointsBig = oddsVal * stake;
-            betPointsSmall = (stake * 5) + stake;
+            betPointsSmall = safeSidePenalty + stake; // 30 + your 5pt stake = 35 total lost when wrong
 
             const btnYes = document.getElementById('btnYes');
             const btnNo = document.getElementById('btnNo');
