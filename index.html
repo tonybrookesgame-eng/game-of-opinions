@@ -415,22 +415,8 @@ nav a:hover {
   min-height: 750px;
   padding: 60px 12%;
   overflow: hidden;
-  background: url('managers-office-hero.png') no-repeat center 38%;
+  background: url('managers office.png') no-repeat center center;
   background-size: cover;
-  filter: saturate(1.05) contrast(1.04);
-}
-
-/* Cinematic vignette + fade into the page background, so the photo reads
-   as a considered crop rather than a stretched banner. */
-.office-section::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse at 50% 40%, transparent 45%, rgba(2,6,17,0.55) 100%),
-    linear-gradient(180deg, rgba(2,6,17,0.15) 0%, transparent 18%, transparent 72%, rgba(7,19,32,0.98) 100%);
 }
 
 .whiteboard-login {
@@ -1434,18 +1420,17 @@ nav a:hover {
     transform: none;
   }
 
-  #login-section { /* Manager's Office on mobile - matches the cropped source's own
-                      aspect ratio, so cover shows the full clean crop with no extra cut */
+  #login-section { /* Manager's Office on mobile */
     flex-direction: column !important;
     height: auto !important;
     min-height: auto !important;
-    aspect-ratio: 740 / 941;
+    aspect-ratio: 16 / 9;
     margin-top: 0 !important;
     justify-content: center !important;
     align-items: center !important;
     padding: 0 !important;
-    background-position: center 15% !important;
-    background-size: cover !important;
+    background-position: center !important;
+    background-size: contain !important;
   }
 
   .ticker-content {
