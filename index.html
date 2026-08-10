@@ -1061,6 +1061,68 @@ nav a:hover {
   border-radius: 16px;
 }
 
+/* Tabbed / swipeable pairs of mockups inside a single popup (e.g. Weekly Predictions) */
+.pillar-tabs {
+  position: relative;
+  display: flex;
+  gap: 8px;
+  margin: 0 0 18px;
+  padding: 4px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 999px;
+}
+.pillar-tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  padding: 9px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+.pillar-tab.active {
+  color: #0a1220;
+  background: #c7ff38;
+}
+.pillar-slider-viewport {
+  overflow: hidden;
+  transition: height 0.3s ease;
+}
+.pillar-slider {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  width: 200%;
+  transition: transform 0.35s ease;
+  touch-action: pan-y;
+}
+.pillar-slider.slide-1 { transform: translateX(-50%); }
+.pillar-slide {
+  width: 50%;
+  flex-shrink: 0;
+  padding: 0 2px;
+  box-sizing: border-box;
+}
+.pillar-slide-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin: -10px 0 20px;
+}
+.pillar-slide-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.18);
+  transition: background 0.2s ease;
+}
+.pillar-slide-dots span.active { background: #c7ff38; }
+
 .pillar-points {
   position: relative;
   text-align: left;
@@ -1088,17 +1150,45 @@ nav a:hover {
 .season-countdown {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   margin-top: 22px;
-  padding: 10px 22px;
-  border-radius: 999px;
-  border: 1px solid rgba(199,255,56,0.35);
-  background: rgba(199,255,56,0.08);
-  color: #d9f99d;
-  font-size: 14px;
-  font-weight: 700;
+  padding: 8px 20px 8px 8px;
+  border-radius: 16px;
+  border: 1px solid rgba(199,255,56,0.3);
+  background: linear-gradient(135deg, rgba(199,255,56,0.12), rgba(199,255,56,0.02));
+  max-width: 100%;
 }
-.season-countdown b { color: #c7ff38; font-weight: 900; }
+.season-countdown-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: rgba(199,255,56,0.14);
+  font-size: 17px;
+}
+.season-countdown-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+}
+.season-countdown-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #9ca3af;
+}
+.season-countdown-value {
+  font-size: 16px;
+  font-weight: 900;
+  color: #c7ff38;
+  line-height: 1.2;
+  white-space: nowrap;
+}
 
 /* Real, admin-refreshed manager count from public/stats - hidden until
    there's an actual synced number, so it never shows a discouraging "0". */
@@ -1502,7 +1592,13 @@ nav a:hover {
     <div class="hero-copy">
       <h1>Your Football Opinions.<br>
       <strong>Finally Worth Something.</strong></h1>
-      <div id="seasonCountdown" class="season-countdown">Loading kickoff countdown...</div>
+      <div id="seasonCountdown" class="season-countdown">
+        <span class="season-countdown-icon">&#9917;</span>
+        <span class="season-countdown-text">
+          <span class="season-countdown-label" id="seasonCountdownLabel">Loading kickoff countdown</span>
+          <span class="season-countdown-value" id="seasonCountdownValue">&hellip;</span>
+        </span>
+      </div>
       <div id="managerCountBadge" class="manager-count-badge" style="display: none;">
         <b id="managerCountValue">0</b> managers already building their XI
       </div>
@@ -1620,12 +1716,37 @@ nav a:hover {
     <div class="pillar-eyebrow">Weekly Predictions</div>
     <h2>Call The First Goal.<br>Back Your Instinct.</h2>
     <p class="pillar-sub">Pick the club, call the minute, then swing for more on a live Bet Builder &mdash; all locked in before a ball is kicked.</p>
-    <div class="pillar-phone-frame">
-      <img src="bet-builder-example.png" alt="The real Match Prediction Boost panel from the app" style="width: 100%; display: block; border-radius: 16px;">
+
+    <div class="pillar-tabs" role="tablist">
+      <button type="button" class="pillar-tab active" id="pillarWeeklyTab0" onclick="setWeeklySlide(0)">First Goal Picks</button>
+      <button type="button" class="pillar-tab" id="pillarWeeklyTab1" onclick="setWeeklySlide(1)">Bet Builder</button>
     </div>
-    <p class="pillar-sub" style="text-align: left; margin-top: -6px;">
-      <strong style="color: #f2f5ff;">How the Bet Builder works:</strong> each gameweek the admin sets a build-a-bet combo and odds. Back <strong style="color: #c7ff38;">YES</strong> and get it right, win <strong>5&times; the odds</strong> in points &mdash; get it wrong and it costs <strong>35 points</strong>. Back <strong style="color: #c7ff38;">NO</strong> and the combo has to fail instead: win <strong>35 points</strong> if it doesn't land, or lose <strong>5&times; the odds</strong> if it does.
-    </p>
+
+    <div class="pillar-slider-viewport" id="pillarWeeklyViewport">
+      <div class="pillar-slider" id="pillarWeeklySlider">
+        <div class="pillar-slide">
+          <div class="pillar-phone-frame">
+            <img src="weekly-picks-example.png" alt="The real Weekly Predictions panel from the app" style="width: 100%; display: block; border-radius: 16px;">
+          </div>
+          <p class="pillar-sub" style="text-align: left; margin-top: -6px;">
+            <strong style="color: #f2f5ff;">How First Goal Picks work:</strong> every gameweek, call which club scores first for <strong>10 points</strong>, and the exact minute of that goal for <strong>40 points</strong> &mdash; nail both and that's <strong>50 points</strong> before a single card's even been checked.
+          </p>
+        </div>
+        <div class="pillar-slide">
+          <div class="pillar-phone-frame">
+            <img src="bet-builder-example.png" alt="The real Match Prediction Boost panel from the app" style="width: 100%; display: block; border-radius: 16px;">
+          </div>
+          <p class="pillar-sub" style="text-align: left; margin-top: -6px;">
+            <strong style="color: #f2f5ff;">How the Bet Builder works:</strong> each gameweek the admin sets a build-a-bet combo and odds. Back <strong style="color: #c7ff38;">YES</strong> and get it right, win <strong>5&times; the odds</strong> in points &mdash; get it wrong and it costs <strong>35 points</strong>. Back <strong style="color: #c7ff38;">NO</strong> and the combo has to fail instead: win <strong>35 points</strong> if it doesn't land, or lose <strong>5&times; the odds</strong> if it does.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="pillar-slide-dots">
+      <span class="active" id="pillarWeeklyDot0"></span>
+      <span id="pillarWeeklyDot1"></span>
+    </div>
+
     <ul class="pillar-points">
       <li>Club to score first, plus the exact minute</li>
       <li>Weekly Bet Builder for risk/reward swings</li>
@@ -1734,12 +1855,64 @@ window.closeInstallOverlay = function () {
 window.openPillar = function (key) {
   const overlay = document.getElementById(`pillar-${key}-overlay`);
   if (overlay) overlay.style.display = 'flex';
+  if (key === 'weekly') requestAnimationFrame(() => window.syncWeeklySliderHeight());
 };
 
 window.closePillar = function (key) {
   const overlay = document.getElementById(`pillar-${key}-overlay`);
   if (overlay) overlay.style.display = 'none';
 };
+
+window.syncWeeklySliderHeight = function () {
+  const slider = document.getElementById('pillarWeeklySlider');
+  const viewport = document.getElementById('pillarWeeklyViewport');
+  if (!slider || !viewport) return;
+  const activeSlide = slider.children[slider.classList.contains('slide-1') ? 1 : 0];
+  if (activeSlide) viewport.style.height = `${activeSlide.offsetHeight}px`;
+};
+
+window.setWeeklySlide = function (index) {
+  const slider = document.getElementById('pillarWeeklySlider');
+  if (!slider) return;
+  slider.classList.toggle('slide-1', index === 1);
+  for (let i = 0; i < 2; i++) {
+    const tab = document.getElementById(`pillarWeeklyTab${i}`);
+    const dot = document.getElementById(`pillarWeeklyDot${i}`);
+    if (tab) tab.classList.toggle('active', i === index);
+    if (dot) dot.classList.toggle('active', i === index);
+  }
+  window.syncWeeklySliderHeight();
+};
+
+(function () {
+  const slider = document.getElementById('pillarWeeklySlider');
+  if (!slider) return;
+  let startX = 0;
+  let startY = 0;
+  let tracking = false;
+
+  slider.addEventListener('touchstart', (e) => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    tracking = true;
+  }, { passive: true });
+
+  slider.addEventListener('touchend', (e) => {
+    if (!tracking) return;
+    tracking = false;
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return;
+    const onSlide1 = slider.classList.contains('slide-1');
+    if (dx < 0 && !onSlide1) window.setWeeklySlide(1);
+    else if (dx > 0 && onSlide1) window.setWeeklySlide(0);
+  }, { passive: true });
+
+  slider.querySelectorAll('img').forEach((img) => {
+    img.addEventListener('load', window.syncWeeklySliderHeight);
+  });
+  window.addEventListener('resize', window.syncWeeklySliderHeight);
+})();
 
 function setInstallNote(message, level = '') {
   if (!installNote) return;
@@ -1820,24 +1993,27 @@ function getInstallFallbackMessage() {
 // SEASON_LOCK_AT constant in season.html. Kept in sync manually since this
 // is a static marketing page with no shared config between the two files.
 function renderSeasonCountdown() {
-  const el = document.getElementById('seasonCountdown');
-  if (!el) return;
+  const label = document.getElementById('seasonCountdownLabel');
+  const value = document.getElementById('seasonCountdownValue');
+  if (!label || !value) return;
 
   const lockAt = new Date('2026-08-21T18:00:00');
   const diffMs = lockAt.getTime() - Date.now();
 
   if (diffMs <= 0) {
-    el.innerHTML = '&#9917; Season picks are locked in for the season.';
+    label.textContent = 'Season picks are';
+    value.textContent = 'Locked In';
     return;
   }
 
   const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
   const hours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
 
+  label.textContent = 'Gameweek 1 kicks off in';
   if (days >= 1) {
-    el.innerHTML = `&#9917; Gameweek 1 locks in <b>${days} day${days === 1 ? '' : 's'}</b> - get your picks in before kickoff.`;
+    value.textContent = `${days} Day${days === 1 ? '' : 's'}`;
   } else {
-    el.innerHTML = `&#9917; Gameweek 1 locks in <b>${hours} hour${hours === 1 ? '' : 's'}</b> - get your picks in before kickoff.`;
+    value.textContent = `${hours} Hour${hours === 1 ? '' : 's'}`;
   }
 }
 renderSeasonCountdown();
