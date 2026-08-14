@@ -547,6 +547,7 @@
   <a href="myxi.html">⚽<br>Team</a>
   <a href="season.html">🏆<br>Picks</a>
   <a href="league.html">📊<br>League</a>
+  <a href="javascript:void(0)" id="mobileLogoutLink" onclick="handleLogout()" style="display: none;">🚪<br>Log Out</a>
 </div>
 
 <script type="module">
@@ -580,6 +581,10 @@
       userLinks.forEach(l => l.style.display = 'none');
       guestLinks.forEach(l => l.style.display = 'inline-block');
     }
+    // .mobile-nav a uses display:flex for the icon-over-label layout, so this
+    // needs its own toggle rather than the inline-block used above.
+    const mobileLogout = document.getElementById('mobileLogoutLink');
+    if (mobileLogout) mobileLogout.style.display = user ? 'flex' : 'none';
   });
 
   window.handleLogout = () => {

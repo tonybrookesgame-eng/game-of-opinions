@@ -553,7 +553,7 @@ canvas { width: 100%; height: 100%; }
   font-size: 12px;
   line-height: 1.55;
 }
-.install-banner {
+.install-banner, .notify-banner {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -564,18 +564,34 @@ canvas { width: 100%; height: 100%; }
   border: 1px solid rgba(199,255,56,0.18);
   background: rgba(199,255,56,0.06);
 }
-.install-banner strong {
+.install-banner strong, .notify-banner strong {
   display: block;
   color: #c7ff38;
   font-size: 14px;
 }
-.install-banner p {
+.install-banner p, .notify-banner p {
   margin: 4px 0 0;
   color: var(--muted);
   font-size: 12px;
   line-height: 1.45;
 }
-.install-banner button {
+.notify-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.notify-banner-dismiss {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 12px;
+  text-decoration: underline;
+  cursor: pointer;
+  font-family: inherit;
+}
+.notify-banner-dismiss:hover { color: #fff; }
+.install-banner button, .notify-banner button {
   margin-top: 0;
   padding: 11px 18px;
   width: auto;
@@ -591,11 +607,11 @@ canvas { width: 100%; height: 100%; }
   box-shadow: 0 6px 18px rgba(199,255,56,0.3);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.install-banner button:hover:not(:disabled) {
+.install-banner button:hover:not(:disabled), .notify-banner button:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 8px 22px rgba(199,255,56,0.4);
 }
-.install-banner button:disabled {
+.install-banner button:disabled, .notify-banner button:disabled {
   opacity: 0.6;
   cursor: default;
   box-shadow: none;
@@ -962,6 +978,17 @@ canvas { width: 100%; height: 100%; }
     <button id="installDashboardBtn" type="button">Install GOO</button>
   </div>
 
+  <div class="notify-banner" id="notifyBanner" style="display: none;">
+    <div>
+      <strong>Turn on notifications</strong>
+      <p id="notifyDashboardStatus">Get reminders before deadlines and when results land.</p>
+    </div>
+    <div class="notify-banner-actions">
+      <button id="notifyDashboardBtn" type="button" onclick="enableNotifications()">Enable</button>
+      <button class="notify-banner-dismiss" type="button" onclick="dismissNotifyBanner()">Maybe later</button>
+    </div>
+  </div>
+
   <div class="section-label">New week checklist</div>
   <div class="card checklist-card">
     <div class="checklist-header">
@@ -1085,6 +1112,7 @@ canvas { width: 100%; height: 100%; }
   <a href="season.html">🏆<br>Picks</a>
   <a href="league.html">📊<br>League</a>
   <a href="rules.html">📜<br>Rules</a>
+  <a href="javascript:void(0)" onclick="handleLogout()">🚪<br>Log Out</a>
 </div>
 
 <script type="module">
@@ -1092,12 +1120,14 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getFirestore, doc, getDoc, collection, getDocs, query, orderBy, limit, setDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
+import { getMessaging, getToken, onMessage, isSupported as isMessagingSupported } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBS3Fpobk342TpJw73mMgYOyUrWb-jBtfM",
   authDomain: "game-of-opinions-97b14.firebaseapp.com",
   projectId: "game-of-opinions-97b14",
   storageBucket: "game-of-opinions-97b14.firebasestorage.app",
+  messagingSenderId: "863518863234",
   appId: "1:863518863234:web:3a2c2378a2a358e0b2299b",
   // TODO: paste your real Measurement ID here once Google Analytics is
   // enabled in Firebase Console (Project Settings -> Integrations), or
@@ -1105,10 +1135,77 @@ const firebaseConfig = {
   measurementId: "G-XXXXXXXXXX"
 };
 
+// TODO: paste your real Web Push VAPID key here (same one used in index.html).
+// See PUSH_NOTIFICATIONS_SETUP.md.
+const VAPID_KEY = "PASTE_YOUR_VAPID_KEY_HERE";
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const analytics = getAnalytics(app);
+
+window.dismissNotifyBanner = function () {
+  localStorage.setItem('notifyBannerDismissed', '1');
+  const banner = document.getElementById('notifyBanner');
+  if (banner) banner.style.display = 'none';
+};
+
+async function maybeShowNotifyBanner() {
+  const banner = document.getElementById('notifyBanner');
+  if (!banner) return;
+  if (localStorage.getItem('notifyBannerDismissed')) return;
+  if (!('Notification' in window) || !('serviceWorker' in navigator)) return;
+  if (Notification.permission === 'granted' || Notification.permission === 'denied') return;
+  if (!(await isMessagingSupported().catch(() => false))) return;
+  banner.style.display = '';
+}
+
+window.enableNotifications = async function () {
+  const btn = document.getElementById('notifyDashboardBtn');
+  const status = document.getElementById('notifyDashboardStatus');
+  const banner = document.getElementById('notifyBanner');
+
+  btn.disabled = true;
+  btn.innerText = 'Requesting...';
+
+  try {
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') {
+      status.innerText = "Notifications are blocked. Enable them in your browser's site settings to turn this on.";
+      btn.disabled = false;
+      btn.innerText = 'Enable';
+      return;
+    }
+
+    const registration = await navigator.serviceWorker.ready;
+    const messaging = getMessaging(app);
+    const token = await getToken(messaging, { vapidKey: VAPID_KEY, serviceWorkerRegistration: registration });
+    if (!token) throw new Error('No registration token received.');
+
+    if (auth.currentUser) {
+      await setDoc(doc(db, "users", auth.currentUser.uid), {
+        fcmToken: token,
+        notificationsEnabledAt: new Date().toISOString()
+      }, { merge: true });
+    }
+
+    status.innerText = "You're all set - you'll get reminders for deadlines and results.";
+    setTimeout(() => { if (banner) banner.style.display = 'none'; }, 2000);
+
+    onMessage(messaging, (payload) => {
+      const title = payload.notification?.title || 'Game of Opinions';
+      const body = payload.notification?.body || '';
+      new Notification(title, { body, icon: 'icon-192.svg' });
+    });
+  } catch (error) {
+    console.error(error);
+    status.innerText = `Couldn't enable notifications: ${error.message || error}`;
+    btn.disabled = false;
+    btn.innerText = 'Enable';
+  }
+};
+
+maybeShowNotifyBanner();
 
 let deferredInstallPrompt = null;
 const installDashboardBtn = document.getElementById('installDashboardBtn');
