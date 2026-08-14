@@ -1,7 +1,8 @@
-const CACHE_NAME = 'game-of-opinions-pwa-v4';
+const CACHE_NAME = 'game-of-opinions-pwa-v5';
 const APP_SHELL = [
   '/',
   '/index.html',
+  '/login.html',
   '/dashboard.html',
   '/admin.html',
   '/league.html',
@@ -15,6 +16,57 @@ const APP_SHELL = [
   '/icon-192.svg',
   '/icon-512.svg'
 ]
+
+// PUSH NOTIFICATIONS (Firebase Cloud Messaging)
+// Handles notifications that arrive while the app isn't in the foreground.
+// See PUSH_NOTIFICATIONS_SETUP.md for how to send one from Firebase Console.
+// Wrapped defensively - a messaging failure here must never break the
+// install/activate/fetch handlers above that the whole PWA relies on.
+try {
+  importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js');
+  importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js');
+
+  firebase.initializeApp({
+    apiKey: "AIzaSyBS3Fpobk342TpJw73mMgYOyUrWb-jBtfM",
+    authDomain: "game-of-opinions-97b14.firebaseapp.com",
+    projectId: "game-of-opinions-97b14",
+    storageBucket: "game-of-opinions-97b14.firebasestorage.app",
+    messagingSenderId: "863518863234",
+    appId: "1:863518863234:web:3a2c2378a2a358e0b2299b"
+  });
+
+  const messaging = (typeof firebase.messaging.isSupported !== 'function' || firebase.messaging.isSupported())
+    ? firebase.messaging()
+    : null;
+
+  if (messaging) {
+    messaging.onBackgroundMessage((payload) => {
+      const title = payload.notification?.title || 'Game of Opinions';
+      const body = payload.notification?.body || '';
+      self.registration.showNotification(title, {
+        body,
+        icon: '/icon-192.svg',
+        badge: '/icon-192.svg',
+        data: { url: payload.fcmOptions?.link || payload.data?.url || '/index.html' }
+      });
+    });
+  }
+} catch (err) {
+  console.warn('Push notification setup failed (caching still works fine):', err);
+}
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const url = event.notification.data?.url || '/index.html';
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url.includes(url) && 'focus' in client) return client.focus();
+      }
+      if (self.clients.openWindow) return self.clients.openWindow(url);
+    })
+  );
+});
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

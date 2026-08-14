@@ -922,6 +922,16 @@ nav a:hover {
   font-size: 12px;
   line-height: 1.5;
 }
+.notify-section {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+.notify-section h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  color: #c7ff38;
+}
 .install-platform-row {
   display: flex;
   align-items: center;
@@ -1590,6 +1600,11 @@ nav a:hover {
       </ol>
       <p class="install-help-tip">Tip: once installed, GOO opens full-screen like a normal app - no browser address bar - and sits on your home screen for one-tap access.</p>
     </div>
+    <div class="notify-section">
+      <h3>Get gameweek reminders</h3>
+      <p class="install-note" id="notifyNote">Turn on notifications so you never miss a deadline.</p>
+      <button id="enableNotifyBtn" class="auth-submit-btn" type="button" style="position: relative; z-index: 2;" onclick="enableNotifications()">Enable Notifications</button>
+    </div>
   </div>
 </div>
 
@@ -1827,14 +1842,16 @@ nav a:hover {
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
+import { getMessaging, getToken, onMessage, isSupported as isMessagingSupported } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBS3Fpobk342TpJw73mMgYOyUrWb-jBtfM",
   authDomain: "game-of-opinions-97b14.firebaseapp.com",
   projectId: "game-of-opinions-97b14",
   storageBucket: "game-of-opinions-97b14.firebasestorage.app",
+  messagingSenderId: "863518863234",
   appId: "1:863518863234:web:3a2c2378a2a358e0b2299b",
   // TODO: paste your real Measurement ID here once Google Analytics is
   // enabled in Firebase Console (Project Settings -> Integrations), or
@@ -1842,11 +1859,75 @@ const firebaseConfig = {
   measurementId: "G-XXXXXXXXXX"
 };
 
+// TODO: paste your real Web Push VAPID key here (Firebase Console -> Project
+// Settings -> Cloud Messaging -> Web Push certificates -> Generate key pair),
+// or notifications will fail to register. See PUSH_NOTIFICATIONS_SETUP.md.
+const VAPID_KEY = "PASTE_YOUR_VAPID_KEY_HERE";
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const analytics = getAnalytics(app);
 console.log("Firebase initialized successfully");
+
+// PUSH NOTIFICATIONS - see PUSH_NOTIFICATIONS_SETUP.md for how to actually
+// send one (it's a Firebase Console action, no code needed for that part).
+window.enableNotifications = async function () {
+  const btn = document.getElementById('enableNotifyBtn');
+  const note = document.getElementById('notifyNote');
+  const setNote = (text, level) => {
+    note.textContent = text;
+    note.className = `install-note${level ? ` ${level}` : ''}`;
+  };
+
+  if (!('Notification' in window) || !('serviceWorker' in navigator) || !(await isMessagingSupported().catch(() => false))) {
+    setNote("Notifications aren't supported in this browser.", 'warn');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerText = 'Requesting...';
+
+  try {
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') {
+      setNote("Notifications are blocked. Enable them in your browser's site settings to turn this on.", 'warn');
+      btn.disabled = false;
+      btn.innerText = 'Enable Notifications';
+      return;
+    }
+
+    const registration = await navigator.serviceWorker.ready;
+    const messaging = getMessaging(app);
+    const token = await getToken(messaging, { vapidKey: VAPID_KEY, serviceWorkerRegistration: registration });
+    if (!token) throw new Error('No registration token received.');
+
+    // Purely informational (shows up as a count in admin.html) - Firebase
+    // Console can broadcast to every registered device regardless of this.
+    if (auth.currentUser) {
+      await setDoc(doc(db, "users", auth.currentUser.uid), {
+        fcmToken: token,
+        notificationsEnabledAt: new Date().toISOString()
+      }, { merge: true });
+    }
+
+    setNote("Notifications are on - you'll get reminders for deadlines and results.", 'success');
+    btn.innerText = 'Notifications Enabled';
+
+    // Foreground messages don't auto-show as OS notifications, so display
+    // one manually when the app is already open in a tab.
+    onMessage(messaging, (payload) => {
+      const title = payload.notification?.title || 'Game of Opinions';
+      const body = payload.notification?.body || '';
+      new Notification(title, { body, icon: 'icon-192.svg' });
+    });
+  } catch (error) {
+    console.error(error);
+    setNote(`Couldn't enable notifications: ${error.message || error}`, 'warn');
+    btn.disabled = false;
+    btn.innerText = 'Enable Notifications';
+  }
+};
 
 let deferredInstallPrompt = null;
 const installNavBtn = document.getElementById('installNavBtn');
