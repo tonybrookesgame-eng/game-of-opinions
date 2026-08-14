@@ -1475,10 +1475,11 @@
         showDebugAdmin('Starting team name update - building batch operations');
         batch.update(doc(db, "users", uid, "myxi", "team"), { teamName: newName });
         batch.update(doc(db, "leaderboard", uid), { teamName: newName });
+        batch.update(doc(db, "users", uid), { teamName: newName });
         showDebugAdmin(`Updating teamName for ${uid} -> ${newName}`);
         await batch.commit();
         showDebugAdmin(`Updated teamName for ${uid}`);
-        alert("Team Name updated successfully in both user profile and leaderboard.");
+        alert("Team Name updated successfully across the team doc, leaderboard, and user profile.");
       } catch (e) {
         console.error(e);
         showDebugAdmin(`Error updating team name for ${uid}: ${e?.message || e}`, true);

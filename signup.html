@@ -208,7 +208,7 @@
 
   <div class="auth-overlay">
     <div class="whiteboard-login">
-      <h2>Manager Registration</h2>
+      <h2>Manager Sign-Up</h2>
       <p style="position: relative; z-index: 2; color: #cbd5e1; font-weight: 700; margin-bottom: 20px; font-size: 14px;">Have you got what it takes?</p>
 
       <div id="signupError" class="auth-error"></div>
@@ -218,7 +218,7 @@
       <input id="confirmPassword" class="auth-input" type="password" placeholder="Confirm Password" autocomplete="new-password">
       <div class="auth-hint">Use at least 6 characters.</div>
 
-      <button id="signupSubmitBtn" class="auth-submit-btn" onclick="handleSignup()">Finalise Application</button>
+      <button id="signupSubmitBtn" class="auth-submit-btn" onclick="handleSignup()">Sign Me Up</button>
 
       <p style="position: relative; z-index: 2; color: #cbd5e1; font-size: 12px; margin-top: 20px;">
         Already a manager? <a href="index.html?login=true" class="inline-switch-link">Log In</a>
@@ -286,7 +286,7 @@
       } catch (error) {
         showSignupError(error.message);
         submitBtn.disabled = false;
-        submitBtn.innerText = 'Finalise Application';
+        submitBtn.innerText = 'Sign Me Up';
       }
     };
   </script>
