@@ -1150,24 +1150,64 @@ window.dismissNotifyBanner = function () {
   if (banner) banner.style.display = 'none';
 };
 
+// Does the actual FCM registration. Safe to call with permission already
+// granted and no user gesture (that's only required for requestPermission
+// itself) - this also doubles as the token-refresh Firebase recommends
+// running on every app load, since tokens can occasionally rotate.
+async function registerPushToken() {
+  const registration = await navigator.serviceWorker.ready;
+  const messaging = getMessaging(app);
+  const token = await getToken(messaging, { vapidKey: VAPID_KEY, serviceWorkerRegistration: registration });
+  if (!token) throw new Error('No registration token received.');
+
+  if (auth.currentUser) {
+    await setDoc(doc(db, "users", auth.currentUser.uid), {
+      fcmToken: token,
+      notificationsEnabledAt: new Date().toISOString()
+    }, { merge: true });
+  }
+
+  onMessage(messaging, (payload) => {
+    const title = payload.notification?.title || 'Game of Opinions';
+    const body = payload.notification?.body || '';
+    new Notification(title, { body, icon: 'icon-192.svg' });
+  });
+
+  return token;
+}
+
 async function maybeShowNotifyBanner() {
   const banner = document.getElementById('notifyBanner');
   const status = document.getElementById('notifyDashboardStatus');
   const btn = document.getElementById('notifyDashboardBtn');
   if (!banner) return;
-  if (localStorage.getItem('notifyBannerDismissed')) return;
-
-  // Already on - nothing to do, no need to show anything.
-  if ('Notification' in window && Notification.permission === 'granted') return;
 
   // Unsupported browser/OS version - explain why rather than showing nothing,
   // which is exactly what iOS Safari outside a home-screen install looks like.
   if (!('Notification' in window) || !('serviceWorker' in navigator) || !(await isMessagingSupported().catch(() => false))) {
+    if (localStorage.getItem('notifyBannerDismissed')) return;
     status.innerText = "Notifications aren't supported on this browser/device yet. On iPhone or iPad, add GOO to your Home Screen first, then open it from there (requires iOS 16.4+).";
     if (btn) btn.style.display = 'none';
     banner.style.display = '';
     return;
   }
+
+  // Permission granted (e.g. via the device's own Settings app, or a past
+  // visit) doesn't guarantee this device ever actually completed FCM
+  // registration - finish that silently rather than assuming it's done.
+  if (Notification.permission === 'granted') {
+    try {
+      await registerPushToken();
+    } catch (error) {
+      console.error(error);
+      status.innerText = `Permission is on, but registration failed: ${error.message || error}. Try reopening the app.`;
+      if (btn) btn.style.display = 'none';
+      banner.style.display = '';
+    }
+    return;
+  }
+
+  if (localStorage.getItem('notifyBannerDismissed')) return;
 
   // Already explicitly blocked - a website can never re-trigger that system
   // prompt once denied, so point at the one place that can actually fix it.
@@ -1198,26 +1238,10 @@ window.enableNotifications = async function () {
       return;
     }
 
-    const registration = await navigator.serviceWorker.ready;
-    const messaging = getMessaging(app);
-    const token = await getToken(messaging, { vapidKey: VAPID_KEY, serviceWorkerRegistration: registration });
-    if (!token) throw new Error('No registration token received.');
-
-    if (auth.currentUser) {
-      await setDoc(doc(db, "users", auth.currentUser.uid), {
-        fcmToken: token,
-        notificationsEnabledAt: new Date().toISOString()
-      }, { merge: true });
-    }
+    await registerPushToken();
 
     status.innerText = "You're all set - you'll get reminders for deadlines and results.";
     setTimeout(() => { if (banner) banner.style.display = 'none'; }, 2000);
-
-    onMessage(messaging, (payload) => {
-      const title = payload.notification?.title || 'Game of Opinions';
-      const body = payload.notification?.body || '';
-      new Notification(title, { body, icon: 'icon-192.svg' });
-    });
   } catch (error) {
     console.error(error);
     status.innerText = `Couldn't enable notifications: ${error.message || error}`;
