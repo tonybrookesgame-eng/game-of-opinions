@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Create your GOO account and join the league.">
+  <meta name="description" content="Log in to your GOO account.">
   <meta name="theme-color" content="#020611">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -16,7 +16,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon-192.png" type="image/png">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <title>Sign Up - GOO</title>
+  <title>Log In - GOO</title>
   <style>
     * { box-sizing: border-box; }
     body {
@@ -126,14 +126,18 @@
       outline: none;
       border-color: #c7ff38;
     }
-    .auth-hint {
+    .auth-forgot-link {
+      display: block;
+      text-align: right;
+      font-size: 12px;
+      color: #9ca8c6 !important;
+      font-weight: 600;
+      margin: -4px 0 14px;
+      text-decoration: underline !important;
       position: relative;
       z-index: 2;
-      margin: -4px 0 14px;
-      font-size: 11px;
-      color: rgba(255,255,255,0.6);
-      text-align: left;
     }
+    .auth-forgot-link:hover { color: #c7ff38 !important; }
     .auth-error {
       position: relative;
       z-index: 2;
@@ -208,28 +212,26 @@
 
   <div class="auth-overlay">
     <div class="whiteboard-login">
-      <h2>Manager Sign-Up</h2>
-      <p style="position: relative; z-index: 2; color: #cbd5e1; font-weight: 700; margin-bottom: 20px; font-size: 14px;">Have you got what it takes?</p>
+      <h2>Manager Login</h2>
+      <p style="position: relative; z-index: 2; color: #cbd5e1; font-weight: 700; margin-bottom: 20px; font-size: 14px;">Winners Think Outside The Box.</p>
 
-      <div id="signupError" class="auth-error"></div>
+      <div id="loginError" class="auth-error"></div>
 
       <input id="email" class="auth-input" type="email" placeholder="Email Address" autocomplete="email">
-      <input id="password" class="auth-input" type="password" placeholder="Create Password" autocomplete="new-password">
-      <input id="confirmPassword" class="auth-input" type="password" placeholder="Confirm Password" autocomplete="new-password">
-      <div class="auth-hint">Use at least 6 characters.</div>
+      <input id="password" class="auth-input" type="password" placeholder="Password" autocomplete="current-password">
+      <a href="javascript:void(0)" class="auth-forgot-link" onclick="handlePasswordReset()">Forgot password?</a>
 
-      <button id="signupSubmitBtn" class="auth-submit-btn" onclick="handleSignup()">Sign Me Up</button>
+      <button id="loginSubmitBtn" class="auth-submit-btn" onclick="handleLogin()">Log Me In</button>
 
       <p style="position: relative; z-index: 2; color: #cbd5e1; font-size: 12px; margin-top: 20px;">
-        Already a manager? <a href="login.html" class="inline-switch-link">Log In</a>
+        Need an account? <a href="signup.html" class="inline-switch-link">Sign Up</a>
       </p>
     </div>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
 
     const firebaseConfig = {
@@ -246,67 +248,56 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
     const analytics = getAnalytics(app);
 
-    // Fires once per page load, the moment someone actually starts filling
-    // the form - lets us tell "viewed the sign-up page" apart from "tried to
-    // sign up but gave up", which a plain page_view count can't distinguish.
-    let signupStartLogged = false;
-    function logSignupStarted() {
-      if (signupStartLogged) return;
-      signupStartLogged = true;
-      logEvent(analytics, 'sign_up_started');
-    }
-    ['email', 'password', 'confirmPassword'].forEach((id) => {
-      document.getElementById(id)?.addEventListener('focus', logSignupStarted, { once: true });
-    });
+    const errorEl = document.getElementById('loginError');
+    const submitBtn = document.getElementById('loginSubmitBtn');
 
-    const errorEl = document.getElementById('signupError');
-    const submitBtn = document.getElementById('signupSubmitBtn');
-
-    function showSignupError(message) {
+    function showLoginError(message) {
       if (!errorEl) return;
       errorEl.textContent = message;
       errorEl.style.display = message ? 'block' : 'none';
     }
 
-    window.handleSignup = async () => {
+    window.handleLogin = async () => {
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
-      const confirmPassword = document.getElementById('confirmPassword').value;
 
-      showSignupError('');
+      showLoginError('');
 
-      if (!email || !password || !confirmPassword) {
-        showSignupError('Please fill in all fields.');
-        return;
-      }
-      if (password.length < 6) {
-        showSignupError('Password must be at least 6 characters.');
-        return;
-      }
-      if (password !== confirmPassword) {
-        showSignupError('Passwords do not match.');
+      if (!email || !password) {
+        showLoginError('Please enter your email and password.');
         return;
       }
 
       submitBtn.disabled = true;
-      submitBtn.innerText = 'Creating your account...';
+      submitBtn.innerText = 'Logging in...';
 
       try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        // Initialize user record in Firestore
-        await setDoc(doc(db, "users", userCredential.user.uid), {
-          email: email,
-          createdAt: new Date()
-        });
-        logEvent(analytics, 'sign_up', { method: 'email' });
-        window.location.href = "myxi.html";
+        await signInWithEmailAndPassword(auth, email, password);
+        logEvent(analytics, 'login', { method: 'email' });
+        window.location.href = "dashboard.html";
       } catch (error) {
-        showSignupError(error.message);
+        showLoginError(error.message);
         submitBtn.disabled = false;
-        submitBtn.innerText = 'Sign Me Up';
+        submitBtn.innerText = 'Log Me In';
+      }
+    };
+
+    window.handlePasswordReset = async () => {
+      const email = document.getElementById('email').value.trim();
+
+      if (!email) {
+        showLoginError('Enter your email address above first, then tap Forgot Password.');
+        return;
+      }
+
+      try {
+        await sendPasswordResetEmail(auth, email);
+        showLoginError('');
+        alert(`Password reset email sent to ${email}. Check your inbox (and spam folder) for a link to set a new password.`);
+      } catch (error) {
+        showLoginError(error.message || 'Failed to send password reset email.');
       }
     };
   </script>

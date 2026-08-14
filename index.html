@@ -1549,7 +1549,7 @@ nav a:hover {
       <a href="season.html" class="user-only">Season Picks</a>
       <a href="league.html" class="user-only">League</a>
       <a href="rules.html" class="rules-link guest-only">Rules</a>
-      <a href="javascript:void(0)" class="login-link guest-only" onclick="openLogin()">Log In</a>
+      <a href="login.html" class="login-link guest-only">Log In</a>
       <a href="signup.html" class="signup-btn guest-only">Sign Up</a>
       <a href="javascript:void(0)" class="user-only" onclick="handleLogout()">Log Out</a>
     </nav>
@@ -1564,22 +1564,6 @@ nav a:hover {
     </div>
   </div>
 </header>
-
-<!-- UNIFIED AUTH OVERLAY -->
-<div id="auth-overlay" class="auth-overlay">
-  <div class="whiteboard-login">
-    <button class="close-x" onclick="closeAuth()" aria-label="Close">&times;</button>
-    <h2 id="auth-title">Manager Login</h2>
-    <p id="auth-subtitle" style="position: relative; z-index: 2; color: #cbd5e1; font-weight: 700; margin-bottom: 20px; font-size: 14px;">Winners Think Outside The Box.</p>
-    <input id="auth-email" class="auth-input" type="email" placeholder="Email Address" style="position: relative; z-index: 2;">
-    <input id="auth-password" class="auth-input" type="password" placeholder="Password" style="position: relative; z-index: 2;">
-    <a href="javascript:void(0)" class="auth-forgot-link" onclick="handlePasswordReset()">Forgot password?</a>
-    <button id="auth-submit-btn" class="auth-submit-btn" onclick="handleAuth()" style="position: relative; z-index: 2;">Log Me In</button>
-    <p id="auth-switch-text" style="position: relative; z-index: 2; font-size: 12px; color: #cbd5e1; margin-top: 20px;">
-      Need an account? <a href="signup.html" class="inline-switch-link">Sign Up</a>
-    </p>
-  </div>
-</div>
 
 <!-- INSTALL OVERLAY -->
 <div id="install-overlay" class="auth-overlay">
@@ -1822,7 +1806,7 @@ nav a:hover {
   <p>Sign up free, pick your 11, and start climbing the league today.</p>
   <div class="closing-cta-actions">
     <a href="signup.html" class="cta-primary">Sign Up Free</a>
-    <a href="javascript:void(0)" class="cta-secondary" onclick="openLogin()">Log In</a>
+    <a href="login.html" class="cta-secondary">Log In</a>
   </div>
 </section>
 
@@ -1833,7 +1817,7 @@ nav a:hover {
     <nav class="footer-nav">
       <a href="rules.html">Rules</a>
       <a href="signup.html">Sign Up</a>
-      <a href="javascript:void(0)" onclick="openLogin()">Log In</a>
+      <a href="login.html">Log In</a>
       <a href="mailto:tonybrookes.game@gmail.com">Contact</a>
     </nav>
     <p class="footer-copy">&copy; 2026 Game of Opinions. Fan-made football predictions, built for opinions.</p>
@@ -1842,20 +1826,26 @@ nav a:hover {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBS3Fpobk342TpJw73mMgYOyUrWb-jBtfM",
   authDomain: "game-of-opinions-97b14.firebaseapp.com",
   projectId: "game-of-opinions-97b14",
   storageBucket: "game-of-opinions-97b14.firebasestorage.app",
-  appId: "1:863518863234:web:3a2c2378a2a358e0b2299b"
+  appId: "1:863518863234:web:3a2c2378a2a358e0b2299b",
+  // TODO: paste your real Measurement ID here once Google Analytics is
+  // enabled in Firebase Console (Project Settings -> Integrations), or
+  // analytics will silently no-op. See ANALYTICS_SETUP.md.
+  measurementId: "G-XXXXXXXXXX"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+const analytics = getAnalytics(app);
 console.log("Firebase initialized successfully");
 
 let deferredInstallPrompt = null;
@@ -2166,57 +2156,6 @@ window.handleLogout = () => {
   signOut(auth).then(() => {
     window.location.reload();
   });
-};
-
-// AUTH SCREEN CONTROLS
-window.openLogin = () => {
-  document.getElementById('auth-overlay').style.display = 'flex';
-};
-
-window.closeAuth = () => {
-  document.getElementById('auth-overlay').style.display = 'none';
-};
-
-// Check for login redirect from other pages - must run after openLogin is
-// defined above, otherwise this throws and silently kills the rest of the
-// script (including handleAuth below), breaking the Log In button entirely
-// for anyone who arrived via a "Log In" link from another page.
-if (window.location.search.includes('login=true')) {
-  window.openLogin();
-}
-
-// UNIFIED AUTH HANDLER
-window.handleAuth = async function() {
-  // This handler is now exclusively for login.
-  const email = document.getElementById("auth-email").value;
-  const password = document.getElementById("auth-password").value;
-
-  if (!email || !password) {
-    alert("Please enter your email and password.");
-    return;
-  }
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-    window.location.href = "dashboard.html";
-  } catch (error) {
-    alert(error.message);
-  }
-};
-
-window.handlePasswordReset = async function() {
-  const email = document.getElementById("auth-email").value.trim();
-
-  if (!email) {
-    alert("Enter your email address above first, then tap Forgot Password.");
-    return;
-  }
-
-  try {
-    await sendPasswordResetEmail(auth, email);
-    alert(`Password reset email sent to ${email}. Check your inbox (and spam folder) for a link to set a new password.`);
-  } catch (error) {
-    alert(error.message || "Failed to send password reset email.");
-  }
 };
 
 </script>
