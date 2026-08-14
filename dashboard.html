@@ -1152,11 +1152,32 @@ window.dismissNotifyBanner = function () {
 
 async function maybeShowNotifyBanner() {
   const banner = document.getElementById('notifyBanner');
+  const status = document.getElementById('notifyDashboardStatus');
+  const btn = document.getElementById('notifyDashboardBtn');
   if (!banner) return;
   if (localStorage.getItem('notifyBannerDismissed')) return;
-  if (!('Notification' in window) || !('serviceWorker' in navigator)) return;
-  if (Notification.permission === 'granted' || Notification.permission === 'denied') return;
-  if (!(await isMessagingSupported().catch(() => false))) return;
+
+  // Already on - nothing to do, no need to show anything.
+  if ('Notification' in window && Notification.permission === 'granted') return;
+
+  // Unsupported browser/OS version - explain why rather than showing nothing,
+  // which is exactly what iOS Safari outside a home-screen install looks like.
+  if (!('Notification' in window) || !('serviceWorker' in navigator) || !(await isMessagingSupported().catch(() => false))) {
+    status.innerText = "Notifications aren't supported on this browser/device yet. On iPhone or iPad, add GOO to your Home Screen first, then open it from there (requires iOS 16.4+).";
+    if (btn) btn.style.display = 'none';
+    banner.style.display = '';
+    return;
+  }
+
+  // Already explicitly blocked - a website can never re-trigger that system
+  // prompt once denied, so point at the one place that can actually fix it.
+  if (Notification.permission === 'denied') {
+    status.innerText = "Notifications are blocked for this app. Go to your device's Settings app -> Notifications -> GOO, and allow them there, then reopen the app.";
+    if (btn) btn.style.display = 'none';
+    banner.style.display = '';
+    return;
+  }
+
   banner.style.display = '';
 }
 

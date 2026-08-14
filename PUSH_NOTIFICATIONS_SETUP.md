@@ -59,6 +59,10 @@ this any time you want to send an update (a deadline reminder, results are
 in, season kickoff, etc.) — there's no limit on how often you can do this,
 and it costs nothing.
 
+**Cadence guideline:** don't over-send. Midday on the day before each
+gameweek locks is the planned rhythm — one reminder per gameweek, not one
+per fixture or every deadline nudge.
+
 ## Notes
 
 - If you ever want notifications sent *automatically* (e.g. "2 hours before
