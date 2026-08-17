@@ -732,6 +732,22 @@ nav a:hover {
 
 ========================= */
 
+.hero-free-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  margin-bottom: 16px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #d9ff6e 0%, #c7ff38 55%, #a8e619 100%);
+  color: #041102;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  box-shadow: 0 6px 20px rgba(199,255,56,0.35);
+}
+
 .hero-copy h1 {
   font-size: clamp(40px, 6vw, 68px);
   line-height: 1.08;
@@ -1560,7 +1576,7 @@ nav a:hover {
       <a href="league.html" class="user-only">League</a>
       <a href="rules.html" class="rules-link guest-only">Rules</a>
       <a href="login.html" class="login-link guest-only">Log In</a>
-      <a href="signup.html" class="signup-btn guest-only">Sign Up</a>
+      <a href="signup.html" class="signup-btn guest-only">Sign Up Free</a>
       <a href="javascript:void(0)" class="user-only" onclick="handleLogout()">Log Out</a>
     </nav>
   </div>
@@ -1617,6 +1633,7 @@ nav a:hover {
 <section class="hero">
   <div class="hero-grid">
     <div class="hero-copy">
+      <div class="hero-free-badge">&#9917; 100% Free to Play &mdash; No Card Needed</div>
       <h1>Your Football Opinions.<br>
       <strong>Finally Worth Something.</strong></h1>
       <div id="seasonCountdown" class="season-countdown">

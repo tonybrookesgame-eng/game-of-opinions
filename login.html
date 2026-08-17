@@ -138,6 +138,61 @@
       z-index: 2;
     }
     .auth-forgot-link:hover { color: #c7ff38 !important; }
+    .google-auth-btn {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      background: #fff;
+      color: #1f1f1f;
+      padding: 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.15);
+      font-weight: 700;
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+      margin-bottom: 18px;
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+    }
+    .google-auth-btn:hover {
+      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+      transform: translateY(-1px);
+    }
+    .google-auth-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .google-g {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-weight: 700;
+      font-size: 17px;
+      color: #4285F4;
+      line-height: 1;
+    }
+    .auth-divider {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 16px;
+      color: #9ca8c6;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .auth-divider::before, .auth-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.14);
+    }
     .auth-error {
       position: relative;
       z-index: 2;
@@ -217,6 +272,11 @@
 
       <div id="loginError" class="auth-error"></div>
 
+      <button id="googleAuthBtn" class="google-auth-btn" type="button" onclick="handleGoogleAuth()">
+        <span class="google-g">G</span> Continue with Google
+      </button>
+      <div class="auth-divider"><span>or</span></div>
+
       <input id="email" class="auth-input" type="email" placeholder="Email Address" autocomplete="email">
       <input id="password" class="auth-input" type="password" placeholder="Password" autocomplete="current-password">
       <a href="javascript:void(0)" class="auth-forgot-link" onclick="handlePasswordReset()">Forgot password?</a>
@@ -231,7 +291,8 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
 
     const firebaseConfig = {
@@ -248,10 +309,33 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getFirestore(app);
     const analytics = getAnalytics(app);
 
     const errorEl = document.getElementById('loginError');
     const submitBtn = document.getElementById('loginSubmitBtn');
+    const googleBtn = document.getElementById('googleAuthBtn');
+
+    window.handleGoogleAuth = async () => {
+      showLoginError('');
+      googleBtn.disabled = true;
+      try {
+        const result = await signInWithPopup(auth, new GoogleAuthProvider());
+        const userRef = doc(db, "users", result.user.uid);
+        const snap = await getDoc(userRef);
+        const isNewUser = !snap.exists();
+        if (isNewUser) {
+          await setDoc(userRef, { email: result.user.email, createdAt: new Date() });
+        }
+        logEvent(analytics, isNewUser ? 'sign_up' : 'login', { method: 'google' });
+        window.location.href = isNewUser ? "myxi.html" : "dashboard.html";
+      } catch (error) {
+        googleBtn.disabled = false;
+        if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') return;
+        console.error(error);
+        showLoginError(error.message || 'Google sign-in failed.');
+      }
+    };
 
     function showLoginError(message) {
       if (!errorEl) return;
