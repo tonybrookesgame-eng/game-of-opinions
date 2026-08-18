@@ -369,41 +369,6 @@ nav a:hover {
   box-shadow: 0 8px 26px rgba(199, 255, 56, 0.45);
 }
 
-/* Small inline pill for "switch mode" links inside auth forms (e.g. "Need
-   an account? Sign Up") - same lime language as the nav buttons, just sized
-   down so it sits comfortably inside a sentence instead of as a full CTA. */
-.inline-switch-link {
-  display: inline-flex;
-  align-items: center;
-  font-size: 12px;
-  font-weight: 800;
-  padding: 5px 14px;
-  border-radius: 999px;
-  text-decoration: none !important;
-  margin-left: 2px;
-  color: #c7ff38 !important;
-  border: 1px solid rgba(199,255,56,0.4);
-  background: rgba(199,255,56,0.08);
-  transition: 0.2s ease;
-}
-.inline-switch-link:hover {
-  border-color: rgba(199,255,56,0.8);
-  background: rgba(199,255,56,0.16);
-}
-
-.auth-forgot-link {
-  display: block;
-  text-align: right;
-  font-size: 12px;
-  color: #9ca8c6 !important;
-  font-weight: 600;
-  margin: -4px 0 14px;
-  text-decoration: underline !important;
-  position: relative;
-  z-index: 2;
-}
-.auth-forgot-link:hover { color: #c7ff38 !important; }
-
 /* MANAGER'S OFFICE STYLES */
 .office-section {
   margin-top: 94px; /* Adjusted to sit below the new header/ticker height */
@@ -453,17 +418,6 @@ nav a:hover {
   margin-bottom: 25px;
 }
 
-.auth-input {
-  width: 100%;
-  padding: 14px;
-  margin-bottom: 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: #1e293b;
-  color: white;
-  font-size: 16px;
-}
-
 /* =========================
 
    HERO
@@ -488,65 +442,6 @@ nav a:hover {
    PHONE MOCKUP
 
 ========================= */
-
-/* BET BUILDER STYLES (Replicated from myxi.html) */
-.bet-match {
-  background: rgba(199, 255, 56, 0.1);
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-weight: 800;
-  font-size: 14px;
-  color: #c7ff38;
-  margin-bottom: 12px;
-  text-align: center;
-  border: 1px solid rgba(199, 255, 56, 0.2);
-}
-.bet-list {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 15px 0;
-}
-.bet-list li {
-  font-size: 12px;
-  color: #cbd5e1;
-  padding: 3px 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-align: left;
-}
-.bet-list li::before {
-  content: "•";
-  color: #c7ff38;
-}
-.bet-odds-box {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(0,0,0,0.3);
-  padding: 10px;
-  border-radius: 10px;
-  margin-bottom: 15px;
-}
-.odds-label { font-size: 11px; color: #9ca3af; }
-.odds-value { font-weight: 900; color: #fff; font-size: 16px; }
-
-.bet-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-.bet-choice-mock {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: white;
-  padding: 8px;
-  border-radius: 10px;
-  font-weight: 700;
-  font-size: 12px;
-  text-align: center;
-}
 
 .phone-screen {
 
@@ -1482,8 +1377,6 @@ nav a:hover {
     font-size: 9px !important;
     padding: 3px 6px !important;
   }
-
-  .nav-sep { display: none; }
 
   nav a {
     margin: 0;
