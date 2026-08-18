@@ -1936,7 +1936,7 @@ window.enableNotifications = async function () {
     onMessage(messaging, (payload) => {
       const title = payload.notification?.title || 'Game of Opinions';
       const body = payload.notification?.body || '';
-      new Notification(title, { body, icon: 'icon-192.svg' });
+      new Notification(title, { body, icon: 'icon-192.png' });
     });
   } catch (error) {
     console.error(error);

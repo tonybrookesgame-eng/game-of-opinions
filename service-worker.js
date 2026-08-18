@@ -1,4 +1,4 @@
-const CACHE_NAME = 'game-of-opinions-pwa-v5';
+const CACHE_NAME = 'game-of-opinions-pwa-v6';
 const APP_SHELL = [
   '/',
   '/index.html',
@@ -13,8 +13,8 @@ const APP_SHELL = [
   '/shared-fixtures.js',
   '/myxi-data-loader.js',
   '/manifest.webmanifest',
-  '/icon-192.svg',
-  '/icon-512.svg'
+  '/icon-192.png',
+  '/icon-512.png'
 ]
 
 // PUSH NOTIFICATIONS (Firebase Cloud Messaging)
@@ -45,8 +45,8 @@ try {
       const body = payload.notification?.body || '';
       self.registration.showNotification(title, {
         body,
-        icon: '/icon-192.svg',
-        badge: '/icon-192.svg',
+        icon: '/icon-192.png',
+        badge: '/icon-192.png',
         data: { url: payload.fcmOptions?.link || payload.data?.url || '/index.html' }
       });
     });
