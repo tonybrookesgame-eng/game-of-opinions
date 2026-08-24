@@ -292,7 +292,7 @@
   <script src="myxi-data-loader.js"></script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, collectionGroup, getDocs, getCountFromServer, doc, updateDoc, increment, setDoc, getDoc, query, orderBy, limit, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, collectionGroup, getDocs, getCountFromServer, doc, updateDoc, increment, setDoc, getDoc, deleteDoc, query, orderBy, limit, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     const firebaseConfig = {
@@ -1431,6 +1431,13 @@
             picksScore: userPicksScore,
             betScore: userBetScore
           }, { merge: true });
+
+          // This week's picks/bet are now safely archived above - clear the
+          // live docs so the new gameweek starts blank instead of silently
+          // carrying last week's selections forward. The squad (myxi/team)
+          // deliberately isn't touched here, since that persists week to week.
+          await deleteDoc(doc(db, "users", userId, "myxi", "weeklyPicks")).catch(() => {});
+          await deleteDoc(doc(db, "users", userId, "myxi", "betBuilder")).catch(() => {});
 
           const statsRef = doc(db, `users/${userId}/stats/points`);
           await setDoc(statsRef, {

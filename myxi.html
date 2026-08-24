@@ -2679,8 +2679,8 @@ let betPointsSmall = 35;
 // Bet Builder Data - Add new weeks at the end of this array
 const weeklyBets = [
   {
-    match: "Newcastle Vs Liverpool",
-    picks: ["Liverpool to win", "Over 2.5 Goals", "Over 10 Corners", "Thiaw To Be carded"],
+    match: "Man Utd Vs Ipswich",
+    picks: ["Man Utd to win", "Over 3.5 Goals", "Over 11 Corners", "Clarke To Be carded"],
     odds: "16/1"
   }
 ];
@@ -3618,6 +3618,15 @@ onSnapshot(gameweekSettingsRef, async (docSnap) => {
         applyPitchLockState(isLocked);
         document.getElementById('clearTeamBtn').disabled = isLocked;
         updateDependentSaveButtonsAvailability(isLocked);
+        // These three were previously only synced on page load, not on this
+        // live snapshot update - meant a gameweek unlocking while the page
+        // was already open left Weekly Picks/Bet Builder stuck disabled
+        // until the user manually reloaded.
+        const firstScorerEl = document.getElementById('firstScorer');
+        const goalMinuteEl = document.getElementById('goalMinute');
+        if (firstScorerEl) firstScorerEl.disabled = isLocked;
+        if (goalMinuteEl) goalMinuteEl.disabled = isLocked;
+        document.querySelectorAll('.bet-choice').forEach(b => b.disabled = isLocked);
 
         // Refresh to apply points display logic
         document.querySelectorAll('.pitch select').forEach(s => updateShirt(s));
