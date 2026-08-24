@@ -37,8 +37,11 @@ service cloud.firestore {
       allow create, update: if isSignedIn() && (isOwner(uid) || isAdmin());
       allow delete: if isAdmin();
 
+      // Squad, weekly picks, and Bet Builder choice - readable by any signed-in
+      // manager now the season's underway, so managers can view each other's
+      // teams from the league table. Writes stay owner/admin-only.
       match /myxi/{doc} {
-        allow read: if isSignedIn() && (isOwner(uid) || isAdmin());
+        allow read: if isSignedIn();
         allow write: if isSignedIn() && (isOwner(uid) || isAdmin());
       }
 
@@ -47,8 +50,10 @@ service cloud.firestore {
         allow write: if isSignedIn() && (isOwner(uid) || isAdmin());
       }
 
+      // Per-gameweek archive (team/picks/bet/points snapshot) - same public
+      // read as myxi/ above, so "view manager" can show past weeks too.
       match /history/{doc} {
-        allow read: if isSignedIn() && (isOwner(uid) || isAdmin());
+        allow read: if isSignedIn();
         allow write: if isSignedIn() && (isOwner(uid) || isAdmin());
       }
 
@@ -57,8 +62,9 @@ service cloud.firestore {
         allow write: if isSignedIn() && (isOwner(uid) || isAdmin());
       }
 
+      // Season predictions - same reasoning as myxi/ above.
       match /predictions/{doc} {
-        allow read: if isSignedIn() && (isOwner(uid) || isAdmin());
+        allow read: if isSignedIn();
         allow write: if isSignedIn() && (isOwner(uid) || isAdmin());
       }
     }

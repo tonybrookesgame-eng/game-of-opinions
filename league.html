@@ -1108,6 +1108,118 @@ h1 {
   }
 }
 
+/* ========================= VIEW MANAGER MODAL ========================= */
+.leader-row.clickable, .podium-card.clickable {
+  cursor: pointer;
+}
+.leader-row.clickable:hover {
+  background: rgba(199,255,56,0.05);
+}
+.manager-view-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+  padding: 90px 16px 30px;
+  background: rgba(2,6,17,0.75);
+  backdrop-filter: blur(6px);
+  overflow-y: auto;
+}
+.manager-view-overlay.open { display: flex; }
+.manager-view-card {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  max-height: 85vh;
+  overflow-y: auto;
+  margin: auto;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(199,255,56,0.12), transparent 55%),
+    linear-gradient(180deg, #101b2d 0%, #0a1220 100%);
+  border: 1px solid rgba(199,255,56,0.22);
+  border-radius: 20px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.55);
+  padding: 32px;
+}
+.manager-view-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.1);
+  color: white;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+.manager-view-close:hover { background: rgba(255,255,255,0.2); }
+.manager-view-title {
+  color: #c7ff38;
+  font-size: 22px;
+  font-weight: 900;
+  text-transform: uppercase;
+  border-bottom: 2px solid rgba(199,255,56,0.3);
+  padding-bottom: 12px;
+  margin: 0 0 20px;
+}
+.manager-view-section {
+  margin-bottom: 22px;
+}
+.manager-view-section h4 {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #9ca3af;
+}
+.manager-view-empty {
+  color: #9ca3af;
+  font-size: 13px;
+  font-style: italic;
+}
+.manager-view-squad {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 8px;
+}
+.manager-view-player {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 12px;
+}
+.manager-view-player strong { display: block; color: #f2f5ff; font-size: 13px; }
+.manager-view-player span { color: #9ca3af; }
+.manager-view-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+.manager-view-row .pts {
+  color: #c7ff38;
+  font-weight: 800;
+  white-space: nowrap;
+  margin-left: 12px;
+}
+.manager-view-loading {
+  text-align: center;
+  color: #9ca3af;
+  padding: 30px 0;
+}
+
 </style>
 
 </head>
@@ -1241,7 +1353,7 @@ h1 {
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
-import { getFirestore, collection, query, orderBy, where, getDocs, getDoc, doc, setDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, query, orderBy, where, limit, getDocs, getDoc, doc, setDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
@@ -1454,10 +1566,12 @@ function renderLeaderboardRows(entries, user) {
     const escapedName = teamName.replace(/'/g, "\\'");
 
     const row = document.createElement("div");
-    row.className = `leader-row ${isYou ? "you" : ""}`;
+    row.className = `leader-row clickable ${isYou ? "you" : ""}`;
+    row.title = `View ${teamName}'s team, picks, and history`;
+    row.onclick = () => window.viewManager(entry.uid, teamName);
     row.innerHTML = `
       <div class="rank ${medalClass}">${medalIcon}</div>
-      <div class="team" ${isTruncated ? `onclick="alert('${escapedName}')" style="cursor:help;"` : ""}>
+      <div class="team">
         <span class="team-cell-inner">
           <span title="${teamName}">${displayTeamName}</span>${isYou ? " (You)" : ""}
         </span>
@@ -1489,7 +1603,9 @@ function renderPodium(entries) {
   visualOrder.forEach(({ entry, rank }) => {
     const teamName = entry.data.teamName || "Anonymous";
     const card = document.createElement("div");
-    card.className = `podium-card rank-${rank}`;
+    card.className = `podium-card rank-${rank} clickable`;
+    card.title = `View ${teamName}'s team, picks, and history`;
+    card.onclick = () => window.viewManager(entry.uid, teamName);
     card.innerHTML = `
       <div class="podium-medal">${medals[rank]}</div>
       <div class="podium-name" title="${teamName}">${teamName}</div>
@@ -1976,7 +2092,113 @@ window.handleLogout = () => {
   });
 };
 
+// VIEW MANAGER - lets any signed-in manager see another manager's squad,
+// most recently processed gameweek picks/bet, and season predictions.
+// Relies on firestore.rules opening read access on myxi/predictions/history
+// to any signed-in user now the season's underway (writes stay locked down).
+function decodePlayerValue(value) {
+  if (!value || value === "Select") return null;
+  if (typeof value === "string" && value.includes("|")) {
+    const [name, club] = value.split("|");
+    return { name, club };
+  }
+  return { name: String(value), club: null };
+}
+
+function renderPlayerChip(value) {
+  const p = decodePlayerValue(value);
+  if (!p) return '';
+  return `<div class="manager-view-player"><strong>${p.name}</strong>${p.club ? `<span>${p.club}</span>` : ''}</div>`;
+}
+
+function renderSeasonPickValue(value) {
+  if (Array.isArray(value)) return value.map(v => decodePlayerValue(v)?.name || v).join(', ');
+  return decodePlayerValue(value)?.name || value;
+}
+
+window.closeManagerView = function () {
+  document.getElementById('manager-view-overlay').classList.remove('open');
+};
+
+window.viewManager = async function (uid, teamName) {
+  const overlay = document.getElementById('manager-view-overlay');
+  const titleEl = document.getElementById('manager-view-title');
+  const bodyEl = document.getElementById('manager-view-body');
+
+  titleEl.textContent = teamName || 'Manager';
+  bodyEl.innerHTML = '<div class="manager-view-loading">Loading...</div>';
+  overlay.classList.add('open');
+
+  try {
+    // Find the most recently processed gameweek to pull this manager's archive for.
+    const gwSnap = await getDocs(query(collection(db, 'gameweekHistory'), orderBy('gw', 'desc'), limit(1)));
+    const latestGw = gwSnap.empty ? null : gwSnap.docs[0].data().gw;
+
+    const [historySnap, seasonSnap] = await Promise.all([
+      latestGw ? getDoc(doc(db, 'users', uid, 'history', 'GW' + latestGw)) : Promise.resolve(null),
+      getDoc(doc(db, 'users', uid, 'predictions', 'season'))
+    ]);
+
+    const history = historySnap && historySnap.exists() ? historySnap.data() : null;
+    const season = seasonSnap.exists() ? seasonSnap.data() : null;
+
+    const squadPlayers = (history?.team?.players || []).filter(v => v && v !== 'Select');
+    const squadHtml = squadPlayers.length
+      ? `<div class="manager-view-squad">${squadPlayers.map(renderPlayerChip).join('')}</div>`
+      : '<p class="manager-view-empty">No squad recorded for the last gameweek.</p>';
+
+    let weeklyHtml = '<p class="manager-view-empty">No weekly picks recorded for the last gameweek.</p>';
+    if (history?.picks) {
+      const p = history.picks;
+      weeklyHtml = `<div class="manager-view-row"><span>${p.first || '—'} to score first, minute ${p.minute || '—'}</span><span class="pts">${history.picksScore ?? 0} pts</span></div>`;
+    }
+
+    let betHtml = '<p class="manager-view-empty">No Bet Builder pick recorded for the last gameweek.</p>';
+    if (history?.bet?.choice) {
+      betHtml = `<div class="manager-view-row"><span>Backed ${history.bet.choice.toUpperCase()}</span><span class="pts">${history.betScore ?? 0} pts</span></div>`;
+    }
+
+    const seasonEntries = season ? Object.entries(season) : [];
+    const seasonHtml = seasonEntries.length
+      ? seasonEntries.map(([title, value]) => `<div class="manager-view-row"><span>${title}</span><span class="pts">${renderSeasonPickValue(value)}</span></div>`).join('')
+      : '<p class="manager-view-empty">No season picks submitted yet.</p>';
+
+    bodyEl.innerHTML = `
+      <div class="manager-view-section">
+        <h4>${latestGw ? `Gameweek ${latestGw} Squad` : 'Squad'}</h4>
+        ${squadHtml}
+      </div>
+      <div class="manager-view-section">
+        <h4>Weekly Predictions</h4>
+        ${weeklyHtml}
+      </div>
+      <div class="manager-view-section">
+        <h4>Bet Builder</h4>
+        ${betHtml}
+      </div>
+      <div class="manager-view-section">
+        <h4>Season Picks</h4>
+        ${seasonHtml}
+      </div>
+    `;
+  } catch (error) {
+    console.error('Failed to load manager view', error);
+    bodyEl.innerHTML = `<p class="manager-view-empty">Couldn't load this manager's data: ${error.message || error}</p>`;
+  }
+};
+
 </script>
+
+<!-- VIEW MANAGER MODAL -->
+<div class="manager-view-overlay" id="manager-view-overlay">
+  <div class="manager-view-card">
+    <button class="manager-view-close" onclick="closeManagerView()" aria-label="Close">&times;</button>
+    <h3 class="manager-view-title" id="manager-view-title">Manager</h3>
+    <div id="manager-view-body">
+      <div class="manager-view-loading">Loading...</div>
+    </div>
+  </div>
+</div>
 
 <!-- FOOTER -->
 <!-- MOBILE NAV -->
