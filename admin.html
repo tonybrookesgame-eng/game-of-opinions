@@ -592,7 +592,7 @@
             <input type="checkbox" id="app-${p.id}">
             <input type="number" id="gl-${p.id}" value="0">
             <input type="number" id="ast-${p.id}" value="0">
-            <input type="checkbox" id="cs-${p.id}">
+            <input type="checkbox" id="cs-${p.id}" ${p.pos === 'FWD' ? 'disabled style="opacity:0.2"' : ''}>
             <input type="number" id="ps-${p.id}" value="0" ${p.pos !== 'GK' ? 'disabled style="opacity:0.2"' : ''}>
             <input type="checkbox" id="yc-${p.id}">
             <input type="checkbox" id="rc-${p.id}">
