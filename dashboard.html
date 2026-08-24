@@ -1004,7 +1004,7 @@ canvas { width: 100%; height: 100%; }
     <div class="card mix">
       <h3>Points Mix</h3>
       <div class="chart-wrap"><canvas id="mixChart" width="360" height="240"></canvas></div>
-      <div class="legend"><span class="sel">Team picks</span><span class="pk">Weekly predictions</span><span class="bet">Match prediction boost</span></div>
+      <div class="legend"><span class="sel">Team picks</span><span class="pk">Weekly (predictions + Bet Builder)</span><span class="bet">Season picks</span></div>
       <div id="mixStatus" class="status-msg">Loading points distribution...</div>
     </div>
 
@@ -1566,7 +1566,7 @@ function drawTrendChart(values) {
   });
 }
 
-function drawMixChart(selectionPts, picksPts, betPts) {
+function drawMixChart(selectionPts, weeklyPts, seasonPts) {
   const canvas = document.getElementById('mixChart');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
@@ -1576,8 +1576,8 @@ function drawMixChart(selectionPts, picksPts, betPts) {
 
   const data = [
     { label: 'Team', val: Math.max(selectionPts, 0), color: '#60a5fa' },
-    { label: 'Weekly', val: Math.max(picksPts, 0), color: '#f59e0b' },
-    { label: 'Boost', val: Math.max(betPts, 0), color: '#34d399' }
+    { label: 'Weekly', val: Math.max(weeklyPts, 0), color: '#f59e0b' },
+    { label: 'Season', val: Math.max(seasonPts, 0), color: '#34d399' }
   ];
 
   const maxVal = Math.max(...data.map(d => d.val), 1);
@@ -1758,6 +1758,8 @@ async function loadDashboard(user) {
   const selectionPts = stats.selectionPts || 0;
   const picksPts = stats.picksPts || 0;
   const betPts = stats.betPts || 0;
+  const weeklyPts = picksPts + betPts; // Weekly predictions + Bet Builder, both live on myxi.html
+  const seasonPts = leader.seasonPoints || 0;
   const totalPts = leader.totalPoints || stats.totalPts || 0;
   const latestWeek = leader.weeklyPoints || 0;
 
@@ -1798,12 +1800,12 @@ async function loadDashboard(user) {
     && trendValues[trendValues.length - 2] >= trendValues[trendValues.length - 3];
   document.getElementById('kpiSignal').innerText = trendValues.length < 3 ? 'N/A' : (rising ? 'Rising' : 'Volatile');
 
-  drawMixChart(selectionPts, picksPts, betPts);
+  drawMixChart(selectionPts, weeklyPts, seasonPts);
 
   document.getElementById('trendStatus').innerText = trendValues.length
     ? `Tracking ${trendValues.length} processed gameweek(s).`
     : 'No gameweeks processed yet.';
-  document.getElementById('mixStatus').innerText = `Team: ${selectionPts} | Weekly: ${picksPts} | Boost: ${betPts}`;
+  document.getElementById('mixStatus').innerText = `Team: ${selectionPts} | Weekly: ${weeklyPts} | Season: ${seasonPts}`;
 
   // Insight 1: current streak (consecutive non-decreasing weeks).
   let streak = 1;
