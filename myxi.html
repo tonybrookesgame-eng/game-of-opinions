@@ -3571,8 +3571,10 @@ onSnapshot(gameweekSettingsRef, async (docSnap) => {
       ? window.getGameweekStatusFromTimes(deadlineDate, reopenDate)
       : 'open';
 
+        const wasLocked = (gameweekStatus === 'locked');
         gameweekStatus = effectiveStatus;
         let isLocked = (gameweekStatus === 'locked');
+        const justLocked = !wasLocked && isLocked;
 
         // Update deadline timer in header
         if (isLocked) {
@@ -3612,6 +3614,12 @@ onSnapshot(gameweekSettingsRef, async (docSnap) => {
             } else if (currentBetChoice === 'no') {
               document.getElementById('betInfo').innerHTML = `Reward: <strong>${betPointsSmall} pts</strong> | Risk: <strong>${betPointsBig} pts</strong>`;
             }
+        }
+
+        // Capture whatever's currently selected but unsaved before the lock
+        // disables these fields below - see autoSaveUnsavedPicksOnLock.
+        if (justLocked && currentUser) {
+          autoSaveUnsavedPicksOnLock();
         }
 
         // Disable/Enable save buttons based on lock status
@@ -3974,6 +3982,49 @@ const saveBetBuilder = async function() {
   }
 }
 window.saveBetBuilder = saveBetBuilder;
+
+// Safety net: if the gameweek locks while the user picked something but
+// never clicked Save, lock in whatever they had chosen instead of losing
+// it. Fires once, right at the moment the gameweek transitions to locked
+// (see the settings/gameweek listener) - bypasses saveWeekly/saveBetBuilder
+// since those deliberately refuse to save once gameweekStatus is locked.
+const autoSaveUnsavedPicksOnLock = async function () {
+  if (!currentUser || !hasTeamNameSaved()) return;
+
+  const fs = document.getElementById('firstScorer');
+  const gm = document.getElementById('goalMinute');
+  if (!weeklyIsSaved && fs && gm && fs.value !== 'Select' && gm.value !== 'Select') {
+    try {
+      const weeklyDocRef = doc(db, "users", currentUser.uid, "myxi", "weeklyPicks");
+      const data = { first: fs.value, minute: gm.value, updatedAt: new Date().toISOString(), autoSavedAtLock: true };
+      await setDoc(weeklyDocRef, data, { merge: true });
+      markWeeklyAsSaved();
+      document.querySelector('.weekly-panel')?.classList.add('panel-saved');
+      const status = document.getElementById('weeklyStatus');
+      if (status) status.innerText = "Auto-saved as the gameweek locked";
+      showToast("Your Weekly Picks were auto-saved as the gameweek locked.");
+      try { showDebug(`Weekly picks auto-saved on lock:\n${JSON.stringify(data, null, 2)}`); } catch (e) {}
+    } catch (error) {
+      console.error('Auto-save weekly picks on lock failed:', error);
+      try { showDebug(`Auto-save weekly picks on lock failed: ${error?.message || error}`, true); } catch (e) {}
+    }
+  }
+
+  if (!betIsSaved && currentBetChoice) {
+    try {
+      const betBuilderDocRef = doc(db, "users", currentUser.uid, "myxi", "betBuilder");
+      const payload = { choice: currentBetChoice, updatedAt: new Date().toISOString(), autoSavedAtLock: true };
+      await setDoc(betBuilderDocRef, payload, { merge: true });
+      markBetAsSaved();
+      document.querySelector('.bet-builder-panel')?.classList.add('panel-saved');
+      showToast("Your Bet Builder pick was auto-saved as the gameweek locked.");
+      try { showDebug(`Bet builder auto-saved on lock:\n${JSON.stringify(payload, null, 2)}`); } catch (e) {}
+    } catch (error) {
+      console.error('Auto-save bet builder on lock failed:', error);
+      try { showDebug(`Auto-save bet builder on lock failed: ${error?.message || error}`, true); } catch (e) {}
+    }
+  }
+};
 
 const clearTeam = async function() {
   if (!currentUser) {
