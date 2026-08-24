@@ -2535,7 +2535,7 @@ MOBILE
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, orderBy, limit, onSnapshot, getDocs, arrayUnion } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, collection, query, orderBy, limit, onSnapshot, getDocs, arrayUnion } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
 
@@ -3343,6 +3343,24 @@ const loadSelectedGameweekHistory = async () => {
     // IMPORTANT: Only load picks and bet if they exist - don't persist them across gameweeks
     if (picksSnap.exists()) picksData = picksSnap.data();
     if (betSnap.exists()) betData = betSnap.data();
+
+    // A saved pick/bet is only valid for the gameweek it was stamped for
+    // (see forDeadline in saveWeekly/saveBetBuilder/autoSaveUnsavedPicksOnLock).
+    // If the live deadline has since moved on - fixtures re-synced, gameweek
+    // processed, etc. - or the doc predates this stamp existing at all,
+    // treat it as stale so the UI shows blank instead of a leftover "Saved"
+    // state carried over from a previous gameweek, and clean up the stale
+    // doc so it doesn't linger.
+    if (currentGameweekDeadlineISO) {
+      if (picksData && picksData.forDeadline !== currentGameweekDeadlineISO) {
+        deleteDoc(doc(db, "users", currentUser.uid, "myxi", "weeklyPicks")).catch(() => {});
+        picksData = null;
+      }
+      if (betData && betData.forDeadline !== currentGameweekDeadlineISO) {
+        deleteDoc(doc(db, "users", currentUser.uid, "myxi", "betBuilder")).catch(() => {});
+        betData = null;
+      }
+    }
     if (statsSnap.exists()) {
       const d = statsSnap.data();
       statsData = {
@@ -3557,6 +3575,11 @@ const auth = getAuth(app);
 const analytics = getAnalytics(app);
 
 let gameweekStatus = 'open'; // Default to open
+// The raw deadline ISO string currently live in settings/gameweek - stamped
+// onto Weekly Picks/Bet Builder saves so a later gameweek can recognize and
+// discard picks made for an earlier one, even if "Process" was never run
+// (e.g. fixtures were simply updated directly for the next gameweek).
+let currentGameweekDeadlineISO = null;
 
 // Listener for gameweek settings (status and deadline) with dynamic auto-lock/unlock
 const gameweekSettingsRef = doc(db, "settings", "gameweek");
@@ -3565,7 +3588,8 @@ onSnapshot(gameweekSettingsRef, async (docSnap) => {
         const settings = docSnap.data();
         const deadlineDate = settings.deadline ? new Date(settings.deadline) : null;
         const reopenDate = settings.reopenTime ? new Date(settings.reopenTime) : null;
-        
+        currentGameweekDeadlineISO = settings.deadline || null;
+
     // Shared status logic lives in shared-fixtures.js to avoid drift across pages.
     const effectiveStatus = typeof window.getGameweekStatusFromTimes === 'function'
       ? window.getGameweekStatusFromTimes(deadlineDate, reopenDate)
@@ -3874,7 +3898,8 @@ const saveWeekly = async function() {
   const data = {
     first: fs.value,
     minute: gm.value,
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
+    forDeadline: currentGameweekDeadlineISO
   };
   try {
     const weeklyDocRef = doc(db, "users", currentUser.uid, "myxi", "weeklyPicks");
@@ -3945,7 +3970,8 @@ const saveBetBuilder = async function() {
     const betBuilderDocRef = doc(db, "users", currentUser.uid, "myxi", "betBuilder");
     const payload = {
       choice: currentBetChoice,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
+      forDeadline: currentGameweekDeadlineISO
     };
     try {
       await setDoc(betBuilderDocRef, payload, { merge: true });
@@ -3996,7 +4022,7 @@ const autoSaveUnsavedPicksOnLock = async function () {
   if (!weeklyIsSaved && fs && gm && fs.value !== 'Select' && gm.value !== 'Select') {
     try {
       const weeklyDocRef = doc(db, "users", currentUser.uid, "myxi", "weeklyPicks");
-      const data = { first: fs.value, minute: gm.value, updatedAt: new Date().toISOString(), autoSavedAtLock: true };
+      const data = { first: fs.value, minute: gm.value, updatedAt: new Date().toISOString(), autoSavedAtLock: true, forDeadline: currentGameweekDeadlineISO };
       await setDoc(weeklyDocRef, data, { merge: true });
       markWeeklyAsSaved();
       document.querySelector('.weekly-panel')?.classList.add('panel-saved');
@@ -4013,7 +4039,7 @@ const autoSaveUnsavedPicksOnLock = async function () {
   if (!betIsSaved && currentBetChoice) {
     try {
       const betBuilderDocRef = doc(db, "users", currentUser.uid, "myxi", "betBuilder");
-      const payload = { choice: currentBetChoice, updatedAt: new Date().toISOString(), autoSavedAtLock: true };
+      const payload = { choice: currentBetChoice, updatedAt: new Date().toISOString(), autoSavedAtLock: true, forDeadline: currentGameweekDeadlineISO };
       await setDoc(betBuilderDocRef, payload, { merge: true });
       markBetAsSaved();
       document.querySelector('.bet-builder-panel')?.classList.add('panel-saved');
