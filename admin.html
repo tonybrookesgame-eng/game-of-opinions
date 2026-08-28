@@ -274,7 +274,7 @@
       <p style="margin: 6px 0 0 0; color: #fde68a; font-size: 12px;">Dry runs work even if the gameweek is still open. They use whatever is currently saved in Firestore, so they are best when users have already saved their picks.</p>
     </div>
     <div style="background: rgba(96,165,250,0.1); padding: 10px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #60a5fa;">
-      <input type="checkbox" id="final-result-mode" checked> <label for="final-result-mode" style="color: #93c5fd; font-weight: bold;">Final result for this gameweek (reopens the site for the next gameweek and clears Weekly Picks/Bet Builder)</label>
+      <input type="checkbox" id="final-result-mode"> <label for="final-result-mode" style="color: #93c5fd; font-weight: bold;">Final result for this gameweek (reopens the site for the next gameweek and clears Weekly Picks/Bet Builder)</label>
       <p style="margin: 6px 0 0 0; color: #bfdbfe; font-size: 12px;">
         Uncheck this to publish a <strong>live/partial update</strong> mid-gameweek (e.g. after Friday's game, before Saturday's) - points update for everyone, but the site stays locked, squads/picks/bet builder stay untouched, and nothing reopens. Fill in whichever games have finished so far and process as many times as you like; only check this box back on once the very last game of the gameweek is done.
       </p>
@@ -292,6 +292,16 @@
         Recalculates every manager's totalPoints as the sum of their archived weeklyPoints across every processed gameweek, plus seasonPoints - overwriting whatever totalPoints currently holds. Only needed once, to correct totals affected by the previous-gameweek-baseline bug fixed above. Safe to run any time after that - it will simply confirm nothing changed if totals are already correct.
       </p>
       <button onclick="repairCumulativeTotals()" style="background: #f87171; width: auto; padding: 10px 20px;">Repair Cumulative Totals</button>
+    </div>
+
+    <div style="background: rgba(248,113,113,0.1); padding: 10px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f87171;">
+      <p style="margin: 0 0 8px; color: #fecaca; font-weight: bold;">One-time repair: restore Weekly Picks / Bet Builder</p>
+      <p style="margin: 0 0 10px; color: #fecaca; font-size: 12px;">
+        If a gameweek was accidentally finalized while still in progress, every manager's live Weekly Picks/Bet Builder selections get deleted (they're archived first, so nothing is actually lost). This restores them from a given gameweek's archive back to the live myxi/weeklyPicks and myxi/betBuilder docs, for anyone whose live doc is currently missing - it never overwrites a live doc that already exists, so it's safe to run more than once.
+      </p>
+      <input type="number" id="restore-picks-gw" placeholder="Gameweek number" style="width: 140px; margin-bottom: 8px;">
+      <br>
+      <button onclick="restoreWeeklyPicksFromArchive()" style="background: #f87171; width: auto; padding: 10px 20px;">Restore Weekly Picks / Bet Builder</button>
     </div>
     <div id="sanity-check-output" style="background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; padding: 10px; color: #d1fae5; font-size: 13px; white-space: pre-wrap;">
       No sanity check run yet.
@@ -1787,6 +1797,65 @@
         console.error(e);
         showDebugAdmin(`Repair failed: ${e?.message || e}`, true);
         alert(`Repair failed: ${e?.message || e}`);
+      }
+    };
+
+    // ONE-TIME REPAIR for a gameweek that got accidentally finalized while
+    // still in progress: processGameweek() archives each manager's
+    // Weekly Picks/Bet Builder into users/{uid}/history/GW{n} *before*
+    // deleting the live myxi/weeklyPicks and myxi/betBuilder docs, so that
+    // data isn't actually lost - it's just no longer visible in the live
+    // view. This copies it back from the archive, but only where the live
+    // doc is currently missing, so it never clobbers anything real.
+    window.restoreWeeklyPicksFromArchive = async function() {
+      const gwNum = parseInt(document.getElementById('restore-picks-gw').value);
+      if (isNaN(gwNum)) {
+        alert('Enter the gameweek number to restore from.');
+        return;
+      }
+      if (!confirm(`This restores every manager's live Weekly Picks and Bet Builder from their GW${gwNum} archive, wherever the live doc is currently missing. Continue?`)) return;
+
+      try {
+        showDebugAdmin(`Restoring Weekly Picks/Bet Builder from GW${gwNum} archive...`);
+
+        // MyXI treats a picks/bet doc as stale (and deletes it again) if its
+        // forDeadline doesn't match the currently-stored deadline - restore
+        // has to re-stamp with the CURRENT deadline, not whatever was
+        // originally saved, or a force-locked/re-synced deadline would
+        // immediately undo this restore the next time each manager loads
+        // MyXI.
+        const gwSettingsSnap = await getDoc(doc(db, 'settings', 'gameweek'));
+        const currentDeadline = gwSettingsSnap.exists() ? gwSettingsSnap.data()?.deadline : null;
+
+        const leaderboardSnap = await getDocs(collection(db, 'leaderboard'));
+        let restoredPicks = 0, restoredBet = 0, checked = 0;
+
+        for (const userDoc of leaderboardSnap.docs) {
+          const userId = userDoc.id;
+          const archiveSnap = await getDoc(doc(db, 'users', userId, 'history', 'GW' + gwNum));
+          if (!archiveSnap.exists()) continue;
+          checked++;
+          const archive = archiveSnap.data();
+
+          const picksLiveSnap = await getDoc(doc(db, 'users', userId, 'myxi', 'weeklyPicks'));
+          if (!picksLiveSnap.exists() && archive.picks) {
+            await setDoc(doc(db, 'users', userId, 'myxi', 'weeklyPicks'), { ...archive.picks, forDeadline: currentDeadline });
+            restoredPicks++;
+          }
+
+          const betLiveSnap = await getDoc(doc(db, 'users', userId, 'myxi', 'betBuilder'));
+          if (!betLiveSnap.exists() && archive.bet) {
+            await setDoc(doc(db, 'users', userId, 'myxi', 'betBuilder'), { ...archive.bet, forDeadline: currentDeadline });
+            restoredBet++;
+          }
+        }
+
+        showDebugAdmin(`Restore complete. Checked ${checked} managers with a GW${gwNum} archive. Restored ${restoredPicks} Weekly Picks, ${restoredBet} Bet Builder docs.`);
+        alert(`Restore complete.\n\nChecked ${checked} managers with a GW${gwNum} archive.\nRestored ${restoredPicks} Weekly Picks and ${restoredBet} Bet Builder selections.`);
+      } catch (e) {
+        console.error(e);
+        showDebugAdmin(`Restore failed: ${e?.message || e}`, true);
+        alert(`Restore failed: ${e?.message || e}`);
       }
     };
 

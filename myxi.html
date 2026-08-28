@@ -2983,9 +2983,13 @@ const updateShirt = function(select) {
   const hasPoints = points !== undefined;
 
   ptsLabel.innerText = (hasPoints ? points : 0) + " PTS";
-  // Player-level points are only shown in historical gameweeks.
+  // Player-level points show in historical gameweeks, and live once the
+  // gameweek is locked (currentDisplayedPlayerScores is populated from the
+  // latest processed gameweekHistory doc while locked - see the "Fetch
+  // Player Points for the Pitch" block above - so a live/partial update
+  // shows up here immediately, not just after a gameweek is finalized).
   const isHistoryView = selectedGw !== "";
-  ptsLabel.style.display = isHistoryView ? "block" : "none";
+  ptsLabel.style.display = (isHistoryView || gameweekStatus === 'locked') ? "block" : "none";
 
   refreshDropdowns();
   // Once the team is saved, the pitch itself is locked (see applyPitchLockState) -
