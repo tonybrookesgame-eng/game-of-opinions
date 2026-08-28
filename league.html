@@ -1220,6 +1220,50 @@ h1 {
   padding: 30px 0;
 }
 
+.weekly-mover-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+.weekly-mover-row.is-you { border-color: rgba(199,255,56,0.35); }
+.weekly-mover-rank { color: #9ca3af; font-weight: 800; width: 26px; }
+.weekly-mover-name { flex: 1; color: #f2f5ff; font-weight: 700; }
+.weekly-mover-pts { color: #c7ff38; font-weight: 800; white-space: nowrap; }
+.weekly-mover-move { font-weight: 800; white-space: nowrap; min-width: 42px; text-align: right; }
+.weekly-mover-move.up { color: #4ade80; }
+.weekly-mover-move.down { color: #f87171; }
+.weekly-mover-move.same { color: #9ca3af; }
+.weekly-highlight-card {
+  background: rgba(199,255,56,0.06);
+  border: 1px solid rgba(199,255,56,0.25);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+.weekly-highlight-card.warn {
+  background: rgba(248,113,113,0.06);
+  border-color: rgba(248,113,113,0.28);
+}
+.weekly-highlight-card strong { display: block; color: #f2f5ff; font-size: 14px; margin-bottom: 2px; }
+.weekly-highlight-card span { color: #9ca3af; font-size: 12px; }
+
+.recap-move-up { color: #4ade80; }
+.recap-move-down { color: #f87171; }
+.recap-card-star-row {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.12);
+  font-size: 13px;
+  color: #f2f5ff;
+  font-weight: 700;
+}
+
 </style>
 
 </head>
@@ -1258,6 +1302,7 @@ h1 {
     <div class="league-primary-actions">
       <button class="league-action-btn primary" onclick="openLeagueModal('create')" aria-label="Create or join a league" title="Create or join a league">+ <span class="btn-label">New League</span></button>
       <button class="league-action-btn accent" id="share-league-btn" onclick="openLeagueModal('share')" aria-label="Share league code" title="Share league code">🔗 <span class="btn-label">Share Code</span></button>
+      <button class="league-action-btn" id="weekly-analysis-btn" onclick="openWeeklyAnalysis()" aria-label="Weekly analysis" title="Weekly analysis">📈 <span class="btn-label">Weekly Analysis</span></button>
     </div>
   </div>
 
@@ -1309,6 +1354,30 @@ h1 {
       <div class="share-card-stat-label">Points</div>
       <div class="share-card-stat-value" id="share-card-points">--</div>
     </div>
+  </div>
+</div>
+
+<div class="share-card-offscreen" id="weekly-recap-card-template">
+  <div class="share-card-logo">GAME <span>OF OPINIONS</span></div>
+  <div class="share-card-team" id="recap-card-gw">Gameweek Recap</div>
+  <div class="share-card-team" id="recap-card-team" style="font-size:18px; margin-bottom:2px;">Team Name</div>
+  <div class="share-card-league" id="recap-card-league">Global League</div>
+  <div class="share-card-stats">
+    <div>
+      <div class="share-card-stat-label">Rank</div>
+      <div class="share-card-stat-value" id="recap-card-rank">#--</div>
+    </div>
+    <div>
+      <div class="share-card-stat-label">Movement</div>
+      <div class="share-card-stat-value" id="recap-card-move">–</div>
+    </div>
+    <div>
+      <div class="share-card-stat-label">Points</div>
+      <div class="share-card-stat-value" id="recap-card-points">--</div>
+    </div>
+  </div>
+  <div class="recap-card-star-row" id="recap-card-star-row" style="display:none;">
+    <span id="recap-card-star"></span>
   </div>
 </div>
 
@@ -1516,6 +1585,7 @@ function getInitials(name) {
 }
 
 let currentUserStats = null;
+let lastWeeklyAnalysis = null;
 let rankRowObserver = null;
 
 function renderLeaderboardSkeleton() {
@@ -2187,6 +2257,241 @@ window.viewManager = async function (uid, teamName) {
   }
 };
 
+// WEEKLY ANALYSIS - summarizes the most recently processed gameweek for
+// whichever league table is currently on screen: who moved up/down, and
+// which selected player stood out or dragged a squad down.
+window.closeWeeklyAnalysis = function () {
+  document.getElementById('weekly-analysis-overlay').classList.remove('open');
+};
+
+window.openWeeklyAnalysis = async function () {
+  const overlay = document.getElementById('weekly-analysis-overlay');
+  const titleEl = document.getElementById('weekly-analysis-title');
+  const bodyEl = document.getElementById('weekly-analysis-body');
+  const shareBtn = document.getElementById('weekly-recap-share-btn');
+
+  const leagueLabel = activeLeagueCode ? (activeLeagueName || 'League') : 'Global League';
+  titleEl.textContent = `${leagueLabel} — Weekly Analysis`;
+  bodyEl.innerHTML = '<div class="manager-view-loading">Loading...</div>';
+  shareBtn.style.display = 'none';
+  lastWeeklyAnalysis = null;
+  overlay.classList.add('open');
+
+  try {
+    const gwSnap = await getDocs(query(collection(db, 'gameweekHistory'), orderBy('gw', 'desc'), limit(1)));
+    if (gwSnap.empty) {
+      bodyEl.innerHTML = '<p class="manager-view-empty">No gameweeks have been processed yet.</p>';
+      return;
+    }
+    const gwDoc = gwSnap.docs[0].data();
+    const gwNum = gwDoc.gw;
+    const playerScores = gwDoc.playerScores || {};
+
+    let memberIds;
+    if (activeLeagueCode) {
+      const leagueSnap = await getDoc(doc(db, 'leagues', 'L-' + activeLeagueCode));
+      memberIds = leagueSnap.exists() ? (leagueSnap.data().members || []).filter(Boolean) : [];
+    } else {
+      const lbSnap = await getDocs(collection(db, 'leaderboard'));
+      memberIds = lbSnap.docs.map(d => d.id);
+    }
+
+    if (!memberIds.length) {
+      bodyEl.innerHTML = '<p class="manager-view-empty">No members in this league yet.</p>';
+      return;
+    }
+
+    const members = await Promise.all(memberIds.map(async (uid) => {
+      const [lbSnap, histSnap] = await Promise.all([
+        getDoc(doc(db, 'leaderboard', uid)),
+        getDoc(doc(db, 'users', uid, 'history', 'GW' + gwNum))
+      ]);
+      const lb = lbSnap.exists() ? lbSnap.data() : {};
+      const hist = histSnap.exists() ? histSnap.data() : null;
+      const currentTotal = lb.totalPoints || 0;
+      const weekPoints = hist ? (hist.weeklyPoints || 0) : 0;
+      return {
+        uid,
+        teamName: lb.teamName || hist?.teamName || 'Anonymous',
+        currentTotal,
+        prevTotal: currentTotal - weekPoints,
+        weekPoints,
+        squad: (hist?.team?.players || []).filter(v => v && v !== 'Select')
+      };
+    }));
+
+    // Prefer the exact standings snapshot admin.html writes right after each
+    // gameweek is processed. Older gameweeks processed before that snapshot
+    // existed fall back to approximating last week's total.
+    const byCurrent = [...members].sort((a, b) => b.currentTotal - a.currentTotal);
+    let prevRankMap = null;
+    if (gwNum > 1) {
+      const snapshotLeagueId = activeLeagueCode ? ('L-' + activeLeagueCode) : 'L-GLOBAL';
+      const prevSnapDoc = await getDoc(doc(db, 'leagues', snapshotLeagueId, 'snapshots', 'GW' + (gwNum - 1)));
+      if (prevSnapDoc.exists()) {
+        prevRankMap = new Map((prevSnapDoc.data().standings || []).map(s => [s.uid, s.rank]));
+      }
+    }
+    const byPrev = [...members].sort((a, b) => b.prevTotal - a.prevTotal);
+    const approxPrevRank = new Map(byPrev.map((m, i) => [m.uid, i + 1]));
+    const myUid = auth.currentUser?.uid;
+
+    const moversData = byCurrent.map((m, i) => {
+      const rank = i + 1;
+      let diff = 0, isNew = false;
+      if (prevRankMap) {
+        if (prevRankMap.has(m.uid)) {
+          diff = prevRankMap.get(m.uid) - rank;
+        } else {
+          isNew = true;
+        }
+      } else {
+        diff = (approxPrevRank.get(m.uid) || rank) - rank;
+      }
+      return { uid: m.uid, teamName: m.teamName, rank, weekPoints: m.weekPoints, diff, isNew };
+    });
+
+    const moversHtml = moversData.map((m) => {
+      const moveClass = m.isNew ? 'same' : m.diff > 0 ? 'up' : m.diff < 0 ? 'down' : 'same';
+      const moveLabel = m.isNew ? 'NEW' : m.diff > 0 ? `▲ ${m.diff}` : m.diff < 0 ? `▼ ${Math.abs(m.diff)}` : '–';
+      return `<div class="weekly-mover-row${m.uid === myUid ? ' is-you' : ''}">
+        <span class="weekly-mover-rank">#${m.rank}</span>
+        <span class="weekly-mover-name">${m.teamName}</span>
+        <span class="weekly-mover-pts">${m.weekPoints} pts</span>
+        <span class="weekly-mover-move ${moveClass}">${moveLabel}</span>
+      </div>`;
+    }).join('');
+
+    // Tally selected players across every squad in this league so we can
+    // call out a standout performer and a possible drop candidate.
+    const tally = new Map();
+    members.forEach(m => {
+      m.squad.forEach(raw => {
+        const p = decodePlayerValue(raw);
+        if (!p) return;
+        const scoreKey = p.club ? `${p.name}|${p.club}` : p.name;
+        const score = playerScores[scoreKey] ?? playerScores[p.name] ?? 0;
+        if (!tally.has(p.name)) tally.set(p.name, { name: p.name, club: p.club, score, count: 0 });
+        tally.get(p.name).count += 1;
+      });
+    });
+    const tallyList = [...tally.values()];
+
+    let starHtml = '<p class="manager-view-empty">No squads recorded for this gameweek.</p>';
+    let dudHtml = '';
+    let star = null;
+    if (tallyList.length) {
+      star = [...tallyList].sort((a, b) => b.score - a.score)[0];
+      starHtml = `<div class="weekly-highlight-card">
+        <strong>${star.name}${star.club ? ` (${star.club})` : ''}</strong>
+        <span>${star.score} pts this gameweek &middot; picked by ${star.count} manager${star.count === 1 ? '' : 's'}</span>
+      </div>`;
+
+      const dudCandidates = tallyList.filter(p => p.score <= 2).sort((a, b) => a.score - b.score);
+      if (dudCandidates.length) {
+        const dud = dudCandidates[0];
+        dudHtml = `<div class="weekly-highlight-card warn">
+          <strong>${dud.name}${dud.club ? ` (${dud.club})` : ''}</strong>
+          <span>Only ${dud.score} pts &middot; picked by ${dud.count} manager${dud.count === 1 ? '' : 's'} &middot; might be worth benching</span>
+        </div>`;
+      }
+    }
+
+    const myMover = moversData.find(m => m.uid === myUid) || null;
+    lastWeeklyAnalysis = { gwNum, leagueLabel, myMover, star };
+    shareBtn.style.display = myMover ? 'inline-flex' : 'none';
+
+    bodyEl.innerHTML = `
+      <div class="manager-view-section">
+        <h4>Gameweek ${gwNum} Movers</h4>
+        ${moversHtml}
+      </div>
+      <div class="manager-view-section">
+        <h4>Player of the Gameweek</h4>
+        ${starHtml}
+      </div>
+      ${dudHtml ? `<div class="manager-view-section"><h4>One to Watch</h4>${dudHtml}</div>` : ''}
+    `;
+  } catch (error) {
+    console.error('Failed to load weekly analysis', error);
+    bodyEl.innerHTML = `<p class="manager-view-empty">Couldn't load weekly analysis: ${error.message || error}</p>`;
+  }
+};
+
+window.shareWeeklyRecap = async function () {
+  if (!lastWeeklyAnalysis || !lastWeeklyAnalysis.myMover || typeof html2canvas !== "function") {
+    if (typeof html2canvas !== "function") {
+      alert("Sharing isn't available right now. Please try again in a moment.");
+    }
+    return;
+  }
+
+  const { gwNum, leagueLabel, myMover, star } = lastWeeklyAnalysis;
+
+  document.getElementById("recap-card-gw").innerText = `Gameweek ${gwNum} Recap`;
+  document.getElementById("recap-card-team").innerText = myMover.teamName;
+  document.getElementById("recap-card-league").innerText = leagueLabel;
+  document.getElementById("recap-card-rank").innerText = `#${myMover.rank}`;
+  document.getElementById("recap-card-points").innerText = myMover.weekPoints;
+
+  const moveEl = document.getElementById("recap-card-move");
+  let moveText = "–";
+  if (myMover.isNew) {
+    moveEl.className = "share-card-stat-value";
+    moveText = "NEW";
+  } else if (myMover.diff > 0) {
+    moveEl.className = "share-card-stat-value recap-move-up";
+    moveText = `▲ ${myMover.diff}`;
+  } else if (myMover.diff < 0) {
+    moveEl.className = "share-card-stat-value recap-move-down";
+    moveText = `▼ ${Math.abs(myMover.diff)}`;
+  } else {
+    moveEl.className = "share-card-stat-value";
+  }
+  moveEl.innerText = moveText;
+
+  const starRow = document.getElementById("recap-card-star-row");
+  if (star) {
+    starRow.style.display = "block";
+    document.getElementById("recap-card-star").innerText = `⭐ Player of the GW: ${star.name} (${star.score} pts)`;
+  } else {
+    starRow.style.display = "none";
+  }
+
+  const template = document.getElementById("weekly-recap-card-template");
+
+  try {
+    const canvas = await html2canvas(template, { backgroundColor: null, scale: 2 });
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+    if (!blob) throw new Error("Could not generate image.");
+
+    const file = new File([blob], "my-goo-recap.png", { type: "image/png" });
+    const shareText = `Gameweek ${gwNum} on Game of Opinions: #${myMover.rank} in ${leagueLabel} with ${myMover.weekPoints} pts this week!`;
+
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: "Game of Opinions", text: shareText });
+        return;
+      } catch (err) {
+        if (err?.name === "AbortError") return;
+      }
+    }
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "my-goo-recap.png";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    showToast("Recap card downloaded!");
+  } catch (error) {
+    console.error("Share Weekly Recap failed", error);
+    alert("Unable to generate your recap card right now. Please try again.");
+  }
+};
+
 </script>
 
 <!-- VIEW MANAGER MODAL -->
@@ -2195,6 +2500,18 @@ window.viewManager = async function (uid, teamName) {
     <button class="manager-view-close" onclick="closeManagerView()" aria-label="Close">&times;</button>
     <h3 class="manager-view-title" id="manager-view-title">Manager</h3>
     <div id="manager-view-body">
+      <div class="manager-view-loading">Loading...</div>
+    </div>
+  </div>
+</div>
+
+<!-- WEEKLY ANALYSIS MODAL -->
+<div class="manager-view-overlay" id="weekly-analysis-overlay">
+  <div class="manager-view-card">
+    <button class="manager-view-close" onclick="closeWeeklyAnalysis()" aria-label="Close">&times;</button>
+    <h3 class="manager-view-title" id="weekly-analysis-title">Weekly Analysis</h3>
+    <button class="league-action-btn accent" id="weekly-recap-share-btn" style="display:none; margin-bottom:18px;" onclick="shareWeeklyRecap()">📤 <span class="btn-label">Share My Recap</span></button>
+    <div id="weekly-analysis-body">
       <div class="manager-view-loading">Loading...</div>
     </div>
   </div>

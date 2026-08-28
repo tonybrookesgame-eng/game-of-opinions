@@ -1330,7 +1330,10 @@
         showDebugAdmin(`Beginning processing for GW${gwNum} (dryRun: ${isDryRun})`);
         // 2. Fetch every user's team from the leaderboard
         const leaderboardSnap = await getDocs(collection(db, "leaderboard"));
-        
+        // Collected so we can snapshot each league's post-GW standings below,
+        // without re-reading every leaderboard doc a second time.
+        const newTotals = {};
+
         for (const userDoc of leaderboardSnap.docs) {
           const userId = userDoc.id;
           const userData = userDoc.data();
@@ -1401,6 +1404,8 @@
             continue; 
           }
 
+          newTotals[userId] = (userData.totalPoints || 0) + deltaTotal;
+
           // Keep the leaderboard's current weekly breakdown in sync.
           // totalPoints changes only by deltaTotal, preserving re-process protection.
           const leaderRef = doc(db, "leaderboard", userId);
@@ -1465,6 +1470,27 @@
           winMin: winMin,
           playerScores: currentScores
         });
+
+        // 9. Snapshot each league's ranked standings as of this gameweek, so
+        // "previous week" comparisons (e.g. League > Weekly Analysis) can read
+        // exact prior rankings instead of approximating them.
+        showDebugAdmin(`Snapshotting league standings for GW${gwNum}`);
+        const leaguesSnap = await getDocs(collection(db, "leagues"));
+        for (const leagueDoc of leaguesSnap.docs) {
+          const members = (leagueDoc.data().members || []).filter(Boolean);
+          if (!members.length) continue;
+
+          const standings = members
+            .map(uid => ({ uid, totalPoints: newTotals[uid] ?? 0 }))
+            .sort((a, b) => b.totalPoints - a.totalPoints)
+            .map((entry, i) => ({ ...entry, rank: i + 1 }));
+
+          await setDoc(doc(db, "leagues", leagueDoc.id, "snapshots", "GW" + gwNum), {
+            gw: gwNum,
+            processedAt: new Date(),
+            standings
+          });
+        }
 
         showDebugAdmin('Updating settings.gameweek reopenTime/status');
         await setDoc(doc(db, "settings", "gameweek"), {

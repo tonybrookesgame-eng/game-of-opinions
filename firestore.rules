@@ -106,6 +106,14 @@ service cloud.firestore {
       );
       allow update: if isAdmin() || isLeagueCreator() || isSelfJoinUpdate() || isSelfRefresh();
       allow delete: if isAdmin();
+
+      // Per-gameweek ranked standings snapshot, written by admin.html's
+      // Process Gameweek step so League > Weekly Analysis can read exact
+      // prior-week rankings instead of approximating them.
+      match /snapshots/{doc} {
+        allow read: if isSignedIn();
+        allow write: if isAdmin();
+      }
     }
 
     match /settings/{doc} {
