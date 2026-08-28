@@ -129,7 +129,8 @@
         <strong>Next fixture deadline:</strong> <span id="current-deadline">Not set</span>
       </div>
       <button onclick="syncDeadlineFromFixtures()" style="margin-top: 0; padding: 8px 20px; width: auto; background: #8b5cf6;">Sync Deadline from MyXI Fixtures</button>
-      <p style="margin-top: 10px; color: #9ca3af; font-size: 13px;">The site will lock automatically 2 hours before the first kickoff and re-open automatically after the weekly scores are published.</p>
+      <button onclick="forceLockSite()" style="margin-top: 0; padding: 8px 20px; width: auto; background: #dc2626;">🔒 Force Lock Site Now</button>
+      <p style="margin-top: 10px; color: #9ca3af; font-size: 13px;">The site will lock automatically 2 hours before the first kickoff and re-open automatically after the weekly scores are published. Use "Force Lock Site Now" as an emergency override if the site is showing as open mid-gameweek and needs to be locked immediately.</p>
 
       <div id="reminder-checklist" style="margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(199,255,56,0.25);">
         <p style="margin: 0 0 8px; font-weight: bold; color: #c7ff38;">📣 Deadline Reminder Checklist</p>
@@ -886,9 +887,16 @@
     // refresh button below; processGameweek() already knows this number
     // directly and doesn't need to re-derive it.
     async function computeCurrentGameweekNumber() {
-      const latestSnap = await getDocs(query(collection(db, 'gameweekHistory'), orderBy('gw', 'desc'), limit(1)));
-      if (latestSnap.empty) return 1;
-      return (latestSnap.docs[0].data().gw || 0) + 1;
+      // Only a FINAL gameweek counts as "done" for this purpose - a
+      // partial/live update leaves final:false, and the "next" gameweek
+      // genuinely hasn't started until the current one is fully settled.
+      // Firestore can't combine an inequality filter on `final` with
+      // ordering by `gw`, so fetch by gw desc and find the first final one
+      // client-side (the collection is small - one doc per gameweek).
+      const snap = await getDocs(query(collection(db, 'gameweekHistory'), orderBy('gw', 'desc')));
+      const latestFinal = snap.docs.find((d) => d.data().final !== false);
+      if (!latestFinal) return 1;
+      return (latestFinal.data().gw || 0) + 1;
     }
 
     // Manager count + league leader shown on the public homepage ticker.
@@ -969,14 +977,55 @@
       await writeDeadlineFromFixtures();
     };
 
+    // Emergency override: immediately locks the site regardless of what
+    // shared-fixtures.js says, for whenever the deadline has drifted open
+    // mid-gameweek and needs correcting right now rather than waiting on a
+    // fixture-date fix. Sets deadline to one minute ago with no reopenTime,
+    // which getGameweekStatusFromTimes() reads as locked.
+    window.forceLockSite = async function() {
+      if (!confirm("This will immediately lock the site for all managers (squad, weekly picks, bet builder). Continue?")) return;
+
+      try {
+        const deadline = new Date(Date.now() - 60000);
+        await setDoc(doc(db, "settings", "gameweek"), {
+          deadline: deadline.toISOString(),
+          reopenTime: null,
+          status: "locked",
+          updatedAt: new Date().toISOString(),
+          source: "admin-force-lock"
+        }, { merge: true });
+        showDebugAdmin(`Force-locked site. Deadline set to ${deadline.toISOString()}`);
+        await loadCurrentSettings();
+        alert("Site is now locked.");
+      } catch (e) {
+        console.error(e);
+        alert(`Failed to lock site: ${e?.message || e}`);
+      }
+    };
+
     async function autoSyncDeadlineFromFixtures() {
       try {
         const snap = await getDoc(doc(db, "settings", "gameweek"));
+        const currentDeadline = snap.exists() ? snap.data()?.deadline : null;
+        const currentDeadlineDate = currentDeadline ? new Date(currentDeadline) : null;
+
+        // Once the stored deadline has already passed, the gameweek is
+        // locked and in progress - don't let this auto-sync (which runs on
+        // every admin.html page load) silently push the deadline forward to
+        // whichever fixture in shared-fixtures.js hasn't kicked off yet.
+        // getGameweekDeadlineInfo() finds the *next upcoming* kickoff, which
+        // advances all weekend for a multi-day gameweek (Fri-Mon fixtures) -
+        // that would reopen picks mid-gameweek every time this runs, which
+        // is the opposite of correct. Only auto-sync when there's no
+        // deadline yet, or the existing one is still upcoming.
+        if (currentDeadlineDate && !Number.isNaN(currentDeadlineDate.getTime()) && currentDeadlineDate <= new Date()) {
+          return;
+        }
+
         const info = window.getGameweekDeadlineInfo ? window.getGameweekDeadlineInfo() : null;
         if (!info || !info.deadline || !info.firstKickOff) return;
 
         const expectedDeadline = info.deadline.toISOString();
-        const currentDeadline = snap.exists() ? snap.data()?.deadline : null;
 
         if (currentDeadline !== expectedDeadline) {
           await writeDeadlineFromFixtures(false);
