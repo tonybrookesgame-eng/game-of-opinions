@@ -3275,6 +3275,11 @@ const populateGameweekHistoryDropdown = async () => {
 
   querySnapshot.forEach((doc) => {
     const data = doc.data();
+    // A gameweek only appears as a selectable past week once it's marked
+    // final - a live/partial update (final: false) is still in progress and
+    // shouldn't be listed as archived yet. Docs with no final field predate
+    // this flag and are treated as final (they really were one-shot runs).
+    if (data.final === false) return;
     allGameweekHistory.push(data);
     const option = document.createElement('option');
     option.value = data.gw;

@@ -1773,7 +1773,11 @@ async function loadDashboard(user) {
   const rank = ranked.findIndex(r => r.id === user.uid);
   document.getElementById('kpiRank').innerText = rank >= 0 ? `#${rank + 1}` : '--';
 
-  const trendValues = historySnap.docs.map(d => (d.data().weeklyPoints || 0));
+  // A gameweek marked final: false is still a live/partial update in
+  // progress - exclude it from the "completed weeks" trend until it's
+  // settled, so the chart doesn't show a half-finished week as a full bar.
+  const finalHistoryDocs = historySnap.docs.filter(d => d.data().final !== false);
+  const trendValues = finalHistoryDocs.map(d => (d.data().weeklyPoints || 0));
   drawTrendChart(trendValues);
 
   // KPI delta for current week vs previous week.
@@ -1825,7 +1829,7 @@ async function loadDashboard(user) {
   if (trendValues.length) {
     const best = Math.max(...trendValues);
     const bestIndex = trendValues.findIndex(v => v === best);
-    const bestGw = historySnap.docs[bestIndex]?.data()?.gw;
+    const bestGw = finalHistoryDocs[bestIndex]?.data()?.gw;
     document.getElementById('insightBest').innerText = `${best}`;
     document.getElementById('insightBestSub').innerText = bestGw ? `Gameweek ${bestGw}` : 'Best points week';
   } else {

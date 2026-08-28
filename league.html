@@ -2203,9 +2203,12 @@ window.viewManager = async function (uid, teamName) {
   overlay.classList.add('open');
 
   try {
-    // Find the most recently processed gameweek to pull this manager's archive for.
-    const gwSnap = await getDocs(query(collection(db, 'gameweekHistory'), orderBy('gw', 'desc'), limit(1)));
-    const latestGw = gwSnap.empty ? null : gwSnap.docs[0].data().gw;
+    // Find the most recently FINISHED gameweek to pull this manager's
+    // archive for - a live/partial update (final: false) is still in
+    // progress and shouldn't be shown as a settled week yet.
+    const gwSnap = await getDocs(query(collection(db, 'gameweekHistory'), orderBy('gw', 'desc')));
+    const latestFinalDoc = gwSnap.docs.find(d => d.data().final !== false);
+    const latestGw = latestFinalDoc ? latestFinalDoc.data().gw : null;
 
     const [historySnap, seasonSnap] = await Promise.all([
       latestGw ? getDoc(doc(db, 'users', uid, 'history', 'GW' + latestGw)) : Promise.resolve(null),
@@ -2281,12 +2284,16 @@ window.openWeeklyAnalysis = async function () {
   overlay.classList.add('open');
 
   try {
-    const gwSnap = await getDocs(query(collection(db, 'gameweekHistory'), orderBy('gw', 'desc'), limit(1)));
-    if (gwSnap.empty) {
-      bodyEl.innerHTML = '<p class="manager-view-empty">No gameweeks have been processed yet.</p>';
+    // Only analyze a gameweek once it's fully finished - a live/partial
+    // update mid-gameweek would show an incomplete, misleading picture
+    // (e.g. "Player of the Gameweek" off a single goal so far).
+    const gwSnap = await getDocs(query(collection(db, 'gameweekHistory'), orderBy('gw', 'desc')));
+    const latestFinalDoc = gwSnap.docs.find(d => d.data().final !== false);
+    if (!latestFinalDoc) {
+      bodyEl.innerHTML = '<p class="manager-view-empty">No gameweeks have finished processing yet.</p>';
       return;
     }
-    const gwDoc = gwSnap.docs[0].data();
+    const gwDoc = latestFinalDoc.data();
     const gwNum = gwDoc.gw;
     const playerScores = gwDoc.playerScores || {};
 
