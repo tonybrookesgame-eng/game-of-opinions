@@ -2051,8 +2051,8 @@ function buildTickerMessages() {
   if (tickerStatsCache?.managerCount > 0) {
     messages.push(`🔥 ${tickerStatsCache.managerCount.toLocaleString('en-GB')} MANAGERS HAVE ALREADY JOINED GOO`);
   }
-  if (tickerStatsCache?.leaderName && tickerStatsCache?.leaderPoints > 0) {
-    messages.push(`⚡ ${tickerStatsCache.leaderName.toUpperCase()} LEADS THE GLOBAL LEAGUE WITH ${tickerStatsCache.leaderPoints} PTS`);
+  if (tickerStatsCache?.leaderPoints > 0) {
+    messages.push(`⚡ THE GLOBAL LEAGUE LEADER HAS ${tickerStatsCache.leaderPoints} PTS`);
   }
 
   if (typeof getGameweekDeadlineInfo === 'function') {

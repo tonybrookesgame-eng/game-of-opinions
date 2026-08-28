@@ -307,7 +307,7 @@
   <script src="myxi-data-loader.js"></script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, collectionGroup, getDocs, getCountFromServer, doc, updateDoc, increment, setDoc, getDoc, deleteDoc, query, orderBy, limit, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, collectionGroup, getDocs, getCountFromServer, doc, updateDoc, increment, setDoc, getDoc, deleteDoc, deleteField, query, orderBy, limit, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     const firebaseConfig = {
@@ -855,14 +855,16 @@
       }
     }
 
-    // League leader shown in the homepage ticker - top of the Global
-    // leaderboard by total points. Returns nulls if nobody has points yet.
+    // League leader points shown in the homepage ticker - top of the Global
+    // leaderboard by total points. Deliberately excludes the team name: this
+    // feeds public/stats, which anyone can read directly (not just via the
+    // ticker text), and managers can name their team anything.
     async function computePublicLeaderStats() {
       const topSnap = await getDocs(query(collection(db, 'leaderboard'), orderBy('totalPoints', 'desc'), limit(1)));
-      if (topSnap.empty) return { leaderName: null, leaderPoints: null };
+      if (topSnap.empty) return { leaderPoints: null };
       const top = topSnap.docs[0].data();
-      if (!(top.totalPoints > 0)) return { leaderName: null, leaderPoints: null };
-      return { leaderName: top.teamName || 'Anonymous', leaderPoints: top.totalPoints || 0 };
+      if (!(top.totalPoints > 0)) return { leaderPoints: null };
+      return { leaderPoints: top.totalPoints || 0 };
     }
 
     // The upcoming/live gameweek number shown on the homepage countdown -
@@ -884,17 +886,17 @@
       try {
         const countSnap = await getCountFromServer(collection(db, 'leaderboard'));
         const managerCount = countSnap.data().count;
-        const { leaderName, leaderPoints } = await computePublicLeaderStats();
+        const { leaderPoints } = await computePublicLeaderStats();
         const currentGameweek = await computeCurrentGameweekNumber();
         await setDoc(doc(db, 'public', 'stats'), {
           managerCount,
-          leaderName,
+          leaderName: deleteField(),
           leaderPoints,
           currentGameweek,
           updatedAt: new Date().toISOString()
         }, { merge: true });
         document.getElementById('public-manager-count').innerText = `${managerCount} (just synced)`;
-        showDebugAdmin(`Public stats refreshed: managerCount=${managerCount}, leader=${leaderName || 'none'} (${leaderPoints ?? 0} pts), currentGameweek=${currentGameweek}`);
+        showDebugAdmin(`Public stats refreshed: managerCount=${managerCount}, leaderPoints=${leaderPoints ?? 0}, currentGameweek=${currentGameweek}`);
       } catch (e) {
         console.error(e);
         showDebugAdmin(`Failed to refresh public stats: ${e?.message || e}`, true);
@@ -1609,10 +1611,10 @@
         // "Refresh Public Stats" button above.
         try {
           const countSnap = await getCountFromServer(collection(db, "leaderboard"));
-          const { leaderName, leaderPoints } = await computePublicLeaderStats();
+          const { leaderPoints } = await computePublicLeaderStats();
           await setDoc(doc(db, "public", "stats"), {
             managerCount: countSnap.data().count,
-            leaderName,
+            leaderName: deleteField(),
             leaderPoints,
             currentGameweek: gwNum + 1,
             updatedAt: new Date().toISOString()
