@@ -768,21 +768,34 @@
       }
     }
 
-    // Manager count shown on the public homepage. Deliberately a manual,
-    // admin-triggered snapshot rather than a live auto-updating counter -
-    // there's no Cloud Functions in this project to keep it in sync
-    // automatically, and a real number refreshed occasionally is more
-    // trustworthy than a fragile client-incremented one that can drift.
+    // League leader shown in the homepage ticker - top of the Global
+    // leaderboard by total points. Returns nulls if nobody has points yet.
+    async function computePublicLeaderStats() {
+      const topSnap = await getDocs(query(collection(db, 'leaderboard'), orderBy('totalPoints', 'desc'), limit(1)));
+      if (topSnap.empty) return { leaderName: null, leaderPoints: null };
+      const top = topSnap.docs[0].data();
+      if (!(top.totalPoints > 0)) return { leaderName: null, leaderPoints: null };
+      return { leaderName: top.teamName || 'Anonymous', leaderPoints: top.totalPoints || 0 };
+    }
+
+    // Manager count + league leader shown on the public homepage ticker.
+    // Deliberately a manual, admin-triggered snapshot rather than a live
+    // auto-updating counter - there's no Cloud Functions in this project to
+    // keep it in sync automatically, and a real number refreshed occasionally
+    // is more trustworthy than a fragile client-incremented one that can drift.
     window.refreshPublicStats = async function() {
       try {
         const countSnap = await getCountFromServer(collection(db, 'leaderboard'));
         const managerCount = countSnap.data().count;
+        const { leaderName, leaderPoints } = await computePublicLeaderStats();
         await setDoc(doc(db, 'public', 'stats'), {
           managerCount,
+          leaderName,
+          leaderPoints,
           updatedAt: new Date().toISOString()
         }, { merge: true });
         document.getElementById('public-manager-count').innerText = `${managerCount} (just synced)`;
-        showDebugAdmin(`Public stats refreshed: managerCount=${managerCount}`);
+        showDebugAdmin(`Public stats refreshed: managerCount=${managerCount}, leader=${leaderName || 'none'} (${leaderPoints ?? 0} pts)`);
       } catch (e) {
         console.error(e);
         showDebugAdmin(`Failed to refresh public stats: ${e?.message || e}`, true);
@@ -1490,6 +1503,23 @@
             processedAt: new Date(),
             standings
           });
+        }
+
+        // Keep the homepage ticker's manager count / league leader fresh
+        // automatically on every processed gameweek, on top of the manual
+        // "Refresh Public Stats" button above.
+        try {
+          const countSnap = await getCountFromServer(collection(db, "leaderboard"));
+          const { leaderName, leaderPoints } = await computePublicLeaderStats();
+          await setDoc(doc(db, "public", "stats"), {
+            managerCount: countSnap.data().count,
+            leaderName,
+            leaderPoints,
+            updatedAt: new Date().toISOString()
+          }, { merge: true });
+          showDebugAdmin('Synced public stats for homepage ticker');
+        } catch (e) {
+          showDebugAdmin(`Failed to sync public stats: ${e?.message || e}`, true);
         }
 
         showDebugAdmin('Updating settings.gameweek reopenTime/status');

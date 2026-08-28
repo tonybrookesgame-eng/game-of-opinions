@@ -21,6 +21,7 @@
 <link rel="icon" href="icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>GOO</title>
+<script src="shared-fixtures.js"></script>
 
 <style>
 
@@ -1475,9 +1476,7 @@ nav a:hover {
   </div>
   <!-- PREMIUM TICKER -->
   <div class="news-ticker">
-    <div class="ticker-content">
-      <span>LIVE WEEKLY PICKS • DEADLINES LOCK 2 HOURS BEFORE FIRST KICK-OFF • RESULTS PUBLISHED AFTER THE WEEKEND &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-      <span>LIVE WEEKLY PICKS • DEADLINES LOCK 2 HOURS BEFORE FIRST KICK-OFF • RESULTS PUBLISHED AFTER THE WEEKEND &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <div class="ticker-content" id="ticker-content">
       <span>LIVE WEEKLY PICKS • DEADLINES LOCK 2 HOURS BEFORE FIRST KICK-OFF • RESULTS PUBLISHED AFTER THE WEEKEND &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
       <span>LIVE WEEKLY PICKS • DEADLINES LOCK 2 HOURS BEFORE FIRST KICK-OFF • RESULTS PUBLISHED AFTER THE WEEKEND &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
     </div>
@@ -2051,6 +2050,66 @@ async function renderManagerCountBadge() {
   }
 }
 renderManagerCountBadge();
+
+// Live homepage ticker - built from public/stats (manager count + league
+// leader, kept fresh by admin.html on every processed gameweek) plus a
+// client-only gameweek deadline countdown from shared-fixtures.js (no auth
+// needed for either). Leaves the static HTML fallback text in place if
+// nothing real is available yet, rather than showing an empty ticker.
+let tickerStatsCache = null;
+
+function buildTickerMessages() {
+  const messages = [];
+
+  if (tickerStatsCache?.managerCount > 0) {
+    messages.push(`🔥 ${tickerStatsCache.managerCount.toLocaleString('en-GB')} MANAGERS HAVE ALREADY JOINED GOO`);
+  }
+  if (tickerStatsCache?.leaderName && tickerStatsCache?.leaderPoints > 0) {
+    messages.push(`⚡ ${tickerStatsCache.leaderName.toUpperCase()} LEADS THE GLOBAL LEAGUE WITH ${tickerStatsCache.leaderPoints} PTS`);
+  }
+
+  if (typeof getGameweekDeadlineInfo === 'function') {
+    try {
+      const info = getGameweekDeadlineInfo();
+      const diffMs = info ? info.deadline.getTime() - Date.now() : null;
+      if (diffMs != null && diffMs > 0) {
+        const totalMinutes = Math.floor(diffMs / 60000);
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+        const timeText = hours > 0 ? `${hours}H ${minutes}M` : `${minutes}M`;
+        messages.push(`⏰ PICKS LOCK IN ${timeText}`);
+      }
+    } catch (err) {
+      console.warn('Could not compute deadline countdown for ticker:', err);
+    }
+  }
+
+  return messages;
+}
+
+function renderTicker() {
+  const el = document.getElementById('ticker-content');
+  if (!el) return;
+
+  const messages = buildTickerMessages();
+  if (!messages.length) return;
+
+  const sequence = messages.join(' &nbsp;•&nbsp; ') + ' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+  el.innerHTML = `<span>${sequence}</span><span>${sequence}</span>`;
+}
+
+async function initLiveTicker() {
+  try {
+    const snap = await getDoc(doc(db, 'public', 'stats'));
+    tickerStatsCache = snap.exists() ? snap.data() : null;
+  } catch (error) {
+    console.warn('Could not load public stats for ticker:', error);
+  }
+  renderTicker();
+  // Refresh the deadline countdown every minute without re-hitting Firestore.
+  setInterval(renderTicker, 60000);
+}
+initLiveTicker();
 
 renderInstallSteps(installPlatformSelect ? installPlatformSelect.value : 'auto');
 
