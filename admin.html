@@ -332,7 +332,7 @@
   <script src="myxi-data-loader.js"></script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, collectionGroup, getDocs, getCountFromServer, doc, updateDoc, increment, setDoc, getDoc, deleteDoc, deleteField, query, orderBy, limit, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, collectionGroup, getDocs, getCountFromServer, doc, updateDoc, setDoc, getDoc, deleteDoc, deleteField, query, orderBy, limit, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     const firebaseConfig = {
@@ -1611,22 +1611,47 @@
 
           if (isDryRun) {
             showDebugAdmin(`DryRun - User: ${userData.teamName || userId} | Weekly: ${userWeeklyTotal} (Delta: ${deltaWeeklyTotal}) | Season: ${userSeasonScore} (Delta: ${deltaSeason}) | DeltaTotal: ${deltaTotal}`);
-            continue; 
+            continue;
           }
 
-          newTotals[userId] = (userData.totalPoints || 0) + deltaTotal;
+          // Recompute every cumulative total FRESH from this user's archived
+          // gameweeks, rather than incrementally patching a running total
+          // with increment(delta). The old approach depended on "delta"
+          // always being computed against the right baseline - it wasn't,
+          // for the very first run of a new gameweek, and wiped out most of
+          // a manager's cumulative points. Recomputing from source of truth
+          // every time (the same fix used by the emergency
+          // repairCumulativeTotals tool) makes that whole bug class
+          // impossible: there's no running total to drift out of sync with,
+          // because it's rebuilt in full on every run.
+          const allHistorySnap = await getDocs(collection(db, `users/${userId}/history`));
+          let cumulativeSelection = 0, cumulativePicks = 0, cumulativeBet = 0, cumulativeWeekly = 0;
+          allHistorySnap.forEach((h) => {
+            if (h.id === "GW" + gwNum) return; // superseded by this run's freshly computed values below
+            const d = h.data();
+            cumulativeSelection += (d.selectionScore || 0);
+            cumulativePicks += (d.picksScore || 0);
+            cumulativeBet += (d.betScore || 0);
+            cumulativeWeekly += (d.weeklyPoints || 0);
+          });
+          cumulativeSelection += userPlayerScore;
+          cumulativePicks += userPicksScore;
+          cumulativeBet += userBetScore;
+          cumulativeWeekly += userWeeklyTotal;
+          const freshTotalPoints = cumulativeWeekly + userSeasonScore;
+
+          newTotals[userId] = freshTotalPoints;
 
           // Keep the leaderboard's current weekly breakdown in sync.
-          // totalPoints changes only by deltaTotal, preserving re-process protection.
           const leaderRef = doc(db, "leaderboard", userId);
-          showDebugAdmin(`Writing leaderboard for user ${userId}: weeklyPoints=${userWeeklyTotal}, totalPointsDelta=${deltaTotal}`);
+          showDebugAdmin(`Writing leaderboard for user ${userId}: weeklyPoints=${userWeeklyTotal}, totalPoints=${freshTotalPoints}`);
           await setDoc(leaderRef, {
             weeklyPoints: userWeeklyTotal,
             weeklySelection: userPlayerScore,
             weeklyPicks: userPicksScore,
             weeklyBet: userBetScore,
             seasonPoints: userSeasonScore,
-            totalPoints: increment(deltaTotal)
+            totalPoints: freshTotalPoints
           }, { merge: true });
 
           // ARCHIVE EVERY PROCESSED GAMEWEEK — INCLUDING 0-POINT WEEKS.
@@ -1662,10 +1687,10 @@
 
           const statsRef = doc(db, `users/${userId}/stats/points`);
           await setDoc(statsRef, {
-            selectionPts: increment(deltaSel),
-            picksPts: increment(deltaPicks),
-            betPts: increment(deltaBet),
-            totalPts: increment(deltaTotal)
+            selectionPts: cumulativeSelection,
+            picksPts: cumulativePicks,
+            betPts: cumulativeBet,
+            totalPts: freshTotalPoints
           }, { merge: true });
         }
 
