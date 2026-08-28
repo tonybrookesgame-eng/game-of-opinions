@@ -130,6 +130,21 @@
       </div>
       <button onclick="syncDeadlineFromFixtures()" style="margin-top: 0; padding: 8px 20px; width: auto; background: #8b5cf6;">Sync Deadline from MyXI Fixtures</button>
       <p style="margin-top: 10px; color: #9ca3af; font-size: 13px;">The site will lock automatically 2 hours before the first kickoff and re-open automatically after the weekly scores are published.</p>
+
+      <div id="reminder-checklist" style="margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(199,255,56,0.25);">
+        <p style="margin: 0 0 8px; font-weight: bold; color: #c7ff38;">📣 Deadline Reminder Checklist</p>
+        <p style="margin: 0 0 10px; color: #9ca3af; font-size: 13px;">
+          Push notifications still send manually via Firebase Console (no cost, no code) - this just tracks whether you've done it for the current deadline so it doesn't slip your mind.
+        </p>
+        <div style="margin-bottom: 8px;">
+          <strong>Time until lock:</strong> <span id="reminder-countdown">—</span>
+        </div>
+        <div style="margin-bottom: 10px;">
+          <strong>Reminder sent?</strong> <span id="reminder-sent-status">—</span>
+        </div>
+        <a href="https://console.firebase.google.com/project/game-of-opinions-97b14/messaging" target="_blank" rel="noopener" style="display: inline-block; margin-right: 10px; margin-bottom: 8px; padding: 8px 20px; background: #60a5fa; color: #041102; font-weight: 800; border-radius: 6px; text-decoration: none;">Open Firebase Messaging</a>
+        <button onclick="markReminderSent()" style="margin-top: 0; padding: 8px 20px; width: auto;">Mark Reminder as Sent</button>
+      </div>
     </div>
 
     <div class="admin-section" style="background: rgba(59,130,246,0.06); border: 1px solid rgba(96,165,250,0.25); border-radius: 8px; padding: 15px; margin-bottom: 20px;">
@@ -696,6 +711,7 @@
           loadPublicStatsDisplay();
           autoSyncDeadlineFromFixtures();
           wireSimpleModeToggle();
+          setInterval(renderReminderChecklist, 60000);
         } else {
           status.innerHTML = `<h2 style="color: #f87171;">Access Denied</h2>
             <p>You are logged in as: <strong>${user.email}</strong></p>
@@ -708,16 +724,21 @@
       }
     });
 
+    let latestGameweekSettings = null;
+
     async function loadCurrentSettings() {
       try {
         const snap = await getDoc(doc(db, "settings", "gameweek"));
         if (!snap.exists()) {
           document.getElementById('current-status').innerText = 'OPEN';
           document.getElementById('current-deadline').innerText = 'Not set';
+          latestGameweekSettings = null;
+          renderReminderChecklist();
           return;
         }
 
         const data = snap.data();
+        latestGameweekSettings = data;
         let deadlineText = 'Not set';
         let statusText = 'OPEN';
 
@@ -736,12 +757,78 @@
         document.getElementById('current-status').innerText = statusText;
         document.getElementById('current-deadline').innerText = deadlineText;
         if (data.odds) document.getElementById('bet-odds').value = data.odds;
+        renderReminderChecklist();
       } catch (e) {
         console.error(e);
         showDebugAdmin(`Failed to load current settings: ${e?.message || e}`, true);
         document.getElementById('current-status').innerText = 'ERROR';
       }
     }
+
+    // Push sends still go through Firebase Console (see
+    // PUSH_NOTIFICATIONS_SETUP.md) - there's no Cloud Function in this
+    // project to fire them automatically. This just tracks, per deadline,
+    // whether you've actually sent one yet, so it doesn't quietly get missed.
+    function renderReminderChecklist() {
+      const countdownEl = document.getElementById('reminder-countdown');
+      const sentEl = document.getElementById('reminder-sent-status');
+      if (!countdownEl || !sentEl) return;
+
+      const data = latestGameweekSettings;
+      const deadlineDate = data?.deadline ? new Date(data.deadline) : null;
+
+      if (!deadlineDate || Number.isNaN(deadlineDate.getTime())) {
+        countdownEl.innerText = 'No deadline set';
+        countdownEl.style.color = '';
+        sentEl.innerText = '—';
+        sentEl.style.color = '';
+        return;
+      }
+
+      const diffMs = deadlineDate.getTime() - Date.now();
+      const urgent = diffMs > 0 && diffMs <= 24 * 60 * 60 * 1000;
+
+      if (diffMs <= 0) {
+        countdownEl.innerText = 'Locked';
+        countdownEl.style.color = '';
+      } else {
+        const totalHours = Math.floor(diffMs / (1000 * 60 * 60));
+        const minutes = Math.floor((diffMs / (1000 * 60)) % 60);
+        const days = Math.floor(totalHours / 24);
+        countdownEl.innerText = days >= 1 ? `${days}d ${totalHours % 24}h` : `${totalHours}h ${minutes}m`;
+        countdownEl.style.color = urgent ? '#f87171' : '';
+      }
+
+      const sentForThisDeadline = data.reminderSentForDeadline === data.deadline;
+      if (sentForThisDeadline && data.reminderSentAt) {
+        sentEl.innerText = `✅ Sent ${new Date(data.reminderSentAt).toLocaleString('en-GB')}`;
+        sentEl.style.color = '#4ade80';
+      } else {
+        sentEl.innerText = urgent ? '⚠️ Not sent yet — deadline is close!' : 'Not sent yet';
+        sentEl.style.color = urgent ? '#f87171' : '#9ca3af';
+      }
+    }
+
+    window.markReminderSent = async function() {
+      if (!latestGameweekSettings?.deadline) {
+        alert('No deadline is set yet - sync it from fixtures first.');
+        return;
+      }
+      try {
+        const reminderSentAt = new Date().toISOString();
+        await setDoc(doc(db, 'settings', 'gameweek'), {
+          reminderSentAt,
+          reminderSentForDeadline: latestGameweekSettings.deadline
+        }, { merge: true });
+        latestGameweekSettings.reminderSentAt = reminderSentAt;
+        latestGameweekSettings.reminderSentForDeadline = latestGameweekSettings.deadline;
+        renderReminderChecklist();
+        showDebugAdmin('Marked reminder as sent for this deadline.');
+      } catch (e) {
+        console.error(e);
+        alert('Could not save reminder status: ' + (e?.message || e));
+      }
+    };
 
     async function loadPwaUsageMetrics() {
       try {
