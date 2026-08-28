@@ -778,6 +778,16 @@
       return { leaderName: top.teamName || 'Anonymous', leaderPoints: top.totalPoints || 0 };
     }
 
+    // The upcoming/live gameweek number shown on the homepage countdown -
+    // one past whatever was most recently processed. Used only by the manual
+    // refresh button below; processGameweek() already knows this number
+    // directly and doesn't need to re-derive it.
+    async function computeCurrentGameweekNumber() {
+      const latestSnap = await getDocs(query(collection(db, 'gameweekHistory'), orderBy('gw', 'desc'), limit(1)));
+      if (latestSnap.empty) return 1;
+      return (latestSnap.docs[0].data().gw || 0) + 1;
+    }
+
     // Manager count + league leader shown on the public homepage ticker.
     // Deliberately a manual, admin-triggered snapshot rather than a live
     // auto-updating counter - there's no Cloud Functions in this project to
@@ -788,14 +798,16 @@
         const countSnap = await getCountFromServer(collection(db, 'leaderboard'));
         const managerCount = countSnap.data().count;
         const { leaderName, leaderPoints } = await computePublicLeaderStats();
+        const currentGameweek = await computeCurrentGameweekNumber();
         await setDoc(doc(db, 'public', 'stats'), {
           managerCount,
           leaderName,
           leaderPoints,
+          currentGameweek,
           updatedAt: new Date().toISOString()
         }, { merge: true });
         document.getElementById('public-manager-count').innerText = `${managerCount} (just synced)`;
-        showDebugAdmin(`Public stats refreshed: managerCount=${managerCount}, leader=${leaderName || 'none'} (${leaderPoints ?? 0} pts)`);
+        showDebugAdmin(`Public stats refreshed: managerCount=${managerCount}, leader=${leaderName || 'none'} (${leaderPoints ?? 0} pts), currentGameweek=${currentGameweek}`);
       } catch (e) {
         console.error(e);
         showDebugAdmin(`Failed to refresh public stats: ${e?.message || e}`, true);
@@ -1515,6 +1527,7 @@
             managerCount: countSnap.data().count,
             leaderName,
             leaderPoints,
+            currentGameweek: gwNum + 1,
             updatedAt: new Date().toISOString()
           }, { merge: true });
           showDebugAdmin('Synced public stats for homepage ticker');
