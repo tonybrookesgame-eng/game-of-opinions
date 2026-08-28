@@ -272,6 +272,12 @@
       <input type="checkbox" id="dry-run-mode"> <label for="dry-run-mode" style="color: #fbbf24; font-weight: bold;">Simulation Mode (Dry Run - No database changes, results show in console)</label>
       <p style="margin: 6px 0 0 0; color: #fde68a; font-size: 12px;">Dry runs work even if the gameweek is still open. They use whatever is currently saved in Firestore, so they are best when users have already saved their picks.</p>
     </div>
+    <div style="background: rgba(96,165,250,0.1); padding: 10px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #60a5fa;">
+      <input type="checkbox" id="final-result-mode" checked> <label for="final-result-mode" style="color: #93c5fd; font-weight: bold;">Final result for this gameweek (reopens the site for the next gameweek and clears Weekly Picks/Bet Builder)</label>
+      <p style="margin: 6px 0 0 0; color: #bfdbfe; font-size: 12px;">
+        Uncheck this to publish a <strong>live/partial update</strong> mid-gameweek (e.g. after Friday's game, before Saturday's) - points update for everyone, but the site stays locked, squads/picks/bet builder stay untouched, and nothing reopens. Fill in whichever games have finished so far and process as many times as you like; only check this box back on once the very last game of the gameweek is done.
+      </p>
+    </div>
     <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
       <button onclick="saveDraft()" style="background: #3b82f6; width: auto; padding: 10px 20px;">Save Progress Draft</button>
       <button onclick="loadDraft()" style="background: #fbbf24; color: #000; width: auto; padding: 10px 20px;">Load Last Draft</button>
@@ -1381,24 +1387,34 @@
     window.processGameweek = async function() {
       const gwNum = parseInt(document.getElementById('gameweek-num').value);
       const isDryRun = document.getElementById('dry-run-mode').checked;
+      const isFinal = document.getElementById('final-result-mode').checked;
 
       if (isNaN(gwNum)) {
         alert("Please enter a Gameweek Number.");
         return;
       }
 
-      // Check if this GW was already processed to prevent double-counting
+      // Check if this GW was already processed. Re-processing is now a
+      // supported, intentional workflow for live/partial updates (see the
+      // "Final result" checkbox above) - only warn, don't treat it as a
+      // mistake, and word it differently depending on what this run will do.
       const historyRef = doc(db, "gameweekHistory", "GW" + gwNum);
       const historySnap = await getDoc(historyRef);
-      if (historySnap.exists()) {
-        if (!isDryRun && !confirm("This Gameweek has already been processed! Processing again will add points AGAIN. Are you sure?")) return;
+      if (historySnap.exists() && !isDryRun) {
+        const reprocessMsg = isFinal
+          ? "This Gameweek was already processed. Running this as the FINAL result will recalculate everyone's points from the stats currently filled in, reopen the site, and clear Weekly Picks/Bet Builder. Continue?"
+          : "This Gameweek was already processed. Running another PARTIAL update will recalculate everyone's points from the stats currently filled in - the site stays locked and nothing is cleared. Continue?";
+        if (!confirm(reprocessMsg)) return;
       }
 
       if (isDryRun) {
         showDebugAdmin('--- STARTING DRY RUN SIMULATION ---');
       }
 
-      if (!confirm(`This will update points for ALL users for Gameweek ${gwNum}. Proceed?`)) return;
+      const confirmMsg = isFinal
+        ? `This will update points for ALL users for Gameweek ${gwNum} and reopen the site for the next gameweek. Proceed?`
+        : `This will publish a LIVE/PARTIAL points update for ALL users for Gameweek ${gwNum}. The site will stay locked and nothing will be cleared. Proceed?`;
+      if (!confirm(confirmMsg)) return;
 
       // 1. Calculate the points based on stats
       const currentScores = {};
@@ -1441,7 +1457,7 @@
       const resRel = [document.getElementById('res-rel1')?.value.trim(), document.getElementById('res-rel2')?.value.trim(), document.getElementById('res-rel3')?.value.trim()].filter(x => x);
 
       try {
-        showDebugAdmin(`Beginning processing for GW${gwNum} (dryRun: ${isDryRun})`);
+        showDebugAdmin(`Beginning processing for GW${gwNum} (dryRun: ${isDryRun}, final: ${isFinal})`);
         // 2. Fetch every user's team from the leaderboard
         const leaderboardSnap = await getDocs(collection(db, "leaderboard"));
         // Collected so we can snapshot each league's post-GW standings below,
@@ -1551,12 +1567,17 @@
             betScore: userBetScore
           }, { merge: true });
 
-          // This week's picks/bet are now safely archived above - clear the
-          // live docs so the new gameweek starts blank instead of silently
-          // carrying last week's selections forward. The squad (myxi/team)
-          // deliberately isn't touched here, since that persists week to week.
-          await deleteDoc(doc(db, "users", userId, "myxi", "weeklyPicks")).catch(() => {});
-          await deleteDoc(doc(db, "users", userId, "myxi", "betBuilder")).catch(() => {});
+          // Only clear picks/bet on the FINAL run for this gameweek. A
+          // partial/live update re-reads the same live docs on every run to
+          // recompute the same picks/bet score (delta 0, no harm) - deleting
+          // them here would zero out and then *subtract* those points the
+          // next time this gameweek gets (re)processed. The squad
+          // (myxi/team) is never touched here either way, since it persists
+          // week to week.
+          if (isFinal) {
+            await deleteDoc(doc(db, "users", userId, "myxi", "weeklyPicks")).catch(() => {});
+            await deleteDoc(doc(db, "users", userId, "myxi", "betBuilder")).catch(() => {});
+          }
 
           const statsRef = doc(db, `users/${userId}/stats/points`);
           await setDoc(statsRef, {
@@ -1606,31 +1627,38 @@
           });
         }
 
-        // Keep the homepage ticker's manager count / league leader fresh
-        // automatically on every processed gameweek, on top of the manual
-        // "Refresh Public Stats" button above.
+        // Keep the homepage ticker's manager count / league leader fresh on
+        // every processed gameweek (partial or final) - it's just showing
+        // current standings, safe either way. The gameweek NUMBER only
+        // advances on the final run, since the "next" gameweek genuinely
+        // hasn't started until this one is fully settled.
         try {
           const countSnap = await getCountFromServer(collection(db, "leaderboard"));
           const { leaderPoints } = await computePublicLeaderStats();
-          await setDoc(doc(db, "public", "stats"), {
+          const statsPayload = {
             managerCount: countSnap.data().count,
             leaderName: deleteField(),
             leaderPoints,
-            currentGameweek: gwNum + 1,
             updatedAt: new Date().toISOString()
-          }, { merge: true });
+          };
+          if (isFinal) statsPayload.currentGameweek = gwNum + 1;
+          await setDoc(doc(db, "public", "stats"), statsPayload, { merge: true });
           showDebugAdmin('Synced public stats for homepage ticker');
         } catch (e) {
           showDebugAdmin(`Failed to sync public stats: ${e?.message || e}`, true);
         }
 
-        showDebugAdmin('Updating settings.gameweek reopenTime/status');
-        await setDoc(doc(db, "settings", "gameweek"), {
-          reopenTime: new Date().toISOString(),
-          status: "open"
-        }, { merge: true });
-
-        alert("Scores updated successfully! The game is now open again.");
+        if (isFinal) {
+          showDebugAdmin('Updating settings.gameweek reopenTime/status');
+          await setDoc(doc(db, "settings", "gameweek"), {
+            reopenTime: new Date().toISOString(),
+            status: "open"
+          }, { merge: true });
+          alert("Scores updated successfully! The game is now open again.");
+        } else {
+          showDebugAdmin('Partial update complete - site stays locked, nothing reopened.');
+          alert(`Live update published for GW${gwNum}. Points are visible to managers now - the site stays locked, and Weekly Picks/Bet Builder are untouched. Come back and process again once more games finish, and check "Final result" when this gameweek is truly over.`);
+        }
         loadHistory();
       } catch (err) {
         console.error(err);
