@@ -284,6 +284,14 @@
       <button onclick="runAdminSanityCheck()" style="background: #10b981; width: auto; padding: 10px 20px;">Run Sanity Check</button>
       <button onclick="processGameweek()" style="width: auto; padding: 10px 20px;">Process / Dry Run</button>
     </div>
+
+    <div style="background: rgba(248,113,113,0.1); padding: 10px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f87171;">
+      <p style="margin: 0 0 8px; color: #fecaca; font-weight: bold;">One-time repair: fix cumulative totals</p>
+      <p style="margin: 0 0 10px; color: #fecaca; font-size: 12px;">
+        Recalculates every manager's totalPoints as the sum of their archived weeklyPoints across every processed gameweek, plus seasonPoints - overwriting whatever totalPoints currently holds. Only needed once, to correct totals affected by the previous-gameweek-baseline bug fixed above. Safe to run any time after that - it will simply confirm nothing changed if totals are already correct.
+      </p>
+      <button onclick="repairCumulativeTotals()" style="background: #f87171; width: auto; padding: 10px 20px;">Repair Cumulative Totals</button>
+    </div>
     <div id="sanity-check-output" style="background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; padding: 10px; color: #d1fae5; font-size: 13px; white-space: pre-wrap;">
       No sanity check run yet.
     </div>
@@ -1467,12 +1475,25 @@
         for (const userDoc of leaderboardSnap.docs) {
           const userId = userDoc.id;
           const userData = userDoc.data();
-          
-          // TRACK DELTAS TO PREVENT DOUBLE-COUNTING
-          const prevWeekly = userData.weeklyPoints || 0;
-          const prevSel = userData.weeklySelection || 0;
-          const prevPicks = userData.weeklyPicks || 0;
-          const prevBet = userData.weeklyBet || 0;
+
+          // TRACK DELTAS TO PREVENT DOUBLE-COUNTING, SCOPED TO *THIS*
+          // GAMEWEEK. leaderboard.weeklyPoints/weeklySelection/etc always
+          // hold whichever gameweek was processed *last*, not necessarily
+          // gwNum - using them directly as the "previous" baseline meant the
+          // very first run of a new gameweek subtracted the entire previous
+          // gameweek's total instead of starting from zero. The correct
+          // baseline is this user's own archive for GW{gwNum} specifically,
+          // if one exists yet (i.e. an earlier partial run of this same
+          // gameweek) - otherwise there is nothing to subtract.
+          const gwArchiveSnap = await getDoc(doc(db, `users/${userId}/history`, "GW" + gwNum));
+          const gwArchiveData = gwArchiveSnap.exists() ? gwArchiveSnap.data() : null;
+          const prevWeekly = gwArchiveData?.weeklyPoints || 0;
+          const prevSel = gwArchiveData?.selectionScore || 0;
+          const prevPicks = gwArchiveData?.picksScore || 0;
+          const prevBet = gwArchiveData?.betScore || 0;
+          // Season prediction points genuinely are cumulative across the
+          // whole season (not per-gameweek), so the leaderboard's running
+          // total is the correct baseline for these specifically.
           const prevSeason = userData.seasonPoints || 0;
 
           const preview = await calculateUserGameweekPreview({
@@ -1596,6 +1617,12 @@
         }
 
         // 8. Save to History
+        // final: false marks this gameweek as still in progress. Consumers
+        // that show "past/archived weeks" (MyXI's history dropdown,
+        // Dashboard's trend chart, View Manager, Weekly Analysis) treat that
+        // as "don't list it yet"; the live per-player score overlay on MyXI
+        // deliberately ignores this flag and always shows the latest
+        // processed doc, since that's the whole point of a live update.
         showDebugAdmin(`Saving gameweekHistory GW${gwNum}`);
         await setDoc(doc(db, "gameweekHistory", "GW" + gwNum), {
           gw: gwNum,
@@ -1603,7 +1630,8 @@
           betResult: betResult,
           winClub: winClub,
           winMin: winMin,
-          playerScores: currentScores
+          playerScores: currentScores,
+          final: isFinal
         });
 
         // 9. Snapshot each league's ranked standings as of this gameweek, so
@@ -1667,6 +1695,50 @@
         alert(`Error processing scores.\n\n${message}`);
       }
     }
+
+    // ONE-TIME REPAIR for the previous-gameweek-baseline bug: totalPoints
+    // was computed as an incremental delta off leaderboard.weeklyPoints,
+    // which holds whichever gameweek was processed most recently rather
+    // than being scoped to the gameweek actually being processed. The first
+    // time a new gameweek was ever processed, that wrongly subtracted the
+    // entire previous gameweek's total. The per-user history archive
+    // (users/{uid}/history/GW{n}.weeklyPoints) was never touched by that bug
+    // - each entry correctly holds what was earned in that specific
+    // gameweek - so it's the source of truth to recompute from.
+    window.repairCumulativeTotals = async function() {
+      if (!confirm("This recalculates totalPoints for every manager from their archived gameweek history plus season points, overwriting the current value. Continue?")) return;
+
+      try {
+        showDebugAdmin('Starting cumulative totals repair...');
+        const leaderboardSnap = await getDocs(collection(db, 'leaderboard'));
+        let fixedCount = 0;
+
+        for (const userDoc of leaderboardSnap.docs) {
+          const userId = userDoc.id;
+          const userData = userDoc.data();
+
+          const historySnap = await getDocs(collection(db, 'users', userId, 'history'));
+          let sumWeekly = 0;
+          historySnap.forEach((h) => { sumWeekly += (h.data().weeklyPoints || 0); });
+
+          const correctTotal = sumWeekly + (userData.seasonPoints || 0);
+          const oldTotal = userData.totalPoints || 0;
+
+          if (oldTotal !== correctTotal) {
+            await setDoc(doc(db, 'leaderboard', userId), { totalPoints: correctTotal }, { merge: true });
+            showDebugAdmin(`Fixed ${userData.teamName || userId}: ${oldTotal} -> ${correctTotal}`);
+            fixedCount++;
+          }
+        }
+
+        showDebugAdmin(`Repair complete. Fixed ${fixedCount} of ${leaderboardSnap.size} managers.`);
+        alert(`Repair complete.\n\nFixed ${fixedCount} of ${leaderboardSnap.size} managers.\n\nYou should also re-run "Refresh Public Stats" and reprocess the current gameweek once more so league snapshots and the homepage ticker pick up the corrected totals.`);
+      } catch (e) {
+        console.error(e);
+        showDebugAdmin(`Repair failed: ${e?.message || e}`, true);
+        alert(`Repair failed: ${e?.message || e}`);
+      }
+    };
 
     window.resetWeeklyPoints = async function() {
       if (!confirm("Are you sure you want to reset 'Weekly Points' to 0 for ALL users? This cannot be undone.")) {
