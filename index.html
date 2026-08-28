@@ -1993,11 +1993,14 @@ function renderGameweekCountdown() {
   const value = document.getElementById('seasonCountdownValue');
   if (!label || !value) return;
 
-  const gwNumber = tickerStatsCache?.currentGameweek;
   const info = typeof getGameweekDeadlineInfo === 'function' ? getGameweekDeadlineInfo() : null;
-  if (!gwNumber || !info) return; // leave the static HTML fallback in place
+  if (!info) return; // leave the static HTML fallback in place
 
-  const gwLabel = `Gameweek ${gwNumber}`;
+  // The gameweek number is a nice-to-have from public/stats - the countdown
+  // itself only needs shared-fixtures.js, so it shouldn't be stuck waiting
+  // on a Firestore field that might be stale or not yet synced.
+  const gwNumber = tickerStatsCache?.currentGameweek;
+  const gwLabel = gwNumber ? `Gameweek ${gwNumber}` : 'Gameweek';
   const diffMs = info.deadline.getTime() - Date.now();
 
   if (diffMs <= 0) {
