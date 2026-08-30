@@ -1,4 +1,4 @@
-const CACHE_NAME = 'game-of-opinions-pwa-v19';
+const CACHE_NAME = 'game-of-opinions-pwa-v20';
 const APP_SHELL = [
   '/',
   '/index.html',
@@ -11,6 +11,7 @@ const APP_SHELL = [
   '/rules.html',
   '/signup.html',
   '/shared-fixtures.js',
+  '/players-data.js',
   '/myxi-data-loader.js',
   '/manifest.webmanifest',
   '/icon-192.png',

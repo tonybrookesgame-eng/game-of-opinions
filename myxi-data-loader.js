@@ -86,6 +86,15 @@
   }
 
   async function loadMyxiGameData() {
+    // playersByPos now lives in players-data.js (shared with myxi.html and
+    // admin.html), loaded as window.playersByPos before this runs - reading
+    // it directly is simpler and safer than scraping it back out of
+    // myxi.html's raw HTML, which no longer contains that literal at all.
+    // clubAbbr isn't shared yet, so it's still scraped from myxi.html.
+    if (!window.playersByPos) {
+      throw new Error("window.playersByPos is not available - make sure players-data.js is loaded before myxi-data-loader.js");
+    }
+
     const response = await fetch("myxi.html", { cache: "no-store" });
     if (!response.ok) {
       throw new Error("Failed to load myxi.html");
@@ -93,10 +102,9 @@
 
     const html = await response.text();
     const clubAbbrLiteral = extractObjectLiteral(html, "clubAbbr");
-    const playersByPosLiteral = extractObjectLiteral(html, "playersByPos");
 
     const clubAbbr = Function('"use strict"; return (' + clubAbbrLiteral + ');')();
-    const playersByPos = Function('"use strict"; return (' + playersByPosLiteral + ');')();
+    const playersByPos = window.playersByPos;
 
     const teams = dedupeSorted(playersByPos.GK || []);
     const { outfield, byName } = toPlayersPool(playersByPos);
