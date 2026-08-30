@@ -258,6 +258,10 @@ h1 {
 
 .league-tabs::-webkit-scrollbar { display: none; }
 
+.league-select {
+  display: none;
+}
+
 .league-tab {
   flex-shrink: 0;
   padding: 9px 16px;
@@ -944,6 +948,31 @@ h1 {
     margin: 4px 0 14px;
   }
 
+  /* More than a couple of leagues turned the scrolling pill-tabs into a
+     drag-to-see-them-all mess on narrow screens - a native dropdown scales
+     to any number of leagues without needing horizontal scroll at all. */
+  .league-tabs {
+    display: none;
+  }
+
+  .league-select {
+    display: block;
+    flex: 1;
+    min-width: 0;
+    padding: 11px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(255,255,255,0.06);
+    color: #fff;
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  .league-select option {
+    background: #0a1220;
+    color: #fff;
+  }
+
   .league-primary-actions {
     gap: 6px;
   }
@@ -1302,6 +1331,7 @@ h1 {
 
   <div class="league-tabs-row user-only">
     <div class="league-tabs" id="league-tabs"></div>
+    <select class="league-select" id="league-select" aria-label="Choose a league"></select>
     <div class="league-primary-actions">
       <button class="league-action-btn primary" onclick="openLeagueModal('create')" aria-label="Create or join a league" title="Create or join a league">+ <span class="btn-label">New League</span></button>
       <button class="league-action-btn accent" id="share-league-btn" onclick="openLeagueModal('share')" aria-label="Share league code" title="Share league code">🔗 <span class="btn-label">Share Code</span></button>
@@ -1835,8 +1865,10 @@ async function loadLeagueMemberships(user) {
 
 function renderLeagueTabs() {
   const wrap = document.getElementById("league-tabs");
+  const select = document.getElementById("league-select");
   if (!wrap) return;
   wrap.innerHTML = "";
+  if (select) select.innerHTML = "";
 
   const globalTab = document.createElement("button");
   globalTab.type = "button";
@@ -1845,6 +1877,14 @@ function renderLeagueTabs() {
   globalTab.addEventListener("click", () => window.viewLeague(""));
   wrap.appendChild(globalTab);
 
+  if (select) {
+    const globalOption = document.createElement("option");
+    globalOption.value = "";
+    globalOption.innerText = "Global";
+    globalOption.selected = !activeLeagueCode;
+    select.appendChild(globalOption);
+  }
+
   userLeagues.forEach(league => {
     const tab = document.createElement("button");
     tab.type = "button";
@@ -1852,8 +1892,20 @@ function renderLeagueTabs() {
     tab.innerText = league.name || `League ${league.code}`;
     tab.addEventListener("click", () => window.viewLeague(league.code));
     wrap.appendChild(tab);
+
+    if (select) {
+      const option = document.createElement("option");
+      option.value = league.code;
+      option.innerText = league.name || `League ${league.code}`;
+      option.selected = activeLeagueCode === league.code;
+      select.appendChild(option);
+    }
   });
 }
+
+document.getElementById("league-select")?.addEventListener("change", (e) => {
+  window.viewLeague(e.target.value);
+});
 
 async function loadLeaderboard(user, leagueCode = "") {
   const body = document.getElementById("leaderboard-body");
