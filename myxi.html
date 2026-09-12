@@ -3691,10 +3691,32 @@ window.handleLogout = () => {
 };
 
 const loadUserData = async function(uid) {
+  // gameweekStatus defaults to 'open' until the settings/gameweek onSnapshot
+  // listener below delivers its first update, which is async and can resolve
+  // after loadSelectedGameweekHistory() has already built and "locked" the
+  // pitch using that stale default - letting a genuinely-locked gameweek
+  // render fully clickable until the listener happens to fire again. Fetch
+  // the live status directly here so the pitch is built with the correct
+  // lock state the first time, not just once the listener catches up.
+  try {
+    const gwSettingsSnap = await getDoc(gameweekSettingsRef);
+    if (gwSettingsSnap.exists()) {
+      const settings = gwSettingsSnap.data();
+      const deadlineDate = settings.deadline ? new Date(settings.deadline) : null;
+      const reopenDate = settings.reopenTime ? new Date(settings.reopenTime) : null;
+      currentGameweekDeadlineISO = settings.deadline || null;
+      gameweekStatus = typeof window.getGameweekStatusFromTimes === 'function'
+        ? window.getGameweekStatusFromTimes(deadlineDate, reopenDate)
+        : 'open';
+    }
+  } catch (e) {
+    console.error('Failed to pre-fetch gameweek status before building pitch:', e);
+  }
+
   // Ensure UI options and latest bet info are loaded before restoring user picks
   populateWeeklyOptions();
   loadCurrentBet();
-  
+
   // Standardize on using loadSelectedGameweekHistory for all initial data loading
   await populateGameweekHistoryDropdown();
   await loadSelectedGameweekHistory();
