@@ -266,6 +266,10 @@
         <select id="res-rel2"><option value="">Rel 2</option></select>
         <select id="res-rel3"><option value="">Rel 3</option></select>
       </div>
+      <p style="margin: 10px 0 0; color: #9ca3af; font-size: 12px;">
+        These fields are saved permanently and reload automatically every time this page opens - no need to re-enter a result once it's confirmed. Clicking below saves whatever's currently filled in here and applies it to every manager's season points and totals immediately, separate from this gameweek's match-day processing.
+      </p>
+      <button onclick="recalculateSeasonPoints()" style="background: #a855f7; width: auto; padding: 10px 20px; margin-top: 8px;">Recalculate Season Points</button>
     </div>
 
     <p>6. Save your progress or run the calculation for all managers.</p>
@@ -616,6 +620,7 @@
           loadCurrentSettings();
           loadPwaUsageMetrics();
           loadPublicStatsDisplay();
+          loadPersistedSeasonResults();
           autoSyncDeadlineFromFixtures();
           wireSimpleModeToggle();
           setInterval(renderReminderChecklist, 60000);
@@ -1104,18 +1109,145 @@
       }
     };
 
-    function seasonPickMatches(savedValue, resultValue) {
-      if (!savedValue || !resultValue) return false;
-      if (savedValue === resultValue) return true;
+    // Shared with season.html (correct/incorrect borders) - lives in
+    // shared-fixtures.js so the two never drift apart.
+    const seasonPickMatches = window.seasonPickMatches;
 
-      const normalizeName = (value) => {
-        if (!value) return "";
-        if (value.includes("|")) return value.split("|")[0].trim().toLowerCase();
-        return value.trim().toLowerCase();
-      };
+    // Pure scoring function: given a manager's saved season picks (sp, keyed
+    // by category title, same shape as users/{uid}/predictions/season) and
+    // the current season results (keyed the same as the res-* fields below),
+    // returns the total season points. Used both by the per-gameweek
+    // processing preview and by the standalone "Recalculate Season Points"
+    // action, so awarding a season result doesn't require waiting on or
+    // re-running a full gameweek's weekly stats.
+    function calculateSeasonScoreFromResults(sp, results) {
+      if (!sp) return 0;
+      let score = 0;
+      if (results.winner && seasonPickMatches(sp["Premier League Winner"], results.winner)) score += 25;
+      if (results.facup && seasonPickMatches(sp["FA Cup Winner"], results.facup)) score += 50;
+      if (results.scorer && seasonPickMatches(sp["Top Scorer"], results.scorer)) score += 25;
+      if (results.assists && seasonPickMatches(sp["Top Assists"], results.assists)) score += 50;
+      if (results.cs && seasonPickMatches(sp["Most Clean Sheets"], results.cs)) score += 50;
+      if (results.ht && seasonPickMatches(sp["First Hat-Trick"], results.ht)) score += 50;
+      const sackedSaved = sp["First Manager Sacked"] ?? sp["First Club To Sack Manager"];
+      if (results.sacked && seasonPickMatches(sackedSaved, results.sacked)) score += 50;
+      if (results.reds && seasonPickMatches(sp["Most Red Cards"], results.reds)) score += 75;
+      if (results.yellows && seasonPickMatches(sp["Most Yellow Cards"], results.yellows)) score += 50;
 
-      return normalizeName(savedValue) === normalizeName(resultValue);
+      if (results.rel && results.rel.length > 0 && sp["Bottom 3 Finishers (Relegation)"]) {
+        const picks = Array.isArray(sp["Bottom 3 Finishers (Relegation)"]) ? sp["Bottom 3 Finishers (Relegation)"] : [sp["Bottom 3 Finishers (Relegation)"]];
+        picks.forEach(pick => {
+          if (results.rel.includes(pick)) score += 40;
+        });
+      }
+
+      return score;
     }
+
+    function readSeasonResultsFromFields() {
+      return {
+        winner: document.getElementById('res-winner')?.value.trim() || "",
+        facup: document.getElementById('res-facup')?.value.trim() || "",
+        scorer: document.getElementById('res-scorer')?.value.trim() || "",
+        assists: document.getElementById('res-assists')?.value.trim() || "",
+        cs: document.getElementById('res-cs')?.value.trim() || "",
+        ht: document.getElementById('res-ht')?.value.trim() || "",
+        sacked: document.getElementById('res-sacked')?.value.trim() || "",
+        reds: document.getElementById('res-reds')?.value.trim() || "",
+        yellows: document.getElementById('res-yellows')?.value.trim() || "",
+        rel: [document.getElementById('res-rel1')?.value.trim(), document.getElementById('res-rel2')?.value.trim(), document.getElementById('res-rel3')?.value.trim()].filter(x => x)
+      };
+    }
+
+    function applySeasonResultsToFields(results) {
+      if (!results) return;
+      if (document.getElementById('res-winner')) document.getElementById('res-winner').value = results.winner || "";
+      if (document.getElementById('res-facup')) document.getElementById('res-facup').value = results.facup || "";
+      if (document.getElementById('res-scorer')) document.getElementById('res-scorer').value = results.scorer || "";
+      if (document.getElementById('res-assists')) document.getElementById('res-assists').value = results.assists || "";
+      if (document.getElementById('res-cs')) document.getElementById('res-cs').value = results.cs || "";
+      if (document.getElementById('res-ht')) document.getElementById('res-ht').value = results.ht || "";
+      if (document.getElementById('res-sacked')) document.getElementById('res-sacked').value = results.sacked || "";
+      if (document.getElementById('res-reds')) document.getElementById('res-reds').value = results.reds || "";
+      if (document.getElementById('res-yellows')) document.getElementById('res-yellows').value = results.yellows || "";
+      if (results.rel) {
+        if (document.getElementById('res-rel1')) document.getElementById('res-rel1').value = results.rel[0] || "";
+        if (document.getElementById('res-rel2')) document.getElementById('res-rel2').value = results.rel[1] || "";
+        if (document.getElementById('res-rel3')) document.getElementById('res-rel3').value = results.rel[2] || "";
+      }
+    }
+
+    // The canonical, permanent season results - separate from settings/adminDraft
+    // (which is just a manual save-progress snapshot the admin has to remember to
+    // reload). Auto-loaded below on page init so a result entered once (e.g. First
+    // Hat-Trick) keeps applying to every future gameweek's processing without
+    // needing to be retyped or reloaded from a draft each time.
+    async function loadPersistedSeasonResults() {
+      try {
+        const snap = await getDoc(doc(db, "settings", "seasonResults"));
+        if (snap.exists()) {
+          // Wait for setSeasonResultOptions() to have populated the <select>
+          // options first, or setting .value here would silently no-op.
+          applySeasonResultsToFields(snap.data());
+        }
+      } catch (e) {
+        console.error('Failed to load persisted season results:', e);
+      }
+    }
+
+    // Saves the current Season Results fields as the permanent record and
+    // immediately recalculates every manager's season points from them -
+    // independent of weekly gameweek processing, so a season result (e.g. a
+    // hat-trick landing) can be applied the moment it's confirmed rather than
+    // waiting for this gameweek's match stats to be ready.
+    window.recalculateSeasonPoints = async function() {
+      const results = readSeasonResultsFromFields();
+      const hasAnyResult = results.winner || results.facup || results.scorer || results.assists ||
+        results.cs || results.ht || results.sacked || results.reds || results.yellows || results.rel.length > 0;
+
+      if (!hasAnyResult) {
+        alert("Fill in at least one Season Result field first.");
+        return;
+      }
+
+      if (!confirm("This saves the Season Results fields as the permanent record and immediately recalculates every manager's season points and totals from them. It does not touch this gameweek's match stats. Continue?")) {
+        return;
+      }
+
+      try {
+        showDebugAdmin('Saving season results and recalculating season points for all managers...');
+        await setDoc(doc(db, "settings", "seasonResults"), results);
+
+        const leaderboardSnap = await getDocs(collection(db, "leaderboard"));
+        let updatedCount = 0;
+
+        for (const userDoc of leaderboardSnap.docs) {
+          const userId = userDoc.id;
+
+          const seasonSnap = await getDoc(doc(db, "users", userId, "predictions", "season"));
+          const sp = seasonSnap.exists() ? seasonSnap.data() : null;
+          const userSeasonScore = calculateSeasonScoreFromResults(sp, results);
+
+          // totalPoints = sum of every archived weekly gameweek + season points,
+          // same formula repairCumulativeTotals() below uses.
+          const historySnap = await getDocs(collection(db, "users", userId, "history"));
+          const cumulativeWeekly = historySnap.docs.reduce((sum, d) => sum + Number(d.data()?.weeklyPoints || 0), 0);
+
+          await setDoc(doc(db, "leaderboard", userId), {
+            seasonPoints: userSeasonScore,
+            totalPoints: cumulativeWeekly + userSeasonScore
+          }, { merge: true });
+          updatedCount++;
+        }
+
+        showDebugAdmin(`Recalculated season points for ${updatedCount} manager(s).`);
+        alert(`Season points recalculated for ${updatedCount} manager(s).`);
+      } catch (e) {
+        console.error(e);
+        showDebugAdmin(`Failed to recalculate season points: ${e?.message || e}`, true);
+        alert(`Error recalculating season points: ${e?.message || e}`);
+      }
+    };
 
     async function calculateUserGameweekPreview({
       userId,
@@ -1188,27 +1320,10 @@
       }
 
       const seasonSnap = await getDoc(doc(db, `users/${userId}/predictions/season`));
-      let userSeasonScore = 0;
-      if (seasonSnap.exists()) {
-        const sp = seasonSnap.data();
-        if (resWinner && seasonPickMatches(sp["Premier League Winner"], resWinner)) userSeasonScore += 25;
-        if (resFacup && seasonPickMatches(sp["FA Cup Winner"], resFacup)) userSeasonScore += 50;
-        if (resScorer && seasonPickMatches(sp["Top Scorer"], resScorer)) userSeasonScore += 25;
-        if (resAssists && seasonPickMatches(sp["Top Assists"], resAssists)) userSeasonScore += 50;
-        if (resCS && seasonPickMatches(sp["Most Clean Sheets"], resCS)) userSeasonScore += 50;
-        if (resHT && seasonPickMatches(sp["First Hat-Trick"], resHT)) userSeasonScore += 50;
-        const sackedSaved = sp["First Manager Sacked"] ?? sp["First Club To Sack Manager"];
-        if (resSacked && seasonPickMatches(sackedSaved, resSacked)) userSeasonScore += 50;
-        if (resReds && seasonPickMatches(sp["Most Red Cards"], resReds)) userSeasonScore += 75;
-        if (resYellows && seasonPickMatches(sp["Most Yellow Cards"], resYellows)) userSeasonScore += 50;
-
-        if (resRel.length > 0 && sp["Bottom 3 Finishers (Relegation)"]) {
-          const picks = Array.isArray(sp["Bottom 3 Finishers (Relegation)"]) ? sp["Bottom 3 Finishers (Relegation)"] : [sp["Bottom 3 Finishers (Relegation)"]];
-          picks.forEach(pick => {
-            if (resRel.includes(pick)) userSeasonScore += 40;
-          });
-        }
-      }
+      const userSeasonScore = calculateSeasonScoreFromResults(seasonSnap.exists() ? seasonSnap.data() : null, {
+        winner: resWinner, facup: resFacup, scorer: resScorer, assists: resAssists, cs: resCS,
+        ht: resHT, sacked: resSacked, reds: resReds, yellows: resYellows, rel: resRel
+      });
 
       const deltaWeeklyTotal = userWeeklyTotal - prevWeekly;
       const deltaSeason = userSeasonScore - prevSeason;

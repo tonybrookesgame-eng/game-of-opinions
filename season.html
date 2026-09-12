@@ -215,6 +215,25 @@
       box-shadow: 0 0 0 1px rgba(199,255,56,0.45), 0 10px 30px rgba(0,0,0,0.2);
     }
 
+    .season-card.pick-correct {
+      border-color: #22c55e;
+      box-shadow: 0 0 0 1px rgba(34,197,94,0.5), 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .season-card.pick-incorrect {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 1px rgba(239,68,68,0.5), 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .season-card .result-line {
+      margin: 6px 0 0;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .season-card.pick-correct .result-line { color: #4ade80; }
+    .season-card.pick-incorrect .result-line { color: #f87171; }
+
     .season-card h3 {
       margin: 0 0 4px;
       font-size: 18px;
@@ -879,6 +898,77 @@ const CATEGORY_CONFIG = [
   { key: "relegated", title: "Bottom 3 Finishers (Relegation)", type: "team", points: "40 points per team", count: 3 },
   { key: "yellows", title: "Most Yellow Cards", type: "player", points: "50 points", count: 1 }
 ];
+
+// Maps each category to its field in settings/seasonResults (admin.html's
+// "Season Results" panel) - same doc admin.html uses to award points, read
+// here only to show correct/incorrect on the manager's own pick.
+const SEASON_RESULT_FIELD_BY_CATEGORY = {
+  winner: "winner", facup: "facup", scorer: "scorer", assists: "assists",
+  cleansheets: "cs", hattrick: "ht", sacked: "sacked", redcards: "reds",
+  yellows: "yellows", relegated: "rel"
+};
+
+function seasonResultLabel(categoryType, value) {
+  if (!value) return "";
+  if (categoryType === "player") return decodePlayer(value).name || value;
+  return value;
+}
+
+// Colors each season-card green/red once its result is confirmed, and
+// leaves it alone (no border override) while still undecided. Relegation
+// awards partial credit per correct team, so it reads as "correct" once at
+// least one of the three picks lands, matching admin.html's scoring.
+async function applySeasonResultColors() {
+  let results;
+  try {
+    const snap = await getDoc(doc(db, "settings", "seasonResults"));
+    if (!snap.exists()) return;
+    results = snap.data() || {};
+  } catch (e) {
+    console.error('Failed to load season results:', e);
+    return;
+  }
+
+  Array.from(document.querySelectorAll(".season-card")).forEach((card) => {
+    const category = CATEGORY_CONFIG.find((c) => c.key === card.dataset.category);
+    if (!category) return;
+
+    const resultField = SEASON_RESULT_FIELD_BY_CATEGORY[category.key];
+    const resultValue = results[resultField];
+
+    card.classList.remove("pick-correct", "pick-incorrect");
+    let resultLine = card.querySelector(".result-line");
+
+    if (category.key === "relegated") {
+      const picked = Array.from(card.querySelectorAll("select")).map((s) => s.value).filter((v) => v);
+      if (!Array.isArray(resultValue) || resultValue.length === 0 || !picked.length) return;
+      const correct = picked.filter((p) => resultValue.includes(p));
+      card.classList.add(correct.length ? "pick-correct" : "pick-incorrect");
+      if (!resultLine) {
+        resultLine = document.createElement("p");
+        resultLine.className = "result-line";
+        card.appendChild(resultLine);
+      }
+      resultLine.textContent = correct.length
+        ? `Result: ${correct.length}/3 correct (${resultValue.join(", ")})`
+        : `Result: ${resultValue.join(", ")}`;
+      return;
+    }
+
+    const select = card.querySelector("select");
+    const pickedValue = select?.value;
+    if (!resultValue || !pickedValue) return;
+
+    const isCorrect = window.seasonPickMatches ? window.seasonPickMatches(pickedValue, resultValue) : false;
+    card.classList.add(isCorrect ? "pick-correct" : "pick-incorrect");
+    if (!resultLine) {
+      resultLine = document.createElement("p");
+      resultLine.className = "result-line";
+      card.appendChild(resultLine);
+    }
+    resultLine.textContent = `Result: ${seasonResultLabel(category.type, resultValue)}`;
+  });
+}
 
 const AI_CHARACTERS = [
   { key: "oracle", label: "The Oracle", tag: "Low Risk", mode: "safe" },
@@ -1631,6 +1721,7 @@ onAuthStateChanged(auth, async (user) => {
 
     if (!gameData) await boot();
     await loadSeasonPicks(user.uid);
+    await applySeasonResultColors();
   } else {
     currentUser = null;
     userLinks.forEach((l) => (l.style.display = 'none'));

@@ -122,9 +122,30 @@
     });
   }
 
+  // Compares a manager's saved season pick against the admin-entered result.
+  // Player picks are stored as "Name|Club" (see encodePlayerValue in
+  // admin.html/myxi.html/season.html) - a transfer moving the club after the
+  // pick was made shouldn't break the match, so this compares names only
+  // once "|" is stripped. Shared by admin.html (awarding season points) and
+  // season.html (showing correct/incorrect borders) to avoid the two
+  // definitions drifting apart.
+  function seasonPickMatches(savedValue, resultValue) {
+    if (!savedValue || !resultValue) return false;
+    if (savedValue === resultValue) return true;
+
+    const normalizeName = (value) => {
+      if (!value) return "";
+      if (value.includes("|")) return value.split("|")[0].trim().toLowerCase();
+      return value.trim().toLowerCase();
+    };
+
+    return normalizeName(savedValue) === normalizeName(resultValue);
+  }
+
   window.gameweekFixtures = fixtureData;
   window.getGameweekFixtures = getGameweekFixtures;
   window.getGameweekDeadlineInfo = getGameweekDeadlineInfo;
   window.getGameweekStatusFromTimes = getGameweekStatusFromTimes;
   window.renderFixtureList = renderFixtureList;
+  window.seasonPickMatches = seasonPickMatches;
 })();
