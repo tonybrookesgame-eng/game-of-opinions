@@ -3522,37 +3522,71 @@ let gameweekStatus = 'open'; // Default to open
 // discard picks made for an earlier one, even if "Process" was never run
 // (e.g. fixtures were simply updated directly for the next gameweek).
 let currentGameweekDeadlineISO = null;
+let currentGameweekReopenISO = null;
+
+// Re-derives lock status from the last-known deadline/reopen times and
+// applies it to the pitch, Weekly Predictions and Bet Builder controls.
+// Called both when settings/gameweek changes (onSnapshot below) and on a
+// timer (see setInterval below) - onSnapshot only fires when that Firestore
+// document itself changes, so without the timer a tab left open across the
+// deadline moment would never actually lock until some unrelated admin
+// write happened to touch the document afterward.
+const refreshGameweekLockUI = () => {
+  const deadlineDate = currentGameweekDeadlineISO ? new Date(currentGameweekDeadlineISO) : null;
+  const reopenDate = currentGameweekReopenISO ? new Date(currentGameweekReopenISO) : null;
+
+  // Shared status logic lives in shared-fixtures.js to avoid drift across pages.
+  const effectiveStatus = typeof window.getGameweekStatusFromTimes === 'function'
+    ? window.getGameweekStatusFromTimes(deadlineDate, reopenDate)
+    : 'open';
+
+  const wasLocked = (gameweekStatus === 'locked');
+  gameweekStatus = effectiveStatus;
+  const isLocked = (gameweekStatus === 'locked');
+  const justLocked = !wasLocked && isLocked;
+
+  // Update deadline timer in header
+  if (isLocked) {
+    try {
+      document.querySelector('header .user-only #deadline-timer').innerText = "GW LOCKED";
+    } catch(e) {}
+  } else if (deadlineDate) {
+    try {
+      const options = { weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false };
+      document.querySelector('header .user-only #deadline-timer').innerText = deadlineDate.toLocaleString('en-GB', options).toUpperCase();
+    } catch(e) {}
+  }
+
+  // Capture whatever's currently selected but unsaved before the lock
+  // disables these fields below - see autoSaveUnsavedPicksOnLock.
+  if (justLocked && currentUser) {
+    autoSaveUnsavedPicksOnLock();
+  }
+
+  // Disable/Enable save buttons based on lock status
+  applyPitchLockState(isLocked);
+  const clearBtn = document.getElementById('clearTeamBtn');
+  if (clearBtn) clearBtn.disabled = isLocked;
+  updateDependentSaveButtonsAvailability(isLocked);
+  const firstScorerEl = document.getElementById('firstScorer');
+  const goalMinuteEl = document.getElementById('goalMinute');
+  if (firstScorerEl) firstScorerEl.disabled = isLocked;
+  if (goalMinuteEl) goalMinuteEl.disabled = isLocked;
+  document.querySelectorAll('.bet-choice').forEach(b => b.disabled = isLocked);
+
+  // Refresh to apply points display logic
+  document.querySelectorAll('.pitch select').forEach(s => updateShirt(s));
+};
 
 // Listener for gameweek settings (status and deadline) with dynamic auto-lock/unlock
 const gameweekSettingsRef = doc(db, "settings", "gameweek");
 onSnapshot(gameweekSettingsRef, async (docSnap) => {
     if (docSnap.exists()) {
         const settings = docSnap.data();
-        const deadlineDate = settings.deadline ? new Date(settings.deadline) : null;
-        const reopenDate = settings.reopenTime ? new Date(settings.reopenTime) : null;
         currentGameweekDeadlineISO = settings.deadline || null;
+        currentGameweekReopenISO = settings.reopenTime || null;
 
-    // Shared status logic lives in shared-fixtures.js to avoid drift across pages.
-    const effectiveStatus = typeof window.getGameweekStatusFromTimes === 'function'
-      ? window.getGameweekStatusFromTimes(deadlineDate, reopenDate)
-      : 'open';
-
-        const wasLocked = (gameweekStatus === 'locked');
-        gameweekStatus = effectiveStatus;
-        let isLocked = (gameweekStatus === 'locked');
-        const justLocked = !wasLocked && isLocked;
-
-        // Update deadline timer in header
-        if (isLocked) {
-            try {
-              document.querySelector('header .user-only #deadline-timer').innerText = "GW LOCKED";
-            } catch(e) {}
-        } else if (deadlineDate) {
-            try {
-              const options = { weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false };
-              document.querySelector('header .user-only #deadline-timer').innerText = deadlineDate.toLocaleString('en-GB', options).toUpperCase();
-            } catch(e) {}
-        }
+        refreshGameweekLockUI();
 
         // Update Bet Builder Points dynamically based on Admin Odds
         if (settings.odds) {
@@ -3581,31 +3615,15 @@ onSnapshot(gameweekSettingsRef, async (docSnap) => {
               document.getElementById('betInfo').innerHTML = `Reward: <strong>${betPointsSmall} pts</strong> | Risk: <strong>${betPointsBig} pts</strong>`;
             }
         }
-
-        // Capture whatever's currently selected but unsaved before the lock
-        // disables these fields below - see autoSaveUnsavedPicksOnLock.
-        if (justLocked && currentUser) {
-          autoSaveUnsavedPicksOnLock();
-        }
-
-        // Disable/Enable save buttons based on lock status
-        applyPitchLockState(isLocked);
-        document.getElementById('clearTeamBtn').disabled = isLocked;
-        updateDependentSaveButtonsAvailability(isLocked);
-        // These three were previously only synced on page load, not on this
-        // live snapshot update - meant a gameweek unlocking while the page
-        // was already open left Weekly Picks/Bet Builder stuck disabled
-        // until the user manually reloaded.
-        const firstScorerEl = document.getElementById('firstScorer');
-        const goalMinuteEl = document.getElementById('goalMinute');
-        if (firstScorerEl) firstScorerEl.disabled = isLocked;
-        if (goalMinuteEl) goalMinuteEl.disabled = isLocked;
-        document.querySelectorAll('.bet-choice').forEach(b => b.disabled = isLocked);
-
-        // Refresh to apply points display logic
-        document.querySelectorAll('.pitch select').forEach(s => updateShirt(s));
     }
 });
+
+// settings/gameweek only changes when an admin action rewrites it - it
+// won't re-fire purely because real time crossed the deadline while this
+// tab stayed open. Re-check periodically so the pitch/Weekly Predictions/Bet
+// Builder actually lock right at the deadline instead of only whenever the
+// document next happens to be rewritten.
+setInterval(refreshGameweekLockUI, 30000);
 
 let authRedirectTimer;
 let currentPersistedTeamName = "";
@@ -3702,9 +3720,10 @@ const loadUserData = async function(uid) {
     const gwSettingsSnap = await getDoc(gameweekSettingsRef);
     if (gwSettingsSnap.exists()) {
       const settings = gwSettingsSnap.data();
-      const deadlineDate = settings.deadline ? new Date(settings.deadline) : null;
-      const reopenDate = settings.reopenTime ? new Date(settings.reopenTime) : null;
       currentGameweekDeadlineISO = settings.deadline || null;
+      currentGameweekReopenISO = settings.reopenTime || null;
+      const deadlineDate = currentGameweekDeadlineISO ? new Date(currentGameweekDeadlineISO) : null;
+      const reopenDate = currentGameweekReopenISO ? new Date(currentGameweekReopenISO) : null;
       gameweekStatus = typeof window.getGameweekStatusFromTimes === 'function'
         ? window.getGameweekStatusFromTimes(deadlineDate, reopenDate)
         : 'open';
