@@ -3545,6 +3545,17 @@ const refreshGameweekLockUI = () => {
   const isLocked = (gameweekStatus === 'locked');
   const justLocked = !wasLocked && isLocked;
 
+  console.log('[gameweek-lock]', {
+    now: new Date().toISOString(),
+    currentGameweekDeadlineISO,
+    currentGameweekReopenISO,
+    deadlineDate: deadlineDate ? deadlineDate.toISOString() : null,
+    reopenDate: reopenDate ? reopenDate.toISOString() : null,
+    effectiveStatus,
+    isLocked,
+    teamIsSaved
+  });
+
   // Update deadline timer in header
   if (isLocked) {
     try {
