@@ -68,7 +68,7 @@
       { name: "Barry", club: "Everton" }, { name: "Beto", club: "Everton" },
       { name: "Kusi-Asare", club: "Fulham" }, { name: "Muniz", club: "Fulham" }, { name: "Garcia", club: "Fulham" },
       { name: "McBurnie", club: "Hull" }, { name: "Ansah", club: "Hull" }, { name: "Vaz", club: "Hull" }, { name: "Burstow", club: "Hull" }, { name: "Destan", club: "Hull" },
-      { name: "Al-Hamadi", club: "Ipswich" }, { name: "Akpom", club: "Ipswich" }, { name: "Hirst", club: "Ipswich" }, { name: "Emersonn", club: "Ipswich" }, { name: "Flemming", club: "Ipswich" },
+      { name: "Akpom", club: "Ipswich" }, { name: "Emersonn", club: "Ipswich" }, { name: "Flemming", club: "Ipswich" },
       { name: "Calvert-Lewin", club: "Leeds" }, { name: "Nmecha", club: "Leeds" },
       { name: "Isak", club: "Liverpool" }, { name: "Ekitike", club: "Liverpool" },
       { name: "Haaland", club: "Man City" },
