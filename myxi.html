@@ -3545,7 +3545,7 @@ const refreshGameweekLockUI = () => {
   const isLocked = (gameweekStatus === 'locked');
   const justLocked = !wasLocked && isLocked;
 
-  console.log('[gameweek-lock]', {
+  const lockDebugInfo = {
     now: new Date().toISOString(),
     currentGameweekDeadlineISO,
     currentGameweekReopenISO,
@@ -3554,7 +3554,11 @@ const refreshGameweekLockUI = () => {
     effectiveStatus,
     isLocked,
     teamIsSaved
-  });
+  };
+  console.log('[gameweek-lock]', lockDebugInfo);
+  // Also shown on-screen (append ?debug=1 to the URL) for phones/installed
+  // PWA windows where dev tools aren't reachable.
+  try { showDebug(`[gameweek-lock]\n${JSON.stringify(lockDebugInfo, null, 2)}`); } catch (e) {}
 
   // Update deadline timer in header
   if (isLocked) {
