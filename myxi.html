@@ -2734,20 +2734,21 @@ let teamIsSaved = false;
 let weeklyIsSaved = false;
 let betIsSaved = false;
 
-// Locks the pitch (shirt selects + formation picker) together with the Save
-// Team button whenever the team has been saved - editing again requires an
-// explicit "Clear Team" first, instead of silently re-unlocking on any tap.
+// Locks the pitch (shirt selects + formation picker) and Save Team button
+// only once the gameweek deadline has actually passed - a team that's
+// already been saved stays fully editable (transfers, formation changes,
+// re-saving) right up to the deadline. "Clear Team" is a separate,
+// deliberate wipe-to-blank action, not something needed to make an edit.
 const applyPitchLockState = (isLocked = (gameweekStatus === 'locked')) => {
-  const lockPitch = isLocked || teamIsSaved;
   document.querySelectorAll('.pitch select').forEach(s => {
-    s.disabled = lockPitch;
+    s.disabled = isLocked;
     const shirt = s.closest('.shirt');
-    if (shirt) shirt.classList.toggle('is-disabled', lockPitch);
+    if (shirt) shirt.classList.toggle('is-disabled', isLocked);
   });
   const formationSelect = document.getElementById('formationSelect');
-  if (formationSelect) formationSelect.disabled = lockPitch;
+  if (formationSelect) formationSelect.disabled = isLocked;
   const saveBtn = document.getElementById('saveTeamBottomBtn');
-  if (saveBtn) saveBtn.disabled = isLocked || teamIsSaved;
+  if (saveBtn) saveBtn.disabled = isLocked;
   updateProgressStepper();
 };
 
@@ -3289,17 +3290,18 @@ const loadSelectedGameweekHistory = async () => {
     if (picksSnap.exists()) picksData = picksSnap.data();
     if (betSnap.exists()) betData = betSnap.data();
 
-    // A saved pick/bet is only valid for the gameweek it was stamped for
-    // (see forDeadline in saveWeekly/saveBetBuilder/autoSaveUnsavedPicksOnLock).
-    // If the live deadline has since moved on - fixtures re-synced, gameweek
-    // processed, etc. - or the doc predates this stamp existing at all,
-    // treat it as stale so the UI shows blank instead of a leftover "Saved"
-    // state carried over from a previous gameweek, and clean up the stale
-    // doc so it doesn't linger.
+    // A saved pick/bet is stamped with the deadline it was made for (see
+    // forDeadline in saveWeekly/saveBetBuilder/autoSaveUnsavedPicksOnLock).
+    // Weekly Picks carry forward as the default for a new gameweek, same as
+    // Team - an inactive manager's last picks stay in play rather than
+    // silently dropping out, so re-stamp with the current deadline instead
+    // of deleting. Bet Builder deliberately does NOT carry over: it's
+    // always blank until re-entered for the new gameweek.
     if (currentGameweekDeadlineISO) {
       if (picksData && picksData.forDeadline !== currentGameweekDeadlineISO) {
-        deleteDoc(doc(db, "users", currentUser.uid, "myxi", "weeklyPicks")).catch(() => {});
-        picksData = null;
+        const carriedPicks = { ...picksData, forDeadline: currentGameweekDeadlineISO };
+        setDoc(doc(db, "users", currentUser.uid, "myxi", "weeklyPicks"), carriedPicks, { merge: true }).catch(() => {});
+        picksData = carriedPicks;
       }
       if (betData && betData.forDeadline !== currentGameweekDeadlineISO) {
         deleteDoc(doc(db, "users", currentUser.uid, "myxi", "betBuilder")).catch(() => {});
@@ -3649,13 +3651,15 @@ let currentPersistedTeamName = "";
 // not merely typed into the input - that's what gates Weekly Picks / Bet Builder saves.
 const hasTeamNameSaved = () => !!(currentPersistedTeamName && currentPersistedTeamName.trim());
 
-// Enforces the required save order: Team -> Weekly Picks -> Bet Builder.
-// When the gameweek is locked or a section is already saved, its button is
-// truly disabled (nothing to do). When the *previous* step just hasn't been
-// saved yet, the button stays clickable but styled as locked ("btn-locked")
-// so a new user tapping it still gets told what to do next, instead of a
-// native-disabled button silently doing nothing (especially on mobile, where
-// there's no hover to reveal the title tooltip).
+// Enforces the required save ORDER: Team -> Weekly Picks -> Bet Builder -
+// e.g. Bet Builder stays styled as locked until Weekly Picks has been saved
+// at least once. It does NOT lock a section just because it was already
+// saved - once its prerequisite is met, a button stays available to
+// re-save changes as many times as wanted, right up until the gameweek
+// deadline. The button stays clickable even when styled as locked
+// ("btn-locked") so a user tapping it still gets told what to do next,
+// instead of a native-disabled button silently doing nothing (especially on
+// mobile, where there's no hover to reveal the title tooltip).
 const updateDependentSaveButtonsAvailability = (isLocked = (gameweekStatus === 'locked')) => {
   const nameSaved = hasTeamNameSaved();
   const nameLockedTitle = 'Save your Team first to unlock this.';
@@ -3664,19 +3668,19 @@ const updateDependentSaveButtonsAvailability = (isLocked = (gameweekStatus === '
   const weeklyBtn = document.getElementById('saveWeeklyBtn');
   if (weeklyBtn) {
     const prereqMissing = !nameSaved;
-    weeklyBtn.disabled = isLocked || weeklyIsSaved;
-    weeklyBtn.classList.toggle('btn-locked', !isLocked && !weeklyIsSaved && prereqMissing);
-    weeklyBtn.title = (!isLocked && !weeklyIsSaved && prereqMissing) ? nameLockedTitle : '';
+    weeklyBtn.disabled = isLocked;
+    weeklyBtn.classList.toggle('btn-locked', !isLocked && prereqMissing);
+    weeklyBtn.title = (!isLocked && prereqMissing) ? nameLockedTitle : '';
   }
 
   const betBtn = document.getElementById('saveBetBuilderBtn');
   if (betBtn) {
     const missingName = !nameSaved;
     const missingWeekly = !weeklyIsSaved;
-    betBtn.disabled = isLocked || betIsSaved;
-    betBtn.classList.toggle('btn-locked', !isLocked && !betIsSaved && (missingName || missingWeekly));
-    betBtn.title = (!isLocked && !betIsSaved && missingName) ? nameLockedTitle
-      : (!isLocked && !betIsSaved && missingWeekly) ? weeklyLockedTitle : '';
+    betBtn.disabled = isLocked;
+    betBtn.classList.toggle('btn-locked', !isLocked && (missingName || missingWeekly));
+    betBtn.title = (!isLocked && missingName) ? nameLockedTitle
+      : (!isLocked && missingWeekly) ? weeklyLockedTitle : '';
   }
   updateProgressStepper();
 };
