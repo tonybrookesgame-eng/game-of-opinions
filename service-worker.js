@@ -1,4 +1,4 @@
-const CACHE_NAME = 'game-of-opinions-pwa-v31';
+const CACHE_NAME = 'game-of-opinions-pwa-v32';
 const APP_SHELL = [
   '/',
   '/index.html',
