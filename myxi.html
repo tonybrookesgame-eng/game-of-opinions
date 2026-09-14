@@ -2581,7 +2581,10 @@ function ensureDebugPanel() {
       zIndex: 999999,
       fontSize: '13px',
       display: 'none',
-      whiteSpace: 'pre-wrap'
+      whiteSpace: 'pre-wrap',
+      maxHeight: '40vh',
+      overflowY: 'auto',
+      pointerEvents: 'none'
     });
     document.body.appendChild(panel);
   }
