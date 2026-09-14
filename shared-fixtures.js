@@ -2,28 +2,28 @@
   const fixtureData = [
     
     {
-      date: "Saturday 12th September",
+      date: "Friday 18th September",
       games: [
-        { home: "Aston Villa", away: "Nottingham Forest", time: "15:00" },
-        { home: "Bournemouth", away: "Brentford", time: "15:00" },
-        { home: "Chelsea", away: "Hull", time: "15:00" },
-        { home: "Crystal Palace", away: "Ipswich", time: "15:00" },
-        { home: "Liverpool", away: "Fulham", time: "15:00" },
-        { home: "Tottenham", away: "Everton", time: "17:30" },
-        { home: "Sunderland", away: "Arsenal", time: "20:00" },
-      ]
+        { home: "Brentford", away: "Chelsea", time: "20:00" },
+             ]
     },
     {
-      date: "Sunday 13th September",
+      date: "Saturday 19th September",
       games: [
-        { home: "Coventry", away: "Brighton", time: "14:00" },
-        { home: "Man Utd", away: "Man City", time: "16:30" }
+        { home: "Tottenham", away: "Aston Villa", time: "12:30" },
+        { home: "Newcastle", away: "Hull", time: "15:00" },
+        { home: "Everton", away: "Ipswich", time: "15:00" },
+        { home: "Brighton", away: "Arsenal", time: "15:00" },
+        { home: "Nottingham Forest", away: "Coventry", time: "17:30" },
         ]
     },
     {
-      date: "Monday 14th September",
+      date: "Sunday 20th September",
       games: [
-        { home: "Leeds", away: "Newcastle", time: "20:00" }
+        { home: "Man City", away: "Sunderland", time: "14:00" },
+        { home: "Leeds", away: "Crystal Palace", time: "14:00" },
+        { home: "Bournemouth", away: "Liverpool", time: "14:00" },
+        { home: "Fulham", away: "Man Utd", time: "16:30" },
         ]
     }
   ];
