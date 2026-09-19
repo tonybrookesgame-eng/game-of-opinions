@@ -1355,6 +1355,81 @@
       };
     }
 
+    // "Differential Pick" bonus: clean sheet, goal, assist and (GK) penalty
+    // save points are DOUBLED for any player picked by fewer than
+    // DIFFERENTIAL_OWNERSHIP_THRESHOLD_PCT% of managers who currently have a
+    // team in - a team simply carried over unchanged from a previous
+    // gameweek still counts (it's never cleared, only an explicit "Clear
+    // Team" or a never-saved team excludes someone). Rewards bold/contrarian
+    // picks - see rules.html. A percentage (rather than a fixed headcount)
+    // keeps the bar meaningful as the manager count grows.
+    const DIFFERENTIAL_OWNERSHIP_THRESHOLD_PCT = 3;
+
+    // Counts how many managers currently have each player in their squad,
+    // and how many managers have a squad at all (the ownership denominator).
+    async function calculatePickOwnership() {
+      const leaderboardSnap = await getDocs(collection(db, "leaderboard"));
+      const pickCounts = {};
+      let totalTeams = 0;
+
+      for (const userDoc of leaderboardSnap.docs) {
+        const teamSnap = await getDoc(doc(db, "users", userDoc.id, "myxi", "team"));
+        const players = teamSnap.exists() ? (teamSnap.data()?.players || []) : [];
+        if (!players.length) continue;
+        totalTeams++;
+        players.forEach(rawValue => {
+          if (!rawValue || rawValue === "Select") return;
+          pickCounts[rawValue] = (pickCounts[rawValue] || 0) + 1;
+        });
+      }
+
+      return { pickCounts, totalTeams };
+    }
+
+    // Turns ownership counts into the set of player keys that qualify as
+    // Differential Picks right now.
+    function getDifferentialPickKeys({ pickCounts, totalTeams }) {
+      const keys = new Set();
+      if (!totalTeams) return keys;
+      Object.entries(pickCounts).forEach(([key, count]) => {
+        if ((count / totalTeams) * 100 < DIFFERENTIAL_OWNERSHIP_THRESHOLD_PCT) keys.add(key);
+      });
+      return keys;
+    }
+
+    // Reads goals/assists/clean-sheets/cards/appearance/penalty-saves from
+    // the admin input fields and computes each player's points for this
+    // gameweek, doubling the clean sheet/goal/assist/penalty-save portion
+    // for Differential Picks. Shared by runAdminSanityCheck() and
+    // processGameweek() so the two can never disagree on the same input.
+    function calculatePlayerScores(differentialKeys = new Set()) {
+      const currentScores = {};
+      playersData.forEach(p => {
+        const r = rules[p.pos];
+        let flat = 0;
+        if (document.getElementById(`app-${p.id}`)?.checked) flat += r.app;
+        if (document.getElementById(`yc-${p.id}`)?.checked) flat += r.yc;
+        if (document.getElementById(`rc-${p.id}`)?.checked) flat += r.rc;
+
+        let bonusEligible = 0;
+        if (document.getElementById(`cs-${p.id}`)?.checked) bonusEligible += r.cs;
+        bonusEligible += (parseInt(document.getElementById(`gl-${p.id}`)?.value) || 0) * r.gl;
+        bonusEligible += (parseInt(document.getElementById(`ast-${p.id}`)?.value) || 0) * r.ast;
+        if (p.pos === 'GK') {
+          bonusEligible += (parseInt(document.getElementById(`ps-${p.id}`)?.value) || 0) * r.ps;
+        }
+
+        const multiplier = differentialKeys.has(p.key) ? 2 : 1;
+        const total = flat + (bonusEligible * multiplier);
+
+        currentScores[p.key] = total;
+        if (!(p.name in currentScores)) {
+          currentScores[p.name] = total;
+        }
+      });
+      return currentScores;
+    }
+
     window.runAdminSanityCheck = async function() {
       const gwNum = parseInt(document.getElementById('gameweek-num').value);
       if (isNaN(gwNum)) {
@@ -1367,22 +1442,9 @@
 
       try {
         const leaderboardSnap = await getDocs(collection(db, 'leaderboard'));
-        const currentScores = {};
-        playersData.forEach(p => {
-          let total = 0;
-          const r = rules[p.pos];
-          if (document.getElementById(`app-${p.id}`)?.checked) total += r.app;
-          if (document.getElementById(`cs-${p.id}`)?.checked) total += r.cs;
-          if (document.getElementById(`yc-${p.id}`)?.checked) total += r.yc;
-          if (document.getElementById(`rc-${p.id}`)?.checked) total += r.rc;
-          total += (parseInt(document.getElementById(`gl-${p.id}`)?.value) || 0) * r.gl;
-          total += (parseInt(document.getElementById(`ast-${p.id}`)?.value) || 0) * r.ast;
-          if (p.pos === 'GK') {
-            total += (parseInt(document.getElementById(`ps-${p.id}`)?.value) || 0) * r.ps;
-          }
-          currentScores[p.key] = total;
-          if (!(p.name in currentScores)) currentScores[p.name] = total;
-        });
+        const ownership = await calculatePickOwnership();
+        const differentialKeys = getDifferentialPickKeys(ownership);
+        const currentScores = calculatePlayerScores(differentialKeys);
 
         const betResult = document.getElementById('bet-result').value;
         const winClub = document.getElementById('winning-club').value;
@@ -1434,6 +1496,7 @@
           `Saved teams: ${teamCount}`,
           `Saved weekly picks: ${picksCount}`,
           `Saved bet builder picks: ${betCount}`,
+          `Differential Picks (<${DIFFERENTIAL_OWNERSHIP_THRESHOLD_PCT}% owned, of ${ownership.totalTeams} teams): ${differentialKeys.size ? [...differentialKeys].join(', ') : 'none'}`,
           '',
           'Preview sample:'
         ];
@@ -1480,29 +1543,14 @@
         : `This will publish a LIVE/PARTIAL points update for ALL users for Gameweek ${gwNum}. The site will stay locked and nothing will be cleared. Proceed?`;
       if (!confirm(confirmMsg)) return;
 
-      // 1. Calculate the points based on stats
-      const currentScores = {};
-      playersData.forEach(p => {
-        let total = 0;
-        const r = rules[p.pos];
-        
-        if (document.getElementById(`app-${p.id}`)?.checked) total += r.app;
-        if (document.getElementById(`cs-${p.id}`)?.checked) total += r.cs;
-        if (document.getElementById(`yc-${p.id}`)?.checked) total += r.yc;
-        if (document.getElementById(`rc-${p.id}`)?.checked) total += r.rc;
-        
-        total += (parseInt(document.getElementById(`gl-${p.id}`)?.value) || 0) * r.gl;
-        total += (parseInt(document.getElementById(`ast-${p.id}`)?.value) || 0) * r.ast;
-        
-        if (p.pos === 'GK') {
-          total += (parseInt(document.getElementById(`ps-${p.id}`)?.value) || 0) * r.ps;
-        }
-        
-        currentScores[p.key] = total;
-        if (!(p.name in currentScores)) {
-          currentScores[p.name] = total;
-        }
-      });
+      // 1. Calculate the points based on stats, including the Differential
+      // Pick bonus (see calculatePickOwnership/calculatePlayerScores above).
+      const ownership = await calculatePickOwnership();
+      const differentialKeys = getDifferentialPickKeys(ownership);
+      const currentScores = calculatePlayerScores(differentialKeys);
+      if (differentialKeys.size) {
+        showDebugAdmin(`Differential Picks this GW (<${DIFFERENTIAL_OWNERSHIP_THRESHOLD_PCT}% of ${ownership.totalTeams} teams): ${[...differentialKeys].join(', ')}`);
+      }
 
       const betResult = document.getElementById('bet-result').value;
       const winClub = document.getElementById('winning-club').value;
