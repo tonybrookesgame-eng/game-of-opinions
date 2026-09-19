@@ -209,6 +209,10 @@
 
     <div class="admin-section">
       <p>2. Enter Match Stats for the week</p>
+      <label for="player-team-filter" style="display: block; margin-bottom: 6px;">Filter by club:</label>
+      <select id="player-team-filter" onchange="filterPlayerInputs()" style="padding: 8px; border-radius: 4px; width: 200px; margin-bottom: 10px;">
+        <option value="">All Clubs</option>
+      </select>
       <div class="player-row row-head">
         <span>Player/Club</span>
         <span>App</span>
@@ -547,6 +551,7 @@
     function renderPlayerInputs() {
       const inputContainer = document.getElementById('player-inputs');
       const clubDropdown = document.getElementById('winning-club');
+      const teamFilter = document.getElementById('player-team-filter');
       if (!inputContainer || !clubDropdown) return;
 
       inputContainer.innerHTML = "";
@@ -556,10 +561,21 @@
         clubDropdown.innerHTML += `<option value="${c}">${c}</option>`;
       });
 
+      if (teamFilter) {
+        const previousFilter = teamFilter.value;
+        teamFilter.innerHTML = '<option value="">All Clubs</option>';
+        plClubs.forEach(c => {
+          teamFilter.innerHTML += `<option value="${c}">${c}</option>`;
+        });
+        // Re-select whatever club was filtered before this rebuild (e.g. a
+        // roster edit triggering a re-render) instead of silently resetting.
+        if (plClubs.includes(previousFilter)) teamFilter.value = previousFilter;
+      }
+
       playersData.forEach(p => {
         const abbr = clubAbbr[p.club] || p.club.substring(0, 3).toUpperCase();
         inputContainer.innerHTML += `
-          <div class="player-row">
+          <div class="player-row" data-club="${p.club}">
             <span title="${p.pos}">${p.name} <small>(${abbr})</small></span>
             <input type="checkbox" id="app-${p.id}">
             <input type="number" id="gl-${p.id}" value="0">
@@ -571,7 +587,21 @@
           </div>
         `;
       });
+
+      filterPlayerInputs();
     }
+
+    // Shows only the selected club's rows in the big "Enter Match Stats"
+    // list (section 2) - every player is still rendered/kept in the DOM
+    // (so their entered stats aren't lost), just hidden, so switching the
+    // filter or clearing it never discards anything already typed in.
+    window.filterPlayerInputs = function() {
+      const teamFilter = document.getElementById('player-team-filter');
+      const selectedClub = teamFilter ? teamFilter.value : "";
+      document.querySelectorAll('#player-inputs .player-row').forEach(row => {
+        row.style.display = (!selectedClub || row.dataset.club === selectedClub) ? '' : 'none';
+      });
+    };
 
     function setSeasonResultOptions() {
       const teamSelectIds = ["res-winner", "res-facup", "res-sacked", "res-rel1", "res-rel2", "res-rel3"];
