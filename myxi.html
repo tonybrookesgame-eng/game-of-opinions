@@ -2920,11 +2920,14 @@ const updateShirt = function(select) {
   const hasPoints = points !== undefined;
 
   ptsLabel.innerText = (hasPoints ? points : 0) + " PTS";
-  // Player-level points only show when viewing a selected (finalized) past
-  // gameweek from the history dropdown - the live view never shows points,
-  // even while locked mid-gameweek.
+  // Player-level points show when viewing a selected past gameweek from the
+  // history dropdown, or on the live view once the admin has published at
+  // least one live/partial update for the current gameweek (see the "Fetch
+  // Player Points for the Pitch" block above) - window.currentDisplayedPlayerScores
+  // stays empty until then, so there's nothing to show.
   const isHistoryView = selectedGw !== "";
-  ptsLabel.style.display = isHistoryView ? "block" : "none";
+  const hasLiveScores = Object.keys(window.currentDisplayedPlayerScores || {}).length > 0;
+  ptsLabel.style.display = (isHistoryView || hasLiveScores) ? "block" : "none";
 
   refreshDropdowns();
   // Once the team is saved, the pitch itself is locked (see applyPitchLockState) -
@@ -3240,15 +3243,22 @@ const loadSelectedGameweekHistory = async () => {
   const userProfileData = userProfileSnap.exists() ? userProfileSnap.data() : {};
 
   // 1. Fetch Player Points for the Pitch
-  // The live view (no gameweek selected in the history dropdown) never shows
-  // points, even while locked mid-gameweek - only a selected, finalized
-  // history entry shows points scored. Points for the live view used to come
-  // from whichever gameweekHistory doc was most recently processed, but that
-  // broke as soon as an admin corrected an older, already-final gameweek
-  // (its processedAt became the newest, so its points leaked onto the live
-  // pitch for the gameweek currently being picked).
+  // The live view (no gameweek selected in the history dropdown) stays blank
+  // until the admin publishes a live/partial update for the CURRENT
+  // gameweek - at which point it should show up immediately, before that
+  // gameweek is finalized. We find "the current gameweek" as the
+  // highest-numbered gameweekHistory doc (not the most recently *processed*
+  // one - re-correcting an older, already-final gameweek must not make its
+  // points leak onto the live pitch for whatever gameweek is being played
+  // now), and only show its points while it's still unfinished (final:
+  // false). Once it's finalized, it moves into the history dropdown instead
+  // and the live view goes blank again until the next gameweek's first
+  // partial update.
   if (!isHistory) {
-    window.currentDisplayedPlayerScores = {};
+    const q = query(collection(db, "gameweekHistory"), orderBy("gw", "desc"), limit(1));
+    const snap = await getDocs(q);
+    const latest = snap.empty ? null : snap.docs[0].data();
+    window.currentDisplayedPlayerScores = (latest && latest.final === false) ? (latest.playerScores || {}) : {};
   } else {
     const gwData = allGameweekHistory.find(gw => gw.gw == selectedGw);
     window.currentDisplayedPlayerScores = gwData ? gwData.playerScores || {} : {};
