@@ -2920,13 +2920,11 @@ const updateShirt = function(select) {
   const hasPoints = points !== undefined;
 
   ptsLabel.innerText = (hasPoints ? points : 0) + " PTS";
-  // Player-level points show in historical gameweeks, and live once the
-  // gameweek is locked (currentDisplayedPlayerScores is populated from the
-  // latest processed gameweekHistory doc while locked - see the "Fetch
-  // Player Points for the Pitch" block above - so a live/partial update
-  // shows up here immediately, not just after a gameweek is finalized).
+  // Player-level points only show when viewing a selected (finalized) past
+  // gameweek from the history dropdown - the live view never shows points,
+  // even while locked mid-gameweek.
   const isHistoryView = selectedGw !== "";
-  ptsLabel.style.display = (isHistoryView || gameweekStatus === 'locked') ? "block" : "none";
+  ptsLabel.style.display = isHistoryView ? "block" : "none";
 
   refreshDropdowns();
   // Once the team is saved, the pitch itself is locked (see applyPitchLockState) -
@@ -3242,14 +3240,15 @@ const loadSelectedGameweekHistory = async () => {
   const userProfileData = userProfileSnap.exists() ? userProfileSnap.data() : {};
 
   // 1. Fetch Player Points for the Pitch
+  // The live view (no gameweek selected in the history dropdown) never shows
+  // points, even while locked mid-gameweek - only a selected, finalized
+  // history entry shows points scored. Points for the live view used to come
+  // from whichever gameweekHistory doc was most recently processed, but that
+  // broke as soon as an admin corrected an older, already-final gameweek
+  // (its processedAt became the newest, so its points leaked onto the live
+  // pitch for the gameweek currently being picked).
   if (!isHistory) {
-    if (gameweekStatus === 'locked') {
-      const q = query(collection(db, "gameweekHistory"), orderBy("processedAt", "desc"), limit(1));
-      const snap = await getDocs(q);
-      window.currentDisplayedPlayerScores = snap.empty ? {} : snap.docs[0].data().playerScores || {};
-    } else {
-      window.currentDisplayedPlayerScores = {}; 
-    }
+    window.currentDisplayedPlayerScores = {};
   } else {
     const gwData = allGameweekHistory.find(gw => gw.gw == selectedGw);
     window.currentDisplayedPlayerScores = gwData ? gwData.playerScores || {} : {};
