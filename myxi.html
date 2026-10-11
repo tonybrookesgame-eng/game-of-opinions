@@ -3254,11 +3254,23 @@ const loadSelectedGameweekHistory = async () => {
   // false). Once it's finalized, it moves into the history dropdown instead
   // and the live view goes blank again until the next gameweek's first
   // partial update.
+  // liveGwArchive holds this manager's own archived breakdown (selection/
+  // picks/bet points) for that same still-in-progress gameweek, so Weekly
+  // Picks and Bet Builder can show their live result too - not just the
+  // pitch. It's null until the first partial update for the current
+  // gameweek is published.
+  let liveGwArchive = null;
   if (!isHistory) {
     const q = query(collection(db, "gameweekHistory"), orderBy("gw", "desc"), limit(1));
     const snap = await getDocs(q);
     const latest = snap.empty ? null : snap.docs[0].data();
-    window.currentDisplayedPlayerScores = (latest && latest.final === false) ? (latest.playerScores || {}) : {};
+    if (latest && latest.final === false) {
+      window.currentDisplayedPlayerScores = latest.playerScores || {};
+      const liveArchiveSnap = await getDoc(doc(db, "users", currentUser.uid, "history", "GW" + latest.gw));
+      if (liveArchiveSnap.exists()) liveGwArchive = liveArchiveSnap.data();
+    } else {
+      window.currentDisplayedPlayerScores = {};
+    }
   } else {
     const gwData = allGameweekHistory.find(gw => gw.gw == selectedGw);
     window.currentDisplayedPlayerScores = gwData ? gwData.playerScores || {} : {};
@@ -3409,16 +3421,18 @@ const loadSelectedGameweekHistory = async () => {
   }
 
   // 4. Update UI - Points Display
-  // Live view: show weekly total only.
+  // Live view: breakdown stays blank until liveGwArchive exists (the first
+  // partial update for the current gameweek has been published), then shows
+  // that gameweek's own selection/picks/bet points, same as history view.
   // History view: show full category breakdown and total.
   const pointsContainer = document.getElementById('points-display-container');
   const liveCumulativeTotal = Number(cumulativeHistoryTotal || 0);
-  
+
   pointsContainer.style.display = 'grid';
   if (!isHistory) {
-    document.getElementById('pts-selection').innerText = '-';
-    document.getElementById('pts-picks').innerText = '-';
-    document.getElementById('pts-bet').innerText = '-';
+    document.getElementById('pts-selection').innerText = liveGwArchive ? (liveGwArchive.selectionScore || 0) : '-';
+    document.getElementById('pts-picks').innerText = liveGwArchive ? (liveGwArchive.picksScore || 0) : '-';
+    document.getElementById('pts-bet').innerText = liveGwArchive ? (liveGwArchive.betScore || 0) : '-';
     document.getElementById('pts-total').innerText = String(liveCumulativeTotal);
   } else {
     document.getElementById('pts-selection').innerText = statsData.selectionPts;
@@ -3472,14 +3486,16 @@ const loadSelectedGameweekHistory = async () => {
     resetBetSaveButton();
   }
 
-  // 7. Apply color coding for historic results
-  if (isHistory) {
+  // 7. Apply color coding for historic results, and for the live view once
+  // a partial update for the current gameweek has been published.
+  const resultStats = isHistory ? statsData : liveGwArchive;
+  if (resultStats) {
     // Color coding for Bet Builder
-    if (statsData.betPts > 0) betPanel.classList.add('bet-correct');
-    else if (statsData.betPts < 0) betPanel.classList.add('bet-incorrect');
+    if (resultStats.betPts > 0 || resultStats.betScore > 0) betPanel.classList.add('bet-correct');
+    else if (resultStats.betPts < 0 || resultStats.betScore < 0) betPanel.classList.add('bet-incorrect');
 
     // Color coding for Weekly Picks
-    if (statsData.picksPts > 0) weeklyPanel.classList.add('weekly-correct');
+    if (resultStats.picksPts > 0 || resultStats.picksScore > 0) weeklyPanel.classList.add('weekly-correct');
     else if (picksData && picksData.first !== "Select") weeklyPanel.classList.add('weekly-incorrect');
   }
 
