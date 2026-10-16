@@ -63,7 +63,7 @@
       { name: "Thiago", club: "Brentford" }, { name: "Wilson", club: "Brentford" }, { name: "Nunes", club: "Brentford" }, { name: "Furo", club: "Brentford" },
       { name: "Kostoulas", club: "Brighton" }, { name: "Rutter", club: "Brighton" }, { name: "Tzimas", club: "Brighton" }, { name: "Ferguson", club: "Brighton" }, { name: "David", club: "Brighton" }, { name: "Yohanna", club: "Brighton" },
       { name: "Joao Pedro", club: "Chelsea" }, { name: "Welbeck", club: "Chelsea" }, { name: "Guiu", club: "Chelsea" }, { name: "Emegha", club: "Chelsea" },
-      { name: "Wright", club: "Coventry" }, { name: "Tchaouna", club: "Coventry" }, { name: "Simms", club: "Coventry" }, { name: "Awoniyi", club: "Coventry" }, 
+      { name: "Wright", club: "Coventry" }, { name: "Cherif", club: "Coventry" }, { name: "Tchaouna", club: "Coventry" }, { name: "Simms", club: "Coventry" }, { name: "Awoniyi", club: "Coventry" }, 
       { name: "Mateta", club: "Crystal Palace" }, { name: "Strand-Larsen", club: "Crystal Palace" },  { name: "Guessand", club: "Crystal Palace" }, { name: "Nketiah", club: "Crystal Palace" },
       { name: "Barry", club: "Everton" },
       { name: "Kusi-Asare", club: "Fulham" }, { name: "Muniz", club: "Fulham" }, { name: "Garcia", club: "Fulham" },

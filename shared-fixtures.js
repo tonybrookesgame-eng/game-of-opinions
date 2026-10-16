@@ -2,28 +2,28 @@
   const fixtureData = [
     
     {
-      date: "Saturday 10th October",
+      date: "Saturday 17th October",
       games: [
-        { home: "Arsenal", away: "Leeds", time: "12:30" },
-        { home: "Sunderland", away: "Brighton", time: "15:00" },
-        { home: "Ipswich", away: "Fulham", time: "15:00" },
-        { home: "Chelsea", away: "Bournemouth", time: "15:00" },
-        { home: "Aston Villa", away: "Brentford", time: "15:00" },
-        { home: "Man Utd", away: "Tottenham", time: "17:30" },
+        { home: "Everton", away: "Chelsea", time: "12:30" },
+        { home: "Brentford", away: "Liverpool", time: "15:00" },
+        { home: "Fulham,", away: "Hull", time: "15:00" },
+        { home: "Man City", away: "Ipswich", time: "15:00" },
+        { home: "Newcastle", away: "Aston Villa", time: "17:30" },
              ]
     },
     {
-      date: "Sunday 11th October",
+      date: "Sunday 18th October",
       games: [
-        { home: "Hull", away: "Everton", time: "14:00" },
-        { home: "Crystal Palace", away: "Nottingham Forest", time: "15:00" },
-        { home: "Liverpool", away: "Man City", time: "16:30" },
+        { home: "Bournemouth", away: "Sunderland", time: "14:00" },
+        { home: "Brighton", away: "Crystal Palace", time: "14:00" },
+        { home: "Leeds", away: "Man Utd", time: "14:00" },
+        { home: "Nottingham Forest", away: "Arsenal", time: "16:30" },
         ]
     },
     {
-      date: "Monday 12th October",
+      date: "Monday 19th October",
       games: [
-        { home: "Coventry", away: "Newcastle", time: "20:00" },
+        { home: "Tottenham", away: "Coventry", time: "20:00" },
         ]
     }
   ];
